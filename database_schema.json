@@ -1,0 +1,1160 @@
+{
+    "database_name": "Chinook",
+    "database_description": "Database sample",
+    "tables": [
+        {
+            "table_name": "albums",
+            "synonyms": [],
+            "description": "This table, 'albums', contains the following columns: AlbumId (INTEGER), Title (NVARCHAR(160)), ArtistId (INTEGER).",
+            "columns": [
+                {
+                    "column_name": "AlbumId",
+                    "synonyms": [],
+                    "description": "The AlbumId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "Title",
+                    "synonyms": [],
+                    "description": "The Title column, storing NVARCHAR(160) data.",
+                    "data_type": "NVARCHAR(160)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "ArtistId",
+                    "synonyms": [],
+                    "description": "The ArtistId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "artists",
+                        "to": "ArtistId"
+                    },
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "IFK_AlbumArtistId",
+                    "unique": false
+                }
+            ]
+        },
+        {
+            "table_name": "sqlite_sequence",
+            "synonyms": [],
+            "description": "This table, 'sqlite_sequence', contains the following columns: name (), seq ().",
+            "columns": [
+                {
+                    "column_name": "name",
+                    "synonyms": [],
+                    "description": "The name column, storing  data.",
+                    "data_type": "",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "seq",
+                    "synonyms": [],
+                    "description": "The seq column, storing  data.",
+                    "data_type": "",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "table_name": "artists",
+            "synonyms": [],
+            "description": "This table, 'artists', contains the following columns: ArtistId (INTEGER), Name (NVARCHAR(120)).",
+            "columns": [
+                {
+                    "column_name": "ArtistId",
+                    "synonyms": [],
+                    "description": "The ArtistId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "Name",
+                    "synonyms": [],
+                    "description": "The Name column, storing NVARCHAR(120) data.",
+                    "data_type": "NVARCHAR(120)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "table_name": "customers",
+            "synonyms": [],
+            "description": "This table, 'customers', contains the following columns: CustomerId (INTEGER), FirstName (NVARCHAR(40)), LastName (NVARCHAR(20)), Company (NVARCHAR(80)), Address (NVARCHAR(70)), City (NVARCHAR(40)), State (NVARCHAR(40)), Country (NVARCHAR(40)), PostalCode (NVARCHAR(10)), Phone (NVARCHAR(24)), Fax (NVARCHAR(24)), Email (NVARCHAR(60)), SupportRepId (INTEGER).",
+            "columns": [
+                {
+                    "column_name": "CustomerId",
+                    "synonyms": [],
+                    "description": "The CustomerId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "FirstName",
+                    "synonyms": [],
+                    "description": "The FirstName column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "LastName",
+                    "synonyms": [],
+                    "description": "The LastName column, storing NVARCHAR(20) data.",
+                    "data_type": "NVARCHAR(20)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Company",
+                    "synonyms": [],
+                    "description": "The Company column, storing NVARCHAR(80) data.",
+                    "data_type": "NVARCHAR(80)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Address",
+                    "synonyms": [],
+                    "description": "The Address column, storing NVARCHAR(70) data.",
+                    "data_type": "NVARCHAR(70)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "City",
+                    "synonyms": [],
+                    "description": "The City column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "State",
+                    "synonyms": [],
+                    "description": "The State column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Country",
+                    "synonyms": [],
+                    "description": "The Country column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "PostalCode",
+                    "synonyms": [],
+                    "description": "The PostalCode column, storing NVARCHAR(10) data.",
+                    "data_type": "NVARCHAR(10)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Phone",
+                    "synonyms": [],
+                    "description": "The Phone column, storing NVARCHAR(24) data.",
+                    "data_type": "NVARCHAR(24)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Fax",
+                    "synonyms": [],
+                    "description": "The Fax column, storing NVARCHAR(24) data.",
+                    "data_type": "NVARCHAR(24)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Email",
+                    "synonyms": [],
+                    "description": "The Email column, storing NVARCHAR(60) data.",
+                    "data_type": "NVARCHAR(60)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "SupportRepId",
+                    "synonyms": [],
+                    "description": "The SupportRepId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "employees",
+                        "to": "EmployeeId"
+                    },
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "IFK_CustomerSupportRepId",
+                    "unique": false
+                }
+            ]
+        },
+        {
+            "table_name": "employees",
+            "synonyms": [],
+            "description": "This table, 'employees', contains the following columns: EmployeeId (INTEGER), LastName (NVARCHAR(20)), FirstName (NVARCHAR(20)), Title (NVARCHAR(30)), ReportsTo (INTEGER), BirthDate (DATETIME), HireDate (DATETIME), Address (NVARCHAR(70)), City (NVARCHAR(40)), State (NVARCHAR(40)), Country (NVARCHAR(40)), PostalCode (NVARCHAR(10)), Phone (NVARCHAR(24)), Fax (NVARCHAR(24)), Email (NVARCHAR(60)).",
+            "columns": [
+                {
+                    "column_name": "EmployeeId",
+                    "synonyms": [],
+                    "description": "The EmployeeId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "LastName",
+                    "synonyms": [],
+                    "description": "The LastName column, storing NVARCHAR(20) data.",
+                    "data_type": "NVARCHAR(20)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "FirstName",
+                    "synonyms": [],
+                    "description": "The FirstName column, storing NVARCHAR(20) data.",
+                    "data_type": "NVARCHAR(20)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Title",
+                    "synonyms": [],
+                    "description": "The Title column, storing NVARCHAR(30) data.",
+                    "data_type": "NVARCHAR(30)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "ReportsTo",
+                    "synonyms": [],
+                    "description": "The ReportsTo column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "employees",
+                        "to": "EmployeeId"
+                    },
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "BirthDate",
+                    "synonyms": [],
+                    "description": "The BirthDate column, storing DATETIME data.",
+                    "data_type": "DATETIME",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "HireDate",
+                    "synonyms": [],
+                    "description": "The HireDate column, storing DATETIME data.",
+                    "data_type": "DATETIME",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Address",
+                    "synonyms": [],
+                    "description": "The Address column, storing NVARCHAR(70) data.",
+                    "data_type": "NVARCHAR(70)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "City",
+                    "synonyms": [],
+                    "description": "The City column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "State",
+                    "synonyms": [],
+                    "description": "The State column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Country",
+                    "synonyms": [],
+                    "description": "The Country column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "PostalCode",
+                    "synonyms": [],
+                    "description": "The PostalCode column, storing NVARCHAR(10) data.",
+                    "data_type": "NVARCHAR(10)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Phone",
+                    "synonyms": [],
+                    "description": "The Phone column, storing NVARCHAR(24) data.",
+                    "data_type": "NVARCHAR(24)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Fax",
+                    "synonyms": [],
+                    "description": "The Fax column, storing NVARCHAR(24) data.",
+                    "data_type": "NVARCHAR(24)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Email",
+                    "synonyms": [],
+                    "description": "The Email column, storing NVARCHAR(60) data.",
+                    "data_type": "NVARCHAR(60)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "IFK_EmployeeReportsTo",
+                    "unique": false
+                }
+            ]
+        },
+        {
+            "table_name": "genres",
+            "synonyms": [],
+            "description": "This table, 'genres', contains the following columns: GenreId (INTEGER), Name (NVARCHAR(120)).",
+            "columns": [
+                {
+                    "column_name": "GenreId",
+                    "synonyms": [],
+                    "description": "The GenreId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "Name",
+                    "synonyms": [],
+                    "description": "The Name column, storing NVARCHAR(120) data.",
+                    "data_type": "NVARCHAR(120)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "table_name": "invoices",
+            "synonyms": [],
+            "description": "This table, 'invoices', contains the following columns: InvoiceId (INTEGER), CustomerId (INTEGER), InvoiceDate (DATETIME), BillingAddress (NVARCHAR(70)), BillingCity (NVARCHAR(40)), BillingState (NVARCHAR(40)), BillingCountry (NVARCHAR(40)), BillingPostalCode (NVARCHAR(10)), Total (NUMERIC(10,2)).",
+            "columns": [
+                {
+                    "column_name": "InvoiceId",
+                    "synonyms": [],
+                    "description": "The InvoiceId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "CustomerId",
+                    "synonyms": [],
+                    "description": "The CustomerId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "customers",
+                        "to": "CustomerId"
+                    },
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "InvoiceDate",
+                    "synonyms": [],
+                    "description": "The InvoiceDate column, storing DATETIME data.",
+                    "data_type": "DATETIME",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "BillingAddress",
+                    "synonyms": [],
+                    "description": "The BillingAddress column, storing NVARCHAR(70) data.",
+                    "data_type": "NVARCHAR(70)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "BillingCity",
+                    "synonyms": [],
+                    "description": "The BillingCity column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "BillingState",
+                    "synonyms": [],
+                    "description": "The BillingState column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "BillingCountry",
+                    "synonyms": [],
+                    "description": "The BillingCountry column, storing NVARCHAR(40) data.",
+                    "data_type": "NVARCHAR(40)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "BillingPostalCode",
+                    "synonyms": [],
+                    "description": "The BillingPostalCode column, storing NVARCHAR(10) data.",
+                    "data_type": "NVARCHAR(10)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Total",
+                    "synonyms": [],
+                    "description": "The Total column, storing NUMERIC(10,2) data.",
+                    "data_type": "NUMERIC(10,2)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "IFK_InvoiceCustomerId",
+                    "unique": false
+                }
+            ]
+        },
+        {
+            "table_name": "invoice_items",
+            "synonyms": [],
+            "description": "This table, 'invoice_items', contains the following columns: InvoiceLineId (INTEGER), InvoiceId (INTEGER), TrackId (INTEGER), UnitPrice (NUMERIC(10,2)), Quantity (INTEGER).",
+            "columns": [
+                {
+                    "column_name": "InvoiceLineId",
+                    "synonyms": [],
+                    "description": "The InvoiceLineId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "InvoiceId",
+                    "synonyms": [],
+                    "description": "The InvoiceId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "invoices",
+                        "to": "InvoiceId"
+                    },
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "TrackId",
+                    "synonyms": [],
+                    "description": "The TrackId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "tracks",
+                        "to": "TrackId"
+                    },
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "UnitPrice",
+                    "synonyms": [],
+                    "description": "The UnitPrice column, storing NUMERIC(10,2) data.",
+                    "data_type": "NUMERIC(10,2)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Quantity",
+                    "synonyms": [],
+                    "description": "The Quantity column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "IFK_InvoiceLineTrackId",
+                    "unique": false
+                },
+                {
+                    "name": "IFK_InvoiceLineInvoiceId",
+                    "unique": false
+                }
+            ]
+        },
+        {
+            "table_name": "media_types",
+            "synonyms": [],
+            "description": "This table, 'media_types', contains the following columns: MediaTypeId (INTEGER), Name (NVARCHAR(120)).",
+            "columns": [
+                {
+                    "column_name": "MediaTypeId",
+                    "synonyms": [],
+                    "description": "The MediaTypeId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "Name",
+                    "synonyms": [],
+                    "description": "The Name column, storing NVARCHAR(120) data.",
+                    "data_type": "NVARCHAR(120)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "table_name": "playlists",
+            "synonyms": [],
+            "description": "This table, 'playlists', contains the following columns: PlaylistId (INTEGER), Name (NVARCHAR(120)).",
+            "columns": [
+                {
+                    "column_name": "PlaylistId",
+                    "synonyms": [],
+                    "description": "The PlaylistId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "Name",
+                    "synonyms": [],
+                    "description": "The Name column, storing NVARCHAR(120) data.",
+                    "data_type": "NVARCHAR(120)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "table_name": "playlist_track",
+            "synonyms": [],
+            "description": "This table, 'playlist_track', contains the following columns: PlaylistId (INTEGER), TrackId (INTEGER).",
+            "columns": [
+                {
+                    "column_name": "PlaylistId",
+                    "synonyms": [],
+                    "description": "The PlaylistId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": {
+                        "table": "playlists",
+                        "to": "PlaylistId"
+                    },
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "TrackId",
+                    "synonyms": [],
+                    "description": "The TrackId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "tracks",
+                        "to": "TrackId"
+                    },
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "IFK_PlaylistTrackTrackId",
+                    "unique": false
+                },
+                {
+                    "name": "sqlite_autoindex_playlist_track_1",
+                    "unique": true
+                }
+            ]
+        },
+        {
+            "table_name": "tracks",
+            "synonyms": [],
+            "description": "This table, 'tracks', contains the following columns: TrackId (INTEGER), Name (NVARCHAR(200)), AlbumId (INTEGER), MediaTypeId (INTEGER), GenreId (INTEGER), Composer (NVARCHAR(220)), Milliseconds (INTEGER), Bytes (INTEGER), UnitPrice (NUMERIC(10,2)).",
+            "columns": [
+                {
+                    "column_name": "TrackId",
+                    "synonyms": [],
+                    "description": "The TrackId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": true,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        "AUTOINCREMENT"
+                    ]
+                },
+                {
+                    "column_name": "Name",
+                    "synonyms": [],
+                    "description": "The Name column, storing NVARCHAR(200) data.",
+                    "data_type": "NVARCHAR(200)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "AlbumId",
+                    "synonyms": [],
+                    "description": "The AlbumId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "albums",
+                        "to": "AlbumId"
+                    },
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "MediaTypeId",
+                    "synonyms": [],
+                    "description": "The MediaTypeId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "media_types",
+                        "to": "MediaTypeId"
+                    },
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "GenreId",
+                    "synonyms": [],
+                    "description": "The GenreId column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": {
+                        "table": "genres",
+                        "to": "GenreId"
+                    },
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Composer",
+                    "synonyms": [],
+                    "description": "The Composer column, storing NVARCHAR(220) data.",
+                    "data_type": "NVARCHAR(220)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Milliseconds",
+                    "synonyms": [],
+                    "description": "The Milliseconds column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "Bytes",
+                    "synonyms": [],
+                    "description": "The Bytes column, storing INTEGER data.",
+                    "data_type": "INTEGER",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "UnitPrice",
+                    "synonyms": [],
+                    "description": "The UnitPrice column, storing NUMERIC(10,2) data.",
+                    "data_type": "NUMERIC(10,2)",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": false,
+                    "default_value": null,
+                    "constraints": [
+                        "NOT NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "IFK_TrackMediaTypeId",
+                    "unique": false
+                },
+                {
+                    "name": "IFK_TrackGenreId",
+                    "unique": false
+                },
+                {
+                    "name": "IFK_TrackAlbumId",
+                    "unique": false
+                }
+            ]
+        },
+        {
+            "table_name": "sqlite_stat1",
+            "synonyms": [],
+            "description": "This table, 'sqlite_stat1', contains the following columns: tbl (), idx (), stat ().",
+            "columns": [
+                {
+                    "column_name": "tbl",
+                    "synonyms": [],
+                    "description": "The tbl column, storing  data.",
+                    "data_type": "",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "idx",
+                    "synonyms": [],
+                    "description": "The idx column, storing  data.",
+                    "data_type": "",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                },
+                {
+                    "column_name": "stat",
+                    "synonyms": [],
+                    "description": "The stat column, storing  data.",
+                    "data_type": "",
+                    "primary_key": false,
+                    "foreign_key": null,
+                    "nullable": true,
+                    "default_value": null,
+                    "constraints": [
+                        "NULL",
+                        ""
+                    ]
+                }
+            ],
+            "indexes": []
+        }
+    ]
+}
