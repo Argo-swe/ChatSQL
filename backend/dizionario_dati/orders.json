@@ -1,0 +1,234 @@
+{
+  "database_name": "Orders",
+  "database_description": "The orders database is designed to monitor and manage purchase transactions",
+  "tables": [
+    {
+      "name": "users",
+      "description": "Table containing information about users",
+      "table_synonyms": [
+        "clients",
+        "customers",
+        "members",
+        "consumers"
+      ],
+      "columns": [
+        {
+          "name": "username",
+          "type": "string",
+          "description": "The unique login name for a user",
+          "column_synonyms": [
+            "nickname",
+            "alias"
+          ],
+          "references": null
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "description": "The user's email address",
+          "column_synonyms": null,
+          "references": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The user's birth name",
+          "column_synonyms": null,
+          "references": null
+        },
+        {
+          "name": "surname",
+          "type": "string",
+          "description": "The user's birth surname",
+          "column_synonyms": null,
+          "references": null
+        }
+      ],
+      "primary_key": [
+        "username"
+      ]
+    },
+    {
+      "name": "products",
+      "description": "Table containing information about products",
+      "table_synonyms": [
+        "items",
+        "articles"
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "The unique identifier for a product",
+          "column_synonyms": [
+            "identification",
+            "tag"
+          ],
+          "references": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The product's name",
+          "column_synonyms": null,
+          "references": null
+        },
+        {
+          "name": "price",
+          "type": "decimal",
+          "description": "The product's price",
+          "column_synonyms": [
+            "cost",
+            "value",
+            "charge"
+          ],
+          "references": null
+        },
+        {
+          "name": "category",
+          "type": "integer",
+          "description": "Foreign key referencing the category to which the product belongs",
+          "column_synonyms": null,
+          "references": {
+            "table_name": "categories",
+            "field_name": "id"
+          }
+        }
+      ],
+      "primary_key": [
+        "id"
+      ]
+    },
+    {
+      "name": "orders",
+      "description": "Table containing information on orders placed by users",
+      "table_synonyms": [
+        "deliveries",
+        "purchases",
+        "sales",
+        "buys",
+        "transactions"
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "The unique identifier for an order",
+          "column_synonyms": [
+            "identification",
+            "tag"
+          ],
+          "references": null
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "description": "Foreign key referencing the user who made the order",
+          "column_synonyms": null,
+          "references": {
+            "table_name": "users",
+            "field_name": "username"
+          }
+        },
+        {
+          "name": "order_date",
+          "type": "date",
+          "description": "Date when the order was made",
+          "column_synonyms": null,
+          "references": null
+        },
+        {
+          "name": "payment_method",
+          "type": "string",
+          "description": "The payment method used for the order",
+          "column_synonyms": null,
+          "references": null
+        }
+      ],
+      "primary_key": [
+        "id"
+      ]
+    },
+    {
+      "name": "categories",
+      "description": "Table containing information on product categories",
+      "table_synonyms": [
+        "classes",
+        "groups",
+        "types"
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "The unique identifier for a category",
+          "column_synonyms": [
+            "identification",
+            "tag"
+          ],
+          "references": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The category's name",
+          "column_synonyms": null,
+          "references": null
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "description": "The category's description",
+          "column_synonyms": null,
+          "references": null
+        }
+      ],
+      "primary_key": [
+        "id"
+      ]
+    },
+    {
+      "name": "order_items",
+      "description": "Table containing information about the items in the order",
+      "table_synonyms": [
+        "details"
+      ],
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "integer",
+          "description": "Foreign key referencing the order to which the item belongs",
+          "column_synonyms": null,
+          "references": {
+            "table_name": "orders",
+            "field_name": "id"
+          }
+        },
+        {
+          "name": "product_id",
+          "type": "integer",
+          "description": "Foreign key referencing the product in the order",
+          "column_synonyms": null,
+          "references": {
+            "table_name": "products",
+            "field_name": "id"
+          }
+        },
+        {
+          "name": "quantity",
+          "type": "integer",
+          "description": "The quantity of the product in the order",
+          "column_synonyms": [
+            "total",
+            "number"
+          ],
+          "references": null
+        }
+      ],
+      "primary_key": [
+        "order_id",
+        "product_id"
+      ]
+    }
+  ]
+}
