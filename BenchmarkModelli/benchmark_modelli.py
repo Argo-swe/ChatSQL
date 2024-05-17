@@ -21,7 +21,7 @@ class SchemaExtractor:
                 #"text": table['description'],
                 #"text": str_list,
             #}
-            documents.append(doc)
+            #documents.append(doc)
 
             for column in table['columns']:
                 str_list = [
