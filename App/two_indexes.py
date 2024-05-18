@@ -1,6 +1,7 @@
 import json
 #import sys
 from txtai.embeddings import Embeddings
+from txtai.pipeline import Translation
 import timeit
 
 """
@@ -148,6 +149,11 @@ def main():
     
     # Inserimento della richiesta dell'utente in linguaggio naturale
     user_query = input("Please enter your request: ")
+
+    # Prova di traduzione automatica
+    translate = Translation("facebook/mbart-large-50-many-to-many-mmt", findmodels=False)
+    translation = translate(user_query, "it")
+    print(translation)
 
     # Costruzione della query SQL per trovare le tabelle rilevanti
     sql_query = """
