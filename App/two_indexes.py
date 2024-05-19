@@ -154,7 +154,7 @@ def main():
     # Primo indice
     embeddings_didx.index(indexable_documents_didx)
 
-    # SalVataggio dell'indice nella directory corrente
+    # Salvataggio dell'indice in un'apposita directory
     embeddings_didx.save("Indici/idx")
     
     # Inserimento della richiesta dell'utente in linguaggio naturale
@@ -167,10 +167,10 @@ def main():
 
     # Costruzione della query SQL per trovare le tabelle rilevanti
     sql_query = """
-        SELECT table_name, text, MAX(score) as max, AVG(score) as avg, COUNT(*) as num_fields
+        SELECT table_name, text, MAX(score) as max, COUNT(*) as num_fields
         FROM txtai WHERE similar(':x') and score >= 0.2
         GROUP BY table_name
-        HAVING max >= 0.45 OR (max >= 0.3 AND num_fields > 1)
+        HAVING max >= 0.45 OR (max >= 0.28 AND num_fields > 1)
         ORDER BY table_name ASC
     """
     results = embeddings_didx.search(sql_query, embeddings_didx.count(), parameters={"x": user_query})
@@ -186,7 +186,7 @@ def main():
     # Secondo indice
     embeddings_kidx.index(indexable_documents_kidx)
 
-    # Salvataggio dell'indice nella directory corrente
+    # Salvataggio dell'indice in un'apposita directory
     embeddings_kidx.save("Indici/idx_2")
 
     # Costruzione della query SQL per estrarre i dati relativi alle tabelle rilevanti
