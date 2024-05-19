@@ -7,7 +7,7 @@ from index_manager import IndexManager
 # Configurazione della pagina
 st.set_page_config(
     page_title="ChatSQL",
-    page_icon="favicon.ico",
+    page_icon="assets/favicon.ico",
     layout="centered",
     initial_sidebar_state="auto",
     menu_items={}
@@ -34,15 +34,12 @@ st.title("ChatSQL")
 with st.sidebar:
     st.title("ChatSQL")
     st.subheader("Da linguaggio naturale a SQL")
-    text_input = st.text_input(label="Cerca un dizionario dati", key="input_dz", autocomplete="ciao", placeholder="Cerca...", label_visibility="visible")
+    text_input = st.text_input(label="Cerca un dizionario dati", key="input_dz", placeholder="Cerca...", label_visibility="visible")
     if text_input:
         st.write("Hai inserito: ", text_input)
 
 # Suddivisione del layout in tab
 tab1, tab2 = st.tabs(["ChatSQL", "Dizionario dati"])
-
-# Contenitore per i messaggi della chat
-#contenitore = tab1.container(height=None, border=False)
 
 manager = IndexManager()
 
@@ -94,9 +91,6 @@ def response_generator(response):
         yield word + " "
         time.sleep(0.05)
 
-# Barra orizzontale
-#tab2.divider()
-
 # Visualizzare i messaggi nella cronologia
 display_chat_history()
 
@@ -116,10 +110,10 @@ optimal_requests = [
     "Raccogliere conchiglie lungo la riva, un hobby rilassante durante le vacanze"
 ]
 
-# Layout con due colonne per riga
 contenitore = ""
 auto_request = ""
 
+# Layout con due colonne per riga
 if not st.session_state.advicesdisabled:
     contenitore = tab1.container()
     with contenitore:
@@ -127,32 +121,31 @@ if not st.session_state.advicesdisabled:
         first_button_cols = st.columns(2)
         second_button_cols = st.columns(2)
 
-        if first_button_cols and first_button_cols[0].button(optimal_requests[0]):
+        if first_button_cols[0].button(optimal_requests[0]):
             auto_request = optimal_requests[0]
-        elif first_button_cols and first_button_cols[1].button(optimal_requests[1]):
+        elif first_button_cols[1].button(optimal_requests[1]):
             auto_request = optimal_requests[1]
-        elif second_button_cols and second_button_cols[0].button(optimal_requests[2]):
+        elif second_button_cols[0].button(optimal_requests[2]):
             auto_request = optimal_requests[2]
-        elif second_button_cols and second_button_cols[1].button(optimal_requests[3]):
+        elif second_button_cols[1].button(optimal_requests[3]):
             auto_request = optimal_requests[3]
 
 # Elemento nascosto per ancorare la fine della chat
-tab1.markdown('<span id="phantom" style="visibility:hidden"></span>', unsafe_allow_html=True)
+tab1.markdown('<span id="phantom" style="visibility: hidden"></span>', unsafe_allow_html=True)
 
 if request := (st.chat_input("Inserisci la richiesta", key="chat_SQL_input", disabled=st.session_state.inputdisabled, on_submit=disableInput) or auto_request):
     # Disabilitare gli aiuti dopo la prima richiesta dell'utente
     disableAdvices()
 
     # Script personalizzato per scorrere automaticamente alla fine della chat e cambiare tab
-    components.html(
-        """
-            <script>
-                var btn = window.parent.document.querySelector('[role="tablist"]').children[0];
-                btn.click();
-                var element = window.parent.document.getElementById('phantom');
-                element.scrollIntoView({ behavior: 'smooth' });
-            </script>
-        """, height=0)
+    components.html("""
+        <script>
+            var btn = window.parent.document.querySelector('[role="tablist"]').children[0];
+            btn.click();
+            var element = window.parent.document.getElementById('phantom');
+            element.scrollIntoView({ behavior: 'smooth' });
+        </script>
+    """, height=0)
     
     # Visualizzare la richiesta dell'utente
     with tab1.chat_message("user", avatar=avatarUser):
