@@ -4,6 +4,29 @@ import time
 import streamlit.components.v1 as components
 from index_manager import IndexManager
 
+# Configurazione della pagina
+st.set_page_config(
+    page_title="ChatSQL",
+    page_icon="favicon.ico",
+    layout="centered",
+    initial_sidebar_state="auto",
+    menu_items={}
+)
+
+# Definizione di un font esterno
+st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            font-family: "Poppins", sans-serif !important;
+        }
+    </style>
+""" , unsafe_allow_html= True)
+
+# Icone per user e AI
+avatarUser = "icon_user.png"
+avatarAI = "icon_ai.png"
+
 # Titolo dell'app
 st.title("ChatSQL")
 
@@ -13,16 +36,10 @@ with st.sidebar:
     st.subheader("Da linguaggio naturale a SQL")
 
 # Suddivisione del layout in tab
-tab1, tab2 = st.tabs(["Dizionario dati", "ChatSQL"])
-
-with tab1:
-    # Lettura del dizionario dati
-    with open('../dizionario_dati/orders.json', 'r') as file:
-        schema = json.load(file)
-        st.json(schema)
+tab1, tab2 = st.tabs(["ChatSQL", "Dizionario dati"])
 
 # Contenitore per i messaggi della chat
-contenitore = tab2.container(height=None, border=False)
+#contenitore = tab1.container(height=None, border=False)
 
 manager = IndexManager()
 
@@ -42,12 +59,20 @@ documents = [
 manager.createIndex(documents)
 
 # Disabilitare l'input testuale
-def disable():
-    st.session_state.disabled = True
+def disableInput():
+    st.session_state.inputdisabled = True
 
-# Inizializzare la variabile di controllo
-if "disabled" not in st.session_state:
-    st.session_state.disabled = False
+# Disabilitare i consigli
+def disableAdvices():
+    st.session_state.advicesdisabled = True
+
+# Inizializzare la variabile di controllo sull'input
+if "inputdisabled" not in st.session_state:
+    st.session_state.inputdisabled = False
+
+# Inizializzare la variabile di controllo sui consigli
+if "advicesdisabled" not in st.session_state:
+    st.session_state.advicesdisabled = False
 
 # Inizializzare la cronologia della chat
 if "messages" not in st.session_state:
@@ -57,7 +82,7 @@ if "messages" not in st.session_state:
 # Visualizzare la cronologia della chat
 def display_chat_history() -> None:
     for message in st.session_state.messages:
-        with contenitore.chat_message(message["role"]):
+        with tab1.chat_message(message["role"], avatar=message["avatar"]):
             st.markdown(message["content"])
 
 # Visualizzare la risposta in modalità ChatBOT-like
@@ -74,10 +99,10 @@ display_chat_history()
 
 # Messaggio di benvenuto
 if not st.session_state.welcome_mex:
-    with contenitore.chat_message("assistant"):
+    with tab1.chat_message("assistant", avatar=avatarAI):
         welcome = "Benvenuto! Tramite ChatSQL, puoi inserire una richiesta da convertire in una query SQL per interrogare un database. Come posso aiutarti?"
         st.markdown(welcome)
-        st.session_state.messages.append({"role": "assistant", "content": welcome})
+        st.session_state.messages.append({"role": "assistant", "avatar": avatarAI, "content": welcome})
         st.session_state.welcome_mex = True
 
 # Esempi di richieste in linguaggio naturale
@@ -89,48 +114,64 @@ optimal_requests = [
 ]
 
 # Layout con due colonne per riga
-first_button_cols = tab2.columns(2)
-second_button_cols = tab2.columns(2)
-
+contenitore = ""
 auto_request = ""
 
-if first_button_cols[0].button(optimal_requests[0]):
-    auto_request = optimal_requests[0]
-elif first_button_cols[1].button(optimal_requests[1]):
-    auto_request = optimal_requests[1]
-elif second_button_cols[0].button(optimal_requests[2]):
-    auto_request = optimal_requests[2]
-elif second_button_cols[1].button(optimal_requests[3]):
-    auto_request = optimal_requests[3]
+if not st.session_state.advicesdisabled:
+    contenitore = tab1.container()
+    with contenitore:
+        st.subheader("Per iniziare, prova una delle seguenti richieste:")
+        first_button_cols = st.columns(2)
+        second_button_cols = st.columns(2)
+
+        if first_button_cols and first_button_cols[0].button(optimal_requests[0]):
+            auto_request = optimal_requests[0]
+        elif first_button_cols and first_button_cols[1].button(optimal_requests[1]):
+            auto_request = optimal_requests[1]
+        elif second_button_cols and second_button_cols[0].button(optimal_requests[2]):
+            auto_request = optimal_requests[2]
+        elif second_button_cols and second_button_cols[1].button(optimal_requests[3]):
+            auto_request = optimal_requests[3]
 
 # Elemento nascosto per ancorare la fine della chat
-tab2.markdown('<div id="phantom"></div>', unsafe_allow_html=True)
+tab1.markdown('<span id="phantom" style="visibility:hidden"></span>', unsafe_allow_html=True)
 
-if request := (tab2.chat_input("Inserisci la richiesta", key="chat_SQL_input", disabled=st.session_state.disabled, on_submit=disable) or auto_request):
-    # Script personalizzato per scorrere automaticamente alla fine della chat
+if request := (st.chat_input("Inserisci la richiesta", key="chat_SQL_input", disabled=st.session_state.inputdisabled, on_submit=disableInput) or auto_request):
+    # Disabilitare gli aiuti dopo la prima richiesta dell'utente
+    disableAdvices()
+
+    # Script personalizzato per scorrere automaticamente alla fine della chat e cambiare tab
     components.html(
-    """
-        <script>
-            var element = window.parent.document.getElementById('phantom');
-            element.scrollIntoView({ behavior: 'smooth' });
-        </script>
-    """, height=0)
+        """
+            <script>
+                var btn = window.parent.document.querySelector('[role="tablist"]').children[0];
+                btn.click();
+                var element = window.parent.document.getElementById('phantom');
+                element.scrollIntoView({ behavior: 'smooth' });
+            </script>
+        """, height=0)
     
     # Visualizzare la richiesta dell'utente
-    with contenitore.chat_message("user"):
+    with tab1.chat_message("user", avatar=avatarUser):
         st.markdown(request)
-    st.session_state.messages.append({"role": "user", "content": request})
+    st.session_state.messages.append({"role": "user", "avatar": avatarUser, "content": request})
 
     if request != "":
         # Costruzione e visualizzazione della risposta
         response = ""
-        with contenitore.chat_message("assistant"):
+        with tab1.chat_message("assistant", avatar=avatarAI):
             with st.spinner('Caricamento...'):
                 time.sleep(2)
                 result_text = manager.getResult(request)
                 response = result_text[0]["text"]
             st.write_stream(response_generator(response))
 
-        st.session_state.messages.append({"role": "assistant", "content": response})
-        st.session_state.disabled = False
+        st.session_state.messages.append({"role": "assistant", "avatar": avatarAI, "content": response})
+        st.session_state.inputdisabled = False
         st.rerun()
+
+with tab2:
+    # Lettura del dizionario dati
+    with open('../dizionario_dati/orders.json', 'r') as file:
+        schema = json.load(file)
+        st.json(schema)
