@@ -24,8 +24,8 @@ st.markdown("""
 """ , unsafe_allow_html= True)
 
 # Icone per user e AI
-avatarUser = "icon_user.png"
-avatarAI = "icon_ai.png"
+avatarUser = "assets/icon_user.png"
+avatarAI = "assets/icon_ai.png"
 
 # Titolo dell'app
 st.title("ChatSQL")
@@ -34,6 +34,9 @@ st.title("ChatSQL")
 with st.sidebar:
     st.title("ChatSQL")
     st.subheader("Da linguaggio naturale a SQL")
+    text_input = st.text_input(label="Cerca un dizionario dati", key="input_dz", autocomplete="ciao", placeholder="Cerca...", label_visibility="visible")
+    if text_input:
+        st.write("Hai inserito: ", text_input)
 
 # Suddivisione del layout in tab
 tab1, tab2 = st.tabs(["ChatSQL", "Dizionario dati"])
@@ -172,6 +175,6 @@ if request := (st.chat_input("Inserisci la richiesta", key="chat_SQL_input", dis
 
 with tab2:
     # Lettura del dizionario dati
-    with open('../dizionario_dati/orders.json', 'r') as file:
+    with open('../DizionarioDati/Ordini/ENG/orders.json', 'r') as file:
         schema = json.load(file)
         st.json(schema)
