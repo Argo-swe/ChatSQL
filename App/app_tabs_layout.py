@@ -170,4 +170,11 @@ with tab2:
     # Lettura del dizionario dati
     with open('../DizionarioDati/Ordini/ENG/orders.json', 'r') as file:
         schema = json.load(file)
-        st.json(schema)
+        with st.expander("Descrizione del database"):
+            st.write(f"""
+                Il dizionario dati descrive un database chiamato {schema['database_name']}.\n
+                Il database ha la seguente descrizione:\n
+                {schema['database_description']}.
+            """)
+        with st.expander("Struttura del dizionario dati"):
+            st.json(schema)
