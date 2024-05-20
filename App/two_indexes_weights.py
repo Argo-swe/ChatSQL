@@ -1,50 +1,9 @@
 import json
 #import sys
 from txtai.embeddings import Embeddings
-from txtai.pipeline import Translation
 import timeit
 
 """
-Try this queries: 
-    _________
-
-    1. all users who paid for their orders with PayPal
-    _________
-    
-    Prompt
-        Table schema: orders (id: integer, username: string, order_date: date, payment_method: string)
-        Table schema: users (username: string, email: string, name: string, surname: string)
-        Foreign key: orders.username->users.username
-        Answer with the right SQL query for: all users who paid for their orders with PayPal
-    
-    ChatBOT answer:
-        SELECT DISTINCT u.*
-        FROM users u
-        JOIN orders o ON u.username = o.username
-        WHERE o.payment_method = 'PayPal';
-    _________
-    
-    2. total cost of orders placed by users with PayPal
-    _________
-
-    Prompt
-        Table schema: order_items (order_id: integer, product_id: integer, quantity: integer)
-        Table schema: orders (id: integer, username: string, order_date: date, payment_method: string)
-        Table schema: products (id: integer, name: string, price: decimal, category: integer)
-        Foreign key: order_items.order_id->orders.id
-        Foreign key: order_items.product_id->products.id
-        Foreign key: orders.username->users.username
-        Foreign key: products.category->categories.id
-        Answer with the right SQL query for: total cost of orders placed by users with PayPal
-
-    ChatBOT answer:
-        SELECT SUM(oi.quantity * p.price) AS total_cost
-        FROM orders o
-        JOIN order_items oi ON o.id = oi.order_id
-        JOIN products p ON oi.product_id = p.id
-        WHERE o.payment_method = 'PayPal';
-    _________
-
     Semantic search - Attempts:
         1. give me the email of the user whose name starts with the letter a
         2. all users who paid for their orders with PayPal
@@ -72,20 +31,42 @@ class SchemaExtractor:
     def extract(self):
         documents = []
         for table in self.data['tables']:
+            # Inserimento descrizione tabella
+            doc = {
+                "table_name": table['name'],
+                "text": table['description'],
+                "weights": 0.5
+                }
+            documents.append(doc)
+
+            # Inserimento sinonimi tabella
+            if table["table_synonyms"] is not None:
+                str_list = [table_synonym for table_synonym in table["table_synonyms"]]
+                #str_list.append(table['description'])
+                doc = {
+                "table_name": table['name'],
+                "text": str_list,
+                "weights": 0.5
+                }
+                documents.append(doc)
+            
             for column in table['columns']:
+                # Inserimento descrizione colonna
                 doc = {
                     "table_name": table['name'],
-                    "text": column['description']
+                    "text": column['description'],
+                    "weights": 1
                 }
                 documents.append(doc)
 
                 # Inserimento sinonimi colonna
                 if column["column_synonyms"] is not None:
                     str_list = [column_synonym for column_synonym in column["column_synonyms"]]
-                    str_list.append(column['description'])
+                    #str_list.append(column['description'])
                     doc = {
                         "table_name": table['name'],
-                        "text": str_list
+                        "text": str_list,
+                        "weights": 0.8
                     }
                     documents.append(doc)
 
@@ -125,20 +106,6 @@ def main():
     documents_didx = extractor.extract()
     documents_kidx = extractor.extract_All()
 
-    # Prova di subindex
-    #embeddings = Embeddings(
-        #content=True,
-        #defaults=False,
-        #indexes={
-            #"keyword": {
-            #"keyword": True
-            #},
-            #"dense": {
-            #"path": "sentence-transformers/all-MiniLM-L6-v2"
-            #}
-        #}
-    #)
-
     # Due embeddings (ricerca semantica e ricerca per keyword)
     embeddings_didx = Embeddings(content=True, defaults=False, path="sentence-transformers/all-MiniLM-L6-v2")
     embeddings_kidx = Embeddings(content=True, defaults=False, keyword=True)
@@ -153,30 +120,24 @@ def main():
 
     # Primo indice
     embeddings_didx.index(indexable_documents_didx)
-    
+
     # Salvataggio dell'indice in un'apposita directory
     embeddings_didx.save("Indici/idx")
     
     # Inserimento della richiesta dell'utente in linguaggio naturale
     user_query = input("Please enter your request: ")
 
-    # Prova di traduzione automatica
-    translate = Translation("facebook/mbart-large-50-many-to-many-mmt", findmodels=False)
-    translation = translate(user_query, "it")
-    print(translation)
-
     # Costruzione della query SQL per trovare le tabelle rilevanti
     sql_query = """
-
-        SELECT table_name, text, MAX(score) as max, COUNT(*) as num_fields
-        FROM txtai WHERE similar(':x') and score >= 0.2
+        SELECT table_name, text, AVG(score) as media, SUM(score * weights) / SUM(weights) AS media_pesata
+        FROM txtai WHERE similar(':x')
         GROUP BY table_name
-        HAVING max >= 0.45 OR (max >= 0.28 AND num_fields > 1)
+        HAVING media >= 0.2 AND media_pesata >= 0.2
         ORDER BY table_name ASC
     """
     results = embeddings_didx.search(sql_query, embeddings_didx.count(), parameters={"x": user_query})
 
-    # Visualizzazione del risultato nel formato {'table_name', 'text', 'sum', 'avg', 'num_fields'}
+    # Visualizzazione del risultato nel formato {'table_name', 'text', 'media', 'media_pesata'}
     for i in enumerate(results):
         print(i)
 
@@ -186,7 +147,6 @@ def main():
 
     # Secondo indice
     embeddings_kidx.index(indexable_documents_kidx)
-
 
     # Salvataggio dell'indice in un'apposita directory
     embeddings_kidx.save("Indici/idx_2")
