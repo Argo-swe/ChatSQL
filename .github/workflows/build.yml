@@ -1,0 +1,39 @@
+name: Build Artifact 
+run-name: Build Artifact on PR Merge
+
+# Trigger: pull request sul main o sul develop
+on:
+  pull_request:
+    branches: 
+      - main
+      - develop
+    types: [closed]
+
+# Unità di lavoro all'interno del workflow
+jobs:
+  build:
+
+    # Controllo se la pull request è stata unita al ramo specificato
+    if: github.event.pull_request.merged == true
+
+    # Esecuzione in ambiente Ubuntu con le ultime versioni di pacchetti e librerie
+    runs-on: ubuntu-latest
+
+    # Azioni atomiche eseguite in sequenza all'interno del job
+    steps:
+
+    # Clonazione del repository all'interno dell'ambiente di esecuzione del job
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+          # Recupero tutta la cronologia (branch e tag)
+          fetch-depth: 0
+
+    # Pubblicazione dell'artefatto generato durante il processo di build
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ChatSQL
+        path: |
+          App
+          DizionarioDati
