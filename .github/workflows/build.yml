@@ -29,12 +29,17 @@ jobs:
           # Recupero tutta la cronologia (branch e tag)
           fetch-depth: 0
 
+    # Creazione della directory principale
+    - name: Parent Folder
+      continue-on-error: true
+      run: |
+        mkdir -p ChatSQL/PoC
+        cp -r App ChatSQL/PoC
+        cp -r DizionarioDati ChatSQL/PoC
+
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
       uses: actions/upload-artifact@v4
       with:
         name: ChatSQL
-        path: |
-          ChatSQL
-          ├── App
-          └── DizionarioDati
+        path: ChatSQL
