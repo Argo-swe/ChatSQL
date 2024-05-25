@@ -91,6 +91,30 @@ def response_generator(response):
         yield word + " "
         time.sleep(0.05)
 
+# Visualizzare un'anteprima del dizionario dati in linguaggio naturale
+@st.cache_data
+def view_data_dict(dict_name):
+    # Lettura del dizionario dati
+    path = f"../DizionarioDati/Ordini/ENG/{dict_name}"
+    dict_preview = ""
+    with open(path, 'r') as file:
+        schema = json.load(file)
+        dict_preview += f"""
+            Il dizionario dati descrive un database chiamato {schema['database_name']}.\n
+            Il database ha la seguente descrizione: {schema['database_description']}.\n 
+            Il database contiene le seguenti tabelle:\n """
+        
+        for table in schema['tables']:
+            dict_preview += f"""
+            {table['name']}: {table['description']}.\n 
+            La tabella contiene le seguenti colonne:\n"""
+            
+            for column in table['columns']:
+                dict_preview += f"""
+                {column['name']}: {column['description']} """
+
+    return dict_preview
+
 # Visualizzare i messaggi nella cronologia
 display_chat_history()
 
@@ -167,14 +191,10 @@ if request := (st.chat_input("Inserisci la richiesta", key="chat_SQL_input", dis
         st.rerun()
 
 with tab2:
-    # Lettura del dizionario dati
-    with open('../DizionarioDati/Ordini/ENG/orders.json', 'r') as file:
-        schema = json.load(file)
-        with st.expander("Descrizione del database"):
-            st.write(f"""
-                Il dizionario dati descrive un database chiamato {schema['database_name']}.\n
-                Il database ha la seguente descrizione:\n
-                {schema['database_description']}.
-            """)
-        with st.expander("Struttura del dizionario dati"):
-            st.json(schema)
+    dict_name = "orders.json"
+    with st.expander("Descrizione del database"):
+        st.write(view_data_dict(dict_name))
+
+    # Funzionalità aggiuntiva per il tecnico
+    #with st.expander("Struttura del dizionario dati"):
+        #st.json(schema)
