@@ -3,21 +3,52 @@ import os
 
 class IndexManager:
     def __init__(self):
-        self.embeddings = Embeddings({"path": "efederici/sentence-BERTino", "content": True})
+        self.embeddings = Embeddings(
+        content=True,
+        defaults=False,
+        indexes={
+            "column_description": {
+                "path": "sentence-transformers/all-MiniLM-L6-v2"
+            },
+             "column_description_multilingual": {
+                "path": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+            },
+            "table_description": {
+                "path": "sentence-transformers/all-MiniLM-L6-v2",
+                "columns": {
+                    "text": "table_description"
+                }
+            },
+            "table_description_multilingual": {
+                "path": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+                "columns": {
+                    "text": "table_description"
+                }
+            }
+        }
+    )
 
     def createIndex(self, documents):
         self.embeddings.index(documents)
 
-    def getResult(self, prompt):
-        query = "select text from txtai where similar(':x') limit 1"
-        return self.embeddings.search(query, parameters={"x": prompt})
+    def getResult(self, user_request):
+        relevant_tables = """
+            SELECT DISTINCT table_name, MAX(score) AS max_score
+            FROM txtai WHERE 
+            similar(':x', 'column_description') and
+            similar(':x', 'column_description_multilingual') and
+            similar(':x', 'table_description') and
+            similar(':x', 'table_description_multilingual') 
+            and score >= 0.25
+            ORDER BY table_name ASC
+        """
+        return self.embeddings.search(relevant_tables, limit=50, parameters={"x": user_request})
     
     def saveIndex(self):
         self.embeddings.save("idx")
     
     def loadIndex(self):
         self.embeddings.load("idx")
-
 
     def createOrLoadIndex(self, documents):
         createIDX = True

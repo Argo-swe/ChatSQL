@@ -1,5 +1,5 @@
 import json
-#import sys
+import sys
 from txtai.embeddings import Embeddings
 from txtai.pipeline import Translation
 import timeit
@@ -73,21 +73,41 @@ class SchemaExtractor:
         documents = []
         for table in self.data['tables']:
             for column in table['columns']:
+                #str_list = ["table_name"]
+                #if table["table_synonyms"] is not None:
+                    #str_list.extend(table_synonym for table_synonym in table["table_synonyms"])
+                #str_list = "the relation called " + table["name"]
+                #if table["is_referenced_by"] is not None:
+                    #str_list += " is referenced by this tables: "
+                    #str_list += ', '.join(table_name for table_name in table["is_referenced_by"])
+                #else:
+                    #str_list += ""
+                    #str_list.extend(column_synonym for column_synonym in column["column_synonyms"])
+                #if column["references"]:
+                    #str_list.append(column['references']["table_name"])
+                str_list = column["name"]
+                #str_list += ', '.join(table_name for table_name in table["is_referenced_by"])
+                if column["column_synonyms"] is not None:
+                    str_list += ", "
+                    str_list += ', '.join(column_synonym for column_synonym in column["column_synonyms"])
+                print(str_list)
                 doc = {
                     "table_name": table['name'],
+                    "table_description": table['description'],
+                    "column_synonyms": str_list,
                     "text": column['description']
                 }
                 documents.append(doc)
 
                 # Inserimento sinonimi colonna
-                if column["column_synonyms"] is not None:
+                """ if column["column_synonyms"] is not None:
                     str_list = [column_synonym for column_synonym in column["column_synonyms"]]
                     str_list.append(column['description'])
                     doc = {
                         "table_name": table['name'],
                         "text": str_list
                     }
-                    documents.append(doc)
+                    documents.append(doc) """
 
         return documents
     
@@ -140,7 +160,46 @@ def main():
     #)
 
     # Due embeddings (ricerca semantica e ricerca per keyword)
-    embeddings_didx = Embeddings(content=True, defaults=False, path="sentence-transformers/all-MiniLM-L6-v2")
+    #embeddings_didx = Embeddings(content=True, defaults=False, path="sentence-transformers/all-MiniLM-L6-v2")
+    embeddings_didx = Embeddings(
+        content=True,
+        defaults=False,
+        indexes={
+            "column_description": {
+                "path": "sentence-transformers/all-MiniLM-L6-v2"
+                #"path": "sentence-transformers/all-mpnet-base-v2"
+            },
+             "column_description_multilingual": {
+                #"path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+                "path": "sentence-transformers/distiluse-base-multilingual-cased-v2"
+            },
+            "table_description": {
+                "path": "sentence-transformers/all-MiniLM-L6-v2",
+                "columns": {
+                    "text": "table_description"
+                }
+            },
+            "table_description_multilingual": {
+                #"path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+                "path": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+                "columns": {
+                    "text": "table_description"
+                }
+            },
+            "column_synonyms": {
+                "path": "sentence-transformers/all-MiniLM-L6-v2",
+                "columns": {
+                    "text": "column_synonyms"
+                }
+            },
+            "column_synonyms_multilingual": {
+                "path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+                "columns": {
+                    "text": "column_synonyms"
+                }
+            }
+        }
+    )
     embeddings_kidx = Embeddings(content=True, defaults=False, keyword=True)
 
     indexable_documents_didx = []
@@ -161,27 +220,57 @@ def main():
     user_query = input("Please enter your request: ")
 
     # Prova di traduzione automatica
-    translate = Translation("facebook/mbart-large-50-many-to-many-mmt", findmodels=False)
+    """ translate = Translation("facebook/mbart-large-50-many-to-many-mmt", findmodels=False)
     translation = translate(user_query, "it")
-    print(translation)
+    print(translation)"""
 
     # Costruzione della query SQL per trovare le tabelle rilevanti
-    sql_query = """
-
-        SELECT table_name, text, MAX(score) as max, COUNT(*) as num_fields
-        FROM txtai WHERE similar(':x') and score >= 0.2
+    """ sql_query = 
+        SELECT table_name, text, MAX(score) as max, COUNT(*) as num_fields, column_synonyms
+        FROM txtai WHERE similar(':x', 'column_description') and similar(':x', 'table_description') and similar(':x', 'column_synonyms') and score >= 0.2
         GROUP BY table_name
-        HAVING max >= 0.45 OR (max >= 0.28 AND num_fields > 1)
         ORDER BY table_name ASC
     """
+    """ sql_query = 
+        SELECT table_name, text, MAX(score) as max, COUNT(*) as num_fields, column_synonyms
+        FROM txtai WHERE similar(':x', 'column_description') and similar(':x', 'column_description_2') 
+        and similar(':x', 'table_description') and similar(':x', 'table_description_2') 
+        and similar(':x', 'column_synonyms') and similar(':x', 'column_synonyms_2') and score >= 0.2
+        GROUP BY table_name
+        ORDER BY table_name ASC """
+    """ sql_query = 
+        SELECT table_name, text, MAX(score) as max, COUNT(*) as num_fields, column_synonyms
+        FROM txtai WHERE similar(':x', 'column_description') and similar(':x', 'column_description_2')
+        and similar(':x', 'table_description') and similar(':x', 'table_description_2') and score >= 0.2
+        GROUP BY table_name
+        ORDER BY table_name ASC """
+    """ sql_query = SELECT DISTINCT table_name
+            FROM txtai WHERE 
+            similar(':x', 'column_description') and
+            similar(':x', 'column_description_multilingual') and
+            similar(':x', 'table_description') and
+            similar(':x', 'table_description_multilingual') and
+            similar(':x', 'column_synonyms') and 
+            similar(':x', 'column_synonyms_multilingual') and
+            score >= 0.3
+            ORDER BY table_name ASC """
+    sql_query = """ SELECT table_name, MAX(score)
+            FROM txtai WHERE 
+            similar(':x', 'column_description') and
+            similar(':x', 'column_description_multilingual') and
+            similar(':x', 'column_synonyms') and
+            score >= 0.3
+            GROUP BY table_name
+            ORDER BY table_name ASC """
     results = embeddings_didx.search(sql_query, embeddings_didx.count(), parameters={"x": user_query})
 
+    #HAVING max >= 0.45 OR (max >= 0.28 AND num_fields > 1)
     # Visualizzazione del risultato nel formato {'table_name', 'text', 'sum', 'avg', 'num_fields'}
     for i in enumerate(results):
         print(i)
 
     # Arresto del programma per testare i due indici separatamente
-    #sys.exit()
+    sys.exit()
     #extractor.timer(embeddings_didx, sql_query)
 
     # Secondo indice
