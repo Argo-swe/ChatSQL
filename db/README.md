@@ -4,7 +4,7 @@
 L'utilizzo del database è basato sull'engine SQLite. Utilizziamo questa soluzione perché richiede minima configurazione, è uno degli engine più leggeri e minimali e si basa su un comodo sistema single-file, per cui ciascun database corrisponde a un singolo file binario `.db`
 
 ## Modalità d'utilizzo
-Essendo il database un singolo file, le connessioni e operazioni con la base di dati sono intermediate da librerie che necessitano solamente l'accesso a tale file. L'engine è molto leggero, percui per semplici operazioni locali si può utilizzare la propria versione, tuttavia basarsi sulla versione contenuta nel servizio di Docker Compose accomuna la versione,
+Essendo il database un singolo file, le connessioni e operazioni con la base di dati sono intermediate da librerie che necessitano solamente l'accesso a tale file.
 ### Creazione del database
 Per creare il database:
 - Scaricare con un package manager sqlite3 (esempio Windows: `winget install sqlite.sqlite`)
