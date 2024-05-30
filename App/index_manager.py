@@ -8,21 +8,15 @@ class IndexManager:
         defaults=False,
         indexes={
             "column_description": {
-                "path": "sentence-transformers/all-MiniLM-L6-v2"
+                "path": "sentence-transformers/all-MiniLM-L12-v2"
             },
              "column_description_multilingual": {
-                "path": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+                "path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
             },
-            "table_description": {
-                "path": "sentence-transformers/all-MiniLM-L6-v2",
+            "table_description_with_column_name_and_synonyms": {
+                "path": "sentence-transformers/all-MiniLM-L12-v2",
                 "columns": {
-                    "text": "table_description"
-                }
-            },
-            "table_description_multilingual": {
-                "path": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-                "columns": {
-                    "text": "table_description"
+                    "text": "relevant_information"
                 }
             }
         }
@@ -32,17 +26,28 @@ class IndexManager:
         self.embeddings.index(documents)
 
     def getResult(self, user_request):
-        relevant_tables = """
-            SELECT DISTINCT table_name, MAX(score) AS max_score
-            FROM txtai WHERE 
-            similar(':x', 'column_description') and
-            similar(':x', 'column_description_multilingual') and
-            similar(':x', 'table_description') and
-            similar(':x', 'table_description_multilingual') 
-            and score >= 0.25
-            ORDER BY table_name ASC
-        """
-        return self.embeddings.search(relevant_tables, limit=50, parameters={"x": user_request})
+        relevant_tables = []
+        relevant_table = []
+        limit = 20
+        for i in range(limit):
+            excluded_tables = ", ".join([f"'{table['table_name']}'" for table in relevant_tables])
+            sql_query = f"""
+                SELECT table_name, score
+                FROM txtai WHERE 
+                table_name NOT IN ({excluded_tables}) and
+                similar(':x', 'column_description') and
+                similar(':x', 'column_description_multilingual') and
+                similar(':x', 'table_description_with_column_name_and_synonyms')
+                and score >= 0.25
+                ORDER BY score DESC
+                LIMIT 1
+            """
+            relevant_table = self.embeddings.search(sql_query, parameters={"x": user_request})
+            if (relevant_table):
+                relevant_tables += relevant_table
+            else:
+                break
+        return relevant_tables
     
     def saveIndex(self):
         self.embeddings.save("idx")
