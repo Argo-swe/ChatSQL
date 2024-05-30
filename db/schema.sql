@@ -1,7 +1,7 @@
 -- Tabella credenziali di login tecnico
 CREATE TABLE IF NOT EXISTS admins (
   username TEXT PRIMARY KEY,
-  password TEXT NUT NULL
+  password TEXT NOT NULL
 );
 
 -- Tabella dizionari dati 
