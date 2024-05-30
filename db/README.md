@@ -7,11 +7,12 @@ L'utilizzo del database è basato sull'engine SQLite. Utilizziamo questa soluzio
 Essendo il database un singolo file, le connessioni e operazioni con la base di dati sono intermediate da librerie che necessitano solamente l'accesso a tale file. L'engine è molto leggero, percui per semplici operazioni locali si può utilizzare la propria versione, tuttavia basarsi sulla versione contenuta nel servizio di Docker Compose accomuna la versione,
 ### Creazione del database
 Per creare il database:
-- Dalla directory principale del progetto eseguire `docker compose up -d` e accedere al terminale sqlite con `docker exec -it chatsql-sqlite-1 sqlite3`;
-- All'interno del terminale, eseguire `.open chatsql.db`;
-- All'interno del terminale, eseguire `.read schema.sql` popolerà il database con le informazioni contenute nello scipt SQL.
+- Scaricare con un package manager sqlite3 (esempio Windows: `winget install sqlite.sqlite`)
+- Selezionare come working directory `db` ed eseguire `sqlite3`
+- All'interno del terminale sqlite, eseguire `.open chatsql.db`;
+- All'interno del terminale sqlite, eseguire `.read schema.sql` popolerà il database con le informazioni contenute nello scipt SQL.
 
-### Comandi utili
+### Comandi utili del terminale sqlite3
 #### Connettersi al database
 `.open chatsql.db` (va eseguito ad ogni nuova sessione).
 
@@ -50,5 +51,5 @@ Il processo è il seguente:
 .import nome_file.csv nome_tabella
 ```
 
-### Linee guida
+### Linee guida sulla persistenza del database attraverso il repository
 Poiché versionare file binari come il `.db` è poco utile, è necessario utilizzare e mantenere aggiornati file che mantengano dati in forma ordinata, come ad esempio uno `schema.sql`, o dei file `.csv` che vengano poi inseriti da uno script `.sql`.
