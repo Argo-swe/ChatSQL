@@ -45,6 +45,7 @@ class IndexManager:
         """
         #similar(':x', 'table_description_with_column_name_and_synonyms') and
         tuples = self.embeddings.search(sql_query, limit=query_limit*10, parameters={"x": user_request})
+        print(self.embeddings.explain(user_request, [tuple["text"] for tuple in tuples]))
         relevant_tuples = self.__getRelevantTuples(tuples)
         return relevant_tuples
 
@@ -126,7 +127,7 @@ def main():
     """ utils_folder_path = os.path.dirname(os.path.realpath(__file__))
     dictionaries_folder_path = os.path.abspath(os.path.join(utils_folder_path, "Indici")) """
     #print(dictionaries_folder_path)
-    manager.promptGenerator("give me the total amount of each order")
+    manager.promptGenerator("all information about products that belong to an order placed by a user whose first name is antonio")
 
 if __name__ == "__main__":
     main()
