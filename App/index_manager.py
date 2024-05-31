@@ -37,7 +37,7 @@ class IndexManager:
             FROM txtai WHERE 
             similar(':x', 'column_description') and
             similar(':x', 'column_description_multilingual') and
-            score >= 0.2
+            score >= 0.25
             GROUP BY table_name HAVING
             avg_score >= 0.25
             ORDER BY max_score DESC
@@ -49,18 +49,17 @@ class IndexManager:
         return relevant_tuples
 
     def __getRelevantTuples(self, tuples):
-        #[f"'{table['table_name']}'" for table in results]
-        i = 0
-        score = 0
         relevant_tuples = []
+        score = 0
+        max_score = tuples[0]['max_score']
         for tuple in enumerate(tuples):
-            print(score - int(tuple[1]['max_score']))
-            if (score - int(tuple[1]['max_score'])) <= 0.3:
-                relevant_tuples.append([tuple[1]['table_name'], tuple[1]['max_score']])
+            scoring_distance = score - tuple[1]['max_score']
+            if tuple[1]['max_score'] >= 0.45:
+                relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score']])
                 score = tuple[1]['max_score']
-                print(score)
-            else:
-                break
+            elif scoring_distance <= 0.2:
+                relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score']])
+                score = tuple[1]['max_score']
         return relevant_tuples
     
     def saveIndex(self):
@@ -127,7 +126,7 @@ def main():
     """ utils_folder_path = os.path.dirname(os.path.realpath(__file__))
     dictionaries_folder_path = os.path.abspath(os.path.join(utils_folder_path, "Indici")) """
     #print(dictionaries_folder_path)
-    manager.promptGenerator("give me the email of the user whose name starts with the letter a")
+    manager.promptGenerator("give me the total amount of each order")
 
 if __name__ == "__main__":
     main()
