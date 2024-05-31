@@ -26,27 +26,21 @@ class IndexManager:
         self.embeddings.index(documents)
 
     def getResult(self, user_request):
-        relevant_tables = []
-        relevant_table = []
-        limit = 20
-        for i in range(limit):
-            excluded_tables = ", ".join([f"'{table['table_name']}'" for table in relevant_tables])
-            sql_query = f"""
-                SELECT table_name, score
-                FROM txtai WHERE 
-                table_name NOT IN ({excluded_tables}) and
-                similar(':x', 'column_description') and
-                similar(':x', 'column_description_multilingual') and
-                similar(':x', 'table_description_with_column_name_and_synonyms')
-                and score >= 0.25
-                ORDER BY score DESC
-                LIMIT 1
-            """
-            relevant_table = self.embeddings.search(sql_query, parameters={"x": user_request})
-            if (relevant_table):
-                relevant_tables += relevant_table
-            else:
-                break
+        query_limit = 20
+        sql_query = f"""
+            SELECT table_name, MAX(score) AS max_score, AVG(score) AS avg_score
+            FROM txtai WHERE 
+            similar(':x', 'column_description') and
+            similar(':x', 'column_description_multilingual') and
+            similar(':x', 'table_description_with_column_name_and_synonyms') and
+            score >= 0.2
+            GROUP BY table_name HAVING
+            avg_score >= 0.25
+            ORDER BY max_score DESC
+            LIMIT {query_limit}
+        """
+        relevant_tables = self.embeddings.search(sql_query, limit=query_limit*10, parameters={"x": user_request})
+        
         return relevant_tables
     
     def saveIndex(self):
