@@ -1,5 +1,9 @@
 import pandas as pd
 import streamlit as st
+from io import StringIO
+
+from backend.tools.utils import Utils
+from backend.tools.dictionary_validator import DictionaryValidator
 
 st.set_page_config(
     page_title="Dictionaries",
@@ -13,7 +17,20 @@ st.title("Dictionaries list")
 
 # dictionary validation
 def validate_dictionary():
-    return True
+    if st.session_state.uploaded_file is not None:
+        # To convert to a string based IO:
+        stringio = StringIO(st.session_state.uploaded_file.getvalue().decode("utf-8"))
+
+        if DictionaryValidator.validate(Utils.string_to_json(stringio.read())):
+            #st.write("VALIDO")
+            is_file_valid = True
+            return True
+        else:
+            #st.write("NON VALIDO")
+            is_file_valid = False
+            return False
+
+    return False
 
 # add dictionary modal
 @st.experimental_dialog("Add a dictionary")
