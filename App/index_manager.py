@@ -23,6 +23,7 @@ class IndexManager:
             }
         )
         self.path = "Indici"
+        self.log_name = "chatsql_log.txt"
         
     def setDataDictName(self, data_dict_name):
         self.data_dict_name = data_dict_name
@@ -45,11 +46,29 @@ class IndexManager:
         """
         #similar(':x', 'table_description_with_column_name_and_synonyms') and
         tuples = self.embeddings.search(sql_query, limit=query_limit*10, parameters={"x": user_request})
-        print(self.embeddings.explain(user_request, [tuple["text"] for tuple in tuples]))
-        relevant_tuples = self.__getRelevantTuples(tuples)
+        #print(self.embeddings.explain(user_request, [tuple["text"] for tuple in tuples]))
+        relevant_tuples = self.__getRelevantTuples(tuples, 1)
         return relevant_tuples
 
-    def __getRelevantTuples(self, tuples):
+    def __getRelevantTuples(self, tuples, log):
+        log = open(self.log_name, "w")
+        log.write("Fase 1 - prima estrazione\n")
+        log.write("Le tabelle vengono estratte in base al punteggio ottenuto confrontando la richiesta utente con la descrizione dei campi della tabella\n")
+        log.write("Lista delle tabelle pertinenti (punteggio maggiore di 0.2):\n")
+        for tuple in enumerate(tuples):
+            log.write(tuple[1]["table_name"] + ": " + str(tuple[1]["max_score"]) + "\n")
+
+        #exclude_str = ", ".join([f"'{table['table_name']}, {table['max_score']}'" for table in tuples])
+        exclude_str = ", ".join([f"('{table['table_name']}', {table['max_score']})" for table in tuples])
+        sql_query = f"""
+            SELECT text
+            FROM txtai WHERE 
+            (table_name, score) IN {exclude_str}
+        """
+        #similar(':x', 'table_description_with_column_name_and_synonyms') and
+        tuples = self.embeddings.search(sql_query)
+
+
         relevant_tuples = []
         score = 0
         max_score = tuples[0]['max_score']
@@ -61,7 +80,15 @@ class IndexManager:
             elif scoring_distance <= 0.2:
                 relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score']])
                 score = tuple[1]['max_score']
+            else:
+                break
+        log.close()
+        self.readLog()
         return relevant_tuples
+    
+    def readLog(self):
+        log = open(self.log_name, "r")
+        print(log.read())
     
     def saveIndex(self):
         self.embeddings.save(f"{self.path}/{self.data_dict_name}")
