@@ -1,7 +1,8 @@
 import sys
 from txtai.embeddings import Embeddings
-from schema_multi_extractor import get_JSON_schema, extract_first_index
+from schema_multi_extractor import get_JSON_schema, extract_first_index, extract_second_index
 import os
+import json
 
 class IndexManager:
     def __init__(self):
@@ -23,6 +24,7 @@ class IndexManager:
                 }
             }
         )
+        self.embeddings_complete = Embeddings(content=True, defaults=False)
         self.path = "Indici"
         self.log_name = "chatsql_log.txt"
 
@@ -32,6 +34,12 @@ class IndexManager:
         for idx, document in enumerate(extracted_documents):
             documents.append((idx, document, None))
         self.embeddings.index(documents)
+
+        extracted_documents = extract_second_index(get_JSON_schema(data_dict_name))
+        documents = []
+        for idx, document in enumerate(extracted_documents):
+            documents.append((idx, document, None))
+        self.embeddings_complete.index(documents)
 
     def __getTuples(self, user_request, is_log):
         query_limit = 20
@@ -52,13 +60,12 @@ class IndexManager:
         return relevant_tuples
 
     def __getRelevantTuples(self, tuples, user_request, is_log):
-        if is_log:
+        if is_log == 1:
             log = self.semanticSearchLog(user_request, tuples)
             log.write("\nFase 2 - seconda estrazione\n")
             log.write("Lista delle tabelle rilevanti:\n")
         relevant_tuples = []
         score = 0
-        max_score = tuples[0]['max_score']
         for tuple in enumerate(tuples):
             scoring_distance = score - tuple[1]['max_score']
             if tuple[1]['max_score'] >= 0.45:
@@ -75,7 +82,8 @@ class IndexManager:
                 if is_log == 1:
                     log.write("Le tabelle rimamenti vengono scartate poiché lo score non è abbastanza alto e la differenza di punteggio rispetto alle tabelle immediatamente precedenti è eccessivamente alta\n")
                 break
-        log.close()
+        if is_log == 1:
+            log.close()
         return relevant_tuples
     
     def semanticSearchLog(self, user_request, tuples):
@@ -104,10 +112,12 @@ class IndexManager:
         print(log.read())
     
     def saveIndex(self, data_dict_name):
-        self.embeddings.save(f"{self.path}/{data_dict_name}")
+        self.embeddings.save(f"{self.path}/{data_dict_name}/idx")
+        self.embeddings_complete.save(f"{self.path}/{data_dict_name}/idx_complete")
     
     def loadIndex(self, data_dict_name):
-        self.embeddings.load(f"{self.path}/{data_dict_name}")
+        self.embeddings.load(f"{self.path}/{data_dict_name}/idx")
+        self.embeddings_complete.load(f"{self.path}/{data_dict_name}/idx_complete")
 
     def createOrLoadIndex(self, data_dict_name):
         createIDX = True
@@ -116,25 +126,44 @@ class IndexManager:
             createIDX = False
         if createIDX:
             self.createIndex(data_dict_name)
-            self.saveIndex()
+            self.saveIndex(data_dict_name)
             return True
         else:
-            self.loadIndex()
+            self.loadIndex(data_dict_name)
             return False
         
-    def promptGenerator(self, user_request, data_dict_name, is_log):
+    def promptGenerator(self, data_dict_name, user_request, is_log):
         relevant_tuples = self.__getTuples(user_request, is_log)
-        schema = get_JSON_schema(data_dict_name)
-
-        unique_tables = set()
-        for result in relevant_tuples:
-            table_name = schema['table_name']
-            unique_tables.add(table_name)
+        relevant_tables = ", ".join([f"'{table[0]}'" for table in relevant_tuples])
+        sql_query = f"""
+            SELECT table_name, fields_number, column_name, column_type, column_reference
+            FROM txtai
+            WHERE table_name IN ({relevant_tables})
+        """
+        complete_results = self.embeddings_complete.search(sql_query, self.embeddings_complete.count())
+        # Costruzione del prompt
+        dyn_string = "Suggested prompt:" + "\n"
+        dyn_ref_string = ""
+        i = 0
+        limit = 0
+        for result in complete_results:
+            if result["column_reference"]:
+                dyn_ref_string += "Foreign key: " + result["table_name"] + "." + result["column_name"] + "->" + json.loads(result["column_reference"])["table_name"] + "." + json.loads(result["column_reference"])["field_name"] + "\n"
+            
+            if (i == 0):
+                dyn_string += "Table schema: " + result["table_name"] + " (" + result["column_name"] + ": " + result["column_type"] + ", "
+                limit = int(result["fields_number"])
+                i += 1
+            elif (i + 1 < limit):
+                dyn_string += result["column_name"] + ": " + result["column_type"] + ", "
+                i += 1
+            else:
+                dyn_string += result["column_name"] + ": " + result["column_type"] + ")\n"
+                i = 0
         
-        print(unique_tables)
-        
-        """ for i in enumerate(relevant_tuples):
-            print(i) """
+        dyn_string += f"{dyn_ref_string}"
+        dyn_string += f"Answer with the right SQL query for: {user_request}"
+        print(f"{dyn_string}")
 
 def main():
     manager = IndexManager()
@@ -143,7 +172,7 @@ def main():
 
     manager.createOrLoadIndex(data_dict_name)
 
-    manager.promptGenerator(data_dict_name, "all information about products that belong to an order placed by a user whose first name is antonio")
+    manager.promptGenerator(data_dict_name, "all information about products that belong to an order placed by a user whose first name is antonio", 1)
 
 if __name__ == "__main__":
     main()
