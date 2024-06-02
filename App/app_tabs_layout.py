@@ -3,6 +3,9 @@ import streamlit as st
 import time
 import streamlit.components.v1 as components
 from index_manager import IndexManager
+from audio_recorder_streamlit import audio_recorder
+from txtai.pipeline import Transcription
+import tempfile
 
 # Configurazione della pagina
 st.set_page_config(
@@ -37,6 +40,22 @@ with st.sidebar:
     text_input = st.text_input(label="Cerca un dizionario dati", key="input_dz", placeholder="Cerca...", label_visibility="visible")
     if text_input:
         st.write("Hai inserito: ", text_input)
+    audio_bytes = audio_recorder()
+    if audio_bytes:
+        st.audio(audio_bytes, format="audio/wav")
+        transcribe = Transcription()
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_audio:
+            temp_audio.write(audio_bytes)
+            temp_audio.flush()
+            temp_audio_path = temp_audio.name  # Ottieni il percorso del file temporaneo
+
+            # Trascrivi l'audio utilizzando il file temporaneo
+            value = transcribe(temp_audio_path)
+        components.html(f"""
+        <script>
+            document.querySelector("[data-testid='stChatInputTextArea']").value = `{value}`;
+        </script>
+    """, height=0)
 
 # Suddivisione del layout in tab
 tab1, tab2 = st.tabs(["ChatSQL", "Dizionario dati"])

@@ -3,6 +3,7 @@ import sys
 from txtai.embeddings import Embeddings
 from txtai.pipeline import Translation
 import timeit
+from index_manager import IndexManager
 
 """
 Try this queries: 
@@ -85,7 +86,7 @@ class SchemaExtractor:
                     #str_list.extend(column_synonym for column_synonym in column["column_synonyms"])
                 #if column["references"]:
                     #str_list.append(column['references']["table_name"])
-                str_list = column["name"]
+                str_list = table['description'] + ": " + column["name"]
                 #str_list += ', '.join(table_name for table_name in table["is_referenced_by"])
                 if column["column_synonyms"] is not None:
                     str_list += ", "
@@ -93,7 +94,7 @@ class SchemaExtractor:
                 print(str_list)
                 doc = {
                     "table_name": table['name'],
-                    "table_description": table['description'],
+                    "table_description": str_list,
                     "column_synonyms": str_list,
                     "text": column['description']
                 }
@@ -166,22 +167,23 @@ def main():
         defaults=False,
         indexes={
             "column_description": {
-                "path": "sentence-transformers/all-MiniLM-L6-v2"
+                #"path": "sentence-transformers/all-MiniLM-L6-v2"
+                "path": "sentence-transformers/all-MiniLM-L12-v2"
                 #"path": "sentence-transformers/all-mpnet-base-v2"
             },
              "column_description_multilingual": {
-                #"path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-                "path": "sentence-transformers/distiluse-base-multilingual-cased-v2"
+                "path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+                #"path": "sentence-transformers/distiluse-base-multilingual-cased-v2"
             },
             "table_description": {
-                "path": "sentence-transformers/all-MiniLM-L6-v2",
+                "path": "sentence-transformers/all-MiniLM-L12-v2",
                 "columns": {
                     "text": "table_description"
                 }
             },
             "table_description_multilingual": {
-                #"path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-                "path": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+                "path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+                #"path": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
                 "columns": {
                     "text": "table_description"
                 }
@@ -220,9 +222,9 @@ def main():
     user_query = input("Please enter your request: ")
 
     # Prova di traduzione automatica
-    """ translate = Translation("facebook/mbart-large-50-many-to-many-mmt", findmodels=False)
-    translation = translate(user_query, "it")
-    print(translation)"""
+    """ translate = Translation("facebook/mbart-large-50-many-to-one-mmt", findmodels=False)
+    user_query_translated = translate(user_query, target="en")
+    print(user_query_translated) """
 
     # Costruzione della query SQL per trovare le tabelle rilevanti
     """ sql_query = 
@@ -254,16 +256,70 @@ def main():
             similar(':x', 'column_synonyms_multilingual') and
             score >= 0.3
             ORDER BY table_name ASC """
-    sql_query = """ SELECT table_name, MAX(score)
+    """ sql_query =  SELECT table_name, text, score AS max
             FROM txtai WHERE 
             similar(':x', 'column_description') and
-            similar(':x', 'column_description_multilingual') and
-            similar(':x', 'column_synonyms') and
-            score >= 0.3
-            GROUP BY table_name
+            similar(':y', 'column_description_multilingual') and
+            score >= 0.2
             ORDER BY table_name ASC """
-    results = embeddings_didx.search(sql_query, embeddings_didx.count(), parameters={"x": user_query})
+    #results = embeddings_didx.search(sql_query, embeddings_didx.count(), parameters={"x": user_query_translated, "y": user_query})
+    """results = []
+    relevant_table = []
+    limit = 20
+    for i in range(limit):
+        #exclude_str = ", ".join([f"'{table[1]['table_name']}'" for table in enumerate(results)])
+        exclude_str = ", ".join([f"'{table['table_name']}'" for table in results])
+        print(exclude_str)
+        sql_query = f
+                SELECT table_name, score
+                FROM txtai WHERE 
+                table_name NOT IN ({exclude_str}) and
+                similar(':x', 'column_description') and
+                similar(':x', 'column_description_multilingual')
+                and score >= 0.25
+                ORDER BY score DESC LIMIT 1 
+        relevant_table = embeddings_didx.search(sql_query, parameters={"x": user_query})
+        if (relevant_table):
+            results += relevant_table
+        else:
+            break
+        print(results)
+    print(i)"""
+    """relevant_tables = []
+        relevant_table = []
+        limit = 20
+        for i in range(limit):
+            excluded_tables = ", ".join([f"'{table['table_name']}'" for table in relevant_tables])
+            sql_query = f
+                SELECT table_name, score
+                FROM txtai WHERE 
+                table_name NOT IN ({excluded_tables}) and
+                similar(':x', 'column_description') and
+                similar(':x', 'column_description_multilingual') and
+                similar(':x', 'table_description_with_column_name_and_synonyms')
+                and score >= 0.25
+                ORDER BY score DESC
+                LIMIT 1
 
+            relevant_table = self.embeddings.search(sql_query, parameters={"x": user_request})
+            if (relevant_table):
+                relevant_tables += relevant_table
+            else:
+                break
+        return relevant_tables"""
+    query_limit = 20
+    sql_query = f"""
+        SELECT table_name, MAX(score) AS max_score, AVG(score) AS avg_score
+        FROM txtai WHERE 
+        similar(':x', 'column_description') and
+        similar(':x', 'column_description_multilingual') and
+        score >= 0.2
+        GROUP BY table_name HAVING
+        avg_score >= 0.25
+        ORDER BY max_score DESC 
+        LIMIT {query_limit}
+    """
+    results = embeddings_didx.search(sql_query, limit=query_limit*10, parameters={"x": user_query})
     #HAVING max >= 0.45 OR (max >= 0.28 AND num_fields > 1)
     # Visualizzazione del risultato nel formato {'table_name', 'text', 'sum', 'avg', 'num_fields'}
     for i in enumerate(results):
