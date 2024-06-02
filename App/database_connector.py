@@ -34,17 +34,33 @@ class DatabaseConnector:
             with self.connection.session as session:
                 session.execute(sqlalchemy.text("INSERT INTO dictionaries(name, description) VALUES (:x, :y)"), {"x" : name, "y": description})
                 session.commit()
-                return True
+            return True
         except sqlalchemy.exc.IntegrityError:
                 raise ValueError("A dictionary with that name already exists")
     
-    def delete_dictionary(self, name):
+    def __delete_dictionary_by_id__(self, id):
+        if(self.__fetch_dictionary_by_name__(id).empty):
+            return False
+        with self.connection.session as session:
+            session.execute(sqlalchemy.text("DELETE FROM dictionaries WHERE id = :x"),{"x":id})
+            session.commit()
+        return True
+        
+    def __delete_dictionary_by_name__(self, name):
         if(self.__fetch_dictionary_by_name__(name).empty):
             return False
         with self.connection.session as session:
             session.execute(sqlalchemy.text("DELETE FROM dictionaries WHERE name = :x"),{"x":name})
             session.commit()
-            return True
+        return True
+
+    def delete_dictionary(self, table_field, field_value):
+        if(table_field == "id"):
+            return self.__delete_dictionary_by_id__(field_value)
+        if(table_field == "name"):
+            return self.__delete_dictionary_by_name__(field_value)
+        return False
+
 
     def __update_dictionary_name__(self, old_name, new_name):
         if(old_name == None):
@@ -72,3 +88,4 @@ class DatabaseConnector:
             return self.__update_dictionary_name__(dictionary_name, new_value)            
         if(table_field == "description"):
             return self.__update_dictionary_description__(dictionary_name, new_value)
+        return False
