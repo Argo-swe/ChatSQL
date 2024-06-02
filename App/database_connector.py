@@ -29,7 +29,7 @@ class DatabaseConnector:
     # Raises ValueError for null or non unique values
     def insert_dictionary(self, name, description=None):
         if(name == None or name == ""):
-            raise ValueError("Name cannot be empty")
+            return False
         try:
             with self.connection.session as session:
                 session.execute(sqlalchemy.text("INSERT INTO dictionaries(name, description) VALUES (:x, :y)"), {"x" : name, "y": description})
@@ -50,7 +50,7 @@ class DatabaseConnector:
         if(old_name == None):
             return False
         if(new_name == None or new_name == ""):
-            raise ValueError("Name cannot be empty")
+            return False
         try:
             with self.connection.session as session:
                 session.execute(sqlalchemy.text("UPDATE dictionaries SET name = :y WHERE name = :x"),{"x" : old_name, "y" : new_name})
