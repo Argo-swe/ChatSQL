@@ -83,12 +83,13 @@ class IndexManager:
         # Da aggiungere questa condizione
         #similar(':x', 'table_description_with_column_name_and_synonyms') and
         tuples = self.embeddings.search(sql_query, limit=query_limit*10, parameters={"x": user_request})
-        relevant_tuples = self.__getRelevantTuples(tuples, user_request, is_log)
-        return relevant_tuples
+        if is_log:
+            self.semanticSearchLog(user_request, tuples)
+        return tuples
 
     def __getRelevantTuples(self, tuples, user_request, is_log):
-        if is_log == 1:
-            log = self.semanticSearchLog(user_request, tuples)
+        if is_log:
+            log = open(self.log_name, "a")
             log.write("\nFase 2 - seconda estrazione\n")
             log.write("Lista delle tabelle rilevanti:\n")
         relevant_tuples = []
@@ -96,17 +97,17 @@ class IndexManager:
         for tuple in enumerate(tuples):
             scoring_distance = score - tuple[1]['max_score']
             if tuple[1]['max_score'] >= 0.45:
-                if is_log == 1:
+                if is_log:
                     log.write("La tabella " + tuple[1]["table_name"] + " viene mantenuta poiché ha un punteggio sufficientemente alto\n")
                 relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score'], tuple[1]['avg_score']])
                 score = tuple[1]['max_score']
             elif scoring_distance <= 0.25:
-                if is_log == 1:
+                if is_log:
                     log.write("La tabella " + tuple[1]["table_name"] + " viene mantenuta poiché la differenza di punteggio rispetto alla tabella precedente è inferiore a 0.25\n")
                 relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score'], tuple[1]['avg_score']])
                 score = tuple[1]['max_score']
             else:
-                if is_log == 1:
+                if is_log:
                     log.write("Le tabelle rimamenti vengono scartate poiché lo score non è abbastanza alto e la differenza di punteggio rispetto alle tabelle immediatamente precedenti è eccessivamente alta\n")
                 break
         if is_log == 1:
@@ -132,35 +133,15 @@ class IndexManager:
             for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
                 log.write(token + ": " + str(score) + "\n")
             log.write("\n")
-        return log
+        log.close()
 
     def readLogFile(self):
         log = open(self.log_name, "r")
         print(log.read())
-    
-    def saveIndex(self, data_dict_name):
-        self.embeddings.save(f"{self.path}/{data_dict_name}/idx")
-        self.embeddings_complete.save(f"{self.path}/{data_dict_name}/idx_complete")
-    
-    def loadIndex(self, data_dict_name):
-        self.embeddings.load(f"{self.path}/{data_dict_name}/idx")
-        self.embeddings_complete.load(f"{self.path}/{data_dict_name}/idx_complete")
-
-    def createOrLoadIndex(self, data_dict_name):
-        createIDX = True
-        path = f"{self.path}/{data_dict_name}"
-        if os.path.exists(path):
-            createIDX = False
-        if createIDX:
-            self.createIndex(data_dict_name)
-            self.saveIndex(data_dict_name)
-            return True
-        else:
-            self.loadIndex(data_dict_name)
-            return False
         
-    def promptGenerator(self, data_dict_name, user_request, is_log):
-        relevant_tuples = self.__getTuples(user_request, is_log)
+    def promptGenerator(self, user_request, is_log):
+        tuples = self.__getTuples(user_request, is_log)
+        relevant_tuples = self.__getRelevantTuples(tuples, user_request, is_log)
         relevant_tables = ", ".join([f"'{table[0]}'" for table in relevant_tuples])
         sql_query = f"""
             SELECT table_name, fields_number, column_name, column_type, column_reference
@@ -199,7 +180,7 @@ def main():
 
     manager.createOrLoadIndex(data_dict_name)
 
-    manager.promptGenerator(data_dict_name, "all information about products that belong to an order placed by a user whose first name is antonio", 1)
+    manager.promptGenerator("all information about products that belong to an order placed by a user whose first name is antonio", 1)
 
 if __name__ == "__main__":
     main()
