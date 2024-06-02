@@ -28,6 +28,21 @@ class IndexManager:
         self.path = "Indici"
         self.log_name = "chatsql_log.txt"
 
+    # Metodo per individuare se l'indice esiste già oppure no per un determinato dizionario dati
+    def createOrLoadIndex(self, data_dict_name):
+        createIDX = True
+        path = f"{self.path}/{data_dict_name}"
+        if os.path.exists(path):
+            createIDX = False
+        if createIDX:
+            self.createIndex(data_dict_name)
+            self.saveIndex(data_dict_name)
+            return True
+        else:
+            self.loadIndex(data_dict_name)
+            return False
+
+    # Metodo per la creazione dei due sottoindici
     def createIndex(self, data_dict_name):
         extracted_documents = extract_first_index(get_JSON_schema(data_dict_name))
         documents = []
@@ -41,6 +56,17 @@ class IndexManager:
             documents.append((idx, document, None))
         self.embeddings_complete.index(documents)
 
+    # Metodo per salvare un indice
+    def saveIndex(self, data_dict_name):
+        self.embeddings.save(f"{self.path}/{data_dict_name}/idx")
+        self.embeddings_complete.save(f"{self.path}/{data_dict_name}/idx_complete")
+    
+    # Metodo per caricare un indice già salvato
+    def loadIndex(self, data_dict_name):
+        self.embeddings.load(f"{self.path}/{data_dict_name}/idx")
+        self.embeddings_complete.load(f"{self.path}/{data_dict_name}/idx_complete")
+
+    # Metodo per eseguire la ricerca semantica
     def __getTuples(self, user_request, is_log):
         query_limit = 20
         sql_query = f"""
@@ -54,6 +80,7 @@ class IndexManager:
             ORDER BY max_score DESC
             LIMIT {query_limit}
         """
+        # Da aggiungere questa condizione
         #similar(':x', 'table_description_with_column_name_and_synonyms') and
         tuples = self.embeddings.search(sql_query, limit=query_limit*10, parameters={"x": user_request})
         relevant_tuples = self.__getRelevantTuples(tuples, user_request, is_log)
