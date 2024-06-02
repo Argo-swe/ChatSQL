@@ -1,6 +1,6 @@
 import sys
 from txtai.embeddings import Embeddings
-from
+from schema_multi_extractor import get_JSON_schema, extract_first_index
 import os
 
 class IndexManager:
@@ -18,22 +18,22 @@ class IndexManager:
                 "table_description_with_column_name_and_synonyms": {
                     "path": "sentence-transformers/all-MiniLM-L12-v2",
                     "columns": {
-                        "text": "intent"
+                        "text": "relevant_information"
                     }
                 }
             }
         )
         self.path = "Indici"
         self.log_name = "chatsql_log.txt"
-        
-    def setDataDictName(self, data_dict_name):
-        self.data_dict_name = data_dict_name
 
-    def createIndex(self):
-        documents = 
+    def createIndex(self, data_dict_name):
+        extracted_documents = extract_first_index(get_JSON_schema(data_dict_name))
+        documents = []
+        for idx, document in enumerate(extracted_documents):
+            documents.append((idx, document, None))
         self.embeddings.index(documents)
 
-    def __getTuples(self, user_request):
+    def __getTuples(self, user_request, is_log):
         query_limit = 20
         sql_query = f"""
             SELECT table_name, text, MAX(score) AS max_score, AVG(score) AS avg_score
@@ -48,8 +48,7 @@ class IndexManager:
         """
         #similar(':x', 'table_description_with_column_name_and_synonyms') and
         tuples = self.embeddings.search(sql_query, limit=query_limit*10, parameters={"x": user_request})
-        
-        relevant_tuples = self.__getRelevantTuples(tuples, user_request, 1)
+        relevant_tuples = self.__getRelevantTuples(tuples, user_request, is_log)
         return relevant_tuples
 
     def __getRelevantTuples(self, tuples, user_request, is_log):
@@ -104,71 +103,47 @@ class IndexManager:
         log = open(self.log_name, "r")
         print(log.read())
     
-    def saveIndex(self):
-        self.embeddings.save(f"{self.path}/{self.data_dict_name}")
+    def saveIndex(self, data_dict_name):
+        self.embeddings.save(f"{self.path}/{data_dict_name}")
     
-    def loadIndex(self):
-        #self.embeddings.load(f"{self.path}/{self.data_dict_name}")
-        self.embeddings.load(f"Indici/idx")
+    def loadIndex(self, data_dict_name):
+        self.embeddings.load(f"{self.path}/{data_dict_name}")
 
-    def createOrLoadIndex(self, documents):
+    def createOrLoadIndex(self, data_dict_name):
         createIDX = True
-        path = f"{self.path}/{self.data_dict_name}"
+        path = f"{self.path}/{data_dict_name}"
         if os.path.exists(path):
             createIDX = False
         if createIDX:
-            self.createIndex(documents)
+            self.createIndex(data_dict_name)
             self.saveIndex()
             return True
         else:
             self.loadIndex()
             return False
         
-    def promptGenerator(self, user_request):
-        relevant_tuples = self.__getTuples(user_request)
+    def promptGenerator(self, user_request, data_dict_name, is_log):
+        relevant_tuples = self.__getTuples(user_request, is_log)
+        schema = get_JSON_schema(data_dict_name)
 
-        formatted_results = []
-        """ if result:
-            for item in result:
-                formatted_string = f"Documento scelto: {item['text']}\nPunteggio di rilevanza: {item['score']:.4f}"
-                formatted_results.append(formatted_string)
-            formatted_output = "\n".join(formatted_results)
-        else:
-            formatted_output = "Nisba" """
+        unique_tables = set()
+        for result in relevant_tuples:
+            table_name = schema['table_name']
+            unique_tables.add(table_name)
         
-        for i in enumerate(relevant_tuples):
-            print(i)
+        print(unique_tables)
+        
+        """ for i in enumerate(relevant_tuples):
+            print(i) """
 
 def main():
     manager = IndexManager()
 
-    """ documents = [
-        (0, {"text":"Passeggiata mattutina lungo la spiaggia di sabbia, osservando l'alba", "intent":"descrizione delle attività"}, None),
-        (1, {"text":"Costruire castelli di sabbia con i bambini, un'attività divertente per la famiglia", "intent":"attività familiari"}, None),
-        (2, {"text":"Assaporare un cocktail di frutta tropicale seduti al bar sulla spiaggia", "intent":"cibo e bevande"}, None),
-        (3, {"text":"Nuotare nelle acque cristalline del mare aperto", "intent":"sport acquatici"}, None),
-        (4, {"text":"Raccogliere conchiglie lungo la riva, un hobby rilassante durante le vacanze", "intent":"attività di tempo libero"}, None),
-        (5, {"text":"Ammirare il tramonto sul mare, un momento magico e suggestivo", "intent":"osservazione della natura"}, None),
-        (6, {"text":"Cenare in riva al mare con vista sulle onde, una serata romantica", "intent":"esperienze culinarie"}, None),
-        (7, {"text":"Partecipare a lezioni di surf per imparare a cavalcare le onde", "intent":"apprendimento di sport acquatici"}, None),
-        (8, {"text":"Esplorare i fondali marini attraverso immersioni guidate", "intent":"avventure subacquee"}, None),
-        (9, {"text":"Godersi il fresco della sera in una passeggiata lungomare", "intent":"attività serali"}, None) 
-    ] """
+    data_dict_name = "orders"
 
-    manager.setDataDictName("orders")
+    manager.createOrLoadIndex(data_dict_name)
 
-    manager.loadIndex()
-
-    #manager.createOrLoadIndex(documents)
-
-    """ prompt = "bella giornata al mare"
-    result = manager.getResult(prompt)
-    manager.printFormattedResult(result) """
-    #print(manager.data_dict_name)
-    """ utils_folder_path = os.path.dirname(os.path.realpath(__file__))
-    dictionaries_folder_path = os.path.abspath(os.path.join(utils_folder_path, "Indici")) """
-    #print(dictionaries_folder_path)
-    manager.promptGenerator("all information about products that belong to an order placed by a user whose first name is antonio")
+    manager.promptGenerator(data_dict_name, "all information about products that belong to an order placed by a user whose first name is antonio")
 
 if __name__ == "__main__":
     main()
