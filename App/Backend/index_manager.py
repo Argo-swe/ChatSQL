@@ -1,6 +1,6 @@
 import sys
 from txtai.embeddings import Embeddings
-from schema_multi_extractor import get_JSON_schema, extract_first_index, extract_second_index
+from schema_multi_extractor import get_json_schema, extract_first_index, extract_second_index
 import os
 import json
 
@@ -25,10 +25,10 @@ class IndexManager:
             }
         )
         self.embeddings_complete = Embeddings(content=True, defaults=False)
-        self.path = "Indici"
+        self.path = "../Indici"
         self.log_name = "chatsql_log.txt"
 
-    # Metodo per individuare se l'indice esiste già oppure no per un determinato dizionario dati
+    # Metodo per individuare se l'indice esiste già per un determinato dizionario dati
     def createOrLoadIndex(self, data_dict_name):
         createIDX = True
         path = f"{self.path}/{data_dict_name}"
@@ -44,30 +44,30 @@ class IndexManager:
 
     # Metodo per la creazione dei due sottoindici
     def createIndex(self, data_dict_name):
-        extracted_documents = extract_first_index(get_JSON_schema(data_dict_name))
+        extracted_documents = extract_first_index(get_json_schema(data_dict_name))
         documents = []
         for idx, document in enumerate(extracted_documents):
             documents.append((idx, document, None))
         self.embeddings.index(documents)
 
-        extracted_documents = extract_second_index(get_JSON_schema(data_dict_name))
+        extracted_documents = extract_second_index(get_json_schema(data_dict_name))
         documents = []
         for idx, document in enumerate(extracted_documents):
             documents.append((idx, document, None))
         self.embeddings_complete.index(documents)
 
-    # Metodo per salvare un indice
+    # Metodo per salvare gli indici
     def saveIndex(self, data_dict_name):
         self.embeddings.save(f"{self.path}/{data_dict_name}/idx")
         self.embeddings_complete.save(f"{self.path}/{data_dict_name}/idx_complete")
     
-    # Metodo per caricare un indice già salvato
+    # Metodo per caricare gli indici già salvati
     def loadIndex(self, data_dict_name):
         self.embeddings.load(f"{self.path}/{data_dict_name}/idx")
         self.embeddings_complete.load(f"{self.path}/{data_dict_name}/idx_complete")
 
-    # Metodo per eseguire la ricerca semantica
-    def __getTuples(self, user_request, is_log):
+    # Metodo per eseguire la ricerca semantica (rimosso il "private" per i test di unità)
+    def getTuples(self, user_request, activate_log):
         query_limit = 20
         sql_query = f"""
             SELECT table_name, text, MAX(score) AS max_score, AVG(score) AS avg_score
@@ -83,12 +83,32 @@ class IndexManager:
         # Da aggiungere questa condizione
         #similar(':x', 'table_description_with_column_name_and_synonyms') and
         tuples = self.embeddings.search(sql_query, limit=query_limit*10, parameters={"x": user_request})
-        if is_log:
+        if activate_log:
             self.semanticSearchLog(user_request, tuples)
         return tuples
-
-    def __getRelevantTuples(self, tuples, user_request, is_log):
-        if is_log:
+    
+    # Metodo per generare i log della ricerca semantica
+    def semanticSearchLog(self, user_request, tuples):
+        log = open(self.log_name, "w")
+        log.write("Richiesta: " + user_request + "\n\n")
+        log.write("Fase 1 - prima estrazione\n")
+        log.write("Lista delle tabelle pertinenti:\n")
+        for tuple in enumerate(tuples):
+            log.write(tuple[1]["table_name"] + ": " + str(tuple[1]["max_score"]) + "\n")
+            log.write("Descrizione della colonna più rilevante: " + tuple[1]["text"] + "\n\n")
+            
+        tokens_importance = self.embeddings.explain(user_request, [tuple["text"] for tuple in tuples])
+        log.write("Classifica di importanza dei termini di ciascuna descrizione:\n")
+        for token_importance in tokens_importance:
+            log.write("Testo: " + token_importance["text"] + "\n")
+            for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
+                log.write(token + ": " + str(score) + "\n")
+            log.write("\n")
+        log.close()
+    
+    # Metodo per raffinare i risultati della ricerca semantica
+    def getRelevantTuples(self, tuples, activate_log):
+        if activate_log:
             log = open(self.log_name, "a")
             log.write("\nFase 2 - seconda estrazione\n")
             log.write("Lista delle tabelle rilevanti:\n")
@@ -97,52 +117,33 @@ class IndexManager:
         for tuple in enumerate(tuples):
             scoring_distance = score - tuple[1]['max_score']
             if tuple[1]['max_score'] >= 0.45:
-                if is_log:
+                if activate_log:
                     log.write("La tabella " + tuple[1]["table_name"] + " viene mantenuta poiché ha un punteggio sufficientemente alto\n")
-                relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score'], tuple[1]['avg_score']])
+                relevant_tuples.append(tuple[1]['table_name'])
                 score = tuple[1]['max_score']
             elif scoring_distance <= 0.25:
-                if is_log:
+                if activate_log:
                     log.write("La tabella " + tuple[1]["table_name"] + " viene mantenuta poiché la differenza di punteggio rispetto alla tabella precedente è inferiore a 0.25\n")
-                relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score'], tuple[1]['avg_score']])
+                relevant_tuples.append(tuple[1]['table_name'])
                 score = tuple[1]['max_score']
             else:
-                if is_log:
-                    log.write("Le tabelle rimamenti vengono scartate poiché lo score non è abbastanza alto e la differenza di punteggio rispetto alle tabelle immediatamente precedenti è eccessivamente alta\n")
+                if activate_log:
+                    log.write("Le tabelle rimanenti vengono scartate poiché lo score non è abbastanza alto e la differenza di punteggio rispetto alle tabelle immediatamente precedenti è superiore a 0.25\n")
                 break
-        if is_log == 1:
+        if activate_log:
             log.close()
         return relevant_tuples
-    
-    def semanticSearchLog(self, user_request, tuples):
-        log = open(self.log_name, "w")
-        log.write("Richiesta: " + user_request + "\n\n")
-        log.write("Fase 1 - prima estrazione\n")
-        log.write("Le tabelle vengono estratte in base al punteggio massimo ottenuto confrontando la richiesta utente con la descrizione dei campi della tabella\n")
-        log.write("Lista delle tabelle pertinenti (punteggio maggiore di 0.28):\n")
-        for tuple in enumerate(tuples):
-            log.write(tuple[1]["table_name"] + ": " + str(tuple[1]["max_score"]) + "\n")
-            log.write("Descrizione colonna: " + tuple[1]["text"] + "\n\n")
-            
-        tokens_importance = self.embeddings.explain(user_request, [tuple["text"] for tuple in tuples])
 
-        log.write("La descrizione delle colonne è composta da tanti termini\n")
-        log.write("Questa è la classifica di importanza dei termini di ciascuna descrizione:\n")
-        for token_importance in tokens_importance:
-            log.write(token_importance["text"] + "\n")
-            for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
-                log.write(token + ": " + str(score) + "\n")
-            log.write("\n")
-        log.close()
-
+    # Metodo per leggere il file di log
     def readLogFile(self):
         log = open(self.log_name, "r")
-        print(log.read())
-        
-    def promptGenerator(self, user_request, is_log):
-        tuples = self.__getTuples(user_request, is_log)
-        relevant_tuples = self.__getRelevantTuples(tuples, user_request, is_log)
-        relevant_tables = ", ".join([f"'{table[0]}'" for table in relevant_tuples])
+        return log.read()
+    
+    # Metodo per generare il prompt dopo la doppia estrazione
+    def promptGenerator(self, user_request, activate_log):
+        tuples = self.getTuples(user_request, activate_log)
+        relevant_tuples = self.getRelevantTuples(tuples, activate_log)
+        relevant_tables = ", ".join([f"'{table}'" for table in relevant_tuples])
         sql_query = f"""
             SELECT table_name, fields_number, column_name, column_type, column_reference
             FROM txtai
@@ -170,17 +171,20 @@ class IndexManager:
                 i = 0
         
         dyn_string += f"{dyn_ref_string}"
-        dyn_string += f"Answer with the right SQL query for: {user_request}"
-        print(f"{dyn_string}")
+        dyn_string += f"Answer with the right SQL query for MariaDB: {user_request}"
+        return dyn_string
 
 def main():
-    manager = IndexManager()
+    # Piccolo script per testare la classe
+    """ manager = IndexManager()
 
     data_dict_name = "orders"
 
     manager.createOrLoadIndex(data_dict_name)
 
-    manager.promptGenerator("all information about products that belong to an order placed by a user whose first name is antonio", 1)
+    prompt = manager.promptGenerator("all information about products that belong to an order placed by a user whose first name is antonio", activate_log=True)
+
+    print(prompt) """
 
 if __name__ == "__main__":
     main()

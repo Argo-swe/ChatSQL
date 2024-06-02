@@ -1,22 +1,22 @@
 import json
 
-def get_JSON_schema(data_dict_name):
+def get_json_schema(data_dict_name):
     path = f'../DizionarioDati/Ordini/ENG/{data_dict_name}.json'
     with open(path, 'r') as file:
         schema = json.load(file)
     return schema
 
-#Estrazione di tutti gli elementi del dizionario dati
+# Estrazione di tutti gli elementi del dizionario dati
 def extract_all(schema):
     documents = []
-    #Creo le liste coi dati delle colonne senza descriverle individualmente
+    # Creo le liste con i dati delle colonne senza descriverle individualmente
     for table in schema['tables']:
         column_names = [column['name'] for column in table['columns']]
         column_descriptions = [column['description'] for column in table['columns']]
         column_types = [column['type'] for column in table['columns']]
         column_references = [column['references'] for column in table['columns']]
 
-        #Creo un documento con tutti i possibili dati per ogni colonna in visione di una group by table_name nella search
+        # Creo un documento con tutti i dati per ogni colonna in vista di una group by table_name nella search
         for column in table['columns']:
             doc = {
                 "table_name": table['name'],
@@ -31,28 +31,23 @@ def extract_all(schema):
                 "column_references": column_references
             }
             documents.append(doc)
-
     return documents
 
-#Estrazione della tabella, della sua descrizione e della lista di colonne che possiede
+# Estrazione della tabella, della sua descrizione e della lista di colonne che possiede
 def extract_table_and_column_list(schema):
     documents = []
     for table in schema['tables']:
         column_names = [column['name'] for column in table['columns']]
-
-        #Qua mi importa solo di avere i dati relativi alle tabelle
-        for table in table['columns']:
-            doc = {
-                "table_name": table['name'],
-                "table_synonyms": table['table_synonyms'],
-                "table_description": table['description'],
-                "columns": column_names
-            }
-            documents.append(doc)
-
+        doc = {
+            "table_name": table['name'],
+            "table_synonyms": table['table_synonyms'],
+            "table_description": table['description'],
+            "columns": column_names
+        }
+        documents.append(doc)
     return documents 
 
-#Estrazione della tabella, della sua descrizione, delle sue colonne e della loro descrizione
+# Estrazione della tabella, della sua descrizione, delle sue colonne e della loro descrizione
 def extract_table_and_columns(schema):
     documents = []
     for table in schema['tables']:
@@ -66,10 +61,9 @@ def extract_table_and_columns(schema):
             "column_descriptions": column_descriptions
         }
         documents.append(doc)
-
     return documents
 
-#Estrazione per il primo indice (ricerca semantica tramite LLM)
+# Estrazione per il primo indice (ricerca semantica tramite LLM)
 def extract_first_index(schema):
     documents = []
     for table in schema['tables']:
@@ -84,10 +78,9 @@ def extract_first_index(schema):
                 "text": column['description']
             }
             documents.append(doc)
-
     return documents
 
-#Estrazione per il secondo indice
+# Estrazione per il secondo indice
 def extract_second_index(schema):
     documents = []
     for table in schema['tables']:
@@ -108,5 +101,4 @@ def extract_second_index(schema):
                 "text": table['name'],
             }
             documents.append(doc)
-
     return documents

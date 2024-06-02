@@ -80,9 +80,7 @@
           "column_synonyms": [
             "cost",
             "value",
-            "charge",
-            "total",
-            "amount"
+            "charge"
           ],
           "references": null
         },
