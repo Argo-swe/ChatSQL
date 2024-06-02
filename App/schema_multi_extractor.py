@@ -1,16 +1,15 @@
 import json
 
-class SchemaMultiExtractor:
-    def get_JSON_schema(data_dict_name):
-        path = f'../DizionarioDati/Ordini/ENG/{data_dict_name}.json'
-        with open(path, 'r') as file:
-            schema = json.load(file)
-        return schema
+def get_JSON_schema(data_dict_name):
+    path = f'../DizionarioDati/Ordini/ENG/{data_dict_name}.json'
+    with open(path, 'r') as file:
+        schema = json.load(file)
+    return schema
 
-    #Estrazione di OGNI possibile elemento del dizionario dati
-    def extract_all(schema):
-        documents = []
-        #Creo le liste coi dati delle colonne senza descriverle individualmente
+#Estrazione di OGNI possibile elemento del dizionario dati
+def extract_all(schema):
+    documents = []
+    #Creo le liste coi dati delle colonne senza descriverle individualmente
         for table in schema['tables']:
             column_names = [column['name'] for column in table['columns']]
             column_descriptions = [column['description'] for column in table['columns']]
