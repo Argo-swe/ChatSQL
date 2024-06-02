@@ -1,5 +1,6 @@
 import sys
 from txtai.embeddings import Embeddings
+from
 import os
 
 class IndexManager:
@@ -28,65 +29,78 @@ class IndexManager:
     def setDataDictName(self, data_dict_name):
         self.data_dict_name = data_dict_name
 
-    def createIndex(self, documents):
+    def createIndex(self):
+        documents = 
         self.embeddings.index(documents)
 
     def __getTuples(self, user_request):
         query_limit = 20
         sql_query = f"""
-            SELECT table_name, MAX(score) AS max_score, AVG(score) AS avg_score
+            SELECT table_name, text, MAX(score) AS max_score, AVG(score) AS avg_score
             FROM txtai WHERE 
             similar(':x', 'column_description') and
             similar(':x', 'column_description_multilingual') and
-            score >= 0.25
-            GROUP BY table_name HAVING
-            avg_score >= 0.25
+            score >= 0.2
+            GROUP BY table_name
+            HAVING avg_score >= 0.25
             ORDER BY max_score DESC
             LIMIT {query_limit}
         """
         #similar(':x', 'table_description_with_column_name_and_synonyms') and
         tuples = self.embeddings.search(sql_query, limit=query_limit*10, parameters={"x": user_request})
-        #print(self.embeddings.explain(user_request, [tuple["text"] for tuple in tuples]))
-        relevant_tuples = self.__getRelevantTuples(tuples, 1)
+        
+        relevant_tuples = self.__getRelevantTuples(tuples, user_request, 1)
         return relevant_tuples
 
-    def __getRelevantTuples(self, tuples, log):
-        log = open(self.log_name, "w")
-        log.write("Fase 1 - prima estrazione\n")
-        log.write("Le tabelle vengono estratte in base al punteggio ottenuto confrontando la richiesta utente con la descrizione dei campi della tabella\n")
-        log.write("Lista delle tabelle pertinenti (punteggio maggiore di 0.2):\n")
-        for tuple in enumerate(tuples):
-            log.write(tuple[1]["table_name"] + ": " + str(tuple[1]["max_score"]) + "\n")
-
-        #exclude_str = ", ".join([f"'{table['table_name']}, {table['max_score']}'" for table in tuples])
-        exclude_str = ", ".join([f"('{table['table_name']}', {table['max_score']})" for table in tuples])
-        sql_query = f"""
-            SELECT text
-            FROM txtai WHERE 
-            (table_name, score) IN {exclude_str}
-        """
-        #similar(':x', 'table_description_with_column_name_and_synonyms') and
-        tuples = self.embeddings.search(sql_query)
-
-
+    def __getRelevantTuples(self, tuples, user_request, is_log):
+        if is_log:
+            log = self.semanticSearchLog(user_request, tuples)
+            log.write("\nFase 2 - seconda estrazione\n")
+            log.write("Lista delle tabelle rilevanti:\n")
         relevant_tuples = []
         score = 0
         max_score = tuples[0]['max_score']
         for tuple in enumerate(tuples):
             scoring_distance = score - tuple[1]['max_score']
             if tuple[1]['max_score'] >= 0.45:
-                relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score']])
+                if is_log == 1:
+                    log.write("La tabella " + tuple[1]["table_name"] + " viene mantenuta poiché ha un punteggio sufficientemente alto\n")
+                relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score'], tuple[1]['avg_score']])
                 score = tuple[1]['max_score']
-            elif scoring_distance <= 0.2:
-                relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score']])
+            elif scoring_distance <= 0.25:
+                if is_log == 1:
+                    log.write("La tabella " + tuple[1]["table_name"] + " viene mantenuta poiché la differenza di punteggio rispetto alla tabella precedente è inferiore a 0.25\n")
+                relevant_tuples.append([tuple[1]['table_name'], scoring_distance, tuple[1]['max_score'], tuple[1]['avg_score']])
                 score = tuple[1]['max_score']
             else:
+                if is_log == 1:
+                    log.write("Le tabelle rimamenti vengono scartate poiché lo score non è abbastanza alto e la differenza di punteggio rispetto alle tabelle immediatamente precedenti è eccessivamente alta\n")
                 break
         log.close()
-        self.readLog()
         return relevant_tuples
     
-    def readLog(self):
+    def semanticSearchLog(self, user_request, tuples):
+        log = open(self.log_name, "w")
+        log.write("Richiesta: " + user_request + "\n\n")
+        log.write("Fase 1 - prima estrazione\n")
+        log.write("Le tabelle vengono estratte in base al punteggio massimo ottenuto confrontando la richiesta utente con la descrizione dei campi della tabella\n")
+        log.write("Lista delle tabelle pertinenti (punteggio maggiore di 0.28):\n")
+        for tuple in enumerate(tuples):
+            log.write(tuple[1]["table_name"] + ": " + str(tuple[1]["max_score"]) + "\n")
+            log.write("Descrizione colonna: " + tuple[1]["text"] + "\n\n")
+            
+        tokens_importance = self.embeddings.explain(user_request, [tuple["text"] for tuple in tuples])
+
+        log.write("La descrizione delle colonne è composta da tanti termini\n")
+        log.write("Questa è la classifica di importanza dei termini di ciascuna descrizione:\n")
+        for token_importance in tokens_importance:
+            log.write(token_importance["text"] + "\n")
+            for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
+                log.write(token + ": " + str(score) + "\n")
+            log.write("\n")
+        return log
+
+    def readLogFile(self):
         log = open(self.log_name, "r")
         print(log.read())
     
