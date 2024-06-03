@@ -4,7 +4,6 @@ from tools.schema_multi_extractor import Schema_Multi_Extractor
 import os
 import json
 
-
 class IndexManager:
     def __init__(self):
         self.embeddings = Embeddings(

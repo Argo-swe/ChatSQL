@@ -3,6 +3,7 @@ import sys
 from txtai.embeddings import Embeddings
 from txtai.pipeline import Translation
 import timeit
+from index_manager import IndexManager
 
 """
 Try this queries: 
@@ -313,7 +314,8 @@ def main():
         similar(':x', 'column_description') and
         similar(':x', 'column_description_multilingual') and
         score >= 0.2
-        GROUP BY table_name
+        GROUP BY table_name HAVING
+        avg_score >= 0.25
         ORDER BY max_score DESC 
         LIMIT {query_limit}
     """
