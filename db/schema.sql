@@ -1,12 +1,12 @@
 -- Tabella credenziali di login tecnico
 CREATE TABLE IF NOT EXISTS admins (
-  username TEXT PRIMARY KEY,
+  username TEXT PRIMARY KEY NOT NULL,
   password TEXT NOT NULL
 );
 
 -- Tabella dizionari dati 
 CREATE TABLE IF NOT EXISTS dictionaries (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   name TEXT UNIQUE NOT NULL,
   description TEXT
 );
