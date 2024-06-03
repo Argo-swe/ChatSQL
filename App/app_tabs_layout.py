@@ -2,7 +2,9 @@ import json
 import streamlit as st
 import time
 import streamlit.components.v1 as components
-from index_manager import IndexManager
+#from index_manager import IndexManager
+from txtai.pipeline import Transcription
+import tempfile
 
 # Configurazione della pagina
 st.set_page_config(
@@ -41,7 +43,7 @@ with st.sidebar:
 # Suddivisione del layout in tab
 tab1, tab2 = st.tabs(["ChatSQL", "Dizionario dati"])
 
-manager = IndexManager()
+""" manager = IndexManager()
 
 documents = [
     (0, {"text":"Passeggiata mattutina lungo la spiaggia di sabbia, osservando l'alba", "intent":"descrizione delle attività"}, None),
@@ -54,9 +56,9 @@ documents = [
     (7, {"text":"Partecipare a lezioni di surf per imparare a cavalcare le onde", "intent":"apprendimento di sport acquatici"}, None),
     (8, {"text":"Esplorare i fondali marini attraverso immersioni guidate", "intent":"avventure subacquee"}, None),
     (9, {"text":"Godersi il fresco della sera in una passeggiata lungomare", "intent":"attività serali"}, None)
-]
+] 
 
-manager.createIndex(documents)
+manager.createIndex(documents) """
 
 # Disabilitare l'input testuale
 def disableInput():
@@ -182,8 +184,8 @@ if request := (st.chat_input("Inserisci la richiesta", key="chat_SQL_input", dis
         with tab1.chat_message("assistant", avatar=avatarAI):
             with st.spinner('Caricamento...'):
                 time.sleep(2)
-                result_text = manager.getResult(request)
-                response = result_text[0]["text"]
+                """ result_text = manager.getResult(request)
+                response = result_text[0]["text"] """
             st.write_stream(response_generator(response))
 
         st.session_state.messages.append({"role": "assistant", "avatar": avatarAI, "content": response})
