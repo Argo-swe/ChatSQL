@@ -17,14 +17,13 @@ class DatabaseConnector:
         result = self.connection.query("SELECT id, name, description FROM dictionaries WHERE name = :x", params={"x":name})
         return result.iloc[0]
     
-    def fetchDictionary(self, table_field: str, value: str):
+    def fetchDictionary(self, table_field: str, value):
         if(table_field == "id"):
             return self.__fetchDictionaryById(value)
         if(table_field == "name"):
             return self.__fetchDictionaryByName(value)
-        return None
     
-    def insertDictionary(self, name: str, description: str =None) -> bool:
+    def insertDictionary(self, name: str, description: str) -> bool:
         if(name == None or name == ""):
             return False
         try:
@@ -44,14 +43,14 @@ class DatabaseConnector:
         return True
         
     def __deleteDictionaryByName(self, name: str) -> bool:
-        if(self.__FetchDictionaryByName(name).empty):
+        if(self.__fetchDictionaryByName(name).empty):
             return False
         with self.connection.session as session:
             session.execute(sqlalchemy.text("DELETE FROM dictionaries WHERE name = :x"),{"x":name})
             session.commit()
         return True
 
-    def deleteDictionary(self, table_field: str, field_value: str) -> bool:
+    def deleteDictionary(self, table_field: str, field_value) -> bool:
         if(table_field == "id"):
             return self.__deleteDictionaryById(field_value)
         if(table_field == "name"):
@@ -62,11 +61,11 @@ class DatabaseConnector:
         validinput =    (key_field == "id" or key_field == "name") and \
                         (update_field == "name" or update_field == "description") and \
                         ((update_value != "" and update_value != None) if update_field == "name" else True) # Additional check for an updated name to be not None or empty
-        if(not validinput or self.fetchDictionary(key_field, key_value).empty): # Previous checks fail or entry does not exist 
+        if((not validinput) or self.fetchDictionary(key_field, key_value).empty): # Previous checks fail or entry does not exist 
             return False
         query = f"UPDATE dictionaries SET {update_field} = :y WHERE {key_field} = :x"
         try:
-            with self.connnection.session as session:
+            with self.connection.session as session:
                 session.execute(sqlalchemy.text(query), {"x" : key_value, "y" : update_value})
                 session.commit()
             return True
