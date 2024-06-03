@@ -2,8 +2,7 @@ import json
 import streamlit as st
 import time
 import streamlit.components.v1 as components
-from index_manager import IndexManager
-from audio_recorder_streamlit import audio_recorder
+#from index_manager import IndexManager
 from txtai.pipeline import Transcription
 import tempfile
 
@@ -40,27 +39,11 @@ with st.sidebar:
     text_input = st.text_input(label="Cerca un dizionario dati", key="input_dz", placeholder="Cerca...", label_visibility="visible")
     if text_input:
         st.write("Hai inserito: ", text_input)
-    audio_bytes = audio_recorder()
-    if audio_bytes:
-        st.audio(audio_bytes, format="audio/wav")
-        transcribe = Transcription()
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_audio:
-            temp_audio.write(audio_bytes)
-            temp_audio.flush()
-            temp_audio_path = temp_audio.name  # Ottieni il percorso del file temporaneo
-
-            # Trascrivi l'audio utilizzando il file temporaneo
-            value = transcribe(temp_audio_path)
-        components.html(f"""
-        <script>
-            document.querySelector("[data-testid='stChatInputTextArea']").value = `{value}`;
-        </script>
-    """, height=0)
 
 # Suddivisione del layout in tab
 tab1, tab2 = st.tabs(["ChatSQL", "Dizionario dati"])
 
-manager = IndexManager()
+""" manager = IndexManager()
 
 documents = [
     (0, {"text":"Passeggiata mattutina lungo la spiaggia di sabbia, osservando l'alba", "intent":"descrizione delle attività"}, None),
@@ -73,9 +56,9 @@ documents = [
     (7, {"text":"Partecipare a lezioni di surf per imparare a cavalcare le onde", "intent":"apprendimento di sport acquatici"}, None),
     (8, {"text":"Esplorare i fondali marini attraverso immersioni guidate", "intent":"avventure subacquee"}, None),
     (9, {"text":"Godersi il fresco della sera in una passeggiata lungomare", "intent":"attività serali"}, None)
-]
+] 
 
-manager.createIndex(documents)
+manager.createIndex(documents) """
 
 # Disabilitare l'input testuale
 def disableInput():
@@ -201,8 +184,8 @@ if request := (st.chat_input("Inserisci la richiesta", key="chat_SQL_input", dis
         with tab1.chat_message("assistant", avatar=avatarAI):
             with st.spinner('Caricamento...'):
                 time.sleep(2)
-                result_text = manager.getResult(request)
-                response = result_text[0]["text"]
+                """ result_text = manager.getResult(request)
+                response = result_text[0]["text"] """
             st.write_stream(response_generator(response))
 
         st.session_state.messages.append({"role": "assistant", "avatar": avatarAI, "content": response})
