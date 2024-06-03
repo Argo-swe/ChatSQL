@@ -3,6 +3,7 @@ import streamlit as st
 import time
 import streamlit.components.v1 as components
 from index_manager import IndexManager
+from login_interface import LoginManager
 
 # Configurazione della pagina
 st.set_page_config(
@@ -21,7 +22,7 @@ st.markdown("""
             font-family: "Poppins", sans-serif !important;
         }
     </style>
-""" , unsafe_allow_html= True)
+""", unsafe_allow_html=True)
 
 # Icone per user e AI
 avatarUser = "assets/icon_user.png"
@@ -30,6 +31,20 @@ avatarAI = "assets/icon_ai.png"
 # Titolo dell'app
 st.title("ChatSQL")
 
+# Inizializzare variabili di stato
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "inputdisabled" not in st.session_state:
+    st.session_state.inputdisabled = False
+
+if "advicesdisabled" not in st.session_state:
+    st.session_state.advicesdisabled = False
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    st.session_state.welcome_mex = False
+
 # Barra laterale
 with st.sidebar:
     st.title("ChatSQL")
@@ -37,6 +52,15 @@ with st.sidebar:
     text_input = st.text_input(label="Cerca un dizionario dati", key="input_dz", placeholder="Cerca...", label_visibility="visible")
     if text_input:
         st.write("Hai inserito: ", text_input)
+
+    # Add login button
+    if not st.session_state.logged_in:
+        if st.button("Login"):
+            LoginManager.show_dialog()
+
+# Check login status
+if not st.session_state.logged_in:
+    st.stop()
 
 # Suddivisione del layout in tab
 tab1, tab2 = st.tabs(["ChatSQL", "Dizionario dati"])
@@ -65,19 +89,6 @@ def disableInput():
 # Disabilitare i consigli
 def disableAdvices():
     st.session_state.advicesdisabled = True
-
-# Inizializzare la variabile di controllo sull'input
-if "inputdisabled" not in st.session_state:
-    st.session_state.inputdisabled = False
-
-# Inizializzare la variabile di controllo sui consigli
-if "advicesdisabled" not in st.session_state:
-    st.session_state.advicesdisabled = False
-
-# Inizializzare la cronologia della chat
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-    st.session_state.welcome_mex = False
 
 # Visualizzare la cronologia della chat
 def display_chat_history() -> None:
@@ -188,13 +199,8 @@ if request := (st.chat_input("Inserisci la richiesta", key="chat_SQL_input", dis
 
         st.session_state.messages.append({"role": "assistant", "avatar": avatarAI, "content": response})
         st.session_state.inputdisabled = False
-        st.rerun()
 
 with tab2:
     dict_name = "orders.json"
     with st.expander("Descrizione del database"):
         st.write(view_data_dict(dict_name))
-
-    # Funzionalità aggiuntiva per il tecnico
-    #with st.expander("Struttura del dizionario dati"):
-        #st.json(schema)
