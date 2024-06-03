@@ -3,7 +3,6 @@ import sys
 from txtai.embeddings import Embeddings
 from txtai.pipeline import Translation
 import timeit
-from index_manager import IndexManager
 
 """
 Try this queries: 
@@ -138,7 +137,7 @@ class SchemaExtractor:
     
 def main():
     # Lettura del dizionario dati
-    with open('../DizionarioDati/Ordini/ENG/orders.json', 'r') as file:
+    with open('DizionarioDati/Ordini/ENG/orders.json', 'r') as file:
         schema = json.load(file)
 
     # Estrazione dei campi e selezione dei dati per l'indexing
@@ -314,8 +313,7 @@ def main():
         similar(':x', 'column_description') and
         similar(':x', 'column_description_multilingual') and
         score >= 0.2
-        GROUP BY table_name HAVING
-        avg_score >= 0.25
+        GROUP BY table_name
         ORDER BY max_score DESC 
         LIMIT {query_limit}
     """
