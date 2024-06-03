@@ -1,6 +1,6 @@
 import sys
 from txtai.embeddings import Embeddings
-from schema_multi_extractor import get_json_schema, extract_first_index, extract_second_index
+from tools.schema_multi_extractor import Schema_Multi_Extractor
 import os
 import json
 
@@ -176,6 +176,7 @@ class IndexManager:
 
 def main():
     # Piccolo script per testare la classe
+    Schema_Multi_Extractor()
     """ manager = IndexManager()
 
     data_dict_name = "orders"

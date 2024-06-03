@@ -24,6 +24,7 @@ class Utils:
         #print(content)
         if Utils.is_json(content):
             #print("is json")
+            print(json.loads(content))
             return json.loads(content)
         else:
             return
