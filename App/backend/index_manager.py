@@ -44,13 +44,13 @@ class IndexManager:
 
     # Metodo per la creazione dei due sottoindici
     def createIndex(self, data_dict_name):
-        extracted_documents = extract_first_index(get_json_schema(data_dict_name))
+        extracted_documents = Schema_Multi_Extractor.extract_first_index(data_dict_name)
         documents = []
         for idx, document in enumerate(extracted_documents):
             documents.append((idx, document, None))
         self.embeddings.index(documents)
 
-        extracted_documents = extract_second_index(get_json_schema(data_dict_name))
+        extracted_documents = Schema_Multi_Extractor.extract_second_index(data_dict_name)
         documents = []
         for idx, document in enumerate(extracted_documents):
             documents.append((idx, document, None))
@@ -176,7 +176,6 @@ class IndexManager:
 
 def main():
     # Piccolo script per testare la classe
-    Schema_Multi_Extractor()
     """ manager = IndexManager()
 
     data_dict_name = "orders"
