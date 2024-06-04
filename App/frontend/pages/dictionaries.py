@@ -2,8 +2,10 @@ import pandas as pd
 import streamlit as st
 from io import StringIO
 
-from backend.tools.utils import Utils
-from backend.tools.dictionary_validator import DictionaryValidator
+import sys
+sys.path.append("../backend")
+from tools.utils import Utils
+from tools.dictionary_validator import DictionaryValidator
 
 st.set_page_config(
     page_title="Dictionaries",
