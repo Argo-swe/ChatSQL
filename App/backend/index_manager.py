@@ -76,7 +76,7 @@ class IndexManager:
             similar(':x', 'column_description_multilingual') and
             score >= 0.2
             GROUP BY table_name
-            HAVING avg_score >= 0.25
+            HAVING max_score >= 0.3 OR avg_score >= 0.28
             ORDER BY max_score DESC
             LIMIT {query_limit}
         """
