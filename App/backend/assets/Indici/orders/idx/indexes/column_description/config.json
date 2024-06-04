@@ -1,10 +1,10 @@
 {
-  "path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "path": "sentence-transformers/all-MiniLM-L12-v2",
   "dimensions": 384,
   "backend": "faiss",
   "offset": 18,
   "build": {
-    "create": "2024-06-03T08:27:19Z",
+    "create": "2024-06-04T07:30:07Z",
     "python": "3.10.12",
     "settings": {
       "components": "IDMap,Flat"
@@ -12,5 +12,5 @@
     "system": "Linux (x86_64)",
     "txtai": "7.1.0"
   },
-  "update": "2024-06-03T08:27:19Z"
+  "update": "2024-06-04T07:30:07Z"
 }

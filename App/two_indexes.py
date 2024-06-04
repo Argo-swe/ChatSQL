@@ -3,7 +3,6 @@ import sys
 from txtai.embeddings import Embeddings
 from txtai.pipeline import Translation
 import timeit
-from index_manager import IndexManager
 
 """
 Try this queries: 

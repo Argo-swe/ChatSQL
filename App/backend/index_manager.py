@@ -25,7 +25,7 @@ class IndexManager:
             }
         )
         self.embeddings_complete = Embeddings(content=True, defaults=False)
-        self.path = "../Indici"
+        self.path = "backend/assets/Indici"
         self.log_name = "chatsql_log.txt"
 
     # Metodo per individuare se l'indice esiste già per un determinato dizionario dati
@@ -176,7 +176,7 @@ class IndexManager:
 
 def main():
     # Piccolo script per testare la classe
-    """ manager = IndexManager()
+    manager = IndexManager()
 
     data_dict_name = "orders"
 
@@ -184,7 +184,7 @@ def main():
 
     prompt = manager.promptGenerator("all information about products that belong to an order placed by a user whose first name is antonio", activate_log=True)
 
-    print(prompt) """
+    print(prompt)
 
 if __name__ == "__main__":
     main()
