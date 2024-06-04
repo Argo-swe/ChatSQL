@@ -138,7 +138,7 @@ class SchemaExtractor:
     
 def main():
     # Lettura del dizionario dati
-    with open('../DizionarioDati/Ordini/ENG/orders.json', 'r') as file:
+    with open('DizionarioDati/Ordini/ENG/orders.json', 'r') as file:
         schema = json.load(file)
 
     # Estrazione dei campi e selezione dei dati per l'indexing
