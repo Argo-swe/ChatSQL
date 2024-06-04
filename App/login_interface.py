@@ -30,7 +30,7 @@ class LoginManager:
     @staticmethod
     def check_injection(input_string):
         # Regex pattern per intercettare caratteri pericolosi
-        pattern = re.compile(r"[;\'\"\-\-#]")
+        pattern = re.compile(r"[;\'\"\-\-#]" )
         return pattern.search(input_string) is None
 
     @staticmethod
