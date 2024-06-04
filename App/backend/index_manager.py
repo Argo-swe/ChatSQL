@@ -4,6 +4,10 @@ from tools.schema_multi_extractor import Schema_Multi_Extractor
 import os
 import json
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature-ricerca-semantica-unit-tests
 class IndexManager:
     def __init__(self):
         self.embeddings = Embeddings(
@@ -72,11 +76,11 @@ class IndexManager:
         sql_query = f"""
             SELECT table_name, text, MAX(score) AS max_score, AVG(score) AS avg_score
             FROM txtai WHERE 
-            similar(':x', 'column_description') and
-            similar(':x', 'column_description_multilingual') and
+            similar(':x', 'column_description') AND
+            similar(':x', 'column_description_multilingual') AND
             score >= 0.2
             GROUP BY table_name
-            HAVING avg_score >= 0.25
+            HAVING max_score >= 0.3 OR avg_score >= 0.28
             ORDER BY max_score DESC
             LIMIT {query_limit}
         """
@@ -176,7 +180,8 @@ class IndexManager:
 
 def main():
     # Piccolo script per testare la classe
-    manager = IndexManager()
+    """ manager = IndexManager()
+>>>>>>> feature-ricerca-semantica-unit-tests
 
     data_dict_name = "orders"
 
@@ -184,7 +189,7 @@ def main():
 
     prompt = manager.promptGenerator("all information about products that belong to an order placed by a user whose first name is antonio", activate_log=True)
 
-    print(prompt)
+    print(prompt) """
 
 if __name__ == "__main__":
     main()
