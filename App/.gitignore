@@ -1,4 +1,3 @@
 pip
 __pycache__/
-Indici/
-Test/
+*.txt
