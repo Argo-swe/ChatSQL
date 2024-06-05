@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 sys.path.append("backend")
 from index_manager import IndexManager
+from login_interface import LoginManager
 
 current_dir = Path(__file__).resolve().parent
 
@@ -31,6 +32,37 @@ st.markdown("""
 # Icone per user e AI
 avatarUser = f"{current_dir}/assets/icon_user.png"
 avatarAI = f"{current_dir}/assets/icon_ai.png"
+
+# Inizializzare variabile login
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+# Inizializzare la variabile index manager
+if "index_manager" not in st.session_state:
+  st.session_state.index_manager = IndexManager()
+  st.session_state.index_manager.createOrLoadIndex("orders")
+
+# Inizializzare la variabile di controllo sull'input
+if "inputdisabled" not in st.session_state:
+    st.session_state.inputdisabled = False
+
+# Inizializzare la cronologia della chat
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    st.session_state.welcome_mex = False
+
+# Disabilitare l'input testuale
+def disableInput():
+    st.session_state.inputdisabled = True
+
+# Visualizzare la cronologia della chat
+def display_chat_history() -> None:
+    for message in st.session_state.messages:
+        with tab1.chat_message(message["role"], avatar=message["avatar"]):
+            if message["role"] == "concierge" or message["role"] == "user":
+                st.markdown(message["content"])
+            else:
+                st.code(message["content"])
 
 # Titolo dell'app
 st.title("ChatSQL")
@@ -60,35 +92,18 @@ with st.sidebar:
     for request in request_list:
         st.code(request)
 
+    st.divider()
+    # Add login button
+    if not st.session_state.logged_in:
+        if st.button("Login"):
+            LoginManager.show_dialog()
+    else:
+        if st.button("Logout"):
+            st.session_state.logged_in = False
+            st.rerun()
+
 # Suddivisione del layout in tab
 tab1, tab2, tab3 = st.tabs(["ChatSQL", "Dizionario dati", "Debug"])
-
-# Disabilitare l'input testuale
-def disableInput():
-    st.session_state.inputdisabled = True
-
-# Inizializzare la variabile index manager
-if "index_manager" not in st.session_state:
-  st.session_state.index_manager = IndexManager()
-  st.session_state.index_manager.createOrLoadIndex("orders")
-
-# Inizializzare la variabile di controllo sull'input
-if "inputdisabled" not in st.session_state:
-    st.session_state.inputdisabled = False
-
-# Inizializzare la cronologia della chat
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-    st.session_state.welcome_mex = False
-
-# Visualizzare la cronologia della chat
-def display_chat_history() -> None:
-    for message in st.session_state.messages:
-        with tab1.chat_message(message["role"], avatar=message["avatar"]):
-            if message["role"] == "concierge" or message["role"] == "user":
-                st.markdown(message["content"])
-            else:
-                st.code(message["content"])
 
 # Visualizzare un'anteprima del dizionario dati in linguaggio naturale
 @st.cache_data

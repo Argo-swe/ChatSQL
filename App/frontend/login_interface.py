@@ -2,7 +2,7 @@ import re
 import streamlit as st
 
 class LoginManager:
-    # temporanee per testare le credenziali , successivamente aggiungere funzione con connessione ad db 
+    # temporanee per testare le credenziali , successivamente aggiungere funzione con connessione a db 
     tmp_username = "adminADMIN1"
     tmp_password = "Admin123123!"
 
@@ -79,7 +79,7 @@ class LoginManager:
                 if LoginManager.verify(username, password):
                     st.session_state.logged_in = True
                     st.success("Login successful!")
-                    st.experimental_rerun()
+                    st.rerun()
                     # per ora non succede nulla
                 else:
                     st.session_state.logged_in = False
