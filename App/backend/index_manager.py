@@ -3,6 +3,9 @@ from txtai.embeddings import Embeddings
 from tools.schema_multi_extractor import Schema_Multi_Extractor
 import os
 import json
+from pathlib import Path
+
+current_dir = Path(__file__).resolve().parent
 
 class IndexManager:
     def __init__(self):
@@ -25,8 +28,8 @@ class IndexManager:
             }
         )
         self.embeddings_complete = Embeddings(content=True, defaults=False)
-        self.path = "../Indici"
-        self.log_name = "chatsql_log.txt"
+        self.path = f"{current_dir}/assets/Indici"
+        self.log_name = f"{current_dir}/chatsql_log.txt"
 
     # Metodo per individuare se l'indice esiste già per un determinato dizionario dati
     def createOrLoadIndex(self, data_dict_name):
@@ -72,8 +75,8 @@ class IndexManager:
         sql_query = f"""
             SELECT table_name, text, MAX(score) AS max_score, AVG(score) AS avg_score
             FROM txtai WHERE 
-            similar(':x', 'column_description') and
-            similar(':x', 'column_description_multilingual') and
+            similar(':x', 'column_description') AND
+            similar(':x', 'column_description_multilingual') AND
             score >= 0.2
             GROUP BY table_name
             HAVING max_score >= 0.3 OR avg_score >= 0.28
@@ -136,8 +139,11 @@ class IndexManager:
 
     # Metodo per leggere il file di log
     def readLogFile(self):
-        log = open(self.log_name, "r")
-        return log.read()
+        try:
+            with open(self.log_name, 'r') as file:
+                return file.read()
+        except FileNotFoundError:
+            return False
     
     # Metodo per generare il prompt dopo la doppia estrazione
     def promptGenerator(self, user_request, activate_log):
@@ -148,10 +154,14 @@ class IndexManager:
             SELECT table_name, fields_number, column_name, column_type, column_reference
             FROM txtai
             WHERE table_name IN ({relevant_tables})
+            ORDER BY table_name ASC
         """
         complete_results = self.embeddings_complete.search(sql_query, self.embeddings_complete.count())
         # Costruzione del prompt
         dyn_string = "Suggested prompt:" + "\n"
+        dyn_string += "-> is equivalent to references\n"
+        dyn_string += ": separates the column name from its type\n"
+        dyn_string += ". separates the table name from the column name\n\n"
         dyn_ref_string = ""
         i = 0
         limit = 0
@@ -176,15 +186,15 @@ class IndexManager:
 
 def main():
     # Piccolo script per testare la classe
-    """ manager = IndexManager()
-
+    manager = IndexManager()
+    
     data_dict_name = "orders"
 
     manager.createOrLoadIndex(data_dict_name)
 
-    prompt = manager.promptGenerator("all information about products that belong to an order placed by a user whose first name is antonio", activate_log=True)
+    prompt = manager.promptGenerator("the surname of users who paid for all their orders with PayPal", activate_log=True)
 
-    print(prompt) """
+    print(prompt)
 
 if __name__ == "__main__":
     main()
