@@ -149,6 +149,8 @@ class IndexManager:
     def promptGenerator(self, user_request, activate_log):
         tuples = self.getTuples(user_request, activate_log)
         relevant_tuples = self.getRelevantTuples(tuples, activate_log)
+        if not relevant_tuples:
+            return f'The request "{user_request}" did not produce any relevant results'
         relevant_tables = ", ".join([f"'{table}'" for table in relevant_tuples])
         sql_query = f"""
             SELECT table_name, fields_number, column_name, column_type, column_reference

@@ -62,7 +62,8 @@ def display_chat_history() -> None:
             if message["role"] == "concierge" or message["role"] == "user":
                 st.markdown(message["content"])
             else:
-                st.code(message["content"])
+                st.code(message["content"], language="txt")
+                
 
 # Titolo dell'app
 st.title("ChatSQL")
@@ -168,7 +169,7 @@ if request := (st.chat_input("Inserisci la richiesta...", key="chat_SQL_input", 
             with st.spinner('Caricamento...'):
                 time.sleep(1.5)
                 response = st.session_state.index_manager.promptGenerator(request, activate_log=True)
-            st.code(response)
+            st.code(response, language="txt")
 
         st.session_state.messages.append({"role": "assistant", "avatar": avatarAI, "content": response})
         st.session_state.inputdisabled = False
