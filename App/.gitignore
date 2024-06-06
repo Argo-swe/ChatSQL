@@ -1,0 +1,3 @@
+pip
+__pycache__/
+*.txt
