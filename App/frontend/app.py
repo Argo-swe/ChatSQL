@@ -33,7 +33,7 @@ st.markdown("""
 avatarUser = f"{current_dir}/assets/icon_user.png"
 avatarAI = f"{current_dir}/assets/icon_ai.png"
 
-# Inizializzare variabile login
+# Inizializzare la variabile di login/logout
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
@@ -42,7 +42,7 @@ if "index_manager" not in st.session_state:
   st.session_state.index_manager = IndexManager()
   st.session_state.index_manager.createOrLoadIndex("orders")
 
-# Inizializzare la variabile di controllo sull'input
+# Inizializzare la variabile di controllo sull'input del ChatBOT
 if "inputdisabled" not in st.session_state:
     st.session_state.inputdisabled = False
 
@@ -91,7 +91,6 @@ with st.sidebar:
     ]
     for request in request_list:
         st.code(request)
-
     st.divider()
     # Add login button
     if not st.session_state.logged_in:
@@ -191,4 +190,3 @@ with tab3:
             data=raw_log,
             file_name="chatsql_log.txt"
         )
-    
