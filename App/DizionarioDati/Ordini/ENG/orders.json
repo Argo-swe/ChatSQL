@@ -99,6 +99,17 @@
       ],
       "primary_key": [
         "id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key": [
+            "category"
+          ],
+          "reference_table_name": "categories",
+          "reference_column_names": [
+            "id"
+          ]
+        }
       ]
     },
     {
@@ -156,6 +167,17 @@
       ],
       "primary_key": [
         "id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key": [
+            "username"
+          ],
+          "reference_table_name": "users",
+          "reference_column_names": [
+            "username"
+          ]
+        }
       ]
     },
     {
@@ -243,14 +265,19 @@
           "foreign_key": [
             "order_id"
           ],
-          "references_table_name": "orders",
-          "references_column_names": [
-            "product_id",
-            "order_id"
+          "reference_table_name": "orders",
+          "reference_column_names": [
+            "id"
           ]
         },
         {
-
+          "foreign_key": [
+            "product_id"
+          ],
+          "reference_table_name": "products",
+          "reference_column_names": [
+            "id"
+          ]
         }
       ]
     }
