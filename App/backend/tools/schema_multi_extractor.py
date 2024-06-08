@@ -76,7 +76,7 @@ class Schema_Multi_Extractor:
     def extract_first_index(data_dict_name):
         documents = []
         schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
-        for table in schema['tables']:
+        for pos, table in enumerate(schema['tables']):
             for column in table['columns']:
                 str_list = table['description'] + ": " + column["name"]
                 if column["column_synonyms"] is not None:
@@ -84,7 +84,8 @@ class Schema_Multi_Extractor:
                     str_list += ', '.join(column_synonym for column_synonym in column["column_synonyms"])
                 doc = {
                     "table_name": table['name'],
-                    "relevant_information": str_list,
+                    "table_description": table["description"],
+                    "table_pos": pos,
                     "text": column['description']
                 }
                 documents.append(doc)
@@ -94,22 +95,29 @@ class Schema_Multi_Extractor:
     def extract_second_index(data_dict_name):
         documents = []
         schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
-        for table in schema['tables']:
+        for it, table in enumerate(schema['tables']):
             # Numero di campi della tabella
-            column_names = [column['name'] for column in table['columns']]
-            fields_number = len(column_names)
+            fields_number = len(table['columns'])
 
             for column in table['columns']:
+                if column["references"]:
+                    reference_table_name = column["references"]['table_name']
+                    reference_column_name = column["references"]['field_name']
+                else:
+                    reference_table_name = None
+                    reference_column_name = None
                 doc = {
                     "table_name": table['name'],
                     "table_description": table['description'],
+                    "primary_key": ', '.join(table['primary_key']),
+                    "it": it,
                     "column_name": column['name'],
                     "column_description": column['description'],
                     "column_type": column['type'],
-                    # Il campo column_reference andrebbe suddiviso in due sotto-campi per evitare la dipendenza dal formato JSON in fase di generazione del prompt
-                    "column_reference": column['references'],
+                    "reference_table_name": reference_table_name,
+                    "reference_column_name": reference_column_name,
                     "fields_number": fields_number,
-                    "text": table['name'],
+                    "text": table["name"]
                 }
                 documents.append(doc)
         return documents

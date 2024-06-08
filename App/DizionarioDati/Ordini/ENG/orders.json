@@ -4,7 +4,7 @@
   "tables": [
     {
       "name": "users",
-      "description": "Table containing information about users",
+      "description": "Table containing account details and personal information about users who make purchases.",
       "table_synonyms": [
         "clients",
         "customers",
@@ -32,14 +32,14 @@
         {
           "name": "name",
           "type": "string",
-          "description": "The user's birth name",
+          "description": "The user's first name",
           "column_synonyms": null,
           "references": null
         },
         {
           "name": "surname",
           "type": "string",
-          "description": "The user's birth surname",
+          "description": "The user's surname",
           "column_synonyms": null,
           "references": null
         }
@@ -50,7 +50,7 @@
     },
     {
       "name": "products",
-      "description": "Table containing information about products",
+      "description": "Table containing information about products, which are items purchased in orders",
       "table_synonyms": [
         "items",
         "articles"
@@ -103,7 +103,7 @@
     },
     {
       "name": "orders",
-      "description": "Table containing information on orders placed by users",
+      "description": "Table containing information on orders placed by users, including general billing details",
       "table_synonyms": [
         "deliveries",
         "purchases",
@@ -145,6 +145,13 @@
           "description": "The payment method used for the order",
           "column_synonyms": null,
           "references": null
+        },
+        {
+          "name": "total",
+          "type": "numeric(10,2)",
+          "description": "The total amount of the order",
+          "column_synonyms": null,
+          "references": null
         }
       ],
       "primary_key": [
@@ -153,7 +160,7 @@
     },
     {
       "name": "categories",
-      "description": "Table containing information on product categories",
+      "description": "Table containing information on categories, which correspond to the type or class of products",
       "table_synonyms": [
         "classes",
         "groups",
@@ -191,7 +198,7 @@
     },
     {
       "name": "order_items",
-      "description": "Table containing information about the items in the order",
+      "description": "Table containing the products added to an order and their quantity",
       "table_synonyms": [
         "details"
       ],
@@ -230,6 +237,21 @@
       "primary_key": [
         "order_id",
         "product_id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key": [
+            "order_id"
+          ],
+          "references_table_name": "orders",
+          "references_column_names": [
+            "product_id",
+            "order_id"
+          ]
+        },
+        {
+
+        }
       ]
     }
   ]
