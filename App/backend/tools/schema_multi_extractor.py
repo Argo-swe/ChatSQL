@@ -100,6 +100,13 @@ class Schema_Multi_Extractor:
             fields_number = len(column_names)
 
             for column in table['columns']:
+                column_reference = column.get('references', 'null') if column.get('references') else 'null'
+                if column_reference != 'null':
+                    reference_table_name = column_reference['table_name']
+                    reference_field_name = column_reference['field_name']
+                else:
+                    reference_table_name = None
+                    reference_field_name = None
                 doc = {
                     "table_name": table['name'],
                     "table_description": table['description'],
@@ -107,7 +114,8 @@ class Schema_Multi_Extractor:
                     "column_description": column['description'],
                     "column_type": column['type'],
                     # Il campo column_reference andrebbe suddiviso in due sotto-campi per evitare la dipendenza dal formato JSON in fase di generazione del prompt
-                    "column_reference": column['references'],
+                    "column_reference_table_name": reference_table_name,
+                    "column_reference_field_name": reference_field_name,
                     "fields_number": fields_number,
                     "text": table['name'],
                 }
