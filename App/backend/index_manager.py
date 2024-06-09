@@ -12,13 +12,13 @@ class IndexManager:
             content=True,
             defaults=False,
             indexes={
-                "column_description": {
+                "table_description": {
                     "path": "sentence-transformers/all-MiniLM-L12-v2"
                 },
-                "table_description": {
+                "column_description": {
                     "path": "sentence-transformers/all-MiniLM-L12-v2",
                     "columns": {
-                        "text": "table_description"
+                        "text": "column_description"
                     }
                 }
             }
@@ -60,10 +60,10 @@ class IndexManager:
     def getTuples(self, user_request, activate_log):
         query_limit = 20
         sql_query = f"""
-            SELECT table_name, text, table_pos, MAX(score) AS max_score, AVG(score) AS avg_score
-            FROM txtai WHERE 
-            similar(':x', 'column_description') AND
+            SELECT table_name, text, table_pos, column_description, MAX(score) AS max_score, AVG(score) AS avg_score
+            FROM txtai WHERE
             similar(':x', 'table_description') AND
+            similar(':x', 'column_description') AND
             score >= 0.2
             GROUP BY table_name
             HAVING max_score >= 0.3 OR avg_score >= 0.28
@@ -78,17 +78,22 @@ class IndexManager:
     # Metodo per generare i log della ricerca semantica
     def semanticSearchLog(self, user_request, tuples):
         log = open(self.log_name, "w")
-        log.write("Richiesta: " + user_request + "\n\n")
-        log.write("Fase 1 - prima estrazione\n")
-        log.write("Lista delle tabelle pertinenti:\n")
-        for tuple in enumerate(tuples):
-            log.write(tuple[1]["table_name"] + ": " + str(tuple[1]["max_score"]) + "\n")
-            log.write("Descrizione della colonna più rilevante: " + tuple[1]["text"] + "\n\n")
-            
-        tokens_importance = self.embeddings.explain(user_request, [tuple["text"] for tuple in tuples])
-        log.write("Classifica di importanza dei termini di ciascuna descrizione:\n")
-        for token_importance in tokens_importance:
-            log.write("Testo: " + token_importance["text"] + "\n")
+        log.write(
+            f"Richiesta: {user_request}\n\n"
+            "Fase 1 - prima estrazione\n"
+            "Lista delle tabelle rilevanti:\n\n")
+        for i, tuple in enumerate(tuples):
+            log.write(
+                f'Tabella {str(i + 1)} | {tuple["table_name"]}: {str(tuple["max_score"])}\n'
+                f'Descrizione della tabella: {tuple["text"]}\n'
+                "Classifica di importanza dei termini della descrizione:\n") 
+            token_importance = self.embeddings.explain(user_request, [tuple["text"]], limit=1)[0]
+            for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
+                log.write(token + ": " + str(score) + "\n")
+            log.write(
+                f'\nDescrizione della colonna più rilevante: {tuple["column_description"]}\n'
+                "Classifica di importanza dei termini della descrizione:\n")
+            token_importance = self.embeddings.explain(user_request, [tuple["column_description"]], limit=1)[0]
             for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
                 log.write(token + ": " + str(score) + "\n")
             log.write("\n")
@@ -98,25 +103,35 @@ class IndexManager:
     def getRelevantTuples(self, tuples, activate_log):
         if activate_log:
             log = open(self.log_name, "a")
-            log.write("\nFase 2 - seconda estrazione\n")
-            log.write("Lista delle tabelle rilevanti:\n")
+            log.write(
+                "\nFase 2 - seconda estrazione\n"
+                "Lista delle tabelle rilevanti:\n")
         relevant_tuples = []
         score = 0
-        for tuple in enumerate(tuples):
-            scoring_distance = score - tuple[1]['max_score']
-            if tuple[1]['max_score'] >= 0.45:
+        for tuple in tuples:
+            scoring_distance = score - tuple["max_score"]
+            if tuple["max_score"] >= 0.45:
                 if activate_log:
-                    log.write("La tabella " + tuple[1]["table_name"] + " viene mantenuta poiché ha un punteggio sufficientemente alto\n")
-                relevant_tuples.append(tuple[1])
-                score = tuple[1]['max_score']
+                    log.write(
+                        f'La tabella {tuple["table_name"]} viene mantenuta '
+                        "poiché ha un punteggio sufficientemente alto\n")
+                relevant_tuples.append(tuple)
+                score = tuple["max_score"]
             elif scoring_distance <= 0.25:
                 if activate_log:
-                    log.write("La tabella " + tuple[1]["table_name"] + " viene mantenuta poiché la differenza di punteggio rispetto alla tabella precedente è inferiore a 0.25\n")
-                relevant_tuples.append(tuple[1])
-                score = tuple[1]['max_score']
+                    log.write(
+                        f'La tabella {tuple["table_name"]} viene mantenuta '
+                        "poiché la differenza di punteggio rispetto alla tabella precedente "
+                        "è inferiore a 0.25\n")
+                relevant_tuples.append(tuple)
+                score = tuple["max_score"]
             else:
                 if activate_log:
-                    log.write("Le tabelle rimanenti vengono scartate poiché lo score non è abbastanza alto e la differenza di punteggio rispetto alle tabelle immediatamente precedenti è superiore a 0.25\n")
+                    log.write(
+                        "Le tabelle rimanenti vengono scartate "
+                        "poiché lo score non è abbastanza alto e " 
+                        "la differenza di punteggio rispetto alle tabelle immediatamente precedenti "
+                        "è superiore a 0.25\n")
                 break
         if activate_log:
             log.close()
@@ -174,7 +189,7 @@ class IndexManager:
 
 def main():
     # Piccolo script per testare la classe
-    """ manager = IndexManager()
+    manager = IndexManager()
     
     data_dict_name = "orders"
 
@@ -182,7 +197,7 @@ def main():
 
     prompt = manager.promptGenerator(data_dict_name, "all information on users who paid for their orders with PayPal", activate_log=True)
 
-    print(prompt) """
+    print(prompt)
 
 if __name__ == "__main__":
     main()

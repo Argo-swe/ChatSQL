@@ -83,10 +83,10 @@ class Schema_Multi_Extractor:
                     str_list += ', '.join(column_synonym for column_synonym in column["column_synonyms"])
                 doc = {
                     "table_name": table['name'],
-                    "table_description": table["description"],
+                    "text": table["description"],
                     # table_pos è la posizione della tabella nel dizionario dati, funzionale alla generazione del prompt
                     "table_pos": pos,
-                    "text": column['description']
+                    "column_description": column['description']
                 }
                 documents.append(doc)
         return documents
