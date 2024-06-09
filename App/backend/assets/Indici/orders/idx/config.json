@@ -1,0 +1,42 @@
+{
+  "content": true,
+  "defaults": false,
+  "indexes": {
+    "column_description": {
+      "path": "sentence-transformers/all-MiniLM-L12-v2",
+      "dimensions": 384,
+      "backend": "faiss",
+      "offset": 19,
+      "build": {
+        "create": "2024-06-09T09:35:52Z",
+        "python": "3.10.12",
+        "settings": {
+          "components": "IDMap,Flat"
+        },
+        "system": "Linux (x86_64)",
+        "txtai": "7.1.0"
+      },
+      "update": "2024-06-09T09:35:52Z"
+    },
+    "table_description": {
+      "path": "sentence-transformers/all-MiniLM-L12-v2",
+      "columns": {
+        "text": "table_description"
+      },
+      "dimensions": 384,
+      "backend": "faiss",
+      "offset": 19,
+      "build": {
+        "create": "2024-06-09T09:35:53Z",
+        "python": "3.10.12",
+        "settings": {
+          "components": "IDMap,Flat"
+        },
+        "system": "Linux (x86_64)",
+        "txtai": "7.1.0"
+      },
+      "update": "2024-06-09T09:35:53Z"
+    }
+  },
+  "offset": 19
+}

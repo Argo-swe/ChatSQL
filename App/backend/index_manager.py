@@ -178,7 +178,7 @@ def main():
     
     data_dict_name = "orders"
 
-    manager.createIndex(data_dict_name)
+    manager.createOrLoadIndex(data_dict_name)
 
     prompt = manager.promptGenerator(data_dict_name, "all information on users who paid for their orders with PayPal", activate_log=True)
 
