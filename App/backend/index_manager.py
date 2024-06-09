@@ -79,9 +79,9 @@ class IndexManager:
     def semanticSearchLog(self, user_request, tuples):
         log = open(self.log_name, "w")
         log.write(
-            f"Richiesta: {user_request}\n\n"
-            "Fase 1 - prima estrazione\n"
-            "Lista delle tabelle rilevanti:\n\n")
+            f"""Richiesta: {user_request}\n\n
+            Fase 1 - prima estrazione\n
+            Lista delle tabelle rilevanti:\n\n""")
         for i, tuple in enumerate(tuples):
             log.write(
                 f'Tabella {str(i + 1)} | {tuple["table_name"]}: {str(tuple["max_score"])}\n'
@@ -104,8 +104,8 @@ class IndexManager:
         if activate_log:
             log = open(self.log_name, "a")
             log.write(
-                "\nFase 2 - seconda estrazione\n"
-                "Lista delle tabelle rilevanti:\n")
+                """\nFase 2 - seconda estrazione\n
+                Lista delle tabelle rilevanti:\n""")
         relevant_tuples = []
         score = 0
         for tuple in tuples:
@@ -155,9 +155,9 @@ class IndexManager:
         schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
         # Legenda dei simboli
         dyn_string = (
-            "Suggested prompt:\n"
-            "In table schema the character ':' separates the column name from its type\n"
-            "Foreign keys have the following schema: table name (column name) references table name (column name)\n\n")
+            """Suggested prompt:\n
+            In table schema the character ':' separates the column name from its type\n
+            Foreign keys have the following schema: table name (column name) references table name (column name)\n\n""")
         dyn_ref_string = "FOREIGN KEYS:\n"
         for table in relevant_tuples:
             table_schema = schema["tables"][table["table_pos"]]
@@ -165,7 +165,7 @@ class IndexManager:
                 f'PRIMARY KEY: ({", ".join(table_schema["primary_key"])})\n')
             dyn_desc_string = (
                 f'Table description: {table_schema["description"]}\n'
-                'The table contains the following columns:\n')
+                "The table contains the following columns:\n")
             column_def = []
             for column in table_schema["columns"]:
                 column_def.append(column["name"] + ": " + column["type"])
@@ -189,7 +189,7 @@ class IndexManager:
 
 def main():
     # Piccolo script per testare la classe
-    manager = IndexManager()
+    """ manager = IndexManager()
     
     data_dict_name = "orders"
 
@@ -197,7 +197,7 @@ def main():
 
     prompt = manager.promptGenerator(data_dict_name, "all information on users who paid for their orders with PayPal", activate_log=True)
 
-    print(prompt)
+    print(prompt) """
 
 if __name__ == "__main__":
     main()
