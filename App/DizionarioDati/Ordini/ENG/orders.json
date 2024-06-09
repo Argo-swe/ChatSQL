@@ -102,7 +102,7 @@
       ],
       "foreign_keys": [
         {
-          "foreign_key": [
+          "foreign_key_column_names": [
             "category"
           ],
           "reference_table_name": "categories",
@@ -170,7 +170,7 @@
       ],
       "foreign_keys": [
         {
-          "foreign_key": [
+          "foreign_key_column_names": [
             "username"
           ],
           "reference_table_name": "users",
@@ -262,7 +262,7 @@
       ],
       "foreign_keys": [
         {
-          "foreign_key": [
+          "foreign_key_column_names": [
             "order_id"
           ],
           "reference_table_name": "orders",
@@ -271,7 +271,7 @@
           ]
         },
         {
-          "foreign_key": [
+          "foreign_key_column_names": [
             "product_id"
           ],
           "reference_table_name": "products",

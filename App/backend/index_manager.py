@@ -2,7 +2,6 @@ import sys
 from txtai.embeddings import Embeddings
 from tools.schema_multi_extractor import Schema_Multi_Extractor
 import os
-import json
 from pathlib import Path
 
 current_dir = Path(__file__).resolve().parent
@@ -24,7 +23,6 @@ class IndexManager:
                 }
             }
         )
-        self.embeddings_complete = Embeddings(content=True, defaults=False)
         self.path = f"{current_dir}/assets/Indici"
         self.log_name = f"{current_dir}/chatsql_log.txt"
 
@@ -50,21 +48,13 @@ class IndexManager:
             documents.append((idx, document, None))
         self.embeddings.index(documents)
 
-        extracted_documents = Schema_Multi_Extractor.extract_second_index(data_dict_name)
-        documents = []
-        for idx, document in enumerate(extracted_documents):
-            documents.append((idx, document, None))
-        self.embeddings_complete.index(documents)
-
     # Metodo per salvare gli indici
     def saveIndex(self, data_dict_name):
         self.embeddings.save(f"{self.path}/{data_dict_name}/idx")
-        self.embeddings_complete.save(f"{self.path}/{data_dict_name}/idx_complete")
     
     # Metodo per caricare gli indici già salvati
     def loadIndex(self, data_dict_name):
         self.embeddings.load(f"{self.path}/{data_dict_name}/idx")
-        self.embeddings_complete.load(f"{self.path}/{data_dict_name}/idx_complete")
 
     # Metodo per eseguire la ricerca semantica (rimosso il "private" per i test di unità)
     def getTuples(self, user_request, activate_log):
@@ -80,9 +70,6 @@ class IndexManager:
             ORDER BY max_score DESC
             LIMIT {query_limit}
         """
-        # Da aggiungere questa condizione
-        # similar(':x', 'column_description_multilingual') AND
-        #similar(':x', 'table_description_with_column_name_and_synonyms') and
         tuples = self.embeddings.search(sql_query, limit=query_limit*10, parameters={"x": user_request})
         if activate_log:
             self.semanticSearchLog(user_request, tuples)
@@ -144,79 +131,44 @@ class IndexManager:
             return False
     
     # Metodo per generare il prompt dopo la doppia estrazione
-    def promptGenerator(self, user_request, activate_log):
+    def promptGenerator(self, data_dict_name, user_request, activate_log):
         tuples = self.getTuples(user_request, activate_log)
         relevant_tuples = self.getRelevantTuples(tuples, activate_log)
         if not relevant_tuples:
             return f'The request "{user_request}" did not produce any relevant results'
-        schema = Schema_Multi_Extractor.get_json_schema("orders")
         # Costruzione del prompt
-        dyn_string = "Suggested prompt:" + "\n"
+        schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
         # Legenda dei simboli
-        dyn_string += "-> is equivalent to references\n"
-        dyn_string += ": separates the column name from its type\n"
-        dyn_string += ". separates the table name from the column name\n\n"
-        dyn_ref_string = ""
-        dyn_desc_string = ""
-        dyn_key_string = ""
-        i = 0
+        dyn_string = (
+            "Suggested prompt:\n"
+            "In table schema the character ':' separates the column name from its type\n"
+            "Foreign keys have the following schema: table name (column name) references table name (column name)\n\n")
+        dyn_ref_string = "FOREIGN KEYS:\n"
         for table in relevant_tuples:
             table_schema = schema["tables"][table["table_pos"]]
-            dyn_key_string = "PRIMARY KEY: (" + ', '.join(table_schema["primary_key"]) + ")" + "\n"
-            print(dyn_key_string)
-        sys.exit()
-        tuples = self.getTuples(user_request, activate_log)
-        relevant_tuples = self.getRelevantTuples(tuples, activate_log)
-        if not relevant_tuples:
-            return f'The request "{user_request}" did not produce any relevant results'
-        relevant_tables = ", ".join([f"'{table}'" for table in relevant_tuples])
-        sql_query = f"""
-            SELECT table_name, table_description, it, fields_number, column_name, column_description, column_type
-            FROM txtai
-            WHERE table_name IN ({relevant_tables})
-            ORDER BY table_name ASC
-        """
-        complete_results = self.embeddings_complete.search(sql_query, self.embeddings_complete.count())
-        print(complete_results)
-        sys.exit()
-        # Costruzione del prompt
-        dyn_string = "Suggested prompt:" + "\n"
-        # Legenda dei simboli
-        dyn_string += "-> is equivalent to references\n"
-        dyn_string += ": separates the column name from its type\n"
-        dyn_string += ". separates the table name from the column name\n\n"
-        dyn_ref_string = ""
-        dyn_desc_string = ""
-        dyn_key_string = ""
-        i = 0
-        limit = 0
-        for result in complete_results:
-            for i in result["primary_key"]:
-                print(', '.join(result["primary_key"]))
-            sys.exit()
-            if result["reference_table_name"] and result["reference_column_name"]:
-                dyn_ref_string += "FOREIGN KEY: " + result["table_name"] + "." + result["column_name"] + "->" + result["reference_table_name"] + "." + result["reference_column_name"] + "\n"
-            
-            if (i == 0):
-                dyn_string += "Table schema: " + result["table_name"] + " (" + result["column_name"] + ": " + result["column_type"] + ", "
-                dyn_desc_string = 'Table description: ' + result["table_description"] + "\n"
-                dyn_key_string = "PRIMARY KEY: (" + result["primary_key"] + ")" + "\n"
-                dyn_desc_string += 'The table contains the following columns:\n'
-                dyn_desc_string += result["column_name"] + ': ' + result["column_description"] + "\n"
-                limit = int(result["fields_number"])
-                i += 1
-            elif (i + 1 < limit):
-                dyn_string += result["column_name"] + ": " + result["column_type"] + ", "
-                dyn_desc_string += result["column_name"] + ': ' + result["column_description"] + "\n"
-                i += 1
-            else:
-                dyn_string += result["column_name"] + ": " + result["column_type"] + ")\n"
-                dyn_desc_string += result["column_name"] + ': ' + result["column_description"] + "\n"
-                dyn_string += dyn_key_string
-                dyn_string += dyn_desc_string + "\n"
-                i = 0
-        
-        dyn_string += f"{dyn_ref_string}" + "\n"
+            dyn_key_string = (
+                f'PRIMARY KEY: ({', '.join(table_schema["primary_key"])})\n')
+            dyn_desc_string = (
+                f'Table description: {table_schema["description"]}\n'
+                'The table contains the following columns:\n')
+            column_def = []
+            for column in table_schema["columns"]:
+                column_def.append(column["name"] + ": " + column["type"])
+                dyn_desc_string += (
+                    f'{column["name"]}: {column["description"]}\n')
+            dyn_string += (
+                f'Table schema: {table_schema["name"]} ({', '.join(column_def)})\n')
+            dyn_string += dyn_key_string
+            dyn_string += dyn_desc_string + "\n"
+            if "foreign_keys" in table_schema:
+                foreign_keys = table_schema["foreign_keys"]
+                for foreign_key in foreign_keys:
+                    dyn_ref_string += (
+                        f'FOREIGN KEY {table_schema["name"]} ('
+                        f'{", ".join(foreign_key["foreign_key_column_names"])}) references '
+                        f'{foreign_key["reference_table_name"]} ('
+                        f'{', '.join(foreign_key["reference_column_names"])})\n')
+        dyn_string += dyn_ref_string + "\n"
         dyn_string += f"Answer with the right SQL query for MariaDB: {user_request}"
         return dyn_string
 
@@ -228,7 +180,7 @@ def main():
 
     manager.createIndex(data_dict_name)
 
-    prompt = manager.promptGenerator("all information on users who paid for their orders with PayPal", activate_log=True)
+    prompt = manager.promptGenerator(data_dict_name, "all information on users who paid for their orders with PayPal", activate_log=True)
 
     print(prompt)
 
