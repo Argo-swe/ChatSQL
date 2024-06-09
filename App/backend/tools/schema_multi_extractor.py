@@ -78,44 +78,35 @@ class Schema_Multi_Extractor:
         schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
         for pos, table in enumerate(schema['tables']):
             for column in table['columns']:
-                str_list = table['description'] + ": " + column["name"]
+                str_list = table['description'] + ": "
                 if column["column_synonyms"] is not None:
-                    str_list += ", "
                     str_list += ', '.join(column_synonym for column_synonym in column["column_synonyms"])
                 doc = {
                     "table_name": table['name'],
                     "table_description": table["description"],
+                    # table_pos è la posizione della tabella nel dizionario dati, funzionale alla generazione del prompt
                     "table_pos": pos,
                     "text": column['description']
                 }
                 documents.append(doc)
         return documents
 
-    # Estrazione per il secondo indice
+    # Estrazione per il secondo indice (attualmente non utilizzato)
     def extract_second_index(data_dict_name):
         documents = []
         schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
-        for it, table in enumerate(schema['tables']):
+        for table in schema['tables']:
             # Numero di campi della tabella
             fields_number = len(table['columns'])
 
             for column in table['columns']:
-                if column["references"]:
-                    reference_table_name = column["references"]['table_name']
-                    reference_column_name = column["references"]['field_name']
-                else:
-                    reference_table_name = None
-                    reference_column_name = None
                 doc = {
                     "table_name": table['name'],
                     "table_description": table['description'],
                     "primary_key": ', '.join(table['primary_key']),
-                    "it": it,
                     "column_name": column['name'],
                     "column_description": column['description'],
                     "column_type": column['type'],
-                    "reference_table_name": reference_table_name,
-                    "reference_column_name": reference_column_name,
                     "fields_number": fields_number,
                     "text": table["name"]
                 }
