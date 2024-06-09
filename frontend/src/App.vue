@@ -3,13 +3,18 @@ import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import OpenAPIClientAxios from 'openapi-client-axios';
 
-const api = new OpenAPIClientAxios({ definition: 'http://localhost:5000/swagger.json' });
+const api = new OpenAPIClientAxios({ definition: 'http://localhost:5000/swagger.json' }); // FLASK
+//const api = new OpenAPIClientAxios({ definition: 'http://localhost:8000/openapi.json' }); // FastAPI
 api.init();
+
+const generatedPrompt = defineModel('generatedPrompt')
 
 async function button() {
   const client = await api.getClient();
-  const res = await client.get_check_test(1);
+  //const res = await client.generate_prompt_api_prompt__get("prova"); //FastAPI
+  const res = await client.get_generate_prompt(); // FLASK
   console.log('Pet created', res.data);
+  generatedPrompt.value = res.data.data;
   }
 </script>
 
@@ -19,7 +24,8 @@ async function button() {
 
     <div class="wrapper">
       <HelloWorld msg="You did it OK!" />
-      <button @click="button">Greet</button>
+      <button @click="button">Test prompt</button>
+      <textarea class="form-control" id="generatedPrompt" v-model="generatedPrompt" readonly></textarea>
 
       <nav>
         <RouterLink to="/">Home</RouterLink>

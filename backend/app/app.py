@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restx import Api
 from flask_cors import CORS
-import os
+# import os
 
 from routes.test import api as test_namespace
 

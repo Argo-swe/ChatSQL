@@ -27,6 +27,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<any>
   /**
+   * get_generate_prompt
+   */
+  'get_generate_prompt'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<any>
+  /**
    * get_check_test
    */
   'get_check_test'(
@@ -55,19 +63,29 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<any>
   }
-  ['/api/test/{test_id}']: {
+  ['/api/test/prompt']: {
     /**
-     * get_check_test
+     * get_generate_prompt
      */
     'get'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<any>
+  }
+  ['/api/test/{test_id}']: {
+    /**
+     * post_check_test
+     */
+    'post'(
       parameters?: Parameters<Paths.ApiTest$TestId.PathParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<any>
     /**
-     * post_check_test
+     * get_check_test
      */
-    'post'(
+    'get'(
       parameters?: Parameters<Paths.ApiTest$TestId.PathParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  

@@ -18,6 +18,8 @@ vengono avviati due container:
 
 ## Backend
 L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhost:5000/api-doc](http://localhost:5000/api-doc)
+
+
 ## Frontend
 ### Rigenerare i metodi per interfacciarsi col `backend`
 1. Avviare il container del `backend`

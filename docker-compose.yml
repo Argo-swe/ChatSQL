@@ -8,11 +8,15 @@ services:
       - FLASK_DEBUG=1
     # env_file:
     #   - ./backend/env-dev
-    #command: flask run -h 0.0.0.0
+
+    command: flask run -h 0.0.0.0
+    #command: fastapi dev app_fastapi.py --host 0.0.0.0
+
     # flask requires SIGINT to stop gracefully
     # (default stop signal from Compose is SIGTERM)
     ports:
       - '5000:5000'
+      - '8000:8000'
     volumes:
       - ./backend/app:/usr/src/app
 

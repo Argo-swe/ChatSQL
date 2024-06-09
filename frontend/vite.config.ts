@@ -16,7 +16,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://host.docker.internal:5000',
+        //target: 'http://host.docker.internal:8000', // FastAPI
+        target: 'http://host.docker.internal:5000', // FLASK
         changeOrigin: true
       }
     }
