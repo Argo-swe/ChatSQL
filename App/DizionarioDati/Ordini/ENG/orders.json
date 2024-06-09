@@ -1,6 +1,6 @@
 {
   "database_name": "Orders",
-  "database_description": "The orders database is designed to monitor and manage purchase transactions",
+  "database_description": "The orders database is designed to monitor and manage purchase transactions.",
   "tables": [
     {
       "name": "users",
@@ -15,7 +15,7 @@
         {
           "name": "username",
           "type": "string",
-          "description": "The unique login name for a user",
+          "description": "The unique login name for a user.",
           "column_synonyms": [
             "nickname",
             "alias"
@@ -24,19 +24,19 @@
         {
           "name": "email",
           "type": "string",
-          "description": "The user's email address",
+          "description": "The user's email address.",
           "column_synonyms": null
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The user's first name",
+          "description": "The user's first name.",
           "column_synonyms": null
         },
         {
           "name": "surname",
           "type": "string",
-          "description": "The user's surname",
+          "description": "The user's surname.",
           "column_synonyms": null
         }
       ],
@@ -55,7 +55,7 @@
         {
           "name": "id",
           "type": "integer",
-          "description": "The unique identifier for a product",
+          "description": "The unique identifier for a product.",
           "column_synonyms": [
             "identification",
             "tag"
@@ -64,13 +64,13 @@
         {
           "name": "name",
           "type": "string",
-          "description": "The product's name",
+          "description": "The product's name.",
           "column_synonyms": null
         },
         {
           "name": "price",
           "type": "numeric(10,2)",
-          "description": "The product's price",
+          "description": "The product's price.",
           "column_synonyms": [
             "cost",
             "value"
@@ -79,7 +79,7 @@
         {
           "name": "category",
           "type": "integer",
-          "description": "Foreign key referencing the category to which the product belongs",
+          "description": "Foreign key referencing the category to which the product belongs.",
           "column_synonyms": null
         }
       ],
@@ -112,7 +112,7 @@
         {
           "name": "id",
           "type": "integer",
-          "description": "The unique identifier for an order",
+          "description": "The unique identifier for an order.",
           "column_synonyms": [
             "identification",
             "tag"
@@ -121,25 +121,25 @@
         {
           "name": "username",
           "type": "string",
-          "description": "Foreign key referencing the user who made the order",
+          "description": "Foreign key referencing the user who made the order.",
           "column_synonyms": null
         },
         {
           "name": "order_date",
           "type": "date",
-          "description": "Date when the order was made",
+          "description": "Date when the order was made.",
           "column_synonyms": null
         },
         {
           "name": "payment_method",
           "type": "string",
-          "description": "The payment method used for the order",
+          "description": "The payment method used for the order.",
           "column_synonyms": null
         },
         {
           "name": "total",
           "type": "numeric(10,2)",
-          "description": "The total amount of the order",
+          "description": "The total amount of the order.",
           "column_synonyms": null
         }
       ],
@@ -170,7 +170,7 @@
         {
           "name": "id",
           "type": "integer",
-          "description": "The unique identifier for a category",
+          "description": "The unique identifier for a category.",
           "column_synonyms": [
             "identification",
             "tag"
@@ -179,13 +179,13 @@
         {
           "name": "name",
           "type": "string",
-          "description": "The category's name",
+          "description": "The category's name.",
           "column_synonyms": null
         },
         {
           "name": "description",
           "type": "string",
-          "description": "The category's description",
+          "description": "The category's description.",
           "column_synonyms": null
         }
       ],
@@ -203,19 +203,19 @@
         {
           "name": "order_id",
           "type": "integer",
-          "description": "Foreign key referencing the order to which the product belongs",
+          "description": "Foreign key referencing the order to which the product belongs.",
           "column_synonyms": null
         },
         {
           "name": "product_id",
           "type": "integer",
-          "description": "Foreign key referencing the product in the order",
+          "description": "Foreign key referencing the product in the order.",
           "column_synonyms": null
         },
         {
           "name": "quantity",
           "type": "integer",
-          "description": "The quantity of the product in the order",
+          "description": "The quantity of the product in the order.",
           "column_synonyms": [
             "total",
             "number"

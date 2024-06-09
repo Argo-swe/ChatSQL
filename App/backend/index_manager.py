@@ -48,11 +48,11 @@ class IndexManager:
             documents.append((idx, document, None))
         self.embeddings.index(documents)
 
-    # Metodo per salvare gli indici
+    # Metodo per salvare l'indice
     def saveIndex(self, data_dict_name):
         self.embeddings.save(f"{self.path}/{data_dict_name}/idx")
     
-    # Metodo per caricare gli indici già salvati
+    # Metodo per caricare l'indice già salvato
     def loadIndex(self, data_dict_name):
         self.embeddings.load(f"{self.path}/{data_dict_name}/idx")
 
@@ -147,7 +147,7 @@ class IndexManager:
         for table in relevant_tuples:
             table_schema = schema["tables"][table["table_pos"]]
             dyn_key_string = (
-                f'PRIMARY KEY: ({', '.join(table_schema["primary_key"])})\n')
+                f'PRIMARY KEY: ({", ".join(table_schema["primary_key"])})\n')
             dyn_desc_string = (
                 f'Table description: {table_schema["description"]}\n'
                 'The table contains the following columns:\n')
@@ -157,7 +157,7 @@ class IndexManager:
                 dyn_desc_string += (
                     f'{column["name"]}: {column["description"]}\n')
             dyn_string += (
-                f'Table schema: {table_schema["name"]} ({', '.join(column_def)})\n')
+                f'Table schema: {table_schema["name"]} ({", ".join(column_def)})\n')
             dyn_string += dyn_key_string
             dyn_string += dyn_desc_string + "\n"
             if "foreign_keys" in table_schema:
@@ -167,14 +167,14 @@ class IndexManager:
                         f'FOREIGN KEY {table_schema["name"]} ('
                         f'{", ".join(foreign_key["foreign_key_column_names"])}) references '
                         f'{foreign_key["reference_table_name"]} ('
-                        f'{', '.join(foreign_key["reference_column_names"])})\n')
+                        f'{", ".join(foreign_key["reference_column_names"])})\n')
         dyn_string += dyn_ref_string + "\n"
         dyn_string += f"Answer with the right SQL query for MariaDB: {user_request}"
         return dyn_string
 
 def main():
     # Piccolo script per testare la classe
-    manager = IndexManager()
+    """ manager = IndexManager()
     
     data_dict_name = "orders"
 
@@ -182,7 +182,7 @@ def main():
 
     prompt = manager.promptGenerator(data_dict_name, "all information on users who paid for their orders with PayPal", activate_log=True)
 
-    print(prompt)
+    print(prompt) """
 
 if __name__ == "__main__":
     main()
