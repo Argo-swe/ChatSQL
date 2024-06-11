@@ -5,7 +5,8 @@ class Schema_Multi_Extractor:
     """
     A class used for dictionary extraction methods
     """
-    __dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ENG/'
+    #__dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ENG/'
+    __dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ITA/'
 
     def get_json_schema(data_dict_name):
         file_path = f'{Schema_Multi_Extractor.__dictionary_schema_dir_path}/{data_dict_name}.json'
@@ -76,40 +77,39 @@ class Schema_Multi_Extractor:
     def extract_first_index(data_dict_name):
         documents = []
         schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
-        for table in schema['tables']:
+        for pos, table in enumerate(schema['tables']):
             for column in table['columns']:
-                str_list = table['description'] + ": " + column["name"]
+                str_list = table['description'] + ": "
                 if column["column_synonyms"] is not None:
-                    str_list += ", "
                     str_list += ', '.join(column_synonym for column_synonym in column["column_synonyms"])
                 doc = {
                     "table_name": table['name'],
-                    "relevant_information": str_list,
-                    "text": column['description']
+                    "text": table["description"],
+                    # table_pos è la posizione della tabella nel dizionario dati, funzionale alla generazione del prompt
+                    "table_pos": pos,
+                    "column_description": column['description']
                 }
                 documents.append(doc)
         return documents
 
-    # Estrazione per il secondo indice
+    # Estrazione per il secondo indice (attualmente non utilizzato)
     def extract_second_index(data_dict_name):
         documents = []
         schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
         for table in schema['tables']:
             # Numero di campi della tabella
-            column_names = [column['name'] for column in table['columns']]
-            fields_number = len(column_names)
+            fields_number = len(table['columns'])
 
             for column in table['columns']:
                 doc = {
                     "table_name": table['name'],
                     "table_description": table['description'],
+                    "primary_key": ', '.join(table['primary_key']),
                     "column_name": column['name'],
                     "column_description": column['description'],
                     "column_type": column['type'],
-                    # Il campo column_reference andrebbe suddiviso in due sotto-campi per evitare la dipendenza dal formato JSON in fase di generazione del prompt
-                    "column_reference": column['references'],
                     "fields_number": fields_number,
-                    "text": table['name'],
+                    "text": table["name"]
                 }
                 documents.append(doc)
         return documents

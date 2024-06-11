@@ -3,12 +3,12 @@
   "defaults": false,
   "indexes": {
     "table_description": {
-      "path": "sentence-transformers/all-MiniLM-L12-v2",
-      "dimensions": 384,
+      "path": "efederici/sentence-BERTino",
+      "dimensions": 768,
       "backend": "faiss",
       "offset": 19,
       "build": {
-        "create": "2024-06-09T15:45:09Z",
+        "create": "2024-06-10T16:47:06Z",
         "python": "3.10.12",
         "settings": {
           "components": "IDMap,Flat"
@@ -16,18 +16,18 @@
         "system": "Linux (x86_64)",
         "txtai": "7.1.0"
       },
-      "update": "2024-06-09T15:45:09Z"
+      "update": "2024-06-10T16:47:06Z"
     },
     "column_description": {
-      "path": "sentence-transformers/all-MiniLM-L12-v2",
+      "path": "efederici/sentence-BERTino",
       "columns": {
         "text": "column_description"
       },
-      "dimensions": 384,
+      "dimensions": 768,
       "backend": "faiss",
       "offset": 19,
       "build": {
-        "create": "2024-06-09T15:45:09Z",
+        "create": "2024-06-10T16:47:06Z",
         "python": "3.10.12",
         "settings": {
           "components": "IDMap,Flat"
@@ -35,7 +35,7 @@
         "system": "Linux (x86_64)",
         "txtai": "7.1.0"
       },
-      "update": "2024-06-09T15:45:09Z"
+      "update": "2024-06-10T16:47:06Z"
     }
   },
   "offset": 19

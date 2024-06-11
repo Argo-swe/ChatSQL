@@ -1,216 +1,243 @@
 {
-  "nome_database": "Ordini",
-  "descrizione_database": "Il database degli ordini \u00E8 progettato per monitorare e gestire transazioni di acquisto",
-  "tabelle": [
+  "database_name": "Ordini",
+  "database_description": "Il database è progettato per monitorare e gestire le transazioni di acquisto.",
+  "tables": [
     {
-      "nome": "utenti",
-      "descrizione": "Tabella contenente informazioni sugli utenti",
-      "sinonimi_tabella": [
+      "name": "utenti",
+      "description": "Tabella contenente i dettagli dell'account e le informazioni personali degli utenti che effettuano acquisti.",
+      "table_synonyms": [
         "clienti",
         "consumatori"
       ],
-      "colonne": [
+      "columns": [
         {
-          "nome": "username",
-          "tipo": "string",
-          "descrizione": "Il nome utente univoco per un utente",
-          "sinonimi_colonna": [
+          "name": "username",
+          "type": "string",
+          "description": "Il nome univoco utilizzato dall'utente in fase di login",
+          "column_synonyms": [
             "soprannome",
             "alias"
-          ],
-          "riferimenti": null
+          ]
         },
         {
-          "nome": "email",
-          "tipo": "string",
-          "descrizione": "L'indirizzo email dell'utente",
-          "sinonimi_colonna": null,
-          "riferimenti": null
+          "name": "email",
+          "type": "string",
+          "description": "L'indirizzo email dell'utente.",
+          "column_synonyms": null
         },
         {
-          "nome": "nome",
-          "tipo": "string",
-          "descrizione": "Il nome all'anagrafe dell'utente",
-          "sinonimi_colonna": null,
-          "riferimenti": null
+          "name": "nome",
+          "type": "string",
+          "description": "Il nome dell'utente.",
+          "column_synonyms": null
         },
         {
-          "nome": "cognome",
-          "tipo": "string",
-          "descrizione": "Il cognome all'anagrafe dell'utente",
-          "sinonimi_colonna": null,
-          "riferimenti": null
+          "name": "cognome",
+          "type": "string",
+          "description": "Il cognome dell'utente.",
+          "column_synonyms": null
         }
       ],
-      "chiave_primaria": [
+      "primary_key": [
         "username"
       ]
     },
     {
-      "nome": "prodotti",
-      "descrizione": "Tabella contenente informazioni sui prodotti",
-      "sinonimi_tabella": [
-        "articoli"
+      "name": "prodotti",
+      "description": "Tabella contenente informazioni sui prodotti memorizzati nel catalogo.",
+      "table_synonyms": [
+        "articoli",
+        "oggetti"
       ],
-      "colonne": [
+      "columns": [
         {
-          "nome": "id",
-          "tipo": "integer",
-          "descrizione": "L'identificatore univoco per un prodotto",
-          "sinonimi_colonna": [
-            "identificazione"
-          ],
-          "riferimenti": null
+          "name": "id",
+          "type": "integer",
+          "description": "L'identificatore univoco per un prodotto.",
+          "column_synonyms": [
+            "etichetta"
+          ]
         },
         {
-          "nome": "nome",
-          "tipo": "string",
-          "descrizione": "Il nome del prodotto",
-          "sinonimi_colonna": null,
-          "riferimenti": null
+          "name": "nome",
+          "type": "string",
+          "description": "Il nome del prodotto.",
+          "column_synonyms": null
         },
         {
-          "nome": "prezzo",
-          "tipo": "decimal",
-          "descrizione": "Il prezzo del prodotto",
-          "sinonimi_colonna": [
-            "costo"
-          ],
-          "riferimenti": null
+          "name": "prezzo",
+          "type": "numeric(10,2)",
+          "description": "Il prezzo del prodotto.",
+          "column_synonyms": [
+            "costo",
+            "valore"
+          ]
         },
         {
-          "nome": "categoria",
-          "tipo": "integer",
-          "descrizione": "Chiave esterna che fa riferimento alla categoria a cui il prodotto appartiene",
-          "sinonimi_colonna": null,
-          "riferimenti": {
-            "nome_tabella": "categorie",
-            "nome_campo": "id"
-          }
+          "name": "categoria",
+          "type": "integer",
+          "description": "Chiave esterna che fa riferimento alla categoria a cui appartiene il prodotto.",
+          "column_synonyms": null
         }
       ],
-      "chiave_primaria": [
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "categoria"
+          ],
+          "reference_table_name": "categorie",
+          "reference_column_names": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ordini",
+      "description": "Tabella contenente informazioni sugli ordini effettuati dagli utenti, inclusi i dettagli generali di fatturazione.",
+      "table_synonyms": [
+        "consegne",
+        "acquisti",
+        "vendite",
+        "transazioni"
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "L'identificatore univoco per un ordine.",
+          "column_synonyms": [
+            "etichetta"
+          ]
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "description": "Chiave esterna che fa riferimento all'utente che ha effettuato l'ordine.",
+          "column_synonyms": null
+        },
+        {
+          "name": "data_ordine",
+          "type": "date",
+          "description": "La data in cui è stato effettuato l'ordine.",
+          "column_synonyms": null
+        },
+        {
+          "name": "metodo_pagamento",
+          "type": "string",
+          "description": "Il metodo di pagamento utilizzato per l'ordine.",
+          "column_synonyms": null
+        },
+        {
+          "name": "totale",
+          "type": "numeric(10,2)",
+          "description": "L'importo totale dell'ordine.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "username"
+          ],
+          "reference_table_name": "utenti",
+          "reference_column_names": [
+            "username"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "categorie",
+      "description": "Tabella contenente informazioni sulle categorie, che corrispondono al tipo o alla classe di prodotti.",
+      "table_synonyms": [
+        "classi",
+        "gruppi",
+        "tipi"
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "L'identificatore univoco per una categoria.",
+          "column_synonyms": [
+            "etichetta"
+          ]
+        },
+        {
+          "name": "nome",
+          "type": "string",
+          "description": "Il nome della categoria.",
+          "column_synonyms": null
+        },
+        {
+          "name": "descrizione",
+          "type": "string",
+          "description": "La descrizione della categoria.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
         "id"
       ]
     },
     {
-      "nome": "ordini",
-      "descrizione": "Tabella contenente informazioni sugli ordini effettuati dagli utenti",
-      "sinonimi_tabella": [
-        "acquisti"
+      "name": "articoli_ordine",
+      "description": "Tabella contenente i prodotti associati a un ordine e la loro quantità.",
+      "table_synonyms": [
+        "dettagli"
       ],
-      "colonne": [
+      "columns": [
         {
-          "nome": "id",
-          "tipo": "integer",
-          "descrizione": "L'identificatore univoco per un ordine",
-          "sinonimi_colonna": [
-            "identificazione"
-          ],
-          "riferimenti": null
+          "name": "id_ordine",
+          "type": "integer",
+          "description": "Chiave esterna che fa riferimento all'ordine a cui appartiene il prodotto.",
+          "column_synonyms": null
         },
         {
-          "nome": "username",
-          "tipo": "string",
-          "descrizione": "Chiave esterna che fa riferimento all'utente che ha effettuato l'ordine",
-          "sinonimi_colonna": null,
-          "riferimenti": {
-            "nome_tabella": "utenti",
-            "nome_campo": "username"
-          }
+          "name": "id_prodotto",
+          "type": "integer",
+          "description": "Chiave esterna che fa riferimento al prodotto ordinato.",
+          "column_synonyms": null
         },
         {
-          "nome": "data_ordine",
-          "tipo": "date",
-          "descrizione": "Data in cui \u00E8 stato effettuato l'ordine",
-          "sinonimi_colonna": null,
-          "riferimenti": null
-        },
-        {
-          "nome": "metodo_pagamento",
-          "tipo": "string",
-          "descrizione": "Il metodo di pagamento utilizzato per l'ordine",
-          "sinonimi_colonna": null,
-          "riferimenti": null
+          "name": "quantità",
+          "type": "integer",
+          "description": "La quantità del prodotto nell'ordine.",
+          "column_synonyms": [
+            "numero"
+          ]
         }
       ],
-      "chiave_primaria": [
-        "id"
-      ]
-    },
-    {
-      "nome": "categorie",
-      "descrizione": "Tabella contenente informazioni sulle categorie di prodotti",
-      "sinonimi_tabella": [
-        "classi"
-      ],
-      "colonne": [
-        {
-          "nome": "id",
-          "tipo": "integer",
-          "descrizione": "L'identificatore univoco per una categoria",
-          "sinonimi_colonna": [
-            "identificazione"
-          ],
-          "riferimenti": null
-        },
-        {
-          "nome": "nome",
-          "tipo": "string",
-          "descrizione": "Il nome della categoria",
-          "sinonimi_colonna": null,
-          "riferimenti": null
-        },
-        {
-          "nome": "descrizione",
-          "tipo": "string",
-          "descrizione": "La descrizione della categoria",
-          "sinonimi_colonna": null,
-          "riferimenti": null
-        }
-      ],
-      "chiave_primaria": [
-        "id"
-      ]
-    },
-    {
-      "nome": "dettagli_ordine",
-      "descrizione": "Tabella contenente informazioni sugli articoli nell'ordine",
-      "sinonimi_tabella": null,
-      "colonne": [
-        {
-          "nome": "id_ordine",
-          "tipo": "integer",
-          "descrizione": "Chiave esterna che fa riferimento all'ordine a cui appartiene l'articolo",
-          "sinonimi_colonna": null,
-          "riferimenti": {
-            "nome_tabella": "ordini",
-            "nome_campo": "id"
-          }
-        },
-        {
-          "nome": "id_prodotto",
-          "tipo": "integer",
-          "descrizione": "Chiave esterna che fa riferimento al prodotto nell'ordine",
-          "sinonimi_colonna": null,
-          "riferimenti": {
-            "nome_tabella": "prodotti",
-            "nome_campo": "id"
-          }
-        },
-        {
-          "nome": "quantit\u00E0",
-          "tipo": "integer",
-          "descrizione": "La quantit\u00E0 del prodotto nell'ordine",
-          "sinonimi_colonna": [
-            "totale"
-          ],
-          "riferimenti": null
-        }
-      ],
-      "chiave_primaria": [
+      "primary_key": [
         "id_ordine",
         "id_prodotto"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "id_ordine"
+          ],
+          "reference_table_name": "ordini",
+          "reference_column_names": [
+            "id"
+          ]
+        },
+        {
+          "foreign_key_column_names": [
+            "id_prodotto"
+          ],
+          "reference_table_name": "prodotti",
+          "reference_column_names": [
+            "id"
+          ]
+        }
       ]
     }
   ]
