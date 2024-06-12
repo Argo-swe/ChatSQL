@@ -1,0 +1,47 @@
+Richiesta: the surname of users who paid for all their orders with PayPal
+
+Fase 1 - prima estrazione
+Lista delle tabelle pertinenti:
+orders: 0.522392213344574
+Descrizione della colonna più rilevante: The payment method used for the order
+
+users: 0.4652700424194336
+Descrizione della colonna più rilevante: The user's birth surname
+
+order_items: 0.3317373991012573
+Descrizione della colonna più rilevante: Foreign key referencing the order to which the item belongs
+
+Classifica di importanza dei termini di ciascuna descrizione:
+Testo: The payment method used for the order
+payment: 0.21283894777297974
+order: 0.13992595672607422
+the: 0.01759779453277588
+The: 0.006127893924713135
+used: -0.0005355477333068848
+method: -0.021348893642425537
+for: -0.021742284297943115
+
+Testo: The user's birth surname
+surname: 0.19981765747070312
+user's: 0.10337913036346436
+The: 0.018262505531311035
+birth: -0.10006096959114075
+
+Testo: Foreign key referencing the order to which the item belongs
+order: 0.11380273103713989
+Foreign: 0.04286894202232361
+referencing: 0.01859554648399353
+the: 0.018384486436843872
+key: 0.016084522008895874
+item: -0.0014872848987579346
+the: -0.0024806559085845947
+to: -0.007569164037704468
+which: -0.014941245317459106
+belongs: -0.039383381605148315
+
+
+Fase 2 - seconda estrazione
+Lista delle tabelle rilevanti:
+La tabella orders viene mantenuta poiché ha un punteggio sufficientemente alto
+La tabella users viene mantenuta poiché ha un punteggio sufficientemente alto
+La tabella order_items viene mantenuta poiché la differenza di punteggio rispetto alla tabella precedente è inferiore a 0.25
