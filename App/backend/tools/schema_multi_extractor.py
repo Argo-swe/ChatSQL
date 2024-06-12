@@ -6,9 +6,9 @@ class Schema_Multi_Extractor:
     A class used for dictionary extraction methods
     """
     # Dizionario dati in inglese
-    # __dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ENG/'
+    __dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ENG/'
     # Dizionario dati in italiano
-    __dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ITA/'
+    #__dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ITA/'
 
     def get_json_schema(data_dict_name):
         file_path = f'{Schema_Multi_Extractor.__dictionary_schema_dir_path}/{data_dict_name}.json'

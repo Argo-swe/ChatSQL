@@ -9,7 +9,7 @@ class TestSemanticSearch(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.index_manager = IndexManager()
-        cls.data_dict_name = "ordini"
+        cls.data_dict_name = "orders"
         cls.index_manager.createOrLoadIndex(cls.data_dict_name)
 
     @parameterized.expand([

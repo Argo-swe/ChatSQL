@@ -9,7 +9,7 @@ current_dir = Path(__file__).resolve().parent
 class IndexManager:
     def __init__(self):
         # Modelli per la lingua inglese
-        """self.embeddings = Embeddings(
+        self.embeddings = Embeddings(
             content=True,
             defaults=False,
             indexes={
@@ -23,9 +23,9 @@ class IndexManager:
                     }
                 }
             }
-        )"""
+        )
         # Modelli per la lingua italiana
-        self.embeddings = Embeddings(
+        """self.embeddings = Embeddings(
             content=True,
             defaults=False,
             indexes={
@@ -39,7 +39,7 @@ class IndexManager:
                     }
                 }
             }
-        )
+        )"""
         self.path = f"{current_dir}/assets/Indici"
         self.log_name = f"{current_dir}/chatsql_log.txt"
 
@@ -201,23 +201,24 @@ class IndexManager:
                         f'{foreign_key["reference_table_name"]} ('
                         f'{", ".join(foreign_key["reference_column_names"])})\n')
         dyn_string += dyn_ref_string + "\n"
-        dyn_string += f"Answer with the right SQL query for MariaDB: {user_request}"
+        dyn_string += f"User request: {user_request}\n"
+        dyn_string += "Convert user request to SQL query for MariaDB"
         return dyn_string
 
 def main():
     # Piccolo script per testare la classe
-    """ manager = IndexManager()
+    """manager = IndexManager()
     
-    #data_dict_name = "orders"
-    data_dict_name = "ordini"
+    data_dict_name = "orders"
+    #ata_dict_name = "ordini"
 
     manager.createOrLoadIndex(data_dict_name)
 
-    user_request = "Tutte le informazioni riguardanti gli utenti che hanno pagato i loro ordini con PayPal."
+    user_request = "all information on users who paid for their orders with PayPal"
 
-    prompt = manager.promptGenerator(data_dict_name, user_request, activate_log=True)
+    prompt = manager.promptGenerator(data_dict_name, user_request, activate_log=False)
 
-    print(prompt) """
+    print(prompt)"""
 
 if __name__ == "__main__":
     main()
