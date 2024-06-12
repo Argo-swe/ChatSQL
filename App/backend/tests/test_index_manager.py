@@ -12,6 +12,10 @@ class TestSemanticSearch(unittest.TestCase):
         cls.data_dict_name = "orders"
         cls.index_manager.createOrLoadIndex(cls.data_dict_name)
 
+    def assertCountEqualWithOneExtra(self, result_table_names, expected_output):
+        self.assertGreaterEqual(set(result_table_names), set(expected_output))
+        self.assertLessEqual(len(result_table_names) - len(expected_output), 1)
+
     @parameterized.expand([
         ("all information about products that belong to an order placed by a user whose first name is alex", [
             "orders",
