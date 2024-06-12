@@ -9,12 +9,8 @@ class TestSemanticSearch(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.index_manager = IndexManager()
-        data_dict_name = "orders"
-        cls.index_manager.createOrLoadIndex(data_dict_name)
-
-    def assertCountEqualWithOneExtra(self, result_table_names, expected_output):
-        self.assertGreaterEqual(set(result_table_names), set(expected_output))
-        self.assertLessEqual(len(result_table_names) - len(expected_output), 1)
+        cls.data_dict_name = "ordini"
+        cls.index_manager.createOrLoadIndex(cls.data_dict_name)
 
     @parameterized.expand([
         ("all information about products that belong to an order placed by a user whose first name is alex", [
@@ -44,7 +40,7 @@ class TestSemanticSearch(unittest.TestCase):
     ])
     def test_semantic_search_first_battery(self, input_value, expected_output):
         tuples = self.index_manager.getRelevantTuples(self.index_manager.getTuples(input_value, activate_log=False), activate_log=False)
-        result_table_names = [tuple for tuple in tuples]
+        result_table_names = [tuple["table_name"] for tuple in tuples]
         self.assertCountEqualWithOneExtra(result_table_names, expected_output)
         # Per un controllo più preciso
         # self.assertCountEqual(result_table_names, expected_output)
@@ -76,7 +72,7 @@ class TestSemanticSearch(unittest.TestCase):
     ])
     def test_semantic_search_second_battery(self, input_value, expected_output):
         tuples = self.index_manager.getRelevantTuples(self.index_manager.getTuples(input_value, activate_log=False), activate_log=False)
-        result_table_names = [tuple for tuple in tuples]
+        result_table_names = [tuple["table_name"] for tuple in tuples]
         self.assertCountEqualWithOneExtra(result_table_names, expected_output)
         # Per un controllo più preciso
         # self.assertCountEqual(result_table_names, expected_output)
@@ -98,7 +94,7 @@ class TestSemanticSearch(unittest.TestCase):
     ])
     def test_semantic_search_third_battery(self, input_value, expected_output):
         tuples = self.index_manager.getRelevantTuples(self.index_manager.getTuples(input_value, activate_log=False), activate_log=False)
-        result_table_names = [tuple for tuple in tuples]
+        result_table_names = [tuple["table_name"] for tuple in tuples]
         self.assertCountEqualWithOneExtra(result_table_names, expected_output)
         # Per un controllo più preciso
         # self.assertCountEqual(result_table_names, expected_output)

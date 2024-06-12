@@ -8,6 +8,7 @@ current_dir = Path(__file__).resolve().parent
 
 class IndexManager:
     def __init__(self):
+        # Modelli per la lingua inglese
         """self.embeddings = Embeddings(
             content=True,
             defaults=False,
@@ -23,6 +24,7 @@ class IndexManager:
                 }
             }
         )"""
+        # Modelli per la lingua italiana
         self.embeddings = Embeddings(
             content=True,
             defaults=False,
@@ -211,7 +213,9 @@ def main():
 
     manager.createOrLoadIndex(data_dict_name)
 
-    prompt = manager.promptGenerator(data_dict_name, "all information on users who paid for their orders with PayPal", activate_log=True)
+    user_request = "Tutte le informazioni riguardanti gli utenti che hanno pagato i loro ordini con PayPal."
+
+    prompt = manager.promptGenerator(data_dict_name, user_request, activate_log=True)
 
     print(prompt) """
 
