@@ -30,6 +30,9 @@ services:
     links:
       - backend
     volumes:
-      - ./frontend:/usr/src/app
+      - ./frontend/src:/usr/src/app/src
+      - ./frontend/public:/usr/src/app/public
+      - ./frontend/environments:/usr/src/app/environments
+      - ./frontend/index.html:/usr/src/app/index.html
     extra_hosts:
       - "host.docker.internal:host-gateway"
