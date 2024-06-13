@@ -210,7 +210,7 @@ def main():
     """manager = IndexManager()
     
     data_dict_name = "orders"
-    #ata_dict_name = "ordini"
+    #data_dict_name = "ordini"
 
     manager.createOrLoadIndex(data_dict_name)
 
