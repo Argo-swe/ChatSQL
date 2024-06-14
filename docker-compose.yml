@@ -1,0 +1,38 @@
+services:
+  backend:
+    build:
+        context: ./backend
+        dockerfile: ./Dockerfile
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    # env_file:
+    #   - ./backend/env-dev
+
+    command: flask run -h 0.0.0.0
+    #command: fastapi dev app_fastapi.py --host 0.0.0.0
+
+    # flask requires SIGINT to stop gracefully
+    # (default stop signal from Compose is SIGTERM)
+    ports:
+      - '5000:5000'
+      - '8000:8000'
+    volumes:
+      - ./backend/app:/usr/src/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    ports:
+      - "5173:5173"
+    stop_signal: SIGINT
+    links:
+      - backend
+    volumes:
+      - ./frontend/src:/usr/src/app/src
+      - ./frontend/public:/usr/src/app/public
+      - ./frontend/environments:/usr/src/app/environments
+      - ./frontend/index.html:/usr/src/app/index.html
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
