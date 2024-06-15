@@ -96,20 +96,20 @@ class IndexManager:
     def semanticSearchLog(self, user_request, tuples):
         log = open(self.log_name, "w")
         log.write(
-            f"Richiesta: {user_request}\n\n"
-            "Fase 1 - prima estrazione\n"
-            "Lista delle tabelle rilevanti:\n\n""")
+            f"Request: {user_request}\n\n"
+            "Phase 1 - first extraction\n"
+            "List of relevant tables:\n\n""")
         for i, tuple in enumerate(tuples):
             log.write(
-                f'Tabella {str(i + 1)} | {tuple["table_name"]}: {str(tuple["max_score"])}\n'
-                f'Descrizione della tabella: {tuple["text"]}\n'
-                "Classifica di importanza dei termini della descrizione:\n") 
+                f'Table {i + 1} | {tuple["table_name"]}: {str(tuple["max_score"])}\n'
+                f'Description of the table: {tuple["text"]}\n'
+                "Ranking of the most relevant terms in the description:\n") 
             token_importance = self.embeddings.explain(user_request, [tuple["text"]], limit=1)[0]
             for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
                 log.write(token + ": " + str(score) + "\n")
             log.write(
-                f'\nDescrizione della colonna più rilevante: {tuple["column_description"]}\n'
-                "Classifica di importanza dei termini della descrizione:\n")
+                f'\nDescription of the most relevant column: {tuple["column_description"]}\n'
+                "Ranking of the most relevant terms in the description:\n")
             token_importance = self.embeddings.explain(user_request, [tuple["column_description"]], limit=1)[0]
             for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
                 log.write(token + ": " + str(score) + "\n")
@@ -121,8 +121,8 @@ class IndexManager:
         if activate_log:
             log = open(self.log_name, "a")
             log.write(
-                "\nFase 2 - seconda estrazione\n"
-                "Lista delle tabelle rilevanti:\n")
+                "\nPhase 2 - second extraction\n"
+                "List of pertinent tables:\n")
         relevant_tuples = []
         score = 0
         for tuple in tuples:
@@ -130,25 +130,25 @@ class IndexManager:
             if tuple["max_score"] >= 0.45:
                 if activate_log:
                     log.write(
-                        f'La tabella {tuple["table_name"]} viene mantenuta '
-                        "poiché ha un punteggio sufficientemente alto\n")
+                        f'The table {tuple["table_name"]} is kept '
+                        "because it has a sufficiently high score\n")
                 relevant_tuples.append(tuple)
                 score = tuple["max_score"]
             elif scoring_distance <= 0.25:
                 if activate_log:
                     log.write(
-                        f'La tabella {tuple["table_name"]} viene mantenuta '
-                        "poiché la differenza di punteggio rispetto alla tabella precedente "
-                        "è inferiore a 0.25\n")
+                        f'The table {tuple["table_name"]} is kept '
+                        "because the score difference with the previous table "
+                        "is less than 0.25\n")
                 relevant_tuples.append(tuple)
                 score = tuple["max_score"]
             else:
                 if activate_log:
                     log.write(
-                        "Le tabelle rimanenti vengono scartate "
-                        "poiché lo score non è abbastanza alto e " 
-                        "la differenza di punteggio rispetto alle tabelle immediatamente precedenti "
-                        "è superiore a 0.25\n")
+                        "The remaining tables are discarded "
+                        "because the score is not high enough " 
+                        "and the score difference with the previous tables "
+                        "is greater than 0.25\n")
                 break
         if activate_log:
             log.close()
@@ -167,7 +167,8 @@ class IndexManager:
         tuples = self.getTuples(user_request, activate_log)
         relevant_tuples = self.getRelevantTuples(tuples, activate_log)
         if not relevant_tuples:
-            return f'The request "{user_request}" did not produce any relevant results'
+            return (f"""Sorry, the ChatBOT was unable to find any relevant results for "{user_request}".\n"""
+                """We invite you to try again with a different request.""")
         # Costruzione del prompt
         schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
         # Legenda dei simboli
@@ -201,24 +202,24 @@ class IndexManager:
                         f'{foreign_key["reference_table_name"]} ('
                         f'{", ".join(foreign_key["reference_column_names"])})\n')
         dyn_string += dyn_ref_string + "\n"
-        dyn_string += f"User request: {user_request}\n"
-        dyn_string += "Convert user request to SQL query for MariaDB"
+        dyn_string += f"User request: {user_request}.\n"
+        dyn_string += "Convert user request to a suitable SQL query for MariaDB."
         return dyn_string
 
 def main():
     # Piccolo script per testare la classe
-    """manager = IndexManager()
+    manager = IndexManager()
     
     data_dict_name = "orders"
     #data_dict_name = "ordini"
 
     manager.createOrLoadIndex(data_dict_name)
 
-    user_request = "all information on users who paid for their orders with PayPal"
+    user_request = "all information about products that belong to an order placed by a user whose first name is alex"
 
-    prompt = manager.promptGenerator(data_dict_name, user_request, activate_log=False)
+    prompt = manager.promptGenerator(data_dict_name, user_request, activate_log=True)
 
-    print(prompt)"""
+    print(prompt)
 
 if __name__ == "__main__":
     main()
