@@ -163,7 +163,7 @@ class IndexManager:
             return False
     
     # Metodo per generare il prompt dopo la doppia estrazione
-    def promptGenerator(self, data_dict_name, user_request, activate_log):
+    def promptGenerator(self, data_dict_name, user_request, lang="english", dbms="MariaDB", activate_log=False):
         tuples = self.getTuples(user_request, activate_log)
         relevant_tuples = self.getRelevantTuples(tuples, activate_log)
         if not relevant_tuples:
@@ -203,12 +203,13 @@ class IndexManager:
                         f'{", ".join(foreign_key["reference_column_names"])})\n')
         dyn_string += dyn_ref_string + "\n"
         dyn_string += f"User request: {user_request}.\n"
-        dyn_string += "Convert user request to a suitable SQL query for MariaDB."
+        dyn_string += f"Convert user request to a suitable SQL query for {dbms}.\n"
+        dyn_string += f"Answer in {lang}."
         return dyn_string
 
 def main():
     # Piccolo script per testare la classe
-    manager = IndexManager()
+    """manager = IndexManager()
     
     data_dict_name = "orders"
     #data_dict_name = "ordini"
@@ -217,9 +218,9 @@ def main():
 
     user_request = "all information about products that belong to an order placed by a user whose first name is alex"
 
-    prompt = manager.promptGenerator(data_dict_name, user_request, activate_log=True)
+    prompt = manager.promptGenerator(data_dict_name, user_request)
 
-    print(prompt)
+    print(prompt)"""
 
 if __name__ == "__main__":
     main()
