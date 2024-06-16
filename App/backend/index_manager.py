@@ -2,6 +2,7 @@ import sys
 from txtai.embeddings import Embeddings
 from tools.schema_multi_extractor import Schema_Multi_Extractor
 import os
+import time
 from pathlib import Path
 
 current_dir = Path(__file__).resolve().parent
@@ -94,44 +95,54 @@ class IndexManager:
     
     # Metodo per generare i log della ricerca semantica
     def semanticSearchLog(self, user_request, tuples):
-        log = open(self.log_name, "w")
-        log.write(
-            f"Request: {user_request}\n\n"
-            "Phase 1 - first extraction\n"
-            "List of relevant tables:\n\n""")
+        log = self.getLogFile("w")
+        if log == False:
+            return log
+        log.write(f'{self.getDebugHeader()}\n')
+        log.write(f'Request: {user_request}\n\n')
+        log.write(f'{self.getDebugHeader()}\n')
+        log.write("Phase 1 - first extraction\n")
+        log.write("List of relevant tables:\n")
+        if not tuples:
+            log.write("No relevant tables found.\n\n")
+        else:
+            log.write("\n")
         for i, tuple in enumerate(tuples):
-            log.write(
-                f'Table {i + 1} | {tuple["table_name"]}: {str(tuple["max_score"])}\n'
-                f'Description of the table: {tuple["text"]}\n'
-                "Ranking of the most relevant terms in the description:\n") 
+            log.write(f'Table {i + 1} | {tuple["table_name"]}: {tuple["max_score"]}\n')
+            log.write(f'Description of the table: {tuple["text"]}\n')
+            log.write("Ranking of the most relevant terms in the description:\n") 
             token_importance = self.embeddings.explain(user_request, [tuple["text"]], limit=1)[0]
             for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
                 log.write(token + ": " + str(score) + "\n")
-            log.write(
-                f'\nDescription of the most relevant column: {tuple["column_description"]}\n'
-                "Ranking of the most relevant terms in the description:\n")
+            log.write(f'\nDescription of the most relevant column: {tuple["column_description"]}\n')
+            log.write("Ranking of the most relevant terms in the description:\n")
             token_importance = self.embeddings.explain(user_request, [tuple["column_description"]], limit=1)[0]
             for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
                 log.write(token + ": " + str(score) + "\n")
             log.write("\n")
         log.close()
+        return True
     
     # Metodo per raffinare i risultati della ricerca semantica
     def getRelevantTuples(self, tuples, activate_log):
         if activate_log:
-            log = open(self.log_name, "a")
-            log.write(
-                "\nPhase 2 - second extraction\n"
-                "List of pertinent tables:\n")
+            log = self.getLogFile("a")
+            if log == False:
+                return log
+            log.write(f'{self.getDebugHeader()}\n')
+            log.write("Phase 2 - second extraction\n")
+            log.write("List of pertinent tables:\n")
         relevant_tuples = []
         score = 0
+        if not tuples:
+            log.write("No tables found.\n\n")
         for tuple in tuples:
             scoring_distance = score - tuple["max_score"]
             if tuple["max_score"] >= 0.45:
                 if activate_log:
                     log.write(
                         f'The table {tuple["table_name"]} is kept '
-                        "because it has a sufficiently high score\n")
+                        "because it has a sufficiently high score.\n")
                 relevant_tuples.append(tuple)
                 score = tuple["max_score"]
             elif scoring_distance <= 0.25:
@@ -139,7 +150,7 @@ class IndexManager:
                     log.write(
                         f'The table {tuple["table_name"]} is kept '
                         "because the score difference with the previous table "
-                        "is less than 0.25\n")
+                        "is less than 0.25.\n")
                 relevant_tuples.append(tuple)
                 score = tuple["max_score"]
             else:
@@ -148,18 +159,31 @@ class IndexManager:
                         "The remaining tables are discarded "
                         "because the score is not high enough " 
                         "and the score difference with the previous tables "
-                        "is greater than 0.25\n")
+                        "is greater than 0.25.\n")
                 break
         if activate_log:
             log.close()
         return relevant_tuples
 
+    # Metodo per ottenere l'header del log
+    def getDebugHeader(self, level="DEBUG", system="ChatSQL"):
+        timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        return f'[{timestamp}] [{system}] [{level}]'
+
+    # Metodo per ottenere un oggetto relativo al file di log
+    def getLogFile(self, mode):
+        try:
+            file = open(self.log_name, mode)
+            return file
+        except Exception:
+            return False
+    
     # Metodo per leggere il file di log
     def readLogFile(self):
         try:
             with open(self.log_name, 'r') as file:
                 return file.read()
-        except FileNotFoundError:
+        except Exception:
             return False
     
     # Metodo per generare il prompt dopo la doppia estrazione
@@ -179,18 +203,15 @@ class IndexManager:
         dyn_ref_string = "FOREIGN KEYS:\n"
         for table in relevant_tuples:
             table_schema = schema["tables"][table["table_pos"]]
-            dyn_key_string = (
-                f'PRIMARY KEY: ({", ".join(table_schema["primary_key"])})\n')
+            dyn_key_string = f'PRIMARY KEY: ({", ".join(table_schema["primary_key"])})\n'
             dyn_desc_string = (
                 f'Table description: {table_schema["description"]}\n'
                 "The table contains the following columns:\n")
             column_def = []
             for column in table_schema["columns"]:
                 column_def.append(column["name"] + ": " + column["type"])
-                dyn_desc_string += (
-                    f'{column["name"]}: {column["description"]}\n')
-            dyn_string += (
-                f'Table schema: {table_schema["name"]} ({", ".join(column_def)})\n')
+                dyn_desc_string += f'{column["name"]}: {column["description"]}\n'
+            dyn_string += f'Table schema: {table_schema["name"]} ({", ".join(column_def)})\n'
             dyn_string += dyn_key_string
             dyn_string += dyn_desc_string + "\n"
             if "foreign_keys" in table_schema:
@@ -218,7 +239,7 @@ def main():
 
     user_request = "all information about products that belong to an order placed by a user whose first name is alex"
 
-    prompt = manager.promptGenerator(data_dict_name, user_request)
+    prompt = manager.promptGenerator(data_dict_name, user_request, activate_log=True)
 
     print(prompt)"""
 
