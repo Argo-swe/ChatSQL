@@ -75,17 +75,17 @@ export interface PathsDictionary {
   }
   ['/api/test/{test_id}']: {
     /**
-     * post_check_test
+     * get_check_test
      */
-    'post'(
+    'get'(
       parameters?: Parameters<Paths.ApiTest$TestId.PathParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<any>
     /**
-     * get_check_test
+     * post_check_test
      */
-    'get'(
+    'post'(
       parameters?: Parameters<Paths.ApiTest$TestId.PathParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  
