@@ -14,7 +14,18 @@ const model = ref([
         label: 'Funzionalità tecnico',
         items: [
             { label: 'Debug', icon: 'pi pi-fw pi-eye', to: '/debug' },
-            { label: 'Logout', icon: 'pi pi-fw pi-sign-out', to: '/login' }
+            { label: 'Log', icon: 'pi pi-fw pi-microchip', to: '/log' },
+            {
+                label: 'Gestione dizionari dati',
+                items: [
+                    { label: 'Aggiunta dizionario', icon: 'pi pi-fw pi-plus', to: '/addDizionario' },
+                    { label: 'Lista dizionari??', icon: 'pi pi-fw pi-list', to: '/' },
+                    { label: 'Altre cose da aggiungere??', icon: 'pi pi-fw pi-list', to: '/' },
+
+                ]
+            },
+            { label: 'Login', icon: 'pi pi-fw pi-user', to: '/login' },
+            { label: 'Logout', icon: 'pi pi-fw pi-sign-out', to: '/login' },
         ]
     }
 ]);

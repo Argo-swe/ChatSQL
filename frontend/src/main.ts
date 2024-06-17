@@ -19,6 +19,7 @@ import ToastService from 'primevue/toastservice';
 import ToggleButton from 'primevue/togglebutton';
 import Tooltip from 'primevue/tooltip';
 import Slider from 'primevue/slider';
+import FileUpload from 'primevue/fileupload';
 import Checkbox from 'primevue/checkbox';
 import InputSwitch from 'primevue/inputswitch';
 
@@ -43,6 +44,7 @@ app.component('FloatLabel', FloatLabel);
 app.component('InputText', InputText);
 app.component('InpitSwitch', InputSwitch);
 app.component('Slider', Slider);
+app.component('FileUpload', FileUpload);
 app.component('ToggleButton', ToggleButton);
 app.component('InputIcon', InputIcon);
 app.component('SelectButton', SelectButton);

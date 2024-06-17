@@ -25,6 +25,18 @@ const router = createRouter({
                     import ('@/views/Debug.vue')
             },
             {
+                path: '/log',
+                name: 'log',
+                component: () =>
+                    import ('@/views/Log.vue')
+            },
+            {
+                path: '/addDizionario',
+                name: 'addDizionario',
+                component: () =>
+                    import ('@/views/AddDizionario.vue')
+            },
+            {
                 path: '/login',
                 name: 'login',
                 component: () =>
