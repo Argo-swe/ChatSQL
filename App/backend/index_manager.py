@@ -12,7 +12,6 @@ class IndexManager:
         # Modelli per la lingua inglese
         self.embeddings = Embeddings(
             content=True,
-            defaults=False,
             indexes={
                 "table_description": {
                     "path": "sentence-transformers/all-MiniLM-L12-v2"
@@ -28,7 +27,6 @@ class IndexManager:
         # Modelli per la lingua italiana
         """self.embeddings = Embeddings(
             content=True,
-            defaults=False,
             indexes={
                 "table_description": {
                     "path": "efederici/sentence-BERTino"
@@ -98,15 +96,13 @@ class IndexManager:
         log = self.getLogFile("w")
         if log == False:
             return log
-        log.write(f'{self.getDebugHeader()}\n')
+        log.write(f'{self.getDebugHeader()} - Details of the prompt generation process.\n')
         log.write(f'Request: {user_request}\n\n')
-        log.write(f'{self.getDebugHeader()}\n')
-        log.write("Phase 1 - first extraction\n")
+        log.write(f'{self.getDebugHeader()} - Phase 1 - first extraction\n')
         log.write("List of relevant tables:\n")
         if not tuples:
-            log.write("No relevant tables found.\n\n")
-        else:
-            log.write("\n")
+            log.write("No relevant tables found.\n")
+        log.write("\n")
         for i, tuple in enumerate(tuples):
             log.write(f'Table {i + 1} | {tuple["table_name"]}: {tuple["max_score"]}\n')
             log.write(f'Description of the table: {tuple["text"]}\n')
@@ -129,8 +125,7 @@ class IndexManager:
             log = self.getLogFile("a")
             if log == False:
                 return log
-            log.write(f'{self.getDebugHeader()}\n')
-            log.write("Phase 2 - second extraction\n")
+            log.write(f'{self.getDebugHeader()} - Phase 2 - second extraction\n')
             log.write("List of pertinent tables:\n")
         relevant_tuples = []
         score = 0
@@ -202,6 +197,7 @@ class IndexManager:
             "Foreign keys have the following schema: table name (column name) references table name (column name)\n\n")
         dyn_ref_string = "FOREIGN KEYS:\n"
         for table in relevant_tuples:
+            # Estraggo dal file JSON le informazioni sulla tabella
             table_schema = schema["tables"][table["table_pos"]]
             dyn_key_string = f'PRIMARY KEY: ({", ".join(table_schema["primary_key"])})\n'
             dyn_desc_string = (
