@@ -1,13 +1,13 @@
-import { toRefs, reactive, computed } from 'vue';
+import { toRefs, reactive, computed, ref } from 'vue';
 
 const layoutConfig = reactive({
     ripple: true,
     darkTheme: false,
     inputStyle: 'outlined',
     menuMode: 'static',
-    theme: 'aura-light-green',
+    theme: 'aura-light-blue',
     scale: 14,
-    activeMenuItem: null
+    activeMenuItem: null,
 });
 
 const layoutState = reactive({
@@ -16,7 +16,8 @@ const layoutState = reactive({
     profileSidebarVisible: false,
     configSidebarVisible: false,
     staticMenuMobileActive: false,
-    menuHoverActive: false
+    menuHoverActive: false,
+    settingsOpen: false,
 });
 
 export function useLayout() {

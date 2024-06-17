@@ -3,7 +3,8 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 
-const { layoutConfig, onMenuToggle } = useLayout();
+const { layoutConfig, onMenuToggle, layoutState } = useLayout();
+
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
@@ -26,7 +27,7 @@ const onTopBarMenuButton = () => {
 };
 const onSettingsClick = () => {
     topbarMenuActive.value = false;
-    router.push('/settings');
+    layoutState.settingsOpen.value = !layoutState.settingsOpen.value;
 };
 const onLoginClick = () => {
     topbarMenuActive.value = false;

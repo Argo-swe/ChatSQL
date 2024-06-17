@@ -15,10 +15,10 @@ const $primevue = usePrimeVue();
 const scales = ref([12, 13, 14, 15, 16]);
 const visible = ref(false);
 
-const { setScale, layoutConfig } = useLayout();
+const { setScale, layoutConfig, layoutState } = useLayout();
 
 const onConfigButtonClick = () => {
-    visible.value = !visible.value;
+    layoutState.settingsOpen.value = !layoutState.settingsOpen.value;
 };
 const onChangeTheme = (theme, mode) => {
     $primevue.changeTheme(layoutConfig.theme.value, theme, 'theme-css', () => {
@@ -76,11 +76,7 @@ const isThemeActive = (themeFamily, color) => {
 </script>
 
 <template>
-    <button class="layout-config-button p-link" type="button" @click="onConfigButtonClick()">
-        <i class="pi pi-cog"></i>
-    </button>
-
-    <Sidebar v-model:visible="visible" position="right" class="layout-config-sidebar w-26rem" pt:closeButton="ml-auto">
+    <Sidebar v-model:visible="layoutState.settingsOpen.value" position="right" class="layout-config-sidebar w-26rem" pt:closeButton="ml-auto">
         <div class="p-2">
             <section class="pb-4 flex align-items-center justify-content-between border-bottom-1 surface-border">
                 <span class="text-xl font-semibold">Scale</span>
