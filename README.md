@@ -4,7 +4,7 @@
 
 ## Tecnologie
 - NodeJS v20.14.0
-- Python v3.10
+- Python v3.10.14
 - VueJS v3.4.21
 
 ## Avviare il progetto
@@ -17,7 +17,7 @@ vengono avviati due container:
 - backend: espone l'interfaccia di backend e i funzionamenti di ricerca semantica
 
 ## Backend
-L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhost:5000/api-doc](http://localhost:5000/api-doc)
+L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhost:8000/docs](http://localhost:8000/docs)
 
 
 ## Frontend
@@ -26,11 +26,12 @@ L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhos
     ```
     docker compose up backend
     ```
+1. Spostarsi nella cartella `frontend`
 1. (Solo la prima volta) Installare i pacchetti
     ```
     npm i
     ```
-1. Spostarsi nella cartella `frontend` e eseguire la chiamata di aggiornamento dell'interfaccia
+1. Eseguire la chiamata di aggiornamento dell'interfaccia backend
     ```
     npm run build-api
     ```

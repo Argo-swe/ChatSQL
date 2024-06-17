@@ -1,12 +1,7 @@
 FastAPI
-flask
-flask_cors
-flask_restx
-flask-api
-flask-openapi3
 pydantic
 python-multipart
-
+aiofiles
 jsonschema
 parameterized
 sqlalchemy

@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import Header from './components/Header.vue';
-import OpenAPIClientAxios from 'openapi-client-axios';
-import { ref } from 'vue';
+import { getApiClient } from './services/api-client';import { ref } from 'vue';
 
-const api = new OpenAPIClientAxios({ definition: 'http://localhost:5000/swagger.json' }); // FLASK
-api.init();
-
-const generatedPrompt = ref('');
 
 async function button() {
-  const client = await api.getClient();
-  const res = await client.get_generate_prompt(); // FLASK
-  console.log('Pet created', res.data);
-  generatedPrompt.value = res.data.data;
+  const client = await getApiClient();
+  // esempio di generazione prompt
+  const resPrompt = await client.generate_prompt_api_prompt__get("prova");
+  const prompt = resPrompt.data.data;
+
+  // esempio di contenuto del file con id 1
+  const resJsonFileContent = await client.get_dictionary_file_api_dictionary__id__file_get(1)
+  const fileContent = JSON.stringify(resJsonFileContent.data);
 }
 </script>
 

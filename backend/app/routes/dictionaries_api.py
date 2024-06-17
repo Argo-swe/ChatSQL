@@ -1,26 +1,157 @@
-from fastapi import APIRouter, File, UploadFile
-from typing import Optional
+from models.responses.response_dto import ResponseDto, ResponseStatusEnum
+from models.responses.dictionaries_response_dto import DictionariesResponseDto
+from models.responses.dictionary_response_dto import DictionaryResponseDto
+
+from fastapi import APIRouter, File, UploadFile, Form, Depends
+from fastapi.responses import FileResponse
+from typing import Annotated, List
+import aiofiles
 
 from models.dictionary_dto import DictionaryDto
 
 tag = "dictionary"
 router = APIRouter()
 
-@router.get("/", tags=[tag], response_model=list[DictionaryDto])
-def get_dictionaries() -> list[DictionaryDto]:
-    dictionaries: list[DictionaryDto] = []
-    return dictionaries
+out_file_base_path = "/usr/src/app/dic_schemas"
+next_id = 2
 
-@router.post("/", tags=[tag], response_model=DictionaryDto)
-def create_dicrionary_metadata(dictionary: DictionaryDto, file: Optional[UploadFile] = None) -> DictionaryDto:
-    dictionary = DictionaryDto(name="Dizionario di prova", description=file.filename)
-    return dictionary
+# TODO: da rimuovere quando legato a DB
+dictionaries: List[DictionaryDto] = [
+    DictionaryDto(id=1, name="Dizionario di prova", description="Descrizione esempio 1")
+]
 
-@router.put("/{id}", tags=[tag], response_model=DictionaryDto)
-def update_dicrionary_metadata(id: int, dictionary: DictionaryDto) -> DictionaryDto:
-    dictionary = DictionaryDto(name="Dizionario di prova", description="Descrizione dizionario di prova")
-    return dictionary
+# TODO: update & upload file
 
-@router.delete("/{id}", tags=[tag], response_model=DictionaryDto)
-def update_dicrionary_metadata() -> None:
-    dictionary = DictionaryDto(name="Dizionario di prova", description="Descrizione dizionario di prova")
+@router.get("/", tags=[tag], response_model=DictionariesResponseDto)
+def get_all_dictionaries() -> DictionariesResponseDto:
+    return DictionariesResponseDto(
+            data=dictionaries,
+            status=ResponseStatusEnum.OK.value
+        )
+
+@router.get("/{id}", tags=[tag], response_model=DictionaryResponseDto)
+def get_dictionary(id: int) -> DictionaryResponseDto:
+    found_dic = next((x for x in dictionaries if x.id == id), None)
+    print(found_dic)
+    if found_dic != None:
+        return DictionaryResponseDto(
+                data=found_dic,
+                status=ResponseStatusEnum.OK.value
+            )
+
+    return DictionaryResponseDto(
+                data=None,
+                message=f"Dictionary with id {id} not found",
+                status=ResponseStatusEnum.NOT_FOUND.value
+            )
+
+@router.get("/{id}/file", tags=[tag])
+def get_dictionary_file(id: int):
+    found_dic = next((x for x in dictionaries if x.id == id), None)
+    print(found_dic)
+    if found_dic != None:
+        return FileResponse(generateFileName(id))
+
+    return ResponseDto(
+                message=f"Dictionary with id {id} not found",
+                status=ResponseStatusEnum.NOT_FOUND.value
+            )
+
+@router.post("/", tags=[tag], response_model=DictionaryResponseDto)
+async def create_dictionary(file: Annotated[UploadFile, File()], dictionary: DictionaryDto = Depends()) -> DictionaryResponseDto:
+    global next_id
+    if dictionary.name != None and dictionary.description != None and file:
+        aus_dic = DictionaryDto(id=next_id, name=dictionary.name, description=dictionary.description)
+        dictionaries.append(aus_dic)
+
+        print (file.filename)
+
+        # TODO come gestire il file?
+        async with aiofiles.open(generateFileName(next_id), 'wb') as out_file:
+            content = await file.read()  # async read
+            await out_file.write(content)  # async write
+
+        next_id += 1
+
+        return DictionaryResponseDto(
+                data=aus_dic,
+                status=ResponseStatusEnum.OK.value
+        )
+
+    if not file:
+        return DictionaryResponseDto(
+                data=None,
+                message=f"Dictionary file is mandatory",
+                status=ResponseStatusEnum.BAD_REQUEST.value
+            )
+
+    return DictionaryResponseDto(
+                data=None,
+                message=f"Dictionary name and description are mandatory",
+                status=ResponseStatusEnum.BAD_REQUEST.value
+            )
+
+@router.put("/{id}/file", tags=[tag], response_model=DictionaryResponseDto)
+async def update_dicrionary_file(id: int, file: Annotated[UploadFile, File()]) -> DictionaryResponseDto:
+    found_dic = next((x for x in dictionaries if x.id == id), None)
+    if found_dic == None:
+        return DictionaryResponseDto(
+                data=None,
+                message=f"Dictionary with id {id} not found",
+                status=ResponseStatusEnum.NOT_FOUND.value
+            )
+
+    # TODO come gestire il file?
+    async with aiofiles.open(generateFileName(id), 'wb') as out_file:
+            content = await file.read()  # async read
+            await out_file.write(content)  # async write
+
+    return DictionaryResponseDto(
+                data=found_dic,
+                status=ResponseStatusEnum.OK.value
+            )
+
+@router.put("/{id}", tags=[tag], response_model=DictionaryResponseDto)
+def update_dicrionary_metadata(id: int, dictionary: DictionaryDto) -> DictionaryResponseDto:
+    found_dic = next((x for x in dictionaries if x.id == id), None)
+    if found_dic == None:
+        return DictionaryResponseDto(
+                data=None,
+                message=f"Dictionary with id {id} not found",
+                status=ResponseStatusEnum.NOT_FOUND.value
+            )
+
+    if dictionary.name == None or dictionary.description == None:
+        return DictionaryResponseDto(
+                data=None,
+                message="Dictionary name and description are mandatory",
+                status=ResponseStatusEnum.BAD_REQUEST.value
+            )
+
+    found_dic.name = dictionary.name
+    found_dic.description = dictionary.description
+
+    return DictionaryResponseDto(
+                data=found_dic,
+                status=ResponseStatusEnum.OK.value
+            )
+
+@router.delete("/{id}", tags=[tag], response_model=ResponseDto)
+def delete_dicrionary(id: int) -> ResponseDto:
+    found_dic = next((x for x in dictionaries if x.id == id), None)
+
+    if found_dic == None:
+        return ResponseDto(
+                message=f"Dictionary with id {id} not found",
+                status=ResponseStatusEnum.NOT_FOUND.values
+            )
+
+    dictionaries.remove(found_dic)
+
+    return ResponseDto(
+                status=ResponseStatusEnum.OK.value
+            )
+
+def generateFileName(id: int) -> str:
+    global out_file_base_path
+    return f'{out_file_base_path}/dic_schema_{id}.json'
