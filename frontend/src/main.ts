@@ -42,7 +42,7 @@ app.directive('styleclass', StyleClass);
 app.component('Button', Button);
 app.component('FloatLabel', FloatLabel);
 app.component('InputText', InputText);
-app.component('InpitSwitch', InputSwitch);
+app.component('InputSwitch', InputSwitch);
 app.component('Slider', Slider);
 app.component('FileUpload', FileUpload);
 app.component('ToggleButton', ToggleButton);
