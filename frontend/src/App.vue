@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Header from './components/Header.vue';
-import { getApiClient } from './services/api-client';import { ref } from 'vue';
-
+import { getApiClient } from './services/api-client';
 
 async function button() {
   const client = await getApiClient();
