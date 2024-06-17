@@ -9,7 +9,6 @@ import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
 import FloatLabel from 'primevue/floatlabel';
 import InputIcon from 'primevue/inputicon';
-import InputSwitch from 'primevue/inputswitch';
 import InputText from 'primevue/inputtext';
 import RadioButton from 'primevue/radiobutton';
 import Ripple from 'primevue/ripple';
@@ -20,6 +19,8 @@ import ToastService from 'primevue/toastservice';
 import ToggleButton from 'primevue/togglebutton';
 import Tooltip from 'primevue/tooltip';
 import Slider from 'primevue/slider';
+import Checkbox from 'primevue/checkbox';
+import InputSwitch from 'primevue/inputswitch';
 
 import '@/assets/styles.scss';
 
@@ -47,5 +48,6 @@ app.component('InputIcon', InputIcon);
 app.component('SelectButton', SelectButton);
 app.component('RadioButton', RadioButton);
 app.component('Sidebar', Sidebar);
+app.component('Checkbox', Checkbox);
 
 app.mount('#app');
