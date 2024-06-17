@@ -1,61 +1,95 @@
-<script setup>
+<script setup lang="ts">
 import { useLayout } from '@/layout/composables/layout';
 import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
 
-const { layoutConfig } = useLayout();
-const email = ref('');
-const password = ref('');
-const checked = ref(false);
+import Password from 'primevue/password';
+import InputText from 'primevue/inputtext';
+import FloatLabel from 'primevue/floatlabel';
+import Button from 'primevue/button';
+import Divider from 'primevue/divider';
 
-const logoUrl = computed(() => {
-    return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
-});
+const username = ref(null);
+const password = ref(null);
+
+function submitForm() {
+  console.log('Username:', username.value);
+  console.log('Password:', password.value);
+  // Add your login logic here
+}
 </script>
-
+  
 <template>
-    <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
-        <div class="flex flex-column align-items-center justify-content-center">
-            <img :src="logoUrl" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0" />
-            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
-                <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
-                    <div class="text-center mb-5">
-                        <img src="/demo/images/login/avatar.png" alt="Image" height="50" class="mb-3" />
-                        <div class="text-900 text-3xl font-medium mb-3">Welcome, Isabel!</div>
-                        <span class="text-600 font-medium">Sign in to continue</span>
-                    </div>
+  <div class="login-view">
+    <form @submit.prevent="submitForm">
+      <div class="card flex justify-content-center">
+        <FloatLabel>
+          <InputText id="username" v-model="username" />
+          <label for="username">Username</label>
+        </FloatLabel>
+      </div>
 
-                    <div>
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email1button" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="email" />
+      <div class="card flex justify-content-center">
+        <FloatLabel>
+          <Password v-model="password" inputId="password">
+            <template #header>
+              <h6>Pick a password</h6>
+            </template>
+            <template #footer>
+              <Divider />
+              <p class="mt-2">Suggestions</p>
+              <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+                <li>At least one lowercase</li>
+                <li>At least one uppercase</li>
+                <li>At least one numeric</li>
+                <li>Minimum 8 characters</li>
+              </ul>
+            </template>
+          </Password>
+          <label for="password">Password</label>
+        </FloatLabel>
+      </div>
 
-                        <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
-                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
-
-                        <div class="flex align-items-center justify-content-between mb-5 gap-5">
-                            <div class="flex align-items-center">
-                                <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
-                                <label for="rememberme1">Remember me</label>
-                            </div>
-                            <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
-                        </div>
-                        <Button label="Sign In" class="w-full p-3 text-xl"></Button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <AppConfig simple />
+      <div class="card flex justify-center">
+        <Button label="Submit" type="submit" />
+      </div>
+    </form>
+  </div>
 </template>
 
 <style scoped>
-.pi-eye {
-    transform: scale(1.6);
-    margin-right: 1rem;
+.login-view {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 20px;
+  background-color: #1f1f1f;
+  border-radius: 8px;
 }
 
-.pi-eye-slash {
-    transform: scale(1.6);
-    margin-right: 1rem;
+.card {
+  width: 100%;
+  max-width: 400px;
+  margin: 1em auto;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.p-float-label label {
+  top: 30%;
+}
+
+.p-float-label:has(input:focus) label,
+.p-float-label:has(input.p-filled) label,
+.p-float-label:has(input:-webkit-autofill) label,
+.p-float-label:has(textarea:focus) label,
+.p-float-label:has(textarea.p-filled) label,
+.p-float-label:has(.p-inputwrapper-focus) label,
+.p-float-label:has(.p-inputwrapper-filled) label {
+  top: -1.10rem;
+}
+
+.p-button[data-v-87276d9b] {
+    left: 30%
 }
 </style>

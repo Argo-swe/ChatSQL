@@ -11,8 +11,11 @@ const logoUrl = computed(() => {
 
 <template>
     <div class="layout-footer">
-        <img :src="logoUrl" alt="Logo" height="40" class="mr-2" />
-        <span class="font-medium ml-2">Gruppo ARGO</span>
+        <div class="titolo">
+            <img :src="logoUrl" alt="Logo" height="40" class="mr-2" />
+            <span class="font-medium ml-2">Gruppo ARGO</span>
+        </div>
+        <p class="copyright">© 2024 Gruppo ARGO. Tutti i diritti riservati.</p>
     </div>
 </template>
 <style lang="scss" scoped></style>
