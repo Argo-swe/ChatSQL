@@ -29,10 +29,6 @@ const onSettingsClick = () => {
     topbarMenuActive.value = false;
     layoutState.settingsOpen.value = !layoutState.settingsOpen.value;
 };
-const onLoginClick = () => {
-    topbarMenuActive.value = false;
-    router.push('/login');
-};
 const topbarMenuClasses = computed(() => {
     return {
         'layout-topbar-menu-mobile-active': topbarMenuActive.value
@@ -85,10 +81,10 @@ const isOutsideClicked = (event) => {
                 <i class="pi pi-cog"></i>
                 <span>Settings</span>
             </button>
-            <button @click="onLoginClick()" class="p-link layout-topbar-button">
+            <router-link to="/login" class="p-link layout-topbar-button">
                 <i class="pi pi-user"></i>
                 <span>Login</span>
-            </button>
+            </router-link>
         </div>
     </div>
 </template>
