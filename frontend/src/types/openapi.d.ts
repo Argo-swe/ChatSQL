@@ -9,7 +9,7 @@ import type {
 declare namespace Components {
     namespace Schemas {
         /**
-         * Body_create_dictionary_api_dictionary__post
+         * Body_createDictionary_api_dictionary__post
          */
         export interface BodyCreateDictionaryApiDictionaryPost {
             /**
@@ -18,9 +18,9 @@ declare namespace Components {
             file: string; // binary
         }
         /**
-         * Body_update_dicrionary_file_api_dictionary__id__file_put
+         * Body_updateDictionaryFile_api_dictionary__id__file_put
          */
-        export interface BodyUpdateDicrionaryFileApiDictionaryIdFilePut {
+        export interface BodyUpdateDictionaryFileApiDictionaryIdFilePut {
             /**
              * File
              */
@@ -125,7 +125,7 @@ declare namespace Components {
     }
 }
 declare namespace Paths {
-    namespace CreateDictionaryApiDictionaryPost {
+    namespace CreateDictionary {
         namespace Parameters {
             /**
              * Description
@@ -145,13 +145,13 @@ declare namespace Paths {
             name: /* Name */ Parameters.Name;
             description: /* Description */ Parameters.Description;
         }
-        export type RequestBody = /* Body_create_dictionary_api_dictionary__post */ Components.Schemas.BodyCreateDictionaryApiDictionaryPost;
+        export type RequestBody = /* Body_createDictionary_api_dictionary__post */ Components.Schemas.BodyCreateDictionaryApiDictionaryPost;
         namespace Responses {
             export type $200 = /* DictionaryResponseDto */ Components.Schemas.DictionaryResponseDto;
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
-    namespace DeleteDicrionaryApiDictionaryIdDelete {
+    namespace DeleteDictionary {
         namespace Parameters {
             /**
              * Id
@@ -166,7 +166,7 @@ declare namespace Paths {
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
-    namespace GeneratePromptApiPromptDebugGet {
+    namespace GeneratePrompt {
         namespace Parameters {
             /**
              * Query
@@ -181,7 +181,7 @@ declare namespace Paths {
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
-    namespace GeneratePromptApiPromptGet {
+    namespace GeneratePromptDebug {
         namespace Parameters {
             /**
              * Query
@@ -196,12 +196,12 @@ declare namespace Paths {
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
-    namespace GetAllDictionariesApiDictionaryGet {
+    namespace GetAllDictionaries {
         namespace Responses {
             export type $200 = /* DictionariesResponseDto */ Components.Schemas.DictionariesResponseDto;
         }
     }
-    namespace GetDictionaryApiDictionaryIdGet {
+    namespace GetDictionary {
         namespace Parameters {
             /**
              * Id
@@ -216,7 +216,7 @@ declare namespace Paths {
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
-    namespace GetDictionaryFileApiDictionaryIdFileGet {
+    namespace GetDictionaryFile {
         namespace Parameters {
             /**
              * Id
@@ -231,12 +231,12 @@ declare namespace Paths {
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
-    namespace MainGet {
+    namespace Main {
         namespace Responses {
             export type $200 = any;
         }
     }
-    namespace UpdateDicrionaryFileApiDictionaryIdFilePut {
+    namespace UpdateDictionaryFile {
         namespace Parameters {
             /**
              * Id
@@ -246,13 +246,13 @@ declare namespace Paths {
         export interface PathParameters {
             id: /* Id */ Parameters.Id;
         }
-        export type RequestBody = /* Body_update_dicrionary_file_api_dictionary__id__file_put */ Components.Schemas.BodyUpdateDicrionaryFileApiDictionaryIdFilePut;
+        export type RequestBody = /* Body_updateDictionaryFile_api_dictionary__id__file_put */ Components.Schemas.BodyUpdateDictionaryFileApiDictionaryIdFilePut;
         namespace Responses {
             export type $200 = /* DictionaryResponseDto */ Components.Schemas.DictionaryResponseDto;
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
-    namespace UpdateDicrionaryMetadataApiDictionaryIdPut {
+    namespace UpdateDictionaryMetadata {
         namespace Parameters {
             /**
              * Id
@@ -272,179 +272,179 @@ declare namespace Paths {
 
 export interface OperationMethods {
   /**
-   * get_all_dictionaries_api_dictionary__get - Get All Dictionaries
+   * getAllDictionaries - Getalldictionaries
    */
-  'get_all_dictionaries_api_dictionary__get'(
+  'getAllDictionaries'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.GetAllDictionariesApiDictionaryGet.Responses.$200>
+  ): OperationResponse<Paths.GetAllDictionaries.Responses.$200>
   /**
-   * create_dictionary_api_dictionary__post - Create Dictionary
+   * createDictionary - Createdictionary
    */
-  'create_dictionary_api_dictionary__post'(
-    parameters?: Parameters<Paths.CreateDictionaryApiDictionaryPost.QueryParameters> | null,
-    data?: Paths.CreateDictionaryApiDictionaryPost.RequestBody,
+  'createDictionary'(
+    parameters?: Parameters<Paths.CreateDictionary.QueryParameters> | null,
+    data?: Paths.CreateDictionary.RequestBody,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.CreateDictionaryApiDictionaryPost.Responses.$200>
+  ): OperationResponse<Paths.CreateDictionary.Responses.$200>
   /**
-   * get_dictionary_api_dictionary__id__get - Get Dictionary
+   * getDictionary - Getdictionary
    */
-  'get_dictionary_api_dictionary__id__get'(
-    parameters?: Parameters<Paths.GetDictionaryApiDictionaryIdGet.PathParameters> | null,
+  'getDictionary'(
+    parameters?: Parameters<Paths.GetDictionary.PathParameters> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.GetDictionaryApiDictionaryIdGet.Responses.$200>
+  ): OperationResponse<Paths.GetDictionary.Responses.$200>
   /**
-   * update_dicrionary_metadata_api_dictionary__id__put - Update Dicrionary Metadata
+   * updateDictionaryMetadata - Updatedictionarymetadata
    */
-  'update_dicrionary_metadata_api_dictionary__id__put'(
-    parameters?: Parameters<Paths.UpdateDicrionaryMetadataApiDictionaryIdPut.PathParameters> | null,
-    data?: Paths.UpdateDicrionaryMetadataApiDictionaryIdPut.RequestBody,
+  'updateDictionaryMetadata'(
+    parameters?: Parameters<Paths.UpdateDictionaryMetadata.PathParameters> | null,
+    data?: Paths.UpdateDictionaryMetadata.RequestBody,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.UpdateDicrionaryMetadataApiDictionaryIdPut.Responses.$200>
+  ): OperationResponse<Paths.UpdateDictionaryMetadata.Responses.$200>
   /**
-   * delete_dicrionary_api_dictionary__id__delete - Delete Dicrionary
+   * deleteDictionary - Deletedictionary
    */
-  'delete_dicrionary_api_dictionary__id__delete'(
-    parameters?: Parameters<Paths.DeleteDicrionaryApiDictionaryIdDelete.PathParameters> | null,
+  'deleteDictionary'(
+    parameters?: Parameters<Paths.DeleteDictionary.PathParameters> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.DeleteDicrionaryApiDictionaryIdDelete.Responses.$200>
+  ): OperationResponse<Paths.DeleteDictionary.Responses.$200>
   /**
-   * get_dictionary_file_api_dictionary__id__file_get - Get Dictionary File
+   * getDictionaryFile - Getdictionaryfile
    */
-  'get_dictionary_file_api_dictionary__id__file_get'(
-    parameters?: Parameters<Paths.GetDictionaryFileApiDictionaryIdFileGet.PathParameters> | null,
+  'getDictionaryFile'(
+    parameters?: Parameters<Paths.GetDictionaryFile.PathParameters> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.GetDictionaryFileApiDictionaryIdFileGet.Responses.$200>
+  ): OperationResponse<Paths.GetDictionaryFile.Responses.$200>
   /**
-   * update_dicrionary_file_api_dictionary__id__file_put - Update Dicrionary File
+   * updateDictionaryFile - Updatedictionaryfile
    */
-  'update_dicrionary_file_api_dictionary__id__file_put'(
-    parameters?: Parameters<Paths.UpdateDicrionaryFileApiDictionaryIdFilePut.PathParameters> | null,
-    data?: Paths.UpdateDicrionaryFileApiDictionaryIdFilePut.RequestBody,
+  'updateDictionaryFile'(
+    parameters?: Parameters<Paths.UpdateDictionaryFile.PathParameters> | null,
+    data?: Paths.UpdateDictionaryFile.RequestBody,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.UpdateDicrionaryFileApiDictionaryIdFilePut.Responses.$200>
+  ): OperationResponse<Paths.UpdateDictionaryFile.Responses.$200>
   /**
-   * generate_prompt_api_prompt__get - Generate Prompt
+   * generatePrompt - Generateprompt
    */
-  'generate_prompt_api_prompt__get'(
-    parameters?: Parameters<Paths.GeneratePromptApiPromptGet.QueryParameters> | null,
+  'generatePrompt'(
+    parameters?: Parameters<Paths.GeneratePrompt.QueryParameters> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.GeneratePromptApiPromptGet.Responses.$200>
+  ): OperationResponse<Paths.GeneratePrompt.Responses.$200>
   /**
-   * generate_prompt_api_prompt_debug_get - Generate Prompt
+   * generatePromptDebug - Generatepromptdebug
    */
-  'generate_prompt_api_prompt_debug_get'(
-    parameters?: Parameters<Paths.GeneratePromptApiPromptDebugGet.QueryParameters> | null,
+  'generatePromptDebug'(
+    parameters?: Parameters<Paths.GeneratePromptDebug.QueryParameters> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.GeneratePromptApiPromptDebugGet.Responses.$200>
+  ): OperationResponse<Paths.GeneratePromptDebug.Responses.$200>
   /**
-   * main__get - Main
+   * main - Main
    */
-  'main__get'(
+  'main'(
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.MainGet.Responses.$200>
+  ): OperationResponse<Paths.Main.Responses.$200>
 }
 
 export interface PathsDictionary {
   ['/api/dictionary/']: {
     /**
-     * get_all_dictionaries_api_dictionary__get - Get All Dictionaries
+     * getAllDictionaries - Getalldictionaries
      */
     'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.GetAllDictionariesApiDictionaryGet.Responses.$200>
+    ): OperationResponse<Paths.GetAllDictionaries.Responses.$200>
     /**
-     * create_dictionary_api_dictionary__post - Create Dictionary
+     * createDictionary - Createdictionary
      */
     'post'(
-      parameters?: Parameters<Paths.CreateDictionaryApiDictionaryPost.QueryParameters> | null,
-      data?: Paths.CreateDictionaryApiDictionaryPost.RequestBody,
+      parameters?: Parameters<Paths.CreateDictionary.QueryParameters> | null,
+      data?: Paths.CreateDictionary.RequestBody,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.CreateDictionaryApiDictionaryPost.Responses.$200>
+    ): OperationResponse<Paths.CreateDictionary.Responses.$200>
   }
   ['/api/dictionary/{id}']: {
     /**
-     * get_dictionary_api_dictionary__id__get - Get Dictionary
+     * getDictionary - Getdictionary
      */
     'get'(
-      parameters?: Parameters<Paths.GetDictionaryApiDictionaryIdGet.PathParameters> | null,
+      parameters?: Parameters<Paths.GetDictionary.PathParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.GetDictionaryApiDictionaryIdGet.Responses.$200>
+    ): OperationResponse<Paths.GetDictionary.Responses.$200>
     /**
-     * update_dicrionary_metadata_api_dictionary__id__put - Update Dicrionary Metadata
+     * updateDictionaryMetadata - Updatedictionarymetadata
      */
     'put'(
-      parameters?: Parameters<Paths.UpdateDicrionaryMetadataApiDictionaryIdPut.PathParameters> | null,
-      data?: Paths.UpdateDicrionaryMetadataApiDictionaryIdPut.RequestBody,
+      parameters?: Parameters<Paths.UpdateDictionaryMetadata.PathParameters> | null,
+      data?: Paths.UpdateDictionaryMetadata.RequestBody,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.UpdateDicrionaryMetadataApiDictionaryIdPut.Responses.$200>
+    ): OperationResponse<Paths.UpdateDictionaryMetadata.Responses.$200>
     /**
-     * delete_dicrionary_api_dictionary__id__delete - Delete Dicrionary
+     * deleteDictionary - Deletedictionary
      */
     'delete'(
-      parameters?: Parameters<Paths.DeleteDicrionaryApiDictionaryIdDelete.PathParameters> | null,
+      parameters?: Parameters<Paths.DeleteDictionary.PathParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.DeleteDicrionaryApiDictionaryIdDelete.Responses.$200>
+    ): OperationResponse<Paths.DeleteDictionary.Responses.$200>
   }
   ['/api/dictionary/{id}/file']: {
     /**
-     * get_dictionary_file_api_dictionary__id__file_get - Get Dictionary File
+     * getDictionaryFile - Getdictionaryfile
      */
     'get'(
-      parameters?: Parameters<Paths.GetDictionaryFileApiDictionaryIdFileGet.PathParameters> | null,
+      parameters?: Parameters<Paths.GetDictionaryFile.PathParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.GetDictionaryFileApiDictionaryIdFileGet.Responses.$200>
+    ): OperationResponse<Paths.GetDictionaryFile.Responses.$200>
     /**
-     * update_dicrionary_file_api_dictionary__id__file_put - Update Dicrionary File
+     * updateDictionaryFile - Updatedictionaryfile
      */
     'put'(
-      parameters?: Parameters<Paths.UpdateDicrionaryFileApiDictionaryIdFilePut.PathParameters> | null,
-      data?: Paths.UpdateDicrionaryFileApiDictionaryIdFilePut.RequestBody,
+      parameters?: Parameters<Paths.UpdateDictionaryFile.PathParameters> | null,
+      data?: Paths.UpdateDictionaryFile.RequestBody,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.UpdateDicrionaryFileApiDictionaryIdFilePut.Responses.$200>
+    ): OperationResponse<Paths.UpdateDictionaryFile.Responses.$200>
   }
   ['/api/prompt/']: {
     /**
-     * generate_prompt_api_prompt__get - Generate Prompt
+     * generatePrompt - Generateprompt
      */
     'get'(
-      parameters?: Parameters<Paths.GeneratePromptApiPromptGet.QueryParameters> | null,
+      parameters?: Parameters<Paths.GeneratePrompt.QueryParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.GeneratePromptApiPromptGet.Responses.$200>
+    ): OperationResponse<Paths.GeneratePrompt.Responses.$200>
   }
   ['/api/prompt/debug']: {
     /**
-     * generate_prompt_api_prompt_debug_get - Generate Prompt
+     * generatePromptDebug - Generatepromptdebug
      */
     'get'(
-      parameters?: Parameters<Paths.GeneratePromptApiPromptDebugGet.QueryParameters> | null,
+      parameters?: Parameters<Paths.GeneratePromptDebug.QueryParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.GeneratePromptApiPromptDebugGet.Responses.$200>
+    ): OperationResponse<Paths.GeneratePromptDebug.Responses.$200>
   }
   ['/']: {
     /**
-     * main__get - Main
+     * main - Main
      */
     'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.MainGet.Responses.$200>
+    ): OperationResponse<Paths.Main.Responses.$200>
   }
 }
 

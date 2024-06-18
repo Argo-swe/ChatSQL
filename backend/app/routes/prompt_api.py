@@ -14,7 +14,7 @@ router = APIRouter()
 # manager.createOrLoadIndex(data_dict_name)
 
 @router.get("/", tags=[tag], response_model=StringDataResponseDto)
-def generate_prompt(query: str) -> StringDataResponseDto:
+def generatePrompt(query: str) -> StringDataResponseDto:
 
     if query == None:
         query = "the surname of users who paid for all their orders with PayPal"
@@ -32,7 +32,7 @@ def generate_prompt(query: str) -> StringDataResponseDto:
 
 
 @router.get("/debug", tags=[tag], response_model=StringDataResponseDto)
-def generate_prompt(query: str) -> StringDataResponseDto:
+def generatePromptDebug(query: str) -> StringDataResponseDto:
 
     # FIXME: set debug method
     if query == None:

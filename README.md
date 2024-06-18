@@ -27,6 +27,11 @@ L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhos
     docker compose up backend
     ```
 1. Spostarsi nella cartella `frontend`
+1. Impostare le versione di node corretta (vedi sopra)\
+    *Se si sta usando `nvm (Node Version Manager)` basta eseguire il comando*
+        ```
+        nvm use
+        ```
 1. (Solo la prima volta) Installare i pacchetti
     ```
     npm i

@@ -1,8 +1,9 @@
-FastAPI
-pydantic
-python-multipart
 aiofiles
+fastapi
+fastapi_utils[all]
 jsonschema
 parameterized
+# pydantic
+python-multipart
 sqlalchemy
 txtai

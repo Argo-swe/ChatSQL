@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_utils.openapi import simplify_operation_ids
 
 from routes.dictionaries_api import router as dictionaries_router
 from routes.prompt_api import router as prompt_router
@@ -19,6 +20,8 @@ app.add_middleware(CORSMiddleware,
 @app.get("/")
 async def main():
     return {"message": "Hello World"}
+
+simplify_operation_ids(app)
 
 # if __name__ == '__main__':
 #     app.run(debug=True, host='0.0.0.0')

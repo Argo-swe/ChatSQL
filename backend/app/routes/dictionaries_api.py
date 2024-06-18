@@ -23,14 +23,14 @@ dictionaries: List[DictionaryDto] = [
 # TODO: update & upload file
 
 @router.get("/", tags=[tag], response_model=DictionariesResponseDto)
-def get_all_dictionaries() -> DictionariesResponseDto:
+def getAllDictionaries() -> DictionariesResponseDto:
     return DictionariesResponseDto(
             data=dictionaries,
             status=ResponseStatusEnum.OK.value
         )
 
 @router.get("/{id}", tags=[tag], response_model=DictionaryResponseDto)
-def get_dictionary(id: int) -> DictionaryResponseDto:
+def getDictionary(id: int) -> DictionaryResponseDto:
     found_dic = next((x for x in dictionaries if x.id == id), None)
     print(found_dic)
     if found_dic != None:
@@ -46,7 +46,7 @@ def get_dictionary(id: int) -> DictionaryResponseDto:
             )
 
 @router.get("/{id}/file", tags=[tag])
-def get_dictionary_file(id: int):
+def getDictionaryFile(id: int):
     found_dic = next((x for x in dictionaries if x.id == id), None)
     print(found_dic)
     if found_dic != None:
@@ -58,7 +58,7 @@ def get_dictionary_file(id: int):
             )
 
 @router.post("/", tags=[tag], response_model=DictionaryResponseDto)
-async def create_dictionary(file: Annotated[UploadFile, File()], dictionary: DictionaryDto = Depends()) -> DictionaryResponseDto:
+async def createDictionary(file: Annotated[UploadFile, File()], dictionary: DictionaryDto = Depends()) -> DictionaryResponseDto:
     global next_id
     if dictionary.name != None and dictionary.description != None and file:
         aus_dic = DictionaryDto(id=next_id, name=dictionary.name, description=dictionary.description)
@@ -92,7 +92,7 @@ async def create_dictionary(file: Annotated[UploadFile, File()], dictionary: Dic
             )
 
 @router.put("/{id}/file", tags=[tag], response_model=DictionaryResponseDto)
-async def update_dicrionary_file(id: int, file: Annotated[UploadFile, File()]) -> DictionaryResponseDto:
+async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()]) -> DictionaryResponseDto:
     found_dic = next((x for x in dictionaries if x.id == id), None)
     if found_dic == None:
         return DictionaryResponseDto(
@@ -112,7 +112,7 @@ async def update_dicrionary_file(id: int, file: Annotated[UploadFile, File()]) -
             )
 
 @router.put("/{id}", tags=[tag], response_model=DictionaryResponseDto)
-def update_dicrionary_metadata(id: int, dictionary: DictionaryDto) -> DictionaryResponseDto:
+def updateDictionaryMetadata(id: int, dictionary: DictionaryDto) -> DictionaryResponseDto:
     found_dic = next((x for x in dictionaries if x.id == id), None)
     if found_dic == None:
         return DictionaryResponseDto(
@@ -137,7 +137,7 @@ def update_dicrionary_metadata(id: int, dictionary: DictionaryDto) -> Dictionary
             )
 
 @router.delete("/{id}", tags=[tag], response_model=ResponseDto)
-def delete_dicrionary(id: int) -> ResponseDto:
+def deleteDictionary(id: int) -> ResponseDto:
     found_dic = next((x for x in dictionaries if x.id == id), None)
 
     if found_dic == None:

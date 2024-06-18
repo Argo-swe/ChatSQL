@@ -5,11 +5,11 @@ import { getApiClient } from './services/api-client';
 async function button() {
   const client = await getApiClient();
   // esempio di generazione prompt
-  const resPrompt = await client.generate_prompt_api_prompt__get("prova");
+  const resPrompt = await client.generatePrompt("prova");
   const prompt = resPrompt.data.data;
 
   // esempio di contenuto del file con id 1
-  const resJsonFileContent = await client.get_dictionary_file_api_dictionary__id__file_get(1)
+  const resJsonFileContent = await client.getDictionaryFile(1)
   const fileContent = JSON.stringify(resJsonFileContent.data);
 }
 </script>
