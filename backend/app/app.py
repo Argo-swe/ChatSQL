@@ -1,26 +1,27 @@
-from flask import Flask
-from flask_restx import Api
-from flask_cors import CORS
-# import os
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_utils.openapi import simplify_operation_ids
 
-from routes.test import api as test_namespace
+from routes.dictionaries_api import router as dictionaries_router
+from routes.prompt_api import router as prompt_router
 
-# Try loading an evn var, or go to default.
-#which_env_file = os.environ.get('WELCOME', '.env-* did not load')
+app = FastAPI()
 
-api = Api(
-    title="ChatSQL API",
-    version="1.0",
-    description="API for ChatSQL",
-    doc="/api-doc"
-)
+app.include_router(dictionaries_router, prefix="/api/dictionary")
+app.include_router(prompt_router, prefix="/api/prompt")
 
-api.add_namespace(test_namespace, path='/api/test')
+app.add_middleware(CORSMiddleware,
+                   allow_credentials=True,
+                   allow_origins=["*"],
+                   allow_methods=["*"],
+                   allow_headers=["*"],
+                   )
 
-app = Flask(__name__)
-app.config["RESTX_MASK_SWAGGER"]=False
-CORS(app)
-api.init_app(app)
+@app.get("/")
+async def main():
+    return {"message": "Hello World"}
+
+simplify_operation_ids(app)
 
 # if __name__ == '__main__':
 #     app.run(debug=True, host='0.0.0.0')

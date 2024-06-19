@@ -11,9 +11,7 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "build-api": "npx openapicmd typegen http://localhost:5000/swagger.json > src/types/openapi.d.ts",
-    "build-api-flask": "npx openapicmd typegen http://localhost:8000/openapi.json > src/types/openapi.d.ts",
-    "build-api-fastapi": "npx openapicmd typegen http://localhost:8000/openapi.json > src/types/openapi.d.ts"
+    "build-api": "npx openapicmd typegen http://localhost:8000/openapi.json > src/types/openapi.d.ts"
   },
   "dependencies": {
     "axios": "^1.7.2",

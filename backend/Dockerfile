@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.10.14
 
 WORKDIR /usr/src/app
 
@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY ./app /usr/src/app
 
-CMD ["flask", "run", "--host", "0.0.0.0"]
+CMD ["fastapi", "dev", "app.py", "--host", "0.0.0.0"]
