@@ -7,3 +7,4 @@ parameterized
 python-multipart
 sqlalchemy
 txtai
+pyjwt
