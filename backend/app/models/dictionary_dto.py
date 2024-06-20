@@ -1,6 +1,7 @@
+from typing import Optional
 from pydantic import BaseModel
 
 class DictionaryDto(BaseModel):
-    #id: int
+    id: Optional[int] = None
     name: str
     description: str

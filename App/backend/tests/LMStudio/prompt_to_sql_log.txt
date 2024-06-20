@@ -1,0 +1,110 @@
+Test 0:
+Request: all information on users who paid for their orders with PayPal
+SELECT * FROM users WHERE username IN (SELECT username FROM orders WHERE payment_method = 'PayPal');
+
+Request: "All information regarding users who paid for their orders using PayPal."
+```
+SELECT *
+FROM users
+WHERE username IN (
+    SELECT username
+    FROM orders
+    WHERE payment_method = 'PayPal'
+)
+```
+
+Request: "All information regarding users who utilized PayPal to pay for their orders."
+SELECT u.email, u.name, u.surname 
+FROM users u 
+JOIN orders o ON u.username = o.username 
+WHERE o.payment_method = 'PayPal';
+
+Request: "All information regarding users who used PayPal as a payment method for their orders."
+```
+SELECT u.*
+FROM users u
+JOIN orders o ON u.username = o.username
+WHERE o.payment_method = 'PayPal';
+```
+
+Request: Information on users who paid for their orders using PayPal.
+```
+SELECT u.name, u.surname, u.email 
+FROM users u 
+JOIN orders o ON u.username = o.username 
+WHERE o.payment_method = 'PayPal';
+```
+
+Request: "All information regarding users who paid for their orders using PayPal."
+SELECT u.name, u.surname, u.email, o.order_date, o.payment_method, o.total 
+FROM orders o 
+JOIN users u ON o.username = u.username 
+WHERE o.payment_method = 'PayPal';
+
+------------------------------------------------------------------
+Test 1:
+Request: all information about products that belong to an order placed by a user whose first name is alex
+```
+SELECT p.*
+FROM products p
+JOIN order_items oi ON p.id = oi.product_id
+JOIN orders o ON oi.order_id = o.id
+JOIN users u ON o.username = u.username
+WHERE u.name = 'alex'
+```
+
+Request: "Return all information about products that belong to an order placed by a user with the first name 'Alex'."
+SELECT p.*
+FROM orders o
+JOIN users u ON o.username = u.username
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE u.name = 'Alex';
+
+Request: "Return all information about products that belong to an order placed by a user with the first name 'Alex'."
+```
+SELECT p.*
+FROM orders o
+JOIN users u ON o.username = u.username
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE u.name = 'Alex';
+```
+
+Request: "Return all information about products that pertain to an order placed by a customer with the first name 'Alex'."
+SELECT 
+    p.*,
+    oi.quantity AS product_quantity,
+    o.order_date,
+    u.name AS customer_name,
+    p.price * oi.quantity AS total_amount
+FROM 
+    products p
+JOIN 
+    order_items oi ON p.id = oi.product_id
+JOIN 
+    orders o ON oi.order_id = o.id
+JOIN 
+    users u ON o.username = u.username
+WHERE 
+    u.name = 'Alex';
+
+Request: "Return all product information related to orders placed by users with the first name 'Alex'."
+```
+SELECT p.*
+FROM products AS p
+JOIN order_items AS oi ON p.id = oi.product_id
+JOIN orders AS o ON oi.order_id = o.id
+JOIN users AS u ON o.username = u.username
+WHERE u.name = 'Alex';
+```
+
+Request: Return all product information for orders placed by users with the first name 'Alex'.
+SELECT p.*
+FROM products AS p
+JOIN order_items AS oi ON p.id = oi.product_id
+JOIN orders AS o ON oi.order_id = o.id
+JOIN users AS u ON o.username = u.username
+WHERE u.name LIKE 'Alex%';
+
+------------------------------------------------------------------
