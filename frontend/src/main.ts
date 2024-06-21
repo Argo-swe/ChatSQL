@@ -3,27 +3,32 @@ import App from './App.vue';
 import router from './router';
 
 import PrimeVue from 'primevue/config';
-import BadgeDirective from 'primevue/badgedirective';
-import Button from 'primevue/button'
-import ConfirmationService from 'primevue/confirmationservice';
-import DialogService from 'primevue/dialogservice';
-import FloatLabel from 'primevue/floatlabel';
-import InputIcon from 'primevue/inputicon';
-import InputText from 'primevue/inputtext';
-import RadioButton from 'primevue/radiobutton';
-import Ripple from 'primevue/ripple';
-import SelectButton from 'primevue/selectbutton';
-import Sidebar from 'primevue/sidebar';
-import StyleClass from 'primevue/styleclass';
 import ToastService from 'primevue/toastservice';
-import ToggleButton from 'primevue/togglebutton';
+import DialogService from 'primevue/dialogservice';
+import ConfirmationService from 'primevue/confirmationservice';
+
+import BadgeDirective from 'primevue/badgedirective';
 import Tooltip from 'primevue/tooltip';
+import Ripple from 'primevue/ripple';
+import StyleClass from 'primevue/styleclass';
+
+import Button from 'primevue/button'
+import FloatLabel from 'primevue/floatlabel';
+import InputText from 'primevue/inputtext';
+import InputSwitch from 'primevue/inputswitch';
 import Slider from 'primevue/slider';
 import FileUpload from 'primevue/fileupload';
+import ToggleButton from 'primevue/togglebutton';
+import InputIcon from 'primevue/inputicon';
+import SelectButton from 'primevue/selectbutton';
+import RadioButton from 'primevue/radiobutton';
+import Sidebar from 'primevue/sidebar';
 import Checkbox from 'primevue/checkbox';
-import InputSwitch from 'primevue/inputswitch';
+import Dropdown from 'primevue/dropdown';
+import Dialog from 'primevue/dialog';
 
 import '@/assets/styles.scss';
+
 
 const app = createApp(App);
 
@@ -33,11 +38,10 @@ app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
 
-app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);
+app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
-
 
 app.component('Button', Button);
 app.component('FloatLabel', FloatLabel);
@@ -51,5 +55,7 @@ app.component('SelectButton', SelectButton);
 app.component('RadioButton', RadioButton);
 app.component('Sidebar', Sidebar);
 app.component('Checkbox', Checkbox);
+app.component('Dropdown', Dropdown);
+app.component('Dialog', Dialog);
 
 app.mount('#app');
