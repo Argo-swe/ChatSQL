@@ -18,6 +18,7 @@ const layoutState = reactive({
     staticMenuMobileActive: false,
     menuHoverActive: false,
     settingsOpen: false,
+    loginDialogVisible: false,
 });
 
 export function useLayout() {
