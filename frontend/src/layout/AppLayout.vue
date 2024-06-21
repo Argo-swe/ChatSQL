@@ -4,6 +4,7 @@ import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
+import LoginDialog from './LoginDialog.vue';
 import { useLayout } from '@/layout/composables/layout';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
@@ -59,6 +60,7 @@ const isOutsideClicked = (event) => {
 <template>
     <div class="layout-wrapper" :class="containerClass">
         <app-topbar></app-topbar>
+        <login-dialog />
         <div class="layout-sidebar">
             <app-sidebar></app-sidebar>
         </div>
@@ -66,7 +68,7 @@ const isOutsideClicked = (event) => {
             <div class="layout-main">
                 <router-view></router-view>
             </div>
-            <app-footer></app-footer>
+            <!-- <app-footer></app-footer> -->
         </div>
         <app-config></app-config>
         <div class="layout-mask"></div>

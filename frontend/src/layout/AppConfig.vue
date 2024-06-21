@@ -13,7 +13,6 @@ defineProps({
 const $primevue = usePrimeVue();
 
 const scales = ref([12, 13, 14, 15, 16]);
-const visible = ref(false);
 
 const { setScale, layoutConfig, layoutState } = useLayout();
 
