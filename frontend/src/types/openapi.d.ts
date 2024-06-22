@@ -9,6 +9,22 @@ import type {
 declare namespace Components {
     namespace Schemas {
         /**
+         * AuthResponseDto
+         */
+        export interface AuthResponseDto {
+            /**
+             * Message
+             */
+            message?: /* Message */ string | null;
+            status: /* ResponseStatusEnum */ ResponseStatusEnum;
+            /**
+             * Data
+             */
+            data: /* Data */ {
+                [key: string]: any;
+            } | null;
+        }
+        /**
          * Body_createDictionary_api_dictionary__post
          */
         export interface BodyCreateDictionaryApiDictionaryPost {
@@ -76,6 +92,19 @@ declare namespace Components {
              * Detail
              */
             detail?: /* ValidationError */ ValidationError[];
+        }
+        /**
+         * LoginDto
+         */
+        export interface LoginDto {
+            /**
+             * Username
+             */
+            username: string;
+            /**
+             * Password
+             */
+            password: string;
         }
         /**
          * ResponseDto
@@ -231,6 +260,13 @@ declare namespace Paths {
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
+    namespace Login {
+        export type RequestBody = /* LoginDto */ Components.Schemas.LoginDto;
+        namespace Responses {
+            export type $200 = /* AuthResponseDto */ Components.Schemas.AuthResponseDto;
+            export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
+        }
+    }
     namespace Main {
         namespace Responses {
             export type $200 = any;
@@ -344,6 +380,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GeneratePromptDebug.Responses.$200>
   /**
+   * login - Login
+   */
+  'login'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.Login.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.Login.Responses.$200>
+  /**
    * main - Main
    */
   'main'(
@@ -435,6 +479,16 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GeneratePromptDebug.Responses.$200>
+  }
+  ['/api/login/']: {
+    /**
+     * login - Login
+     */
+    'post'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.Login.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.Login.Responses.$200>
   }
   ['/']: {
     /**

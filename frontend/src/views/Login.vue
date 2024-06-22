@@ -8,17 +8,45 @@ import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
 import Button from 'primevue/button';
 import Divider from 'primevue/divider';
+import { getApiClient } from '../services/api-client';
+import { useRouter } from 'vue-router'
+
+import { ref } from 'vue';
+
+const router = useRouter();
 
 const username = ref(null);
 const password = ref(null);
 
-function submitForm() {
+async function submitForm() {
   console.log('Username:', username.value);
   console.log('Password:', password.value);
   // Add your login logic here
+  const client = await getApiClient();
+
+  const resPrompt = await client.login(
+    undefined,
+    { "username": username.value ?? "", "password": password.value ?? "" }
+  );
+  console.log(resPrompt)
+
+
+  switch (resPrompt.data.status) {
+    case "OK":
+      localStorage.setItem("token", resPrompt.data.data?.access_token || '');
+      router.push('/')
+    break;
+
+    case "NOT_FOUND":
+      // TODO: aggiungere warning
+
+      break;
+    default:
+      break;
+  }
 }
 </script>
-  
+
 <template>
   <div class="login-view">
     <form @submit.prevent="submitForm">
