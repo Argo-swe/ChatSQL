@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, onMounted, ref, type Ref } from "vue";
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload';
-import { getApiClient } from '@/services/api-client';
+import { getApiClient } from '@/services/api-client.service';
 import type { DynamicDialogInstance } from 'primevue/dynamicdialogoptions'
 
 const client = getApiClient();

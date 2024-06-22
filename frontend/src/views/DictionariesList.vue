@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getApiClient } from '@/services/api-client';
+import { getApiClient } from '@/services/api-client.service';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -8,6 +8,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useDialog } from 'primevue/usedialog';
 import CreateUpdateDictionaryModal from '@/components/CreateUpdateDictionaryModal.vue';
 import type { Components } from '@/types/openapi';
+import { downloadFile, stringToSnakeCase } from '@/services/utils.service';
 
 const dialog = useDialog();
 const confirm = useConfirm();
@@ -105,6 +106,21 @@ function onClickUpdateFile(dictionary: Components.Schemas.DictionaryDto) {
     });
 }
 
+function onClickDownloadFile(dictionary: Components.Schemas.DictionaryDto) {
+    client.getDictionaryFile(dictionary.id, undefined, {
+
+        responseType: 'blob'
+
+    }).then(
+        response => {
+            downloadFile(`${stringToSnakeCase(dictionary.name)}_schema.json`, response.data);
+        },
+        error => {
+            console.warn(error);
+        }
+    )
+}
+
 function onClickDelete(dictionaryId: number) {
     confirm.require({
         message: 'Are you sure you want to proceed?',
@@ -153,9 +169,10 @@ function onClickDelete(dictionaryId: number) {
         <Column field="description" header="Description" sortable style="width: 55%"></Column>
         <Column style="width: 20%" bodyStyle="text-align:right">
             <template #body="slotProps">
-                <Button icon="pi pi-pencil" aria-label="Edit dictionary metadata" class="ml-2" rounded @click="onClickUpdateMetadata(slotProps.data)" />
-                <Button icon="pi pi-file-edit" aria-label="Edit dictionary schema" class="ml-2" rounded @click="onClickUpdateFile(slotProps.data)" />
-                <Button icon="pi pi-trash" aria-label="Delete dictionary" severity="danger" class="ml-2" rounded @click="onClickDelete(slotProps.data.id)" />
+                <Button icon="pi pi-pencil" title="Edit dictionary metadata" class="ml-2" rounded @click="onClickUpdateMetadata(slotProps.data)" />
+                <Button icon="pi pi-file-edit" title="Edit dictionary file" class="ml-2" rounded @click="onClickUpdateFile(slotProps.data)" />
+                <Button icon="pi pi-download" title="Download dictionary file" severity="help" class="ml-2" rounded @click="onClickDownloadFile(slotProps.data)" />
+                <Button icon="pi pi-trash" title="Delete dictionary" severity="danger" class="ml-2" rounded @click="onClickDelete(slotProps.data.id)" />
             </template>
         </Column>
     </DataTable>
