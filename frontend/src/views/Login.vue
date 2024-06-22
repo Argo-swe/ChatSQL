@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { useLayout } from '@/layout/composables/layout';
+import { ref, computed } from 'vue';
+import AppConfig from '@/layout/AppConfig.vue';
+
 import Password from 'primevue/password';
 import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
 import Button from 'primevue/button';
 import Divider from 'primevue/divider';
-
-import { ref } from 'vue';
 
 const username = ref(null);
 const password = ref(null);

@@ -1,5 +1,5 @@
 <template>
-    <img src="@/assets/argo_trasparente.png" alt="Logo" height="40" class="logo">
+    <img src="../public/images/argo_trasparente.png" alt="Logo" height="40" class="logo">
 </template>
 
 <script>

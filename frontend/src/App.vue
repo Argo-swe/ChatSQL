@@ -15,6 +15,7 @@ async function button() {
 </script>
 
 <template>
-  <Header />
-  <RouterView />
+  <router-view />
 </template>
+
+<style scoped></style>
