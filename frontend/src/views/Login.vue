@@ -2,6 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
+import { messageService } from '../services/toast-message'
 
 import Password from 'primevue/password';
 import InputText from 'primevue/inputtext';
@@ -11,14 +12,20 @@ import Divider from 'primevue/divider';
 
 const username = ref(null);
 const password = ref(null);
+const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
+
 
 function submitForm() {
   console.log('Username:', username.value);
   console.log('Password:', password.value);
   // Add your login logic here
+  messageSuccess('Login', `user: ${username.value} - psw: ${password.value}`);
+  messageInfo('Login', `user: ${username.value} - psw: ${password.value}`);
+  messageWarning('Login', `user: ${username.value} - psw: ${password.value}`);
+  messageError('Login', `user: ${username.value} - psw: ${password.value}`);
 }
 </script>
-  
+
 <template>
   <div class="login-view">
     <form @submit.prevent="submitForm">
