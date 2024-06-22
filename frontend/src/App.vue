@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import Header from './components/Header.vue';
-import { getApiClient } from './services/api-client';
+import ConfirmDialog from 'primevue/confirmdialog';
+import DynamicDialog from 'primevue/dynamicdialog';
+import { getApiClient } from '@/services/api-client';
 
 async function button() {
   const client = await getApiClient();
@@ -16,6 +17,8 @@ async function button() {
 
 <template>
   <router-view />
+  <ConfirmDialog></ConfirmDialog>
+  <DynamicDialog />
 </template>
 
 <style scoped></style>

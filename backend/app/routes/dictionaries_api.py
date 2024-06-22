@@ -143,7 +143,7 @@ def deleteDictionary(id: int) -> ResponseDto:
     if found_dic == None:
         return ResponseDto(
                 message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND.values
+                status=ResponseStatusEnum.NOT_FOUND.value
             )
 
     dictionaries.remove(found_dic)
