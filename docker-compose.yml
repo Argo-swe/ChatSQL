@@ -18,6 +18,7 @@ services:
       - "5173:5173"
     links:
       - backend
+    env_file: ./frontend/.env
     volumes:
       - ./frontend/src:/usr/src/app/src
       - ./frontend/public:/usr/src/app/public

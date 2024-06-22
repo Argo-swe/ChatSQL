@@ -5,6 +5,7 @@ from fastapi_utils.openapi import simplify_operation_ids
 from routes.dictionaries_api import router as dictionaries_router
 from routes.prompt_api import router as prompt_router
 from routes.login_api import router as login_router
+
 app = FastAPI()
 
 app.include_router(dictionaries_router, prefix="/api/dictionary")
