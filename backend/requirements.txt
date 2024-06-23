@@ -7,4 +7,4 @@ parameterized
 python-multipart
 sqlalchemy
 txtai
-psycopg2    # to use PostgreSQL database
+psycopg2    # per usare database PostgreSQL
