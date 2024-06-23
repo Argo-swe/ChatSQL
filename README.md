@@ -19,6 +19,18 @@ vengono avviati due container:
 ## Backend
 L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhost:8000/docs](http://localhost:8000/docs)
 
+### Variabili d'ambiente
+Modificare il file `backend/.env` inserendo
+```
+KEY=VALUE
+```
+
+nel codice python per utilizzare la variabile
+```
+import os
+
+PYTHON_VARIABLE = os.getenv("KEY", DEFAULT_VALUE)
+```
 
 ## Frontend
 ### Rigenerare i metodi per interfacciarsi col `backend`
@@ -40,3 +52,24 @@ L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhos
     ```
     npm run build-api
     ```
+### Variabili d'ambiente
+Modificare il file `frontend/env.d.ts` inserendo la definizione della variabile di ambiente
+```
+interface ImportMetaEnv {
+    KEY: string,
+    VITE_KEY_2: string
+}
+```
+
+modificare il file `frontend/.env` inserendo i valori da utilizzare
+```
+KEY=VALUE
+VITE_KEY_2=VALUE_2
+```
+*perchè una variabile sia accessibile al codice processato (utilizzabile dall'utente) deve essere preceduta da `KITE_`*
+
+per utilizzare la variabile basta utilizzare
+```
+import.meta.env.VITE_KEY_2  // = VALUE_2
+import.meta.env.KEY         // = undefined (vedi nota sopra)
+```

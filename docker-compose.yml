@@ -1,3 +1,5 @@
+name: chatsql
+
 services:
   backend:
     build:
@@ -6,6 +8,8 @@ services:
     command: fastapi dev app.py --host 0.0.0.0
     ports:
       - '8000:8000'
+    env_file:
+      - backend/.env
     volumes:
       - ./backend/app:/usr/src/app
       - backend-db-volume:/opt/chatsql
