@@ -20,7 +20,7 @@ vengono avviati due container:
 L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ### Variabili d'ambiente
-Modificare il file `backend/.env` inserendo
+Creare un file locale il file `backend/.env.local` inserendo le variabili che si vogliono modificare rispetto al file `backend/.env` o che hanno valori da impostare
 ```
 KEY=VALUE
 ```
@@ -31,6 +31,8 @@ import os
 
 PYTHON_VARIABLE = os.getenv("KEY", DEFAULT_VALUE)
 ```
+#### Variabili con valore da impostare per sicurezza
+- JWT_SECRET
 
 ## Frontend
 ### Rigenerare i metodi per interfacciarsi col `backend`
@@ -61,7 +63,7 @@ interface ImportMetaEnv {
 }
 ```
 
-modificare il file `frontend/.env` inserendo i valori da utilizzare
+Creare un file locale il file `frontend/.env.local` inserendo le variabili che si vogliono modificare rispetto al file `frontend/.env` o che hanno valori da impostare
 ```
 KEY=VALUE
 VITE_KEY_2=VALUE_2

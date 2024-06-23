@@ -12,6 +12,7 @@ services:
       - /usr/src/entrypoint-backend.sh
     env_file:
       - backend/.env
+      - backend/.env.local
     volumes:
       - ./backend/app:/usr/src/app
       - backend-db-volume:/opt/chatsql
@@ -26,6 +27,7 @@ services:
       - /usr/src/app/entrypoint-frontend.sh
     env_file:
       - frontend/.env
+      - frontend/.env.local
     links:
       - backend
     volumes:
