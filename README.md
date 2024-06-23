@@ -8,13 +8,16 @@
 - VueJS v3.4.21
 
 ## Avviare il progetto
-Per avviare il progetto eseguire il comando
-```
-docker compose up
-```
-vengono avviati due container:
-- frontend: sviluppato in VueJs ed espone l'interfacci utente
-- backend: espone l'interfaccia di backend e i funzionamenti di ricerca semantica
+1. Creare i due file `backend/.env.local` e `backend/.env.local` per gestire i valori da utilizzare in locale per le variabili d'ambiente.\
+Si possono copiare i relativi file `.env`, popolando le variabili richieste.\
+Vedi relative sottosezioni delle variabili d'ambiente.
+1. eseguire il comando
+    ```
+    docker compose up
+    ```
+    vengono avviati due container:
+    - frontend: sviluppato in VueJs ed espone l'interfacci utente
+    - backend: espone l'interfaccia di backend e i funzionamenti di ricerca semantica
 
 ## Backend
 L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhost:8000/docs](http://localhost:8000/docs)
