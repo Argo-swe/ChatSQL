@@ -7,6 +7,7 @@ class ResponseStatusEnum(str, Enum):
     ERROR = 'ERROR'
     BAD_REQUEST = 'BAD_REQUEST'
     NOT_FOUND = 'NOT_FOUND'
+    CONFLICT = 'CONFLICT'
 
 class ResponseDto(BaseModel):
     message: Optional[str] = None

@@ -69,6 +69,7 @@ function createDictionary() {
 
 function editDictionaryMetadata() {
   client.updateDictionaryMetadata(dictionaryId.value, {
+    id: dictionaryId.value,
     name: dictionaryName.value,
     description: dictionaryDescription.value
   }).then(
@@ -137,7 +138,7 @@ function submitForm() {
 }
 
 function isFileSelected(): boolean {
-  return selectedFile != null;
+  return !withFile.value || selectedFile != null;
 }
 
 function isFormValid(): boolean {
