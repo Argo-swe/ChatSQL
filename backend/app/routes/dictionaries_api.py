@@ -64,7 +64,7 @@ def getDictionaryFile(id: int, db: Session = Depends(getDb)):
                 status=ResponseStatusEnum.NOT_FOUND
             )
 
-@router.post("/", tags=[tag], response_model=DictionaryResponseDto)
+@router.post("/", tags=[tag], response_model=DictionaryResponseDto, dependencies=[Depends(JwtBearer())])
 async def createDictionary(file: Annotated[UploadFile, File()], dictionary: DictionaryDto = Depends(), db: Session = Depends(getDb)) -> DictionaryResponseDto:
     if dictionary.name != None and dictionary.description != None and file:
         foundDic = crud.getDictionaryByName(db, name=dictionary.name)
@@ -103,7 +103,7 @@ async def createDictionary(file: Annotated[UploadFile, File()], dictionary: Dict
                 status=ResponseStatusEnum.BAD_REQUEST
             )
 
-@router.put("/{id}/file", tags=[tag], response_model=DictionaryResponseDto)
+@router.put("/{id}/file", tags=[tag], response_model=DictionaryResponseDto, dependencies= Depends(JwtBearer())])
 async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()], db: Session = Depends(getDb)) -> DictionaryResponseDto:
     foundDic = crud.getDictionaryById(db, id)
 
@@ -126,7 +126,7 @@ async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()], db:
                 status=ResponseStatusEnum.OK
             )
 
-@router.put("/{id}", tags=[tag], response_model=DictionaryResponseDto)
+@router.put("/{id}", tags=[tag], response_model=DictionaryResponseDto, dependencies=[Depends(JwtBearer())])
 def updateDictionaryMetadata(id: int, dictionary: DictionaryDto, db: Session = Depends(getDb)) -> DictionaryResponseDto:
     foundDic = crud.getDictionaryById(db, id)
 
