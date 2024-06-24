@@ -1,4 +1,4 @@
-from sqlalchemy import  Column, Integer, String
+from sqlalchemy import  Column, Integer, String, event
 
 from .base import Base
 
@@ -16,3 +16,9 @@ class Dictionaries(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, index=True)
     description = Column(String)
+
+# creazione dati di default
+def insertDataAdmins(target, connection, **kw):
+    connection.execute(target.insert(), {'id': 1, 'username':'admin', 'password': 'admin'})
+
+event.listen(Admins.__table__, 'after_create', insertDataAdmins)

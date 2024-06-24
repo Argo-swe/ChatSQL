@@ -7,7 +7,9 @@ const api = new OpenAPIClientAxios({
 
 const client = await api.getClient<ApiClient>();
 
-
 export const getApiClient = () => {
+  if (localStorage.getItem("token")) {
+    client.defaults.headers['authorization'] = `Bearer ${localStorage.getItem("token")}`;
+  }
   return client;
 }
