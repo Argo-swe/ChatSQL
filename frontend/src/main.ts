@@ -27,6 +27,7 @@ import Checkbox from 'primevue/checkbox';
 import Dropdown from 'primevue/dropdown';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
+import Toast from 'primevue/toast';
 
 import '@/assets/styles.scss';
 
@@ -59,5 +60,6 @@ app.component('Checkbox', Checkbox);
 app.component('Dropdown', Dropdown);
 app.component('Dialog', Dialog);
 app.component('Textarea', Textarea);
+app.component('Toast', Toast);
 
 app.mount('#app');
