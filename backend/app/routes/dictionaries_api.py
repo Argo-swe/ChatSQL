@@ -3,7 +3,8 @@ from models.responses.dictionaries_response_dto import DictionariesResponseDto
 from models.responses.dictionary_response_dto import DictionaryResponseDto
 from models.dictionary_dto import DictionaryDto
 
-from fastapi import APIRouter, File, UploadFile, Form, Depends
+from engine.backend.jwt_bearer import JwtBearer
+from fastapi import APIRouter, File, UploadFile, Depends
 from fastapi.responses import FileResponse
 from typing import Annotated, List
 import aiofiles
@@ -32,7 +33,7 @@ def getAllDictionaries(db: Session = Depends(getDb)) -> DictionariesResponseDto:
 
     return DictionariesResponseDto(
             data=dictionaries,
-            status=ResponseStatusEnum.OK.value
+            status=ResponseStatusEnum.OK
         )
 
 @router.get("/{id}", tags=[tag], response_model=DictionaryResponseDto)
@@ -42,13 +43,13 @@ def getDictionary(id: int, db: Session = Depends(getDb)) -> DictionaryResponseDt
     if foundDic != None:
         return DictionaryResponseDto(
                 data=foundDic,
-                status=ResponseStatusEnum.OK.value
+                status=ResponseStatusEnum.OK
             )
 
     return DictionaryResponseDto(
                 data=None,
                 message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND.value
+                status=ResponseStatusEnum.NOT_FOUND
             )
 
 @router.get("/{id}/file", tags=[tag])
@@ -60,7 +61,7 @@ def getDictionaryFile(id: int, db: Session = Depends(getDb)):
 
     return ResponseDto(
                 message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND.value
+                status=ResponseStatusEnum.NOT_FOUND
             )
 
 @router.post("/", tags=[tag], response_model=DictionaryResponseDto)
@@ -72,7 +73,7 @@ async def createDictionary(file: Annotated[UploadFile, File()], dictionary: Dict
             return DictionaryResponseDto(
                 data=None,
                 message=f"Dictionary with name '{dictionary.name}' already exists",
-                status=ResponseStatusEnum.CONFLICT.value
+                status=ResponseStatusEnum.CONFLICT
             )
 
         newDic = crud.createDictionary(db=db, dictionary=dictionary)
@@ -86,20 +87,20 @@ async def createDictionary(file: Annotated[UploadFile, File()], dictionary: Dict
 
         return DictionaryResponseDto(
                 data=newDic,
-                status=ResponseStatusEnum.OK.value
+                status=ResponseStatusEnum.OK
         )
 
     if not file:
         return DictionaryResponseDto(
                 data=None,
                 message=f"Dictionary file is mandatory",
-                status=ResponseStatusEnum.BAD_REQUEST.value
+                status=ResponseStatusEnum.BAD_REQUEST
             )
 
     return DictionaryResponseDto(
                 data=None,
                 message=f"Dictionary name and description are mandatory",
-                status=ResponseStatusEnum.BAD_REQUEST.value
+                status=ResponseStatusEnum.BAD_REQUEST
             )
 
 @router.put("/{id}/file", tags=[tag], response_model=DictionaryResponseDto)
@@ -110,7 +111,7 @@ async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()], db:
         return DictionaryResponseDto(
                 data=None,
                 message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND.value
+                status=ResponseStatusEnum.NOT_FOUND
             )
 
     async with aiofiles.open(__generateSchemaFileName(id), 'wb') as out_file:
@@ -122,7 +123,7 @@ async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()], db:
 
     return DictionaryResponseDto(
                 data=foundDic,
-                status=ResponseStatusEnum.OK.value
+                status=ResponseStatusEnum.OK
             )
 
 @router.put("/{id}", tags=[tag], response_model=DictionaryResponseDto)
@@ -133,28 +134,28 @@ def updateDictionaryMetadata(id: int, dictionary: DictionaryDto, db: Session = D
         return DictionaryResponseDto(
                 data=None,
                 message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND.value
+                status=ResponseStatusEnum.NOT_FOUND
             )
 
     if dictionary.name == None or dictionary.description == None:
         return DictionaryResponseDto(
                 data=None,
                 message="Dictionary name and description are mandatory",
-                status=ResponseStatusEnum.BAD_REQUEST.value
+                status=ResponseStatusEnum.BAD_REQUEST
             )
 
     if crud.getDictionaryByName(db, dictionary.name) != None:
         return DictionaryResponseDto(
             data=None,
             message=f"Dictionary with name '{dictionary.name}' already exists",
-            status=ResponseStatusEnum.CONFLICT.value
+            status=ResponseStatusEnum.CONFLICT
         )
 
     newDic = crud.updateDictionary(db, dictionary)
 
     return DictionaryResponseDto(
                 data=newDic,
-                status=ResponseStatusEnum.OK.value
+                status=ResponseStatusEnum.OK
             )
 
 @router.delete("/{id}", tags=[tag], response_model=ResponseDto)
@@ -164,7 +165,7 @@ def deleteDictionary(id: int, db: Session = Depends(getDb)) -> ResponseDto:
     if foundDic == None:
         return ResponseDto(
                 message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND.value
+                status=ResponseStatusEnum.NOT_FOUND
             )
 
     crud.deleteDictionary(db, id)
@@ -175,7 +176,7 @@ def deleteDictionary(id: int, db: Session = Depends(getDb)) -> ResponseDto:
     # TODO: rimuovere indice txtai
 
     return ResponseDto(
-                status=ResponseStatusEnum.OK.value
+                status=ResponseStatusEnum.OK
             )
 
 def __generateSchemaFileName(id: int) -> str:
