@@ -84,9 +84,9 @@ async function submitForm() {
                     </Password>
                 </div>
                 <div class="flex justify-content-end gap-2">
-                    <Button type="sumbit" label="Cancel" severity="secondary"
+                    <Button type="button" label="Cancel" severity="secondary"
                         @click="layoutState.loginDialogVisible.value = false"></Button>
-                    <Button type="button" label="Login" @click="layoutState.loginDialogVisible.value = false"></Button>
+                    <Button type="sumbit" label="Login" @click="layoutState.loginDialogVisible.value = false"></Button>
                 </div>
             </form>
         </Dialog>
