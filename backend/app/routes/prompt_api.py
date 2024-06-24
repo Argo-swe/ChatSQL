@@ -27,7 +27,7 @@ def generatePrompt(query: str) -> StringDataResponseDto:
     # return { "data": prompt, "message": "OK" }
     return StringDataResponseDto(
         data=prompt,
-        status=ResponseStatusEnum.OK.value
+        status=ResponseStatusEnum.OK
     )
 
 
@@ -46,5 +46,5 @@ def generatePromptDebug(query: str) -> StringDataResponseDto:
     # return { "data": prompt, "message": "OK" }
     return StringDataResponseDto(
         data=prompt,
-        status=ResponseStatusEnum.OK.value
+        status=ResponseStatusEnum.OK
     )

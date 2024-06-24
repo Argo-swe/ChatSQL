@@ -9,20 +9,45 @@ import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
 import Button from 'primevue/button';
 import Divider from 'primevue/divider';
+import { getApiClient } from '../services/api-client';
+import { useRouter } from 'vue-router'
+
+const router = useRouter();
 
 const username = ref(null);
 const password = ref(null);
 const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
 
 
-function submitForm() {
+async function submitForm() {
   console.log('Username:', username.value);
   console.log('Password:', password.value);
+  
+  // Message examples
+  // messageSuccess('Login', `user: ${username.value} - psw: ${password.value}`);
+  // messageInfo('Login', `user: ${username.value} - psw: ${password.value}`);
+  // messageWarning('Login', `user: ${username.value} - psw: ${password.value}`);
+  // messageError('Login', `user: ${username.value} - psw: ${password.value}`);
+  
   // Add your login logic here
-  messageSuccess('Login', `user: ${username.value} - psw: ${password.value}`);
-  messageInfo('Login', `user: ${username.value} - psw: ${password.value}`);
-  messageWarning('Login', `user: ${username.value} - psw: ${password.value}`);
-  messageError('Login', `user: ${username.value} - psw: ${password.value}`);
+  const client = await getApiClient();
+
+  const resPrompt = await client.login(
+    undefined,
+    { "username": username.value ?? "", "password": password.value ?? "" }
+  );
+  switch (resPrompt.data.status) {
+    case "OK":
+      localStorage.setItem("token", resPrompt.data.data?.access_token || '');
+      router.push('/')
+      break;
+    case "NOT_FOUND":
+      messageWarning('Login', `Utente '${username.value}' non trovato`);
+      break;
+    default:
+      messageError('Login', `ERROR: ${resPrompt.data.message}`);
+      break;
+  }
 }
 </script>
 
