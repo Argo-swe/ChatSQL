@@ -3,3 +3,4 @@
 .venv/*
 node_modules
 swagger-codegen-cli-3.jar
+.env.local

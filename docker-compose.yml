@@ -1,3 +1,5 @@
+name: chatsql
+
 services:
   backend:
     build:
@@ -6,9 +8,15 @@ services:
     command: fastapi dev app.py --host 0.0.0.0
     ports:
       - '8000:8000'
+    entrypoint:
+      - /usr/src/entrypoint-backend.sh
+    env_file:
+      - backend/.env
+      - backend/.env.local
     volumes:
       - ./backend/app:/usr/src/app
-      - ./backend/db:/usr/db
+      - ./backend/requirements.txt:/usr/src/requirements.txt
+      - backend-db-volume:/opt/chatsql
 
   frontend:
     build:
@@ -16,8 +24,11 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "5173:5173"
+    entrypoint:
+      - /usr/src/app/entrypoint-frontend.sh
     env_file:
       - frontend/.env
+      - frontend/.env.local
     links:
       - backend
     volumes:
@@ -25,5 +36,10 @@ services:
       - ./frontend/public:/usr/src/app/public
       - ./frontend/environments:/usr/src/app/environments
       - ./frontend/index.html:/usr/src/app/index.html
+      - ./frontend/package.json:/usr/src/app/package.json
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+volumes:
+  backend-db-volume:
+    external: false
