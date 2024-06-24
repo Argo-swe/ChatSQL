@@ -8,24 +8,24 @@ const { layoutState } = useLayout();
 
 <template>
     <div class="card flex justify-center">
-        <Dialog v-model:visible="layoutState.loginDialogVisible.value" modal header="Edit Profile">
+        <Dialog v-model:visible="layoutState.loginDialogVisible.value" modal header="Login">
             <template #header>
                 <h2>Login</h2>
             </template>
-            <span class="text-surface-500 dark:text-surface-400 block mb-8">Login into the admin area.</span>
-            <div class="flex items-center gap-4 mb-4">
-                <label for="username" class="font-semibold w-24">Username</label>
+            <span class="p-text-secondary block mb-5">Login to admin area.</span>
+            <div class="flex align-items-center gap-3 mb-3">
+                <label for="username" class="font-semibold w-6rem">Username</label>
                 <InputText id="username" class="flex-auto" autocomplete="off" />
             </div>
-            <div class="flex items-center gap-4 mb-2">
-                <label for="email" class="font-semibold w-24">Email</label>
-                <InputText id="email" class="flex-auto" autocomplete="off" />
+            <div class="flex align-items-center gap-3 mb-5">
+                <label for="password" class="font-semibold w-6rem">Password</label>
+                <InputText id="password" class="flex-auto" autocomplete="off" />
             </div>
-            <template #footer>
-                <Button label="Cancel" text severity="secondary" @click="layoutState.loginDialogVisible.value = false" autofocus />
-                <Button label="Save" outlined severity="primary" @click="layoutState.loginDialogVisible.value = false" autofocus />
-            </template>
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" severity="secondary"
+                    @click="layoutState.loginDialogVisible.value = false"></Button>
+                <Button type="button" label="Login" @click="layoutState.loginDialogVisible.value = false"></Button>
+            </div>
         </Dialog>
     </div>
-
 </template>
