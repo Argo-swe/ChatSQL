@@ -103,7 +103,7 @@ async def createDictionary(file: Annotated[UploadFile, File()], dictionary: Dict
                 status=ResponseStatusEnum.BAD_REQUEST
             )
 
-@router.put("/{id}/file", tags=[tag], response_model=DictionaryResponseDto, dependencies= Depends(JwtBearer())])
+@router.put("/{id}/file", tags=[tag], response_model=DictionaryResponseDto, dependencies=[Depends(JwtBearer())])
 async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()], db: Session = Depends(getDb)) -> DictionaryResponseDto:
     foundDic = crud.getDictionaryById(db, id)
 
