@@ -27,7 +27,7 @@ const onTopBarMenuButton = () => {
 };
 const onSettingsClick = () => {
     topbarMenuActive.value = false;
-    layoutState.settingsOpen.value = !layoutState.settingsOpen.value;
+    layoutState.configSidebarVisible.value = !layoutState.configSidebarVisible.value;
 };
 const onLoginClick = () => {
     topbarMenuActive.value = false;
