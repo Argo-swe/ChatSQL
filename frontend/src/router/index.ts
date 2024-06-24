@@ -35,12 +35,6 @@ const router = createRouter({
                 name: 'addDizionario',
                 component: () =>
                     import ('@/views/AddDizionario.vue')
-            },
-            {
-                path: '/login',
-                name: 'login',
-                component: () =>
-                    import ('@/views/Login.vue')
             }
         ]
     }]
