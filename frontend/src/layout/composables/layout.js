@@ -2,11 +2,11 @@ import { toRefs, reactive, computed, ref } from 'vue';
 
 const layoutConfig = reactive({
     ripple: true,
-    darkTheme: false,
+    darkTheme: localStorage.getItem('darkTheme') === 'true',
     inputStyle: 'outlined',
     menuMode: 'static',
     theme: 'aura-light-blue',
-    scale: 14,
+    scale: localStorage.getItem('scale') ? parseInt(localStorage.getItem('scale')) : 14,
     activeMenuItem: null,
 });
 
@@ -17,13 +17,14 @@ const layoutState = reactive({
     configSidebarVisible: false,
     staticMenuMobileActive: false,
     menuHoverActive: false,
-    settingsOpen: false,
+    settingsOpen: false, //////////////////////////
     loginDialogVisible: false,
 });
 
 export function useLayout() {
     const setScale = (scale) => {
         layoutConfig.scale = scale;
+        localStorage.setItem('scale', scale);
     };
 
     const setActiveMenuItem = (item) => {
