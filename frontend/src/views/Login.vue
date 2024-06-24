@@ -2,6 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
+import { messageService } from '../services/toast-message'
 
 import Password from 'primevue/password';
 import InputText from 'primevue/inputtext';
@@ -15,10 +16,19 @@ const router = useRouter();
 
 const username = ref(null);
 const password = ref(null);
+const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
+
 
 async function submitForm() {
   console.log('Username:', username.value);
   console.log('Password:', password.value);
+  
+  // Message examples
+  // messageSuccess('Login', `user: ${username.value} - psw: ${password.value}`);
+  // messageInfo('Login', `user: ${username.value} - psw: ${password.value}`);
+  // messageWarning('Login', `user: ${username.value} - psw: ${password.value}`);
+  // messageError('Login', `user: ${username.value} - psw: ${password.value}`);
+  
   // Add your login logic here
   const client = await getApiClient();
 
@@ -26,20 +36,16 @@ async function submitForm() {
     undefined,
     { "username": username.value ?? "", "password": password.value ?? "" }
   );
-  console.log(resPrompt)
-
-
   switch (resPrompt.data.status) {
     case "OK":
       localStorage.setItem("token", resPrompt.data.data?.access_token || '');
       router.push('/')
-    break;
-
+      break;
     case "NOT_FOUND":
-      // TODO: aggiungere warning
-
+      messageWarning('Login', `Utente '${username.value}' non trovato`);
       break;
     default:
+      messageError('Login', `ERROR: ${resPrompt.data.message}`);
       break;
   }
 }

@@ -21,6 +21,7 @@ import Tooltip from 'primevue/tooltip';
 import Slider from 'primevue/slider';
 import FileUpload from 'primevue/fileupload';
 import Checkbox from 'primevue/checkbox';
+import Toast from 'primevue/toast';
 import InputSwitch from 'primevue/inputswitch';
 
 import '@/assets/styles.scss';
@@ -51,5 +52,6 @@ app.component('SelectButton', SelectButton);
 app.component('RadioButton', RadioButton);
 app.component('Sidebar', Sidebar);
 app.component('Checkbox', Checkbox);
+app.component('Toast', Toast);
 
 app.mount('#app');
