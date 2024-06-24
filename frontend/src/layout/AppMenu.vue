@@ -24,8 +24,6 @@ const model = ref([
 
                 ]
             },
-            { label: 'Login', icon: 'pi pi-fw pi-user', to: '/login' },
-            { label: 'Logout', icon: 'pi pi-fw pi-sign-out', to: '/login' },
         ]
     }
 ]);

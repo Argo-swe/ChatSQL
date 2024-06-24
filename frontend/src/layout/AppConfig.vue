@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { onMounted } from 'vue';
 import { usePrimeVue } from 'primevue/config';
 import { useLayout } from '@/layout/composables/layout';
 
@@ -13,18 +14,15 @@ defineProps({
 const $primevue = usePrimeVue();
 
 const scales = ref([12, 13, 14, 15, 16]);
-const visible = ref(false);
 
 const { setScale, layoutConfig, layoutState } = useLayout();
 
-const onConfigButtonClick = () => {
-    layoutState.settingsOpen.value = !layoutState.settingsOpen.value;
-};
 const onChangeTheme = (theme, mode) => {
     $primevue.changeTheme(layoutConfig.theme.value, theme, 'theme-css', () => {
         layoutConfig.theme.value = theme;
         layoutConfig.darkTheme.value = mode;
     });
+    localStorage.setItem('darkTheme', mode);
 };
 const decrementScale = () => {
     setScale(layoutConfig.scale.value - 1);
@@ -73,10 +71,15 @@ const isThemeActive = (themeFamily, color) => {
     return layoutConfig.theme.value === themeName;
 };
 
+onMounted(() => {
+    onDarkModeChange(layoutConfig.darkTheme.value);
+    applyScale();
+});
+
 </script>
 
 <template>
-    <Sidebar v-model:visible="layoutState.settingsOpen.value" position="right" class="layout-config-sidebar w-26rem" pt:closeButton="ml-auto">
+    <Sidebar v-model:visible="layoutState.configSidebarVisible.value" position="right" class="layout-config-sidebar w-26rem" pt:closeButton="ml-auto">
         <div class="p-2">
             <section class="pb-4 flex align-items-center justify-content-between border-bottom-1 surface-border">
                 <span class="text-xl font-semibold">Scale</span>
