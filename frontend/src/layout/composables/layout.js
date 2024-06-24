@@ -17,7 +17,6 @@ const layoutState = reactive({
     configSidebarVisible: false,
     staticMenuMobileActive: false,
     menuHoverActive: false,
-    settingsOpen: false, //////////////////////////
     loginDialogVisible: false,
 });
 

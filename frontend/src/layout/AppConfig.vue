@@ -79,7 +79,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <Sidebar v-model:visible="layoutState.settingsOpen.value" position="right" class="layout-config-sidebar w-26rem" pt:closeButton="ml-auto">
+    <Sidebar v-model:visible="layoutState.configSidebarVisible.value" position="right" class="layout-config-sidebar w-26rem" pt:closeButton="ml-auto">
         <div class="p-2">
             <section class="pb-4 flex align-items-center justify-content-between border-bottom-1 surface-border">
                 <span class="text-xl font-semibold">Scale</span>
