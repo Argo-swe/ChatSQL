@@ -6,6 +6,7 @@ import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
 import LoginDialog from './LoginDialog.vue';
 import { useLayout } from '@/layout/composables/layout';
+import Toast from 'primevue/toast';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
@@ -73,7 +74,7 @@ const isOutsideClicked = (event) => {
         <app-config></app-config>
         <div class="layout-mask"></div>
     </div>
-    <Toast />
+    <Toast position="bottom-right"/>
 </template>
 
 <style lang="scss" scoped></style>

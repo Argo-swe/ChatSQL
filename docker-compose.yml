@@ -8,6 +8,7 @@ services:
       - '8000:8000'
     volumes:
       - ./backend/app:/usr/src/app
+      - ./backend/db:/usr/db
 
   frontend:
     build:
@@ -15,6 +16,8 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "5173:5173"
+    env_file:
+      - frontend/.env
     links:
       - backend
     volumes:
