@@ -28,6 +28,7 @@ import Dropdown from 'primevue/dropdown';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
+import Avatar from 'primevue/avatar';
 
 import '@/assets/styles.scss';
 
@@ -61,5 +62,6 @@ app.component('Dropdown', Dropdown);
 app.component('Dialog', Dialog);
 app.component('Textarea', Textarea);
 app.component('Toast', Toast);
+app.component('Avatar', Avatar);
 
 app.mount('#app');

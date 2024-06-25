@@ -23,57 +23,114 @@ const languages = ref([
     { name: 'German', code: 'DE' },
 ]);
 
+const selectedDictionary = ref(null);
+const dictionaries = ref([
+    { name: 'Utenti', code: 'Utenti' },
+    { name: 'Clienti Zucchetti', code: 'cz' },
+    { name: 'Abc', code: 'abc' },
+]);
+
+const request = ref('');
+
+function runRequest() {
+    console.log(request.value);
+}
+
 </script>
 <template>
 
-    <div id="chat"
-        style="display: flex; flex-direction: column; justify-content: space-between; height: 78vh; width: 100%;">
+    <div id="chat" class="flex flex-column justify-between">
         <!-- TITLE -->
-        <div id="chat-title" style="width: 100%;height: 2em;">
+        <div id="chat-title" class="flex flex-row justify-between">
             <h3>Nome dizionario dati</h3>
+            <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
+                class="w-fit h-fit" />
+            <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
+                class="w-fit h-fit" />
+
+            <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
+                optionValue="code" />
+            <Button severity="secondary" icon="pi pi-info" rounded />
         </div>
 
         <!-- CHAT MESSAGES -->
-        <div id="messages" style="height: 100%; display: flex; flex-direction: column; overflow-y: scroll;">
-            <div class="message sent" style="background-color: rgb(218, 232, 239); width: 80%; align-self: flex-end; margin: 0.5em; padding: 1em;">
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae quia inventore quisquam eligendi aliquid doloremque qui amet sit et cum cupiditate consectetur quo rerum maiores adipisci assumenda impedit, sequi excepturi. Adipisci, in. Similique, natus illo facere, quas, ea optio saepe architecto unde aliquid vero itaque!</p>
+        <div id="messages">
+
+            <div class="message sent">
+                <Avatar icon="pi pi-user" class="" size="large" shape="circle" />
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae
+                    quia inventore quisquam eligendi aliquid doloremque qui amet sit et cum cupiditate consectetur quo
+                    rerum maiores adipisci assumenda impedit, sequi excepturi. Adipisci, in. Similique, natus illo
+                    facere, quas, ea optio saepe architecto unde aliquid vero itaque!</p>
             </div>
-            <div class="message recieved" style="background-color: rgb(231, 231, 232); width: 80%; margin: 0.5em; padding: 1em;">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit, quisquam unde dolor dicta temporibus error.</p>
-            </div>
-            <div class="message sent" style="background-color: rgb(218, 232, 239); width: 80%; align-self: flex-end; margin: 0.5em; padding: 1em;">
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae quia inventore quisquam eligendi aliquid doloremque qui amet sit et cum cupiditate consectetur quo rerum maiores adipisci assumenda impedit, sequi excepturi. Adipisci, in. Similique, natus illo facere, quas, ea optio saepe architecto unde aliquid vero itaque!</p>
-            </div>
-            <div class="message recieved" style="background-color: rgb(231, 231, 232); width: 80%; margin: 0.5em; padding: 1em;">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit, quisquam unde dolor dicta temporibus error.</p>
-            </div>
-            <div class="message sent" style="background-color: rgb(218, 232, 239); width: 80%; align-self: flex-end; margin: 0.5em; padding: 1em;">
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae quia inventore quisquam eligendi aliquid doloremque qui amet sit et cum cupiditate consectetur quo rerum maiores adipisci assumenda impedit, sequi excepturi. Adipisci, in. Similique, natus illo facere, quas, ea optio saepe architecto unde aliquid vero itaque!</p>
-            </div>
-            <div class="message recieved" style="background-color: rgb(231, 231, 232); width: 80%; margin: 0.5em; padding: 1em;">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit, quisquam unde dolor dicta temporibus error.</p>
-            </div>
-            <div class="message sent" style="background-color: rgb(218, 232, 239); width: 80%; align-self: flex-end; margin: 0.5em; padding: 1em;">
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae quia inventore quisquam eligendi aliquid doloremque qui amet sit et cum cupiditate consectetur quo rerum maiores adipisci assumenda impedit, sequi excepturi. Adipisci, in. Similique, natus illo facere, quas, ea optio saepe architecto unde aliquid vero itaque!</p>
-            </div>
-            <div class="message recieved" style="background-color: rgb(231, 231, 232); width: 80%; margin: 0.5em; padding: 1em;">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit, quisquam unde dolor dicta temporibus error.</p>
+
+            <div class="message recieved">
+                <Avatar icon="pi pi-database" class="" size="large" shape="circle" />
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit,
+                    quisquam unde dolor dicta temporibus error.</p>
+
             </div>
         </div>
 
         <!-- INPUT select e promot -->
-        <div id="input-container" class="flex" style="align-items: flex-end; width: 100%; margin-top: 1em;">
-            <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                style="width: fit-content; height: fit-content;" class="" />
-            <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
-                style="width: fit-content;  height: fit-content;" class="" />
-            <Textarea v-model="value" placeholder="Enter a natural language request" rows="2"
-                style="height: fit-content; width: 80%;" />
-
-            <Button label="Send" icon="pi pi-send" style="width: fit-content; height: fit-content;" />
+        <div id="input-container" class="absolute bottom-0 left-0 right-0 flex items-end">
+            <Textarea v-model="request" autoResize placeholder="Enter a natural language request" rows="1"
+                class="w-full" />
+            <Button @click="runRequest" aria-label="Send" icon="pi pi-send" rounded />
         </div>
 
     </div>
 
 
 </template>
+
+<style scoped>
+#chat {
+    height: calc(100vh - 5rem - 4rem - 2rem);
+    max-height: 100%;
+    position: relative;
+}
+
+#chat-title {
+    width: 100%;
+    height: 2em;
+    background-color: var(--primary-100);
+}
+
+#messages {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+.message {
+    width: 80%;
+    padding: 1em;
+    margin: 0.5em;
+}
+
+.message.sent {
+    background-color: rgb(218, 232, 239);
+    align-self: flex-end;
+}
+
+.message.recieved {
+    background-color: rgb(231, 231, 232);
+}
+
+#input-container {
+    width: 100%;
+    margin-top: 1em;
+    align-items: flex-end;
+    max-height: 5rem;
+}
+
+#input-container textarea {
+    max-height: 20rem;
+}
+
+textarea::-webkit-scrollbar {
+    width: 1em;
+}
+</style>
