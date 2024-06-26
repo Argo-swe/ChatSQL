@@ -22,7 +22,7 @@ app.add_middleware(CORSMiddleware,
                    )
 
 # Define excluded endpoints
-excluded_endpoints = ["/healthcheck"]
+excluded_endpoints = ["/healthcheck", "/openapi.json"]
 
 # Add filter to the logger
 logging.getLogger("uvicorn.access").addFilter(EndpointFilter(excluded_endpoints))
