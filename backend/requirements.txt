@@ -7,4 +7,5 @@ parameterized
 python-multipart
 sqlalchemy
 txtai
+psycopg2    # per usare database PostgreSQL
 pyjwt

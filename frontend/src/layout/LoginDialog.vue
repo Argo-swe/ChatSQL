@@ -10,7 +10,7 @@ import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
 import Button from 'primevue/button';
 import Divider from 'primevue/divider';
-import { getApiClient } from '../services/api-client';
+import { getApiClient } from '@/services/api-client.service';
 import { useRouter } from 'vue-router'
 
 const { layoutState } = useLayout();

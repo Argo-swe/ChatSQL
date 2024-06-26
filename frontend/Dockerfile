@@ -13,6 +13,9 @@ COPY package*.json ./
 
 RUN npm ci
 
+COPY ./entrypoint-frontend.sh ./entrypoint-frontend.sh
+RUN ["chmod", "+x", "./entrypoint-frontend.sh"]
+
 EXPOSE 8080
 
 CMD [ "npm", "run", "dev"]
