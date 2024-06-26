@@ -79,27 +79,29 @@ const copyToClipboard = (event) => {
 
     <div id="chat" class="flex flex-column justify-between">
         <!-- TITLE -->
-        <div class="flex flex-row align-items-center justify-content-start mb-2">
-            <h3 class="m-1">Choose a dictionary</h3>
-            <ToggleButton v-model="checked" onLabel="Show" offLabel="Hide" onIcon="pi pi-check" offIcon="pi pi-times" class="w-9rem m-1" aria-label="Hide or Show" @click="toggleSelectView"/>
-        </div>
-        <div id="chat-title" :class="{hide: hide}" class="flex flex-wrap flex-row justify-between">
-            <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
-                    optionValue="code" placeholder="Choose dictionary..." class="w-fit max-w-8rem md:max-w-max h-fit m-2" />
-            <Button severity="secondary" icon="pi pi-info" rounded class="m-2" />
-
-            <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                class="w-fit h-fit m-2" />
-            <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
-                class="w-fit h-fit m-2" />
+        <div id="titlebar-container" class="card">
+            <div id="chat-title" class="flex flex-row align-items-center">
+                <h3 class="m-1">Choose a dictionary</h3>
+                <ToggleButton v-model="checked" onLabel="Show" offLabel="Hide" onIcon="pi pi-check" offIcon="pi pi-times" class="w-9rem m-1" aria-label="Hide or Show" @click="toggleSelectView"/>
+            </div>
+            <div :class="{hide: hide}" class="flex flex-wrap flex-row mt-2">
+                <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
+                        optionValue="code" placeholder="Choose dictionary..." class="w-fit max-w-8rem md:max-w-max h-fit m-2" />
+                <Button severity="secondary" icon="pi pi-info" rounded class="m-2" />
+    
+                <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
+                    class="w-fit h-fit m-2" />
+                <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
+                    class="w-fit h-fit m-2" />
+            </div>
         </div>
 
         <!-- CHAT MESSAGES -->
         <div id="messages">
 
             <div class="message sent">
-                <Avatar icon="pi pi-user" class="" size="large" shape="circle" />
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae
+                <Avatar icon="pi pi-user" size="large" shape="circle" />
+                <p class="border-round-lg">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae
                     quia inventore quisquam eligendi aliquid doloremque qui amet sit et cum cupiditate consectetur quo
                     rerum maiores adipisci assumenda impedit, sequi excepturi. Adipisci, in. Similique, natus illo
                     facere, quas, ea optio saepe architecto unde aliquid vero itaque!</p>
@@ -108,7 +110,7 @@ const copyToClipboard = (event) => {
             <div class="message received border-round-lg">
                 <Avatar icon="pi pi-database" class="" size="large" shape="circle" />
                 <Button :label="isCopying ? '' : 'Copy'" :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'" class="copy-to-clipboard" severity="contrast" @click="copyToClipboard"/>
-                <p class="mt-2">
+                <p class="mt-2 border-round-lg">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit,
                     quisquam unde dolor dicta temporibus error.
                 </p>
@@ -138,11 +140,13 @@ const copyToClipboard = (event) => {
   display: none !important;
 }
 
+#titlebar-container {
+    padding: 1rem;
+    margin: unset;
+}
+
 #chat-title {
-    width: 100%;
-    /* Con la gestione dello switch On/Off limitare l'altezza diventa superfluo */
-    /* height: 2em; */
-    background-color: var(--primary-100);
+    justify-content: space-between;
 }
 
 #messages {
@@ -154,10 +158,15 @@ const copyToClipboard = (event) => {
 
 .message {
     width: 80%;
-    padding: 1em;
     margin: 0.5em;
     /* position relative aggiunta per avere un riferimento da cui partire per spostare il copy button */
     position: relative;
+}
+.message .p-avatar {
+    margin-bottom: 0.5em;
+}
+.message p {
+    padding: 1em;
 }
 
 .copy-to-clipboard {
@@ -167,12 +176,18 @@ const copyToClipboard = (event) => {
 }
 
 .message.sent {
-    background-color: rgb(218, 232, 239);
     align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
-.message.received {
-    background-color: rgb(231, 231, 232);
+.message.sent p {
+    background-color: var(--message-sent);
+}
+
+.message.received p {
+    background-color: var(--message-received);
 }
 
 #input-container {
