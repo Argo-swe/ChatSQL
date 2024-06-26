@@ -78,7 +78,7 @@ async def createDictionary(file: Annotated[UploadFile, File()], dictionary: Dict
 
         newDic = crud.createDictionary(db=db, dictionary=dictionary)
 
-        # TODO: creare indice txtai
+        # TODO: validare dizionario e create indice txtai
 
         async with aiofiles.open(__generateSchemaFileName(newDic.id), 'wb') as out_file:
             content = await file.read()
@@ -118,8 +118,7 @@ async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()], db:
         content = await file.read()
         await out_file.write(content)
 
-    # TODO: aggiornare indice txtai
-
+    # TODO: validare dizionario e aggiornare indice txtai
 
     return DictionaryResponseDto(
                 data=foundDic,
@@ -144,7 +143,8 @@ def updateDictionaryMetadata(id: int, dictionary: DictionaryDto, db: Session = D
                 status=ResponseStatusEnum.BAD_REQUEST
             )
 
-    if crud.getDictionaryByName(db, dictionary.name) != None:
+    dicWithName = crud.getDictionaryByName(db, dictionary.name)
+    if dicWithName != None and dicWithName.id != id:
         return DictionaryResponseDto(
             data=None,
             message=f"Dictionary with name '{dictionary.name}' already exists",

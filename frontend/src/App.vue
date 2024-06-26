@@ -9,4 +9,8 @@ import DynamicDialog from 'primevue/dynamicdialog';
   <DynamicDialog />
 </template>
 
-<style scoped></style>
+<style scoped>
+.capitalize {
+  text-transform: capitalize;
+}
+</style>

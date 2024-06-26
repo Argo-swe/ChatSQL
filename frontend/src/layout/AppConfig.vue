@@ -4,6 +4,9 @@ import { onMounted } from 'vue';
 import { usePrimeVue } from 'primevue/config';
 import { useLayout } from '@/layout/composables/layout';
 
+import { useI18n } from 'vue-i18n';
+const { t, locale } = useI18n();
+
 defineProps({
     simple: {
         type: Boolean,
@@ -14,6 +17,7 @@ defineProps({
 const $primevue = usePrimeVue();
 
 const scales = ref([12, 13, 14, 15, 16]);
+const supportedLocales = ref(['it', 'en']);
 
 const { setScale, layoutConfig, layoutState } = useLayout();
 
@@ -40,6 +44,9 @@ const onDarkModeChange = (value) => {
 
     layoutConfig.darkTheme.value = value;
     onChangeTheme(newThemeName, value);
+};
+const onLanguageChange = (value) => {
+    localStorage.setItem('language', value);
 };
 const changeTheme = (theme, color) => {
     let newTheme, dark;
@@ -82,7 +89,7 @@ onMounted(() => {
     <Sidebar v-model:visible="layoutState.configSidebarVisible.value" position="right" class="layout-config-sidebar w-26rem" pt:closeButton="ml-auto">
         <div class="p-2">
             <section class="pb-4 flex align-items-center justify-content-between border-bottom-1 surface-border">
-                <span class="text-xl font-semibold">Scale</span>
+                <span class="text-xl font-semibold">{{ t(`settings.scale`) }}</span>
                 <div class="flex align-items-center gap-2 border-1 surface-border py-1 px-2" style="border-radius: 30px">
                     <Button icon="pi pi-minus" @click="decrementScale" text rounded :disabled="layoutConfig.scale.value === scales[0]" />
                     <i v-for="s in scales" :key="s" :class="['pi pi-circle-fill text-sm text-200', { 'text-lg text-primary': s === layoutConfig.scale.value }]" />
@@ -92,10 +99,26 @@ onMounted(() => {
             </section>
 
             <section class="py-4 flex align-items-center justify-content-between border-bottom-1 surface-border">
-                <span :class="['text-xl font-semibold']">Dark Mode</span>
+                <span class="text-xl font-semibold">{{ t(`settings.darkMode`) }}</span>
                 <InputSwitch :modelValue="layoutConfig.darkTheme.value" @update:modelValue="onDarkModeChange" />
             </section>
 
+            <section class="py-4 flex align-items-center justify-content-between border-bottom-1 surface-border">
+                <span class="text-xl font-semibold">{{ t(`settings.language`) }}</span>
+                <Dropdown v-model="locale" :options="supportedLocales"
+                     @update:modelValue="onLanguageChange">
+                    <template #value="slotProps">
+                        <div class="capitalize">
+                            {{ t(`locale.${slotProps.value}`) }}
+                        </div>
+                    </template>
+                    <template #option="slotProps">
+                        <div class="capitalize">
+                            {{ t(`locale.${slotProps.option}`) }}
+                        </div>
+                    </template>
+                </Dropdown>
+            </section>
         </div>
     </Sidebar>
 </template>

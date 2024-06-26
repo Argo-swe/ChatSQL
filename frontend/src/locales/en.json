@@ -1,0 +1,84 @@
+{
+  "actions": {
+    "alreadyExistsById": "{item} with id {id} already exists",
+    "alreadyExistsByName": "{item} with name '{name}' already exists",
+    "create": {
+      "error": "Error during creation",
+      "success": "Successfully created"
+    },
+    "delete": {
+      "error": "Error while deleting",
+      "success": "Successfully deleted"
+    },
+    "formatError": "wrong format",
+    "notFoundById": "{item} with id {id} not found",
+    "notFoundByName": "{item} with name '{name}' not found",
+    "update": {
+      "error": "Error during update",
+      "success": "Successfully updated"
+    }
+  },
+  "dictionary": {
+    "create": "Create data dictionary",
+    "delete": "Delete data dictionary",
+    "file": {
+      "download": "Download data dictionary file",
+      "title": "Data dictionary file",
+      "update": "Update data dictionary file"
+    },
+    "title": "Data dictionary | Data dictionaries",
+    "update": "Update data dictionary"
+  },
+  "general": {
+    "confirm": {
+      "proceed": "Are you sure you want to proceed?"
+    },
+    "input": {
+      "fileupload": "Upload file"
+    },
+    "list": {
+      "empty": "No results found",
+      "loading": "Loading data! Please wait...",
+      "error": "Error while loagind data"
+    },
+    "menu": {
+      "technicianFunctionalities": "Technician functionalities"
+    }
+  },
+  "locale": {
+    "en": "english",
+    "it": "italian"
+  },
+  "login": {
+    "badCredential": "Wrong credential",
+    "subject": "Login to the technician area",
+    "title": "Login"
+  },
+  "settings": {
+    "darkMode": "Dark mode",
+    "language": "Language",
+    "scale": "Scale"
+  },
+  "text": {
+    "cancel": "cancel",
+    "chat": "chat",
+    "debug": "debug",
+    "description": "description",
+    "error": "error",
+    "genericError": "generic error",
+    "info": "info",
+    "log": "log",
+    "login": "login",
+    "logout": "logout",
+    "name": "name",
+    "no": "no",
+    "ok": "ok",
+    "password": "password",
+    "save": "save",
+    "settings": "settings",
+    "user": "user",
+    "username": "username",
+    "warning": "warning",
+    "yes": "yes"
+  }
+}

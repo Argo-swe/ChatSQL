@@ -1,0 +1,84 @@
+{
+  "actions": {
+    "alreadyExistsById": "{item} con id {id} esiste già",
+    "alreadyExistsByName": "{item} con nome '{name}' esiste già",
+    "create": {
+      "error": "Errore durante la creazione",
+      "success": "Creato con successo"
+    },
+    "delete": {
+      "error": "Errore durante l'eliminazione",
+      "success": "Eliminato con successo"
+    },
+    "formatError": "formato errato",
+    "notFoundById": "{item} con id {id} non trovato",
+    "notFoundByName": "{item} con nome '{name}' non trovato",
+    "update": {
+      "error": "Errore durante l'aggiornamento",
+      "success": "Aggiornato con successo"
+    }
+  },
+  "dictionary": {
+    "create": "Crea dizionario dati",
+    "delete": "Elimina dizionario dati",
+    "file": {
+      "download": "Scarica file dizionario dati",
+      "title": "File dizionario dati",
+      "update": "Aggiorna file dizionario dati"
+    },
+    "title": "Dizionario dati | Dizionari dati",
+    "update": "Aggiorna dizionario dati"
+  },
+  "general": {
+    "confirm": {
+      "proceed": "Sei sicuro di vole proseguire?"
+    },
+    "input": {
+      "fileupload": "Carica file"
+    },
+    "list": {
+      "empty": "Nessun risultato trovato",
+      "loading": "Caricamento dati! Attendere...",
+      "error": "Errore nel recupero dei dati"
+    },
+    "menu": {
+      "technicianFunctionalities": "Funzionalità del tecnico"
+    }
+  },
+  "locale": {
+    "en": "inglese",
+    "it": "italiano"
+  },
+  "login": {
+    "badCredential": "Credenziali errate",
+    "subject": "Accedi all'area del tecnico",
+    "title": "Accedi"
+  },
+  "settings": {
+    "darkMode": "Modalità scuro",
+    "language": "Lingua",
+    "scale": "Scala"
+  },
+  "text": {
+    "cancel": "annulla",
+    "chat": "chat",
+    "debug": "debug",
+    "description": "descrizione",
+    "error": "errore",
+    "genericError": "errore generico",
+    "info": "info",
+    "log": "log",
+    "login": "accedi",
+    "logout": "esci",
+    "name": "nome",
+    "no": "no",
+    "ok": "ok",
+    "password": "password",
+    "save": "salva",
+    "settings": "impostazioni",
+    "user": "utente",
+    "username": "nome utente",
+    "warning": "avviso",
+    "yes": "si"
+  }
+}

@@ -1,8 +1,7 @@
 import { useToast } from "primevue/usetoast";
-import { ToastSeverity, type ToastSeverityOptions } from 'primevue/api';
 import type { ToastMessageOptions } from "primevue/toast";
 
-const defaultLifeTime = 3000;
+const defaultLifeTime = 5000;
 
 export const messageService = () => {
   const toast = useToast();

@@ -1,6 +1,8 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_utils.openapi import simplify_operation_ids
+from filters.log_filter import EndpointFilter
 
 from routes.dictionaries_api import router as dictionaries_router
 from routes.prompt_api import router as prompt_router
@@ -19,9 +21,19 @@ app.add_middleware(CORSMiddleware,
                    allow_headers=["*"],
                    )
 
+# Define excluded endpoints
+excluded_endpoints = ["/healthcheck"]
+
+# Add filter to the logger
+logging.getLogger("uvicorn.access").addFilter(EndpointFilter(excluded_endpoints))
+
 @app.get("/")
 async def main():
     return {"message": "Hello World"}
+
+@app.get("/healthcheck")
+async def healthcheck():
+    return { "status": "running" }
 
 simplify_operation_ids(app)
 
