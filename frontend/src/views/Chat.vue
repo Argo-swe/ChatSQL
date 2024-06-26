@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
+import { messageService } from '../services/toast-message'
 
 const { isDarkTheme } = useLayout();
 
@@ -31,26 +32,59 @@ const dictionaries = ref([
 ]);
 
 const request = ref('');
+const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
 
 function runRequest() {
     console.log(request.value);
 }
+
+const checked = ref(false);
+const hide = ref(false);
+
+const toggleSelectView = () => {
+    hide.value = !hide.value;
+}
+
+const isCopying = ref(false);
+
+const copyToClipboard = (event) => {
+    if (isCopying.value) return; 
+    isCopying.value = true;
+    const messageContent = event.currentTarget.closest('.message').querySelector('p');
+    if (!messageContent) return;
+    const text = messageContent.textContent.trim();
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            console.log('Text copied to clipboard:', text);
+            messageSuccess('Copy', 'Text copied to clipboard');
+            setTimeout(() => {
+                isCopying.value = false;
+            }, 2000);
+        })
+        .catch((err) => {
+            console.error('Error when copying to clipboard:', err);
+            messageError('Copy', 'Error when copying to clipboard');
+        });
+};
 
 </script>
 <template>
 
     <div id="chat" class="flex flex-column justify-between">
         <!-- TITLE -->
-        <div id="chat-title" class="flex flex-row justify-between">
-            <h3>Nome dizionario dati</h3>
-            <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                class="w-fit h-fit" />
-            <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
-                class="w-fit h-fit" />
-
+        <div class="flex flex-row align-items-center justify-content-start mb-2">
+            <h3 class="m-1">Choose a dictionary</h3>
+            <ToggleButton v-model="checked" onLabel="Show" offLabel="Hide" onIcon="pi pi-check" offIcon="pi pi-times" class="w-9rem m-1" aria-label="Hide or Show" @click="toggleSelectView"/>
+        </div>
+        <div id="chat-title" :class="{hide: hide}" class="flex flex-wrap flex-row justify-between">
             <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
-                optionValue="code" />
-            <Button severity="secondary" icon="pi pi-info" rounded />
+                    optionValue="code" placeholder="Choose dictionary..." class="w-fit max-w-8rem md:max-w-max h-fit m-2" />
+            <Button severity="secondary" icon="pi pi-info" rounded class="m-2" />
+
+            <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
+                class="w-fit h-fit m-2" />
+            <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
+                class="w-fit h-fit m-2" />
         </div>
 
         <!-- CHAT MESSAGES -->
@@ -64,11 +98,13 @@ function runRequest() {
                     facere, quas, ea optio saepe architecto unde aliquid vero itaque!</p>
             </div>
 
-            <div class="message recieved">
+            <div class="message recieved border-round-lg">
                 <Avatar icon="pi pi-database" class="" size="large" shape="circle" />
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit,
-                    quisquam unde dolor dicta temporibus error.</p>
-
+                <Button :label="isCopying ? '' : 'Copy'" :icon="isCopying ? 'pi pi-check-circle' : 'pi pi-copy'" class="copy-to-clipboard" severity="contrast" @click="copyToClipboard"/>
+                <p class="mt-2">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit,
+                    quisquam unde dolor dicta temporibus error.
+                </p>
             </div>
         </div>
 
@@ -91,9 +127,13 @@ function runRequest() {
     position: relative;
 }
 
+.hide {
+  display: none !important;
+}
+
 #chat-title {
     width: 100%;
-    height: 2em;
+    /* height: 2em; */
     background-color: var(--primary-100);
 }
 
@@ -108,6 +148,13 @@ function runRequest() {
     width: 80%;
     padding: 1em;
     margin: 0.5em;
+    position: relative;
+}
+
+.copy-to-clipboard {
+    position: absolute;
+    top: 1em;
+    right: 1em;
 }
 
 .message.sent {
