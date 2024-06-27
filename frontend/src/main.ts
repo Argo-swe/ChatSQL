@@ -33,6 +33,7 @@ import Fieldset from 'primevue/fieldset';
 import Panel from 'primevue/panel';
 import Divider from 'primevue/divider';
 import Card from 'primevue/card';
+import InputGroup from 'primevue/inputgroup';
 
 import '@/assets/styles.scss';
 
@@ -71,5 +72,6 @@ app.component('Fieldset', Fieldset);
 app.component('Panel', Panel);
 app.component('Divider', Divider);
 app.component('Card', Card);
+app.component('InputGroup', InputGroup);
 
 app.mount('#app');

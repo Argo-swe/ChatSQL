@@ -1,3 +1,4 @@
+
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
@@ -87,15 +88,16 @@ const getDictionaryName = (code) => {
         <!-- TITLE -->
         <div id="titlebar-container" class="card p-3">
             <div id="chat-title" class="flex flex-row align-items-center">
-                <!--<h1 ref="chatTitle" class="m-1 text-xl font-semibold">Choose a dictionary</h1>-->
                 <h1 class="m-1 text-xl font-semibold">{{ getDictionaryName(selectedDictionary) }}</h1>
                 <ToggleButton v-model="checked" onLabel="Show" offLabel="Hide" onIcon="pi pi-check" offIcon="pi pi-times" class="w-9rem m-1" aria-label="Hide or Show" @click="toggleSelectView"/>
             </div>
             <Divider :class="{hide: hide}" />
-            <div :class="{hide: hide}" class="flex flex-wrap flex-row mt-2">
-                <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
-                        optionValue="code" placeholder="Choose dictionary..." class="w-fit max-w-12rem md:max-w-max h-fit m-2" />
-                <Button severity="secondary" icon="pi pi-info" rounded class="m-2" />
+            <div :class="{hide: hide}" class="flex flex-wrap flex-row">
+                <InputGroup class="w-fit">
+                    <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
+                        optionValue="code" placeholder="Choose dictionary..." class="max-w-12rem md:w-fit h-fit m-2 mr-0" />
+                    <Button severity="info" icon="pi pi-info" class="h-fit m-2 ml-0" />
+                </InputGroup>
     
                 <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
                     class="w-fit h-fit m-2" />
@@ -103,49 +105,6 @@ const getDictionaryName = (code) => {
                     class="w-fit h-fit m-2" />
             </div>
         </div>
-
-        <!--Prove di template presi da Prime Vue-->
-        <!--<Card>
-            <template #title>Choose a dictionary</template>
-            <template #content>
-                <div :class="{hide: hide}" class="flex flex-wrap flex-row mt-2">
-                    <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
-                            optionValue="code" placeholder="Choose dictionary..." class="w-fit max-w-12rem md:max-w-max h-fit m-2" />
-                    <Button severity="secondary" icon="pi pi-info" rounded class="m-2" />
-        
-                    <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                        class="w-fit h-fit m-2" />
-                    <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
-                        class="w-fit h-fit m-2" />
-                </div>
-            </template>
-        </Card>-->
-
-        <!--<Fieldset legend="Choose dictionary" :toggleable="true">
-            <div :class="{hide: hide}" class="flex flex-wrap flex-row mt-2">
-                <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
-                        optionValue="code" placeholder="Choose dictionary..." class="w-fit max-w-12rem md:max-w-max h-fit m-2" />
-                <Button severity="secondary" icon="pi pi-info" rounded class="m-2" />
-    
-                <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                    class="w-fit h-fit m-2" />
-                <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
-                    class="w-fit h-fit m-2" />
-            </div>
-        </Fieldset>-->
-
-        <!--<Panel header="Choose Dictionary" toggleable>
-            <div :class="{hide: hide}" class="flex flex-wrap flex-row mt-2">
-                <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
-                        optionValue="code" placeholder="Choose dictionary..." class="w-fit max-w-12rem md:max-w-max h-fit m-2" />
-                <Button severity="secondary" icon="pi pi-info" rounded class="m-2" />
-    
-                <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                    class="w-fit h-fit m-2" />
-                <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
-                    class="w-fit h-fit m-2" />
-            </div>
-        </Panel>-->
 
         <!-- CHAT MESSAGES -->
         <div id="messages">
@@ -169,7 +128,6 @@ const getDictionaryName = (code) => {
                         <Avatar icon="pi pi-database" class="" size="large" shape="circle" />
                     </div>
                     <div class="w-full border-round-lg messageBox">
-                        <!--<Button :label="isCopying ? '' : 'Copy'" :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'" class="copy-to-clipboard align-self-end mt-2 mr-2" severity="contrast" @click="copyToClipboard"/>-->
                         <Button :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'" class="copy-to-clipboard" severity="contrast" @click="copyToClipboard" aria-label="Copy to clipboard" />
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit, 
                         quisquam unde dolor dicta temporibus error.</p>
@@ -178,12 +136,11 @@ const getDictionaryName = (code) => {
             </div>
         </div>
 
-        <!-- INPUT select e prompt -->
-        <div id="input-container" class="bottom-0 left-0 right-0 flex items-end">
+        <InputGroup id="input-container" class="mt-1">
             <Textarea v-model="request" autoResize placeholder="Enter a natural language request" rows="1"
-                class="w-full" />
-            <Button @click="runRequest" aria-label="Send" icon="pi pi-send" rounded />
-        </div>
+                class="w-full" aria-label="Enter a natural language request" :disabled="!selectedDictionary" />
+            <Button @click="runRequest" icon="pi pi-send" aria-label="Send a request" :disabled="!selectedDictionary" />
+        </InputGroup>
     </div>
 
 
@@ -212,15 +169,14 @@ const getDictionaryName = (code) => {
 }
 
 .message {
-    /* width: 80%;
-    margin: 0.5em;  */
     width: 95%;
-    /* position relative aggiunta per avere un riferimento da cui partire per spostare il copy button */
     position: relative;
 }
+
 .message .p-avatar {
     margin-bottom: 0.5em;
 }
+
 .message p {
     padding: 1em;
 }
@@ -248,13 +204,19 @@ const getDictionaryName = (code) => {
 
 #input-container {
     width: 100%;
-    margin-top: 1em;
-    align-items: flex-end;
     max-height: 5rem;
 }
 
 #input-container textarea {
     max-height: 20rem;
+    overflow-y: scroll !important;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    box-sizing: content-box;
+}
+
+#input-container textarea::placeholder {
+    white-space: nowrap;
 }
 
 textarea::-webkit-scrollbar {
