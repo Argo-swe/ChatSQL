@@ -29,6 +29,10 @@ import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
 import Avatar from 'primevue/avatar';
+import Fieldset from 'primevue/fieldset';
+import Panel from 'primevue/panel';
+import Divider from 'primevue/divider';
+import Card from 'primevue/card';
 
 import '@/assets/styles.scss';
 
@@ -63,5 +67,9 @@ app.component('Dialog', Dialog);
 app.component('Textarea', Textarea);
 app.component('Toast', Toast);
 app.component('Avatar', Avatar);
+app.component('Fieldset', Fieldset);
+app.component('Panel', Panel);
+app.component('Divider', Divider);
+app.component('Card', Card);
 
 app.mount('#app');
