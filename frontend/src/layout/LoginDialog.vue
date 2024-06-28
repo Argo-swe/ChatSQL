@@ -1,55 +1,56 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { usePrimeVue } from 'primevue/config';
+import { ref } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
-import AppConfig from '@/layout/AppConfig.vue';
-import { messageService } from '@/services/toast-message'
-
-import Password from 'primevue/password';
-import InputText from 'primevue/inputtext';
-import FloatLabel from 'primevue/floatlabel';
-import Button from 'primevue/button';
-import Divider from 'primevue/divider';
 import { getApiClient } from '@/services/api-client.service';
 import { useRouter } from 'vue-router'
+import { messageService } from '@/services/message.service'
+const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
+
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const { layoutState } = useLayout();
 const router = useRouter();
+const client = getApiClient();
 
 const username = ref(null);
 const password = ref(null);
-const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
 
 
 async function submitForm() {
-    console.log('Username:', username.value);
-    console.log('Password:', password.value);
 
-    // Message examples
-    // messageSuccess('Login', `user: ${username.value} - psw: ${password.value}`);
-    // messageInfo('Login', `user: ${username.value} - psw: ${password.value}`);
-    // messageWarning('Login', `user: ${username.value} - psw: ${password.value}`);
-    // messageError('Login', `user: ${username.value} - psw: ${password.value}`);
-
-    // Add your login logic here
-    const client = await getApiClient();
-
-    const resPrompt = await client.login(
+    client.login(
         undefined,
         { "username": username.value ?? "", "password": password.value ?? "" }
-    );
-    switch (resPrompt.data.status) {
-        case "OK":
-            localStorage.setItem("token", resPrompt.data.data?.access_token || '');
-            router.push('/')
-            break;
-        case "NOT_FOUND":
-            messageWarning('Login', `Utente '${username.value}' non trovato`);
-            break;
-        default:
-            messageError('Login', `ERROR: ${resPrompt.data.message}`);
-            break;
-    }
+    ).then(
+        response => {
+            switch (response.data.status) {
+                case "OK":
+                    localStorage.setItem("token", response.data.data?.access_token || '');
+                    router.push('/')
+                    layoutState.loginDialogVisible.value = false
+                    window.dispatchEvent(new CustomEvent('token-localstorage-changed', {
+                        detail: {
+                            storage: localStorage.getItem('token')
+                        }
+                    }));
+                    break;
+                case "NOT_FOUND":
+                    messageError(t('Login'), t('actions.notFoundById', { item: t('text.User'), name: username.value }))
+                    break;
+                case "BAD_CREDENTIAL":
+                    messageError(t('Login'), t('login.badCredential'))
+                    break;
+                default:
+                    messageError(t('Login'), `${t('text.genericError')}:\n${response.data.message}`);
+                    break;
+            }
+        },
+        error => {
+            messageError(t('Login'), `${t('text.genericError')}:\n${error}`);
+        }
+    )
+
 }
 </script>
 
@@ -57,16 +58,16 @@ async function submitForm() {
     <div class="card flex justify-center">
         <Dialog v-model:visible="layoutState.loginDialogVisible.value" modal header="Login">
             <template #header>
-                <h2>Login</h2>
+                <h2>{{ t('login.title') }}</h2>
             </template>
-            <form @submit.prevent="submitForm">
-                <span class="p-text-secondary block mb-5">Login to admin area.</span>
+            <form>
+                <span class="p-text-secondary block mb-5">{{ t('login.subject') }}</span>
                 <div class="flex align-items-center gap-3 mb-3">
-                    <label for="username" class="font-semibold w-6rem">Username</label>
+                    <label for="username" class="font-semibold w-6rem">{{ t('text.Username') }}</label>
                     <InputText id="username" class="flex-auto" v-model="username" />
                 </div>
                 <div class="flex align-items-center gap-3 mb-5">
-                    <label for="password" class="font-semibold w-6rem">Password</label>
+                    <label for="password" class="font-semibold w-6rem">{{ t('text.Password') }}</label>
                     <Password v-model="password" inputId="password">
                         <template #header>
                             <h6>Pick a password</h6>
@@ -84,9 +85,9 @@ async function submitForm() {
                     </Password>
                 </div>
                 <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary"
+                    <Button type="button" :label="t('text.Cancel')" severity="secondary"
                         @click="layoutState.loginDialogVisible.value = false"></Button>
-                    <Button type="sumbit" label="Login" @click="layoutState.loginDialogVisible.value = false"></Button>
+                    <Button @click="submitForm" :label="t('text.Login')"></Button>
                 </div>
             </form>
         </Dialog>

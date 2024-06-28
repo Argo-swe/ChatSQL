@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { getApiClient } from '@/services/api-client.service';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Button from 'primevue/button';
 import { useConfirm } from "primevue/useconfirm";
 import { useDialog } from 'primevue/usedialog';
 import CreateUpdateDictionaryModal from '@/components/CreateUpdateDictionaryModal.vue';
 import type { Components } from '@/types/openapi';
-import { downloadFile, stringToSnakeCase } from '@/services/utils.service';
+import UtilsService from '@/services/utils.service';
+
+import { messageService } from '@/services/message.service'
+const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n();
 
 const dialog = useDialog();
 const confirm = useConfirm();
@@ -49,8 +52,7 @@ function retrieveDictionaries() {
         },
         error => {
             loading.value = false;
-            // TODO: show error
-            console.warn(error);
+            messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`)
         },
     );
 }
@@ -61,7 +63,7 @@ function onClickCreate() {
             withFile: true,
         },
         props: {
-            header: 'Create new dictionary',
+            header: t('dictionary.create'),
             ...dialogPropsPreset
         },
         onClose: (opt) => {
@@ -82,7 +84,7 @@ function onClickUpdateMetadata(dictionary: Components.Schemas.DictionaryDto) {
             dictionaryDescription: dictionary.description
         },
         props: {
-            header: 'Update dictionary metadata',
+            header: t('dictionary.update'),
             ...dialogPropsPreset
         },
         onClose: (opt) => {
@@ -100,7 +102,7 @@ function onClickUpdateFile(dictionary: Components.Schemas.DictionaryDto) {
             dictionaryId: dictionary.id
         },
         props: {
-            header: 'Update dictionary file',
+            header: t('dictionary.file.update'),
             ...dialogPropsPreset
         }
     });
@@ -108,12 +110,10 @@ function onClickUpdateFile(dictionary: Components.Schemas.DictionaryDto) {
 
 function onClickDownloadFile(dictionary: Components.Schemas.DictionaryDto) {
     client.getDictionaryFile(dictionary.id, undefined, {
-
         responseType: 'blob'
-
     }).then(
         response => {
-            downloadFile(`${stringToSnakeCase(dictionary.name)}_schema.json`, response.data);
+            UtilsService.downloadFile(`${UtilsService.stringToSnakeCase(dictionary.name)}_schema.json`, response.data);
         },
         error => {
             console.warn(error);
@@ -123,28 +123,28 @@ function onClickDownloadFile(dictionary: Components.Schemas.DictionaryDto) {
 
 function onClickDelete(dictionaryId: number) {
     confirm.require({
-        message: 'Are you sure you want to proceed?',
-        header: 'Delete dictionary',
+        message: t('general.confirm.proceed'),
+        header: t('dictionary.delete'),
         icon: 'pi pi-exclamation-triangle',
+        acceptLabel: t('text.Yes'),
+        rejectLabel: t('text.No'),
         accept: () => {
             client.deleteDictionary(dictionaryId).then(
                 response => {
-                    // TODO: eliminato con successo
-                    retrieveDictionaries();
                     switch(response.data?.status) {
                         case "OK":
                             retrieveDictionaries();
+                            messageSuccess(t('dictionary.title'), t('actions.delete.success'))
                             break;
                         case "NOT_FOUND":
-                            //add toast with message response.data.message
+                            messageError(t('dictionary.title'), `${t('actions.delete.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`)
                             break;
                         default:
-                            console.warn(response.data);
+                            messageError(t('dictionary.title'), `${t('actions.delete.error')}\n${response.data?.message}`)
                     }
                 },
                 error => {
-                    // TODO: eliminato con errore
-                    console.warn(error);
+                    messageError(t('dictionary.title'), `${t('actions.delete.error')}\n${error}`)
                 }
             )
         }
@@ -155,24 +155,24 @@ function onClickDelete(dictionaryId: number) {
 <template>
     <div class="flex justify-content-between flex-wrap">
         <div class="flex m-2">
-            <h1>Dizionari dati</h1>
+            <h1>{{ t('dictionary.title', 2) }}</h1>
         </div>
         <div class="flex m-2">
-            <Button icon="pi pi-plus" label="Create dictionary" severity="success" class="ml-2" rounded @click="onClickCreate()" />
+            <Button icon="pi pi-plus" :label="t('dictionary.create')" severity="success" class="ml-2" rounded @click="onClickCreate()" />
         </div>
     </div>
 
-    <DataTable :value="dictionaries" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem" :alwaysShowPaginator="false" :loading="loading">
-        <template #empty> Nessun dizionario trovato </template>
-        <template #loading> Caricamento dati dizionati. Attendere... </template>
-        <Column field="name" header="Name" sortable style="width: 25%"></Column>
-        <Column field="description" header="Description" sortable style="width: 55%"></Column>
+     <DataTable :value="dictionaries" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem" :alwaysShowPaginator="false" :loading="loading">
+        <template #empty> {{ t('general.list.empty') }} </template>
+        <template #loading> {{ t('general.list.loading') }} </template>
+        <Column field="name" :header="t('text.Name')" sortable style="width: 25%"></Column>
+        <Column field="description" :header="t('text.Description')" sortable style="width: 55%"></Column>
         <Column style="width: 20%" bodyStyle="text-align:right">
             <template #body="slotProps">
-                <Button icon="pi pi-pencil" title="Edit dictionary metadata" class="ml-2" rounded @click="onClickUpdateMetadata(slotProps.data)" />
-                <Button icon="pi pi-file-edit" title="Edit dictionary file" class="ml-2" rounded @click="onClickUpdateFile(slotProps.data)" />
-                <Button icon="pi pi-download" title="Download dictionary file" severity="help" class="ml-2" rounded @click="onClickDownloadFile(slotProps.data)" />
-                <Button icon="pi pi-trash" title="Delete dictionary" severity="danger" class="ml-2" rounded @click="onClickDelete(slotProps.data.id)" />
+                <Button icon="pi pi-pencil" :title="t('dictionary.update')" class="ml-2" rounded @click="onClickUpdateMetadata(slotProps.data)" />
+                <Button icon="pi pi-file-edit" :title="t('dictionary.file.update')" class="ml-2" rounded @click="onClickUpdateFile(slotProps.data)" />
+                <Button icon="pi pi-download" :title="t('dictionary.file.download')" severity="help" class="ml-2" rounded @click="onClickDownloadFile(slotProps.data)" />
+                <Button icon="pi pi-trash" :title="t('dictionary.delete')" severity="danger" class="ml-2" rounded @click="onClickDelete(slotProps.data.id)" />
             </template>
         </Column>
     </DataTable>

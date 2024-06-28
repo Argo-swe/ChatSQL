@@ -1,32 +1,46 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n'
 
 import AppMenuItem from './AppMenuItem.vue';
+import AuthService from '@/services/auth.service';
 
-const model = ref([
+const { t } = useI18n();
+
+const USER_MENU = [
     {
         items: [
-            { label: 'Chat', icon: 'pi pi-fw pi-comments', to: '/' },
-            { label: 'Dizionari dati', icon: 'pi pi-fw pi-database', to: '/dizionari' }
+            { label: computed(() => t('text.Chat')), icon: 'pi pi-fw pi-comments', to: '/chat' },
+        ]
+    },
+];
+
+const TECHNICIAN_MENU = [
+    {
+        items: [
+            { label: computed(() => t('text.Chat')), icon: 'pi pi-fw pi-comments', to: '/chat' },
+            { label: computed(() => t('dictionary.title', 2)), icon: 'pi pi-fw pi-database', to: '/dictionary' }
         ]
     },
     {
-        label: 'Funzionalità tecnico',
+        label: computed(() => t('general.menu.technicianFunctionalities')),
         items: [
-            { label: 'Debug', icon: 'pi pi-fw pi-eye', to: '/debug' },
-            { label: 'Log', icon: 'pi pi-fw pi-microchip', to: '/log' },
-            {
-                label: 'Gestione dizionari dati',
-                items: [
-                    { label: 'Aggiunta dizionario', icon: 'pi pi-fw pi-plus', to: '/addDizionario' },
-                    { label: 'Lista dizionari??', icon: 'pi pi-fw pi-list', to: '/' },
-                    { label: 'Altre cose da aggiungere??', icon: 'pi pi-fw pi-list', to: '/' },
-
-                ]
-            },
+            { label: computed(() => t('text.Debug')), icon: 'pi pi-fw pi-eye', to: '/debug' },
+            { label: computed(() => t('text.Log')), icon: 'pi pi-fw pi-microchip', to: '/log' }
         ]
     }
-]);
+];
+
+let model = ref(AuthService.isLogged() ? TECHNICIAN_MENU : USER_MENU);
+
+onMounted(() => {
+    window.addEventListener('token-localstorage-changed', () => {
+        model.value = AuthService.isLogged() ? TECHNICIAN_MENU : USER_MENU;
+    });
+});
+
+
+
 </script>
 
 <template>

@@ -36,25 +36,20 @@ def _checkUser(data: LoginDto, db: Session = Depends(getDb)) -> CheckUserResult:
 
 @router.post("/", tags=[tag], response_model=AuthResponseDto)
 def login(data: LoginDto, db: Session = Depends(getDb)):
-    check = _checkUser(data, db)
-    if(check == CheckUserResult.WRONG_USERNAME):
+    query = crud.getUserByUsername(db, data.username)
+    if(query == None):
         return AuthResponseDto(
             data = None,
             status = ResponseStatusEnum.NOT_FOUND
         )
-    if(check == CheckUserResult.WRONG_PASSWORD):
+    if(query.password != data.password):
         return AuthResponseDto(
             data = None,
-            status = ResponseStatusEnum.ERROR,
+            status = ResponseStatusEnum.BAD_CREDENTIAL,
             message = "Wrong password"
         )
-    if(check == CheckUserResult.OK):
-        token = JwtHandler.sign()
-        return AuthResponseDto(
-            data = token,
-            status = ResponseStatusEnum.OK
-        )
+    token = JwtHandler.sign(query.id)
     return AuthResponseDto(
-        data = None,
-        status = ResponseStatusEnum.ERROR
+        data = token,
+        status = ResponseStatusEnum.OK
     )

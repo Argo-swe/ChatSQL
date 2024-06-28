@@ -11,11 +11,12 @@ services:
     entrypoint:
       - /usr/src/entrypoint-backend.sh
     env_file:
-      - backend/.env
+      - backend/.env.postgres
       - backend/.env.local
+    links:
+      - postgresdb
     volumes:
       - ./backend/app:/usr/src/app
-      - ./backend/requirements.txt:/usr/src/requirements.txt
       - backend-db-volume:/opt/chatsql
     healthcheck:
       test: curl --fail http://localhost:8000/healthcheck || exit 1
@@ -45,9 +46,21 @@ services:
       - ./frontend/public:/usr/src/app/public
       - ./frontend/environments:/usr/src/app/environments
       - ./frontend/index.html:/usr/src/app/index.html
-      - ./frontend/package.json:/usr/src/app/package.json
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    networks:
+      - chatsql-network
+
+  postgresdb:
+    image: postgres:alpine3.16
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresdb-volume:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: chatsql
     networks:
       - chatsql-network
 
@@ -57,4 +70,6 @@ networks:
 
 volumes:
   backend-db-volume:
+    external: false
+  postgresdb-volume:
     external: false

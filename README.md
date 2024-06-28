@@ -78,3 +78,20 @@ per utilizzare la variabile basta utilizzare
 import.meta.env.VITE_KEY_2  // = VALUE_2
 import.meta.env.KEY         // = undefined (vedi nota sopra)
 ```
+
+### Localizzazione
+Per gestire il multilingua viene utilizzata la libreria `vue-i18n` (versione 9).\
+La documentazione è reperibile [qui](https://vue-i18n.intlify.dev/guide/essentials/started.html)
+
+I file di lingua sono posizionati nella cartella `frontend/locales` e nominati con `SIGLA_LINGUA.json`. Internamente sono strutturati con una mappa chiave valore.
+
+Le stringhe semplici e dirette sono inserite nel gruppo `text`, tutte in minuscolo, uno script all'avvio genera le realtive coppie chiave/valore con la prima lettera maiuscola.
+
+#### Modificare i file di lingua
+Un plugin utile alla compilazione e la verifica dei file di lingua per VScode è [i18n json editor](https://marketplace.visualstudio.com/items?itemName=thibault-vanderseypen.i18n-json-editor).\
+
+Una volta installato aprire le relative configurazioni tramite il menu "Extensions" -> pulsante a ingranaggio -> Settings e impostare:\
+- disabilitare il blocco sulle chiavi in UPPERCASE;
+- aggiungere alle `supportedFolders` il termine `"locales"` *(dopo questa modifica va riavviato VScode)*.
+
+Cliccare col tasto destro sulla cartella `frontend/locales` e cliccare `i18n json editor` alla fine delle modifiche ricordarsi di premere il tasto `Save` in alto a destra.

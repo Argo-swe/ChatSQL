@@ -2,16 +2,28 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
+import AuthService from '@/services/auth.service';
+
+import { useConfirm } from "primevue/useconfirm";
+const confirm = useConfirm();
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n();
 
 const { layoutConfig, onMenuToggle, layoutState } = useLayout();
 
+const router = useRouter();
+
+let isLogged = ref(AuthService.isLogged());
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
-const router = useRouter();
 
 onMounted(() => {
     bindOutsideClickListener();
+    window.addEventListener('token-localstorage-changed', () => {
+        isLogged.value = AuthService.isLogged();
+    });
 });
 
 onBeforeUnmount(() => {
@@ -32,6 +44,19 @@ const onSettingsClick = () => {
 const onLoginClick = () => {
     topbarMenuActive.value = false;
     layoutState.loginDialogVisible.value = !layoutState.loginDialogVisible.value;
+};
+const onLogoutClick = () => {
+    confirm.require({
+        message: t('general.confirm.proceed'),
+        header: t('text.Logout'),
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: t('text.Yes'),
+        rejectLabel: t('text.No'),
+        accept: () => {
+            AuthService.logout();
+            router.push('/')
+        }
+    });
 };
 const topbarMenuClasses = computed(() => {
     return {
@@ -81,13 +106,14 @@ const isOutsideClicked = (event) => {
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="onSettingsClick()" class="p-link layout-topbar-button">
+            <button @click="onSettingsClick()" class="p-link layout-topbar-button" :title="t('text.Settings')">
                 <i class="pi pi-cog"></i>
-                <span>Settings</span>
             </button>
-            <button @click="onLoginClick()" class="p-link layout-topbar-button">
+            <button v-if="!isLogged" @click="onLoginClick()" class="p-link layout-topbar-button" :title="t('text.Login')">
                 <i class="pi pi-user"></i>
-                <span>Login</span>
+            </button>
+            <button v-else @click="onLogoutClick()" class="p-link layout-topbar-button" :title="t('text.Logout')">
+                <i class="pi pi-sign-out"></i>
             </button>
         </div>
     </div>
