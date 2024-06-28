@@ -1,10 +1,7 @@
 
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue';
-import { useLayout } from '@/layout/composables/layout';
-import { messageService } from '../services/toast-message'
-
-const { isDarkTheme } = useLayout();
+import { messageService } from '@/services/message.service'
 
 const selectedDbms = ref("Mysql");
 const dbms = ref([
@@ -54,7 +51,7 @@ const isCopying = ref(false);
 
 const copyToClipboard = (event) => {
     // Interrompo se c'è già una copia in corso
-    if (isCopying.value) return; 
+    if (isCopying.value) return;
     isCopying.value = true;
     // Risalgo al messaggio più vicino al bottone cliccato
     const messageContent = event.currentTarget.closest('.message').querySelector('p');
@@ -98,7 +95,7 @@ const getDictionaryName = (code) => {
                         optionValue="code" placeholder="Choose dictionary..." class="max-w-12rem md:w-fit h-fit m-2 mr-0" />
                     <Button severity="info" icon="pi pi-info" class="h-fit m-2 ml-0" />
                 </InputGroup>
-    
+
                 <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
                     class="w-fit h-fit m-2" />
                 <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
@@ -129,7 +126,7 @@ const getDictionaryName = (code) => {
                     </div>
                     <div class="w-full border-round-lg messageBox">
                         <Button :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'" class="copy-to-clipboard" severity="contrast" @click="copyToClipboard" aria-label="Copy to clipboard" />
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit, 
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit,
                         quisquam unde dolor dicta temporibus error.</p>
                     </div>
                 </div>
