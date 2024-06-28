@@ -14,19 +14,24 @@ import Tooltip from 'primevue/tooltip';
 import Ripple from 'primevue/ripple';
 import StyleClass from 'primevue/styleclass';
 
-// import PrimeVue components
+// import PrimeVue components (alphabetical order)
+import Avatar from 'primevue/avatar';
 import Button from 'primevue/button'
+import Card from 'primevue/card';
 import Checkbox from 'primevue/checkbox';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import Dialog from 'primevue/dialog';
 import Divider from 'primevue/divider';
 import Dropdown from 'primevue/dropdown';
+import Fieldset from 'primevue/fieldset';
 import FileUpload from 'primevue/fileupload';
 import FloatLabel from 'primevue/floatlabel';
+import InputGroup from 'primevue/inputgroup';
 import InputIcon from 'primevue/inputicon';
 import InputSwitch from 'primevue/inputswitch';
 import InputText from 'primevue/inputtext';
+import Panel from 'primevue/panel';
 import Password from 'primevue/password';
 import RadioButton from 'primevue/radiobutton';
 import SelectButton from 'primevue/selectbutton';
@@ -35,6 +40,7 @@ import Slider from 'primevue/slider';
 import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
 import ToggleButton from 'primevue/togglebutton';
+// END import PrimeVue components (alphabetical order)
 
 // locale files
 import LocaleEn from '@/locales/en.json'
@@ -69,19 +75,24 @@ app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
 
-// PrimeVue components
+// PrimeVue components (alphabetical order)
+app.component('Avatar', Avatar);
 app.component('Button', Button);
+app.component('Card', Card);
 app.component('Checkbox', Checkbox);
 app.component('Column', Column);
 app.component('DataTable', DataTable);
 app.component('Dialog', Dialog);
 app.component('Divider', Divider);
 app.component('Dropdown', Dropdown);
+app.component('Fieldset', Fieldset);
 app.component('FileUpload', FileUpload);
 app.component('FloatLabel', FloatLabel);
+app.component('InputGroup', InputGroup);
 app.component('InputIcon', InputIcon);
 app.component('InputSwitch', InputSwitch);
 app.component('InputText', InputText);
+app.component('Panel', Panel);
 app.component('Password', Password);
 app.component('RadioButton', RadioButton);
 app.component('SelectButton', SelectButton);
@@ -90,5 +101,6 @@ app.component('Slider', Slider);
 app.component('Textarea', Textarea);
 app.component('Toast', Toast);
 app.component('ToggleButton', ToggleButton);
+// END PrimeVue components (alphabetical order)
 
 app.mount('#app');
