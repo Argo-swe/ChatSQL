@@ -90,9 +90,9 @@ const getDictionaryName = (code) => {
             </div>
             <Divider :class="{hide: hide}" />
             <div :class="{hide: hide}" class="flex flex-wrap flex-row">
-                <InputGroup class="w-fit">
+                <InputGroup class="w-full sm:w-fit">
                     <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
-                        optionValue="code" placeholder="Choose dictionary..." class="max-w-12rem md:w-fit h-fit m-2 mr-0" />
+                        optionValue="code" placeholder="Choose dictionary..." class="h-fit m-2 mr-0" />
                     <Button severity="info" icon="pi pi-info" class="h-fit m-2 ml-0" />
                 </InputGroup>
 
