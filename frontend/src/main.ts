@@ -41,6 +41,7 @@ import TabMenu from 'primevue/tabmenu';
 import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
 import ToggleButton from 'primevue/togglebutton';
+import ScrollTop from 'primevue/scrolltop';
 // END import PrimeVue components (alphabetical order)
 
 // locale files
@@ -103,6 +104,7 @@ app.component('TabMenu', TabMenu);
 app.component('Textarea', Textarea);
 app.component('Toast', Toast);
 app.component('ToggleButton', ToggleButton);
+app.component('ScrollTop', ScrollTop);
 // END PrimeVue components (alphabetical order)
 
 app.mount('#app');

@@ -72,6 +72,7 @@ const isOutsideClicked = (event) => {
             <!-- <app-footer></app-footer> -->
         </div>
         <app-config></app-config>
+        <ScrollTop />
         <div class="layout-mask"></div>
     </div>
     <Toast position="bottom-right"/>

@@ -5,6 +5,8 @@ import { getApiClient } from '@/services/api-client.service';
 import ChatMessage from '@/components/ChatMessage.vue'
 import AuthService from '@/services/auth.service';
 import type { TabMenuChangeEvent } from 'primevue/tabmenu';
+import UtilsService from '@/services/utils.service';
+
 const client = getApiClient()
 
 function t(str: string) {
@@ -171,6 +173,10 @@ const getDictionaryName = (id: number) => {
   return dict ? dict.name + ' (.json)' : 'Choose a dictionary';
 };
 
+function onClickDownloadFile() {
+    UtilsService.downloadFile('chatsql_log.txt', debugMessage.value);
+}
+
 </script>
 <template>
     <TabMenu v-model:activeIndex="active" :model="items" v-if="isLogged" class="tab-chat mb-2" @tab-change="onTabChange"/>
@@ -211,6 +217,7 @@ const getDictionaryName = (id: number) => {
 
     <div v-if="active == 1" id="debug" class="h-full mt-3">
         <h1 class="m-1 mb-3 text-xl font-semibold">Debug riferito all'ultima richiesta dell'operatore</h1>
+        <Button v-if="!loadingDebug && debugMessage" icon="pi pi-download" label="Download file (.txt)" severity="help" class="mb-3" @click="onClickDownloadFile()" />
         <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
     </div>
 </template>
