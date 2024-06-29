@@ -10,7 +10,7 @@ const { t } = useI18n();
 const USER_MENU = [
     {
         items: [
-            { label: computed(() => t('text.Chat')), icon: 'pi pi-fw pi-comments', to: '/chat' },
+            { label: computed(() => t('text.Chat')), icon: 'pi pi-fw pi-comments', to: '/chat' }
         ]
     },
 ];
@@ -18,15 +18,14 @@ const USER_MENU = [
 const TECHNICIAN_MENU = [
     {
         items: [
-            { label: computed(() => t('text.Chat')), icon: 'pi pi-fw pi-comments', to: '/chat' },
-            { label: computed(() => t('dictionary.title', 2)), icon: 'pi pi-fw pi-database', to: '/dictionary' }
+            { label: computed(() => t('text.Chat')), icon: 'pi pi-fw pi-comments', to: '/chat' }
         ]
     },
     {
         label: computed(() => t('general.menu.technicianFunctionalities')),
         items: [
-            { label: computed(() => t('text.Debug')), icon: 'pi pi-fw pi-eye', to: '/debug' },
-            { label: computed(() => t('text.Log')), icon: 'pi pi-fw pi-microchip', to: '/log' }
+            { label: computed(() => t('dictionary.title', 2)), icon: 'pi pi-fw pi-database', to: '/dictionary' },
+            { label: computed(() => t('text.Debug')), icon: 'pi pi-fw pi-eye', to: '/debug' }
         ]
     }
 ];

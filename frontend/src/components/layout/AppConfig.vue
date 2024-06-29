@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { onMounted } from 'vue';
 import { usePrimeVue } from 'primevue/config';
-import { useLayout } from '@/layout/composables/layout';
+import { useLayout } from '@/components/layout/composables/layout';
 
 import { useI18n } from 'vue-i18n';
 const { t, locale } = useI18n();

@@ -4,8 +4,8 @@ import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
-import LoginDialog from './LoginDialog.vue';
-import { useLayout } from '@/layout/composables/layout';
+import LoginDialog from '../LoginDialog.vue';
+import { useLayout } from '@/components/layout/composables/layout';
 import Toast from 'primevue/toast';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();

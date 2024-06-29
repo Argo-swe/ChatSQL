@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import AppLayout from '@/layout/AppLayout.vue';
+import AppLayout from '@/components/layout/AppLayout.vue';
 import AuthService from '@/services/auth.service';
 
 const router = createRouter({
@@ -25,12 +25,6 @@ const router = createRouter({
                 name: 'debug',
                 component: () =>
                     import ('@/views/Debug.vue')
-            },
-            {
-                path: '/log',
-                name: 'log',
-                component: () =>
-                    import ('@/views/Log.vue')
             }
         ]
     }]
