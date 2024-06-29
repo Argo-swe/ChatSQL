@@ -1,4 +1,0 @@
-pip
-__pycache__/
-*.txt
-!backend/tests/LMStudio/*.txt
