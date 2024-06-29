@@ -2,7 +2,7 @@ from models.responses.response_dto import ResponseStatusEnum
 from models.responses.string_data_response_dto import StringDataResponseDto
 
 from fastapi import APIRouter
-# from engine.backend.index_manager import IndexManager
+# from engine.index_manager import IndexManager
 
 tag = "prompt"
 router = APIRouter()

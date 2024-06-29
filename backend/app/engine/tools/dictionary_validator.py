@@ -1,6 +1,6 @@
 from jsonschema import validate
 from pathlib import Path
-from .utils import Utils
+from tools.utils import Utils
 
 class DictionaryValidator:
     __dictionary_schema_file_path = Path(__file__).parent / '../assets/dictionary_schema.json'

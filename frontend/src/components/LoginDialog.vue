@@ -31,7 +31,6 @@ async function submitForm() {
             switch (response.data.status) {
                 case "OK":
                     localStorage.setItem("token", response.data.data?.access_token || '');
-                    //router.push('/')
                     layoutState.loginDialogVisible.value = false
                     resetForm();
                     window.dispatchEvent(new CustomEvent('token-localstorage-changed', {

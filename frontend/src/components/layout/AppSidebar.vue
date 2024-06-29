@@ -4,7 +4,7 @@ import AppFooter from './AppFooter.vue';
 </script>
 
 <template>
-    <div class="flex flex-column justify-content-between flex-wrap">
+    <div class="flex flex-column justify-content-between flex-wrap h-full">
         <div class="flex m-2">
             <app-menu></app-menu>
         </div>

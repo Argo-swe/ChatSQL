@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 SQLALCHEMY_DATABASE_URL = os.getenv('SQLALCHEMY_DATABASE_URL', "sqlite:////opt/chatsql/db/chatsql.db")
-# SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
     engine = create_engine(
