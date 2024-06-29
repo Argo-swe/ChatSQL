@@ -3,6 +3,8 @@ from models.responses.dictionaries_response_dto import DictionariesResponseDto
 from models.responses.dictionary_response_dto import DictionaryResponseDto
 from models.dictionary_dto import DictionaryDto
 
+from engine.index_manager import IndexManager
+
 from auth.jwt_bearer import JwtBearer
 from fastapi import APIRouter, File, UploadFile, Depends
 from fastapi.responses import FileResponse
@@ -26,6 +28,8 @@ tag = "dictionary"
 router = APIRouter()
 
 outFileBasePath = "/opt/chatsql/dictionary_schemas"
+
+manager = IndexManager()
 
 @router.get("/", tags=[tag], response_model=DictionariesResponseDto)
 def getAllDictionaries(db: Session = Depends(getDb)) -> DictionariesResponseDto:
@@ -84,6 +88,7 @@ async def createDictionary(file: Annotated[UploadFile, File()], dictionary: Dict
             content = await file.read()
             await out_file.write(content)
 
+        manager.createIndex(newDic.id)
 
         return DictionaryResponseDto(
                 data=newDic,
@@ -119,6 +124,7 @@ async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()], db:
         await out_file.write(content)
 
     # TODO: validare dizionario e aggiornare indice txtai
+    manager.createIndex(foundDic.id)
 
     return DictionaryResponseDto(
                 data=foundDic,

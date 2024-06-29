@@ -119,7 +119,7 @@ declare namespace Components {
         /**
          * ResponseStatusEnum
          */
-        export type ResponseStatusEnum = "OK" | "ERROR" | "BAD_REQUEST" | "NOT_FOUND";
+        export type ResponseStatusEnum = "OK" | "ERROR" | "BAD_CREDENTIAL" | "BAD_REQUEST" | "NOT_FOUND" | "CONFLICT";
         /**
          * StringDataResponseDto
          */
@@ -198,12 +198,27 @@ declare namespace Paths {
     namespace GeneratePrompt {
         namespace Parameters {
             /**
+             * Dbms
+             */
+            export type Dbms = string;
+            /**
+             * Dictionaryid
+             */
+            export type DictionaryId = number;
+            /**
+             * Lang
+             */
+            export type Lang = string;
+            /**
              * Query
              */
             export type Query = string;
         }
         export interface QueryParameters {
+            dictionaryId: /* Dictionaryid */ Parameters.DictionaryId;
             query: /* Query */ Parameters.Query;
+            dbms: /* Dbms */ Parameters.Dbms;
+            lang: /* Lang */ Parameters.Lang;
         }
         namespace Responses {
             export type $200 = /* StringDataResponseDto */ Components.Schemas.StringDataResponseDto;
@@ -258,6 +273,11 @@ declare namespace Paths {
         namespace Responses {
             export type $200 = any;
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
+        }
+    }
+    namespace Healthcheck {
+        namespace Responses {
+            export type $200 = any;
         }
     }
     namespace Login {
@@ -395,6 +415,14 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.Main.Responses.$200>
+  /**
+   * healthcheck - Healthcheck
+   */
+  'healthcheck'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.Healthcheck.Responses.$200>
 }
 
 export interface PathsDictionary {
@@ -499,6 +527,16 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.Main.Responses.$200>
+  }
+  ['/healthcheck']: {
+    /**
+     * healthcheck - Healthcheck
+     */
+    'get'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.Healthcheck.Responses.$200>
   }
 }
 

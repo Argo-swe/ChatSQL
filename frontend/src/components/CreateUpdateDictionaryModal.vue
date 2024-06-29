@@ -153,7 +153,11 @@ function isFileSelected(): boolean {
 }
 
 function isFormValid(): boolean {
-  return isFileSelected() && dictionaryName.value?.length > 0 && dictionaryDescription.value?.length > 0;
+  if (onCreation.value || !withFile.value) {
+    return isFileSelected() && dictionaryName.value?.length > 0 && dictionaryDescription.value?.length > 0;
+  } else {
+    return isFileSelected();
+  }
 }
 
 function clearSelectedFile() {

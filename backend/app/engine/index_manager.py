@@ -1,11 +1,13 @@
 import sys
 from txtai.embeddings import Embeddings
-from tools.schema_multi_extractor import Schema_Multi_Extractor
+from engine.tools.schema_multi_extractor import Schema_Multi_Extractor
 import os
 import time
 from pathlib import Path
 
 current_dir = Path(__file__).resolve().parent
+indexesOutFileBasePath = "/opt/chatsql/indexes"
+logsOutFileBasePath = "/opt/chatsql/logs/chatsql_log.txt"
 
 class IndexManager:
     def __init__(self):
@@ -39,38 +41,37 @@ class IndexManager:
                 }
             }
         )"""
-        self.path = f"{current_dir}/assets/Indici"
-        self.log_name = f"{current_dir}/chatsql_log.txt"
 
     # Metodo per individuare se l'indice esiste già per un determinato dizionario dati
-    def createOrLoadIndex(self, data_dict_name):
+    def createOrLoadIndex(self, dictionary_id):
         createIDX = True
-        path = f"{self.path}/{data_dict_name}"
+        path = f"{indexesOutFileBasePath}/index_{dictionary_id}"
         if os.path.exists(path):
             createIDX = False
         if createIDX:
-            self.createIndex(data_dict_name)
-            self.saveIndex(data_dict_name)
+            self.createIndex(dictionary_id)
             return True
         else:
-            self.loadIndex(data_dict_name)
+            self.loadIndex(dictionary_id)
             return False
 
     # Metodo per la creazione dei due sottoindici
-    def createIndex(self, data_dict_name):
-        extracted_documents = Schema_Multi_Extractor.extract_first_index(data_dict_name)
+    def createIndex(self, dictionary_id, save_index=True):
+        extracted_documents = Schema_Multi_Extractor.extract_first_index(dictionary_id)
         documents = []
         for idx, document in enumerate(extracted_documents):
             documents.append((idx, document, None))
         self.embeddings.index(documents)
+        if save_index:
+            self.saveIndex(dictionary_id)
 
     # Metodo per salvare l'indice
-    def saveIndex(self, data_dict_name):
-        self.embeddings.save(f"{self.path}/{data_dict_name}/idx")
-    
+    def saveIndex(self, dictionary_id):
+        self.embeddings.save(f"{indexesOutFileBasePath}/index_{dictionary_id}")
+
     # Metodo per caricare l'indice già salvato
-    def loadIndex(self, data_dict_name):
-        self.embeddings.load(f"{self.path}/{data_dict_name}/idx")
+    def loadIndex(self, dictionary_id):
+        self.embeddings.load(f"{indexesOutFileBasePath}/index_{dictionary_id}")
 
     # Metodo per eseguire la ricerca semantica (rimosso il "private" per i test di unità)
     def getTuples(self, user_request, activate_log):
@@ -90,7 +91,7 @@ class IndexManager:
         if activate_log:
             self.semanticSearchLog(user_request, tuples)
         return tuples
-    
+
     # Metodo per generare i log della ricerca semantica
     def semanticSearchLog(self, user_request, tuples):
         log = self.getLogFile("w")
@@ -106,7 +107,7 @@ class IndexManager:
         for i, tuple in enumerate(tuples):
             log.write(f'Table {i + 1} | {tuple["table_name"]}: {tuple["max_score"]}\n')
             log.write(f'Description of the table: {tuple["text"]}\n')
-            log.write("Ranking of the most relevant terms in the description:\n") 
+            log.write("Ranking of the most relevant terms in the description:\n")
             token_importance = self.embeddings.explain(user_request, [tuple["text"]], limit=1)[0]
             for token, score in sorted(token_importance["tokens"], key=lambda x: x[1], reverse=True):
                 log.write(token + ": " + str(score) + "\n")
@@ -118,7 +119,7 @@ class IndexManager:
             log.write("\n")
         log.close()
         return True
-    
+
     # Metodo per raffinare i risultati della ricerca semantica
     def getRelevantTuples(self, tuples, activate_log):
         if activate_log:
@@ -152,7 +153,7 @@ class IndexManager:
                 if activate_log:
                     log.write(
                         "The remaining tables are discarded "
-                        "because the score is not high enough " 
+                        "because the score is not high enough "
                         "and the score difference with the previous tables "
                         "is greater than 0.25.\n")
                 break
@@ -168,28 +169,28 @@ class IndexManager:
     # Metodo per ottenere un oggetto relativo al file di log
     def getLogFile(self, mode):
         try:
-            file = open(self.log_name, mode)
+            file = open(logsOutFileBasePath, mode)
             return file
         except Exception:
             return False
-    
+
     # Metodo per leggere il file di log
     def readLogFile(self):
         try:
-            with open(self.log_name, 'r') as file:
+            with open(logsOutFileBasePath, 'r') as file:
                 return file.read()
         except Exception:
             return False
-    
+
     # Metodo per generare il prompt dopo la doppia estrazione
-    def promptGenerator(self, data_dict_name, user_request, lang="english", dbms="MariaDB", activate_log=False):
+    def promptGenerator(self, dictionary_id, user_request, lang="english", dbms="MariaDB", activate_log=False):
         tuples = self.getTuples(user_request, activate_log)
         relevant_tuples = self.getRelevantTuples(tuples, activate_log)
         if not relevant_tuples:
             return (f"""Sorry, the ChatBOT was unable to find any relevant results for "{user_request}".\n"""
                 """We invite you to try again with a different request.""")
         # Costruzione del prompt
-        schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
+        schema = Schema_Multi_Extractor.get_json_schema(dictionary_id)
         # Legenda dei simboli
         dyn_string = (
             "Suggested prompt:\n"
@@ -227,15 +228,15 @@ class IndexManager:
 def main():
     # Piccolo script per testare la classe
     """manager = IndexManager()
-    
-    data_dict_name = "orders"
-    #data_dict_name = "ordini"
 
-    manager.createOrLoadIndex(data_dict_name)
+    index_name = "orders"
+    #index_name = "ordini"
+
+    manager.createOrLoadIndex(index_name)
 
     user_request = "all information about products that belong to an order placed by a user whose first name is alex"
 
-    prompt = manager.promptGenerator(data_dict_name, user_request, activate_log=True)
+    prompt = manager.promptGenerator(index_name, user_request, activate_log=True)
 
     print(prompt)"""
 

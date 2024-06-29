@@ -1,24 +1,24 @@
 from pathlib import Path
-from tools.utils import Utils
+from .utils import Utils
 
 class Schema_Multi_Extractor:
     """
     A class used for dictionary extraction methods
     """
     # Dizionario dati in inglese
-    __dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ENG/'
+    __dictionary_schema_dir_path = "/opt/chatsql/dictionary_schemas"
     # Dizionario dati in italiano
     #__dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ITA/'
 
-    def get_json_schema(data_dict_name):
-        file_path = f'{Schema_Multi_Extractor.__dictionary_schema_dir_path}/{data_dict_name}.json'
+    def get_json_schema(dictionary_id: int):
+        file_path = f'{Schema_Multi_Extractor.__dictionary_schema_dir_path}/dic_schema_{dictionary_id}.json'
         schema = Utils.read_json_file_content(file_path)
         return schema
 
     # Estrazione di tutti gli elementi del dizionario dati
-    def extract_all(data_dict_name):
+    def extract_all(dictionary_id: int):
         documents = []
-        schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
+        schema = Schema_Multi_Extractor.get_json_schema(dictionary_id)
         # Creo le liste con i dati delle colonne senza descriverle individualmente
         for table in schema['tables']:
             column_names = [column['name'] for column in table['columns']]
@@ -44,9 +44,9 @@ class Schema_Multi_Extractor:
         return documents
 
     # Estrazione della tabella, della sua descrizione e della lista di colonne che possiede
-    def extract_table_and_column_list(data_dict_name):
+    def extract_table_and_column_list(dictionary_id: int):
         documents = []
-        schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
+        schema = Schema_Multi_Extractor.get_json_schema(dictionary_id)
         for table in schema['tables']:
             column_names = [column['name'] for column in table['columns']]
             doc = {
@@ -56,12 +56,12 @@ class Schema_Multi_Extractor:
                 "columns": column_names
             }
             documents.append(doc)
-        return documents 
+        return documents
 
     # Estrazione della tabella, della sua descrizione, delle sue colonne e della loro descrizione
-    def extract_table_and_columns(data_dict_name):
+    def extract_table_and_columns(dictionary_id: int):
         documents = []
-        schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
+        schema = Schema_Multi_Extractor.get_json_schema(dictionary_id)
         for table in schema['tables']:
             column_names = [column['name'] for column in table['columns']]
             column_descriptions = [column['description'] for column in table['columns']]
@@ -76,9 +76,9 @@ class Schema_Multi_Extractor:
         return documents
 
     # Estrazione per il primo indice (ricerca semantica tramite LLM)
-    def extract_first_index(data_dict_name):
+    def extract_first_index(dictionary_id: int):
         documents = []
-        schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
+        schema = Schema_Multi_Extractor.get_json_schema(dictionary_id)
         for pos, table in enumerate(schema['tables']):
             for column in table['columns']:
                 str_list = table['description'] + ": "
@@ -95,9 +95,9 @@ class Schema_Multi_Extractor:
         return documents
 
     # Estrazione per il secondo indice (attualmente non utilizzato)
-    def extract_second_index(data_dict_name):
+    def extract_second_index(dictionary_id: int):
         documents = []
-        schema = Schema_Multi_Extractor.get_json_schema(data_dict_name)
+        schema = Schema_Multi_Extractor.get_json_schema(dictionary_id)
         for table in schema['tables']:
             # Numero di campi della tabella
             fields_number = len(table['columns'])
