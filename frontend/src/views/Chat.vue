@@ -173,7 +173,7 @@ const getDictionaryName = (id: number) => {
 
 </script>
 <template>
-    <TabMenu v-model:activeIndex="active" :model="items" v-if="isLogged" @tab-change="onTabChange"/>
+    <TabMenu v-model:activeIndex="active" :model="items" v-if="isLogged" class="tab-chat mb-2" @tab-change="onTabChange"/>
 
     <div v-if="active == 0" id="chat" class="flex flex-column justify-between">
         <!-- TITLE -->
@@ -209,16 +209,17 @@ const getDictionaryName = (id: number) => {
         </InputGroup>
     </div>
 
-    <div v-if="active == 1" id="debug">
-        <div class="card p-3">
-
-            <h3>Viene mostrato il debug riferito all'ultima richiesta operatore</h3>
-            <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
-        </div>
+    <div v-if="active == 1" id="debug" class="h-full mt-3">
+        <h1 class="m-1 mb-3 text-xl font-semibold">Debug riferito all'ultima richiesta dell'operatore</h1>
+        <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
     </div>
 </template>
 
 <style scoped>
+.tab-chat * {
+    background-color: transparent;
+}
+
 #chat {
     height: calc(100vh - 5rem - 4rem - 2rem);
     max-height: 100%;
