@@ -42,8 +42,7 @@
                             "required": [
                                 "name",
                                 "type",
-                                "description",
-                                "references"
+                                "description"
                             ],
                             "properties": {
                                 "name": {
@@ -58,17 +57,6 @@
                                 "column_synonyms": {
                                     "type": [ "array", "null" ],
                                     "items": {"type": "string"}
-                                },
-                                "references": {
-                                    "type": [ "object", "null" ],
-                                    "properties": {
-                                        "table_name": {
-                                            "type": "string"
-                                        },
-                                        "field_name": {
-                                            "type": "string"
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -77,6 +65,30 @@
                         "type": "array",
                         "items": {"type": "string"},
                         "minItems": 1
+                    },
+                    "foreign_keys": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "foreign_key_column_names",
+                                "reference_table_name",
+                                "reference_column_names"
+                            ],
+                            "properties": {
+                                "foreign_key_column_names": {
+                                    "type": "array",
+                                    "items": {"type": "string"}
+                                },
+                                "reference_table_name": {
+                                    "type": "string"
+                                },
+                                "reference_column_names": {
+                                    "type": "array",
+                                    "items": {"type": "string"}
+                                }
+                            }
+                        }
                     }
                 }
             }

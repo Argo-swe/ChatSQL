@@ -1,12 +1,13 @@
 from jsonschema import validate
 from pathlib import Path
-from tools.utils import Utils
+from .utils import Utils
 
 class DictionaryValidator:
-    __dictionary_schema_file_path = Path(__file__).parent / '../assets/dictionary_schema.json'
+    __dictionary_schema_file_path = Path(__file__).parent / './assets/dictionary_schema.json'
 
     def validate(json_dictionary) -> bool:
         """Validate a JSON object dictionary with base ChatSQL dictionary schema"""
+        print(DictionaryValidator.__dictionary_schema_file_path)
         schema = Utils.read_json_file_content(DictionaryValidator.__dictionary_schema_file_path)
 
         try:

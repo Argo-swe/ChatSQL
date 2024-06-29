@@ -10,13 +10,35 @@
       "error": "Errore durante l'eliminazione",
       "success": "Eliminato con successo"
     },
-    "formatError": "formato errato",
+    "formatError": "Formato errato",
+    "generate": {
+      "error": "Errore durante la generazione",
+      "success": "Generazione avvenuta con successo"
+    },
     "notFoundById": "{item} con id {id} non trovato",
     "notFoundByName": "{item} con nome '{name}' non trovato",
     "update": {
       "error": "Errore durante l'aggiornamento",
       "success": "Aggiornato con successo"
     }
+  },
+  "chat": {
+    "debug": {
+      "subject": "Viene mostrato il debug riferito all'ultima richiesta operatore",
+      "title": "Debug",
+      "file": {
+        "download": "Scarica file (.txt)"
+      }
+    },
+    "dictionary": {
+      "placeholder": "Scegli un dizionario"
+    },
+    "prompt": {
+      "generate": "Genera prompt",
+      "placeholder": "Inserisci una richiesta in linguaggio naturale",
+      "title": "Prompt"
+    },
+    "title": "Chat"
   },
   "dictionary": {
     "create": "Crea dizionario dati",
@@ -38,8 +60,8 @@
     },
     "list": {
       "empty": "Nessun risultato trovato",
-      "loading": "Caricamento dati! Attendere...",
-      "error": "Errore nel recupero dei dati"
+      "error": "Errore nel recupero dei dati",
+      "loading": "Caricamento dati! Attendere..."
     },
     "menu": {
       "technicianFunctionalities": "Funzionalità del tecnico"
@@ -59,14 +81,26 @@
     "language": "Lingua",
     "scale": "Scala"
   },
+  "footer": {
+    "title": "Gruppo ARGO",
+    "copyright": {
+      "title": "© 2024 Gruppo ARGO",
+      "section": "Tutti i diritti riservati"
+    }
+  },
   "text": {
     "cancel": "annulla",
     "chat": "chat",
     "debug": "debug",
     "description": "descrizione",
+    "english": "inglese",
     "error": "errore",
+    "french": "francese",
     "genericError": "errore generico",
+    "german": "tedesco",
+    "hide": "nascondi",
     "info": "info",
+    "italian": "italiano",
     "log": "log",
     "login": "accedi",
     "logout": "esci",
@@ -76,6 +110,9 @@
     "password": "password",
     "save": "salva",
     "settings": "impostazioni",
+    "show": "mostra",
+    "spanish": "spagnolo",
+    "toggle_view": "attiva/disattiva visualizzazione",
     "user": "utente",
     "username": "nome utente",
     "warning": "avviso",

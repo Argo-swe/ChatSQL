@@ -9,16 +9,25 @@ import UtilsService from '@/services/utils.service';
 
 const client = getApiClient()
 
-function t(str: string) {
-    return str;
-}
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n();
 
 let loading = ref(false);
 let loadingDebug = ref(false);
 let debugMessage = ref();
 
 onMounted(() => {
-    retrieveDictionaries();
+    retrieveDictionaries()
+        .then(retrieved => {
+            if (retrieved) {
+                checked.value = !checked.value;
+                toggleSelectView();
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
     window.addEventListener('token-localstorage-changed', () => {
         isLogged.value = AuthService.isLogged();
         if (!isLogged.value) {
@@ -28,45 +37,65 @@ onMounted(() => {
 });
 
 function retrieveDictionaries() {
-    dictionaries.value = [];
-    client.getAllDictionaries().then(
-        response => {
-            switch (response.data?.status) {
-                case "OK":
-                    dictionaries.value = response.data.data;
-                    break;
-                default:
-                    console.warn(response.data);
-            }
-        },
-        error => {
-            //messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`)
-        },
-    );
+    return new Promise((resolve, reject) => {
+        dictionaries.value = [];
+        client.getAllDictionaries().then(
+            response => {
+                switch (response.data?.status) {
+                    case "OK": {
+                        dictionaries.value = response.data.data;
+                        let localStorageDictionaryId = localStorage.getItem('chat-dictionary-id');
+                        if (localStorageDictionaryId && response.data.data.findIndex(d => d?.id) != -1) {
+                            selectedDictionary.value = parseInt(localStorageDictionaryId);
+                            resolve(true);
+                        }
+                        resolve(false);
+                        break;
+                    }
+                    default:
+                        messageError(t('dictionary.title'), `${t('general.list.error')}\n${response.data?.message}`);
+                        reject(`${t('general.list.error')}\n${response.data?.message}`);
+                }
+            },
+            error => {
+                messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
+                reject(`${t('general.list.error')}\n${error}`);
+            },
+        );
+    });
 }
 
-const selectedDbms = ref("Mysql");
+const selectedDbms = ref(localStorage.getItem('chat-dbms') || "Mysql");
 const dbms = ref([
     { name: 'Mysql', code: 'Mysql' },
     { name: 'PostgreSQL', code: 'PostgreSQL', },
     { name: 'MariaDB', code: 'MariaDB' },
     { name: 'Microsoft SQL Server', code: 'Microsoft' },
-    { name: 'Oracle database', code: 'Oracle' },
+    { name: 'Oracle DB', code: 'Oracle' },
     { name: 'SQLite', code: 'SQLite' },
 ]);
 
-const selectedLanguage = ref("english");
+const selectedLanguage = ref(localStorage.getItem('chat-language') || "english");
 const languages = ref([
-    { name: 'English', code: 'english' },
-    { name: 'Italian', code: 'italian' },
-    { name: 'French', code: 'french' },
-    { name: 'Spanish', code: 'spanish' },
-    { name: 'German', code: 'german' },
+    'english',
+    'italian',
+    'french',
+    'spanish',
+    'german',
 ]);
 
-const selectedDictionary = ref(null);
+const selectedDictionary = ref<null|number>(null);
 const dictionaries = ref();
 
+const onLanguageChange = (value: string) => {
+    localStorage.setItem('chat-language', value);
+};
+const onDbmsChange = (value: string) => {
+    localStorage.setItem('chat-dbms', value);
+};
+const onDictionaryChange = (value: number) => {
+    localStorage.setItem('chat-dictionary-id', value.toString());
+};
 const messages = ref<any>([]);
 
 const request = ref('');
@@ -77,7 +106,7 @@ function runRequest() {
     console.log(request.value);
     loading.value = true;
     client.generatePrompt({
-      dictionaryId: parseInt(selectedDictionary.value!),
+      dictionaryId: selectedDictionary.value!,
       query: request.value.trim(),
       dbms: selectedDbms.value,
       lang: selectedLanguage.value
@@ -88,19 +117,16 @@ function runRequest() {
                     addMessage(response.data.data, false);
                 break;
                 case "BAD_REQUEST":
-                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.formatError')}`)
-                break;
-                case "CONFLICT":
-                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`)
+                    messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${t('actions.formatError')}`)
                 break;
                 default:
-                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${response.data?.message}`)
+                    messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${response.data?.message}`)
             }
             loading.value = false;
         },
         error => {
             loading.value = false;
-            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error}`)
+            messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`)
         }
     )
 }
@@ -114,16 +140,16 @@ function loadDebug() {
                     debugMessage.value = response.data.data
                     break;
                 case "NOT_FOUND":
-                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.formatError')}`)
+                    messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${t('actions.formatError')}`)
                 break;
                 default:
-                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${response.data?.message}`)
+                    messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${response.data?.message}`)
             }
             loadingDebug.value = false;
         },
         error => {
             loadingDebug.value = false;
-            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error}`)
+            messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error}`)
         }
     )
 }
@@ -152,8 +178,8 @@ function onTabChange(event: TabMenuChangeEvent) {
 let isLogged = ref(AuthService.isLogged());
 const active = ref(0);
 const items = ref([
-    { label: 'Chat', icon: 'pi pi-comments' },
-    { label: 'Debug', icon: 'pi pi-receipt' }
+    { label: () => t('chat.title'), icon: 'pi pi-comments' },
+    { label: () => t('chat.debug.title'), icon: 'pi pi-receipt' }
 ]);
 
 
@@ -168,11 +194,12 @@ const toggleSelectView = () => {
 }
 
 // Ritorno il nome del dizionario dati selezionato
-const getDictionaryName = (id: number) => {
+const getDictionaryName = (id: number | null) => {
   const dict = dictionaries.value?.find(dict => dict.id === id);
-  return dict ? dict.name + ' (.json)' : 'Choose a dictionary';
+  return dict ? dict.name + ' (.json)' : t('chat.dictionary.placeholder');
 };
 
+// Download del file di log
 function onClickDownloadFile() {
     UtilsService.downloadFile('chatsql_log.txt', debugMessage.value);
 }
@@ -186,20 +213,31 @@ function onClickDownloadFile() {
         <div id="titlebar-container" class="card p-3">
             <div id="chat-title" class="flex flex-row align-items-center">
                 <h1 class="m-1 text-xl font-semibold">{{ getDictionaryName(selectedDictionary) }}</h1>
-                <ToggleButton v-model="checked" onLabel="Show" offLabel="Hide" onIcon="pi pi-check" offIcon="pi pi-times" class="w-9rem m-1" aria-label="Hide or Show" @click="toggleSelectView"/>
+                <ToggleButton v-model="checked" :onLabel="t('text.Show')" :offLabel="t('text.Hide')" onIcon="pi pi-check" offIcon="pi pi-times" class="w-9rem m-1" :aria-label="t('text.toggle_view')" @click="toggleSelectView"/>
             </div>
             <Divider :class="{hide: hide}" />
             <div :class="{hide: hide}" class="flex flex-wrap flex-row">
                 <InputGroup class="w-full sm:w-fit">
-                    <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
-                        optionValue="id" placeholder="Choose dictionary..." class="h-fit m-2 mr-0" />
+                    <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name" @update:modelValue="onDictionaryChange"
+                        optionValue="id" :placeholder="t('chat.dictionary.placeholder')" class="h-fit m-2 mr-0" />
                     <Button severity="info" icon="pi pi-info" class="h-fit m-2 ml-0" />
                 </InputGroup>
 
                 <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                    class="w-fit h-fit m-2" />
-                <Dropdown v-model="selectedLanguage" :options="languages" optionLabel="name" optionValue="code"
-                    class="w-fit h-fit m-2" />
+                    class="w-fit h-fit m-2" @update:modelValue="onDbmsChange"/>
+                <Dropdown v-model="selectedLanguage" :options="languages" @update:modelValue="onLanguageChange"
+                class="w-fit h-fit m-2">
+                    <template #value="slotProps">
+                        <div class="capitalize">
+                            {{ t(`text.${slotProps.value}`) }}
+                        </div>
+                    </template>
+                    <template #option="slotProps">
+                        <div class="capitalize">
+                            {{ t(`text.${slotProps.option}`) }}
+                        </div>
+                    </template>
+                </Dropdown>
             </div>
         </div>
 
@@ -209,15 +247,15 @@ function onClickDownloadFile() {
         </div>
 
         <InputGroup id="input-container" class="mt-1">
-            <Textarea v-model="request" autoResize placeholder="Enter a natural language request" rows="1"
-                class="w-full" aria-label="Enter a natural language request" />
-            <Button @click="runRequest" :icon="loading ? 'pi pi-spin pi-spinner' : 'pi pi-send'" aria-label="Send a request" :disabled="loading || !selectedDictionary || !request" />
+            <Textarea v-model="request" :placeholder="t('chat.prompt.placeholder')" rows="5"
+                class="w-full" :aria-label="t('chat.prompt.placeholder')" />
+            <Button @click="runRequest" :icon="loading ? 'pi pi-spin pi-spinner' : 'pi pi-send'" :title="t('chat.prompt.generate')" :disabled="loading || !selectedDictionary || !request" />
         </InputGroup>
     </div>
 
     <div v-if="active == 1" id="debug" class="h-full mt-3">
-        <h1 class="m-1 mb-3 text-xl font-semibold">Debug riferito all'ultima richiesta dell'operatore</h1>
-        <Button v-if="!loadingDebug && debugMessage" icon="pi pi-download" label="Download file (.txt)" severity="help" class="mb-3" @click="onClickDownloadFile()" />
+        <h1 class="m-1 mb-3 text-xl font-semibold">{{ t('chat.debug.subject') }}</h1>
+        <Button v-if="!loadingDebug && debugMessage" icon="pi pi-download" :label="t('chat.debug.file.download')" severity="help" class="mb-3" @click="onClickDownloadFile()" />
         <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
     </div>
 </template>
@@ -250,7 +288,7 @@ function onClickDownloadFile() {
 
 #input-container {
     width: 100%;
-    max-height: 5rem;
+    max-height: 10rem;
 }
 
 #input-container textarea {
@@ -259,6 +297,7 @@ function onClickDownloadFile() {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
     box-sizing: content-box;
+    resize: none;
 }
 
 #input-container textarea::placeholder {
