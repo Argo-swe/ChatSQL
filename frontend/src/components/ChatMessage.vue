@@ -64,7 +64,7 @@ const copyToClipboard = (event) => {
 
 .message p {
     padding: 1em;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 .copy-to-clipboard {
