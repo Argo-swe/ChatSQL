@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useLayout } from '@/components/layout/composables/layout';
 import { computed } from 'vue';
 

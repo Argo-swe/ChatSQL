@@ -1,7 +1,35 @@
-
-<script setup>
+<script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue';
 import { messageService } from '@/services/message.service'
+import { getApiClient } from '@/services/api-client.service';
+import ChatMessage from '@/components/ChatMessage.vue'
+const client = getApiClient()
+
+function t(str: string) {
+    return str;
+}
+
+onMounted(() => {
+    retrieveDictionaries();
+});
+
+function retrieveDictionaries() {
+    dictionaries.value = [];
+    client.getAllDictionaries().then(
+        response => {
+            switch (response.data?.status) {
+                case "OK":
+                    dictionaries.value = response.data.data;
+                    break;
+                default:
+                    console.warn(response.data);
+            }
+        },
+        error => {
+            //messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`)
+        },
+    );
+}
 
 const selectedDbms = ref("Mysql");
 const dbms = ref([
@@ -13,28 +41,64 @@ const dbms = ref([
     { name: 'SQLite', code: 'SQLite' },
 ]);
 
-const selectedLanguage = ref("EN");
+const selectedLanguage = ref("english");
 const languages = ref([
-    { name: 'English', code: 'EN' },
-    { name: 'Italian', code: 'IT' },
-    { name: 'French', code: 'FR' },
-    { name: 'Spanish', code: 'ES' },
-    { name: 'German', code: 'DE' },
+    { name: 'English', code: 'english' },
+    { name: 'Italian', code: 'italian' },
+    { name: 'French', code: 'french' },
+    { name: 'Spanish', code: 'spanish' },
+    { name: 'German', code: 'german' },
 ]);
 
 const selectedDictionary = ref(null);
-const dictionaries = ref([
-    { name: 'Utenti', code: 'Utenti' },
-    { name: 'Clienti Zucchetti', code: 'cz' },
-    { name: 'Abc', code: 'abc' },
-]);
+const dictionaries = ref();
+
+const messages = ref<any>([]);
 
 const request = ref('');
 const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
 
 function runRequest() {
+    addMessage(request.value.trim(), true);
     console.log(request.value);
+    client.generatePrompt({
+      dictionaryId: parseInt(selectedDictionary.value!),
+      query: request.value.trim(),
+      dbms: selectedDbms.value,
+      lang: selectedLanguage.value
+    }).then(
+        response => {
+        switch(response.data?.status) {
+            case "OK":
+                addMessage(response.data.data, false);
+            break;
+            case "BAD_REQUEST":
+            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.formatError')}`)
+            break;
+            case "CONFLICT":
+            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`)
+            break;
+            default:
+            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${response.data?.message}`)
+        }
+        },
+        error => {
+            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error}`)
+        }
+    )
 }
+
+function addMessage(message: String, isSent: Boolean) {
+    if (!messages.value) {
+        messages.value = [];
+    }
+
+    messages.value.push({
+        message,
+        isSent
+    })
+}
+
 
 // Switch Hide/Show per il toggle button
 const checked = ref(false);
@@ -46,35 +110,9 @@ const toggleSelectView = () => {
     hide.value = !hide.value;
 }
 
-// Variabile per controllare lo stato della funzione di copia del prompt
-const isCopying = ref(false);
-
-const copyToClipboard = (event) => {
-    // Interrompo se c'è già una copia in corso
-    if (isCopying.value) return;
-    isCopying.value = true;
-    // Risalgo al messaggio più vicino al bottone cliccato
-    const messageContent = event.currentTarget.closest('.message').querySelector('p');
-    if (!messageContent) return;
-    // Estraggo il contenuto dall'elemento ed elimino eventuali spazi all'inizio e alla fine della stringa
-    const text = messageContent.textContent.trim();
-    navigator.clipboard.writeText(text)
-        .then(() => {
-            console.log('Text copied to clipboard: ', text);
-            messageSuccess('Copy', 'Text copied to clipboard');
-            setTimeout(() => {
-                isCopying.value = false;
-            }, 2000);
-        })
-        .catch((err) => {
-            console.error('Error when copying to clipboard: ', err);
-            messageError('Copy', 'Error when copying to clipboard');
-        });
-};
-
 // Ritorno il nome del dizionario dati selezionato
-const getDictionaryName = (code) => {
-  const dict = dictionaries.value.find(dict => dict.code === code);
+const getDictionaryName = (id) => {
+  const dict = dictionaries.value?.find(dict => dict.id === id);
   return dict ? dict.name + ' (.json)' : 'Choose a dictionary';
 };
 
@@ -92,7 +130,7 @@ const getDictionaryName = (code) => {
             <div :class="{hide: hide}" class="flex flex-wrap flex-row">
                 <InputGroup class="w-full sm:w-fit">
                     <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name"
-                        optionValue="code" placeholder="Choose dictionary..." class="h-fit m-2 mr-0" />
+                        optionValue="id" placeholder="Choose dictionary..." class="h-fit m-2 mr-0" />
                     <Button severity="info" icon="pi pi-info" class="h-fit m-2 ml-0" />
                 </InputGroup>
 
@@ -105,32 +143,10 @@ const getDictionaryName = (code) => {
 
         <!-- CHAT MESSAGES -->
         <div id="messages">
-            <div class="message sent md:w-10 mx-1 my-2">
-                <div class="flex flex-row-reverse gap-3">
-                    <div class="flex-shrink-0">
-                        <Avatar icon="pi pi-user" size="large" shape="circle" />
-                    </div>
-                    <div class="w-full border-round-lg messageBox">
-                        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae
-                        quia inventore quisquam eligendi aliquid doloremque qui amet sit et cum cupiditate consectetur quo
-                        rerum maiores adipisci assumenda impedit, sequi excepturi. Adipisci, in. Similique, natus illo
-                        facere, quas, ea optio saepe architecto unde aliquid vero itaque!</p>
-                    </div>
-                </div>
-            </div>
+            <ChatMessage v-for="msg in messages" :is-sent="msg.isSent" :message="msg.message"></ChatMessage>
+            <!-- <ChatMessage :is-sent="true" message="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae quia inventore quisquam eligendi aliquid doloremque qui amet sit et cum cupiditate consectetur quorerum maiores adipisci assumenda impedit, sequi excepturi. Adipisci, in. Similique, natus illofacere, quas, ea optio saepe architecto unde aliquid vero itaque!"></ChatMessage>
 
-            <div class="message received md:w-10 mx-1 my-2">
-                <div class="flex gap-3">
-                    <div class="flex-shrink-0">
-                        <Avatar icon="pi pi-database" class="" size="large" shape="circle" />
-                    </div>
-                    <div class="w-full border-round-lg messageBox">
-                        <Button :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'" class="copy-to-clipboard" severity="contrast" @click="copyToClipboard" aria-label="Copy to clipboard" />
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit,
-                        quisquam unde dolor dicta temporibus error.</p>
-                    </div>
-                </div>
-            </div>
+            <ChatMessage :is-sent="false" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit,quisquam unde dolor dicta temporibus error."></ChatMessage> -->
         </div>
 
         <InputGroup id="input-container" class="mt-1">
@@ -165,7 +181,7 @@ const getDictionaryName = (code) => {
     overflow-y: scroll;
 }
 
-.message {
+/* .message {
     width: 95%;
     position: relative;
 }
@@ -197,7 +213,7 @@ const getDictionaryName = (code) => {
 
 .message.received .messageBox {
     background-color: var(--message-received);
-}
+} */
 
 #input-container {
     width: 100%;

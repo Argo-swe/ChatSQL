@@ -38,7 +38,7 @@ def generatePrompt(dictionaryId: int, query: str, dbms: str, lang: str, db: Sess
             )
 
     manager.loadIndex(foundDic.id)
-    prompt = manager.promptGenerator(foundDic.id, query, lang, dbms)
+    prompt = manager.promptGenerator(foundDic.id, query, lang, dbms, activate_log=True)
 
     print(prompt)
 

@@ -7,7 +7,9 @@ from pathlib import Path
 
 current_dir = Path(__file__).resolve().parent
 indexesOutFileBasePath = "/opt/chatsql/indexes"
-logsOutFileBasePath = "/opt/chatsql/logs/chatsql_log.txt"
+logsOutFileBasePath = "/opt/chatsql/logs"
+logsFileOutFileBasePath = f"{logsOutFileBasePath}/chatsql_log.txt"
+
 
 class IndexManager:
     def __init__(self):
@@ -131,7 +133,8 @@ class IndexManager:
         relevant_tuples = []
         score = 0
         if not tuples:
-            log.write("No tables found.\n\n")
+            if activate_log:
+                log.write("No tables found.\n\n")
         for tuple in tuples:
             scoring_distance = score - tuple["max_score"]
             if tuple["max_score"] >= 0.45:
@@ -169,7 +172,8 @@ class IndexManager:
     # Metodo per ottenere un oggetto relativo al file di log
     def getLogFile(self, mode):
         try:
-            file = open(logsOutFileBasePath, mode)
+            os.makedirs(logsOutFileBasePath, exist_ok=True)
+            file = open(logsFileOutFileBasePath, mode)
             return file
         except Exception:
             return False
@@ -177,7 +181,7 @@ class IndexManager:
     # Metodo per leggere il file di log
     def readLogFile(self):
         try:
-            with open(logsOutFileBasePath, 'r') as file:
+            with open(logsFileOutFileBasePath, 'r') as file:
                 return file.read()
         except Exception:
             return False
