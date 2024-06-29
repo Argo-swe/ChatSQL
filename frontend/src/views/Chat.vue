@@ -19,6 +19,9 @@ onMounted(() => {
     retrieveDictionaries();
     window.addEventListener('token-localstorage-changed', () => {
         isLogged.value = AuthService.isLogged();
+        if (!isLogged.value) {
+            active.value = 0; // show default chat tab
+        }
     });
 });
 
