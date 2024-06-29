@@ -10,13 +10,32 @@
       "error": "Error while deleting",
       "success": "Successfully deleted"
     },
-    "formatError": "wrong format",
+    "formatError": "Wrong format",
+    "generate": {
+      "error": "Error during generation",
+      "success": "Generation successful"
+    },
     "notFoundById": "{item} with id {id} not found",
     "notFoundByName": "{item} with name '{name}' not found",
     "update": {
       "error": "Error during update",
       "success": "Successfully updated"
     }
+  },
+  "chat": {
+    "debug": {
+      "subject": "The debug referring to the last operator request is shown",
+      "title": "Debug"
+    },
+    "dictionary": {
+      "placeholder": "Choose a dictionary"
+    },
+    "prompt": {
+      "generate": "Generate prompts",
+      "placeholder": "Enter a natural language request",
+      "title": "Prompt"
+    },
+    "title": "Chat"
   },
   "dictionary": {
     "create": "Create data dictionary",
@@ -38,8 +57,8 @@
     },
     "list": {
       "empty": "No results found",
-      "loading": "Loading data! Please wait...",
-      "error": "Error while loagind data"
+      "error": "Error while loagind data",
+      "loading": "Loading data! Please wait..."
     },
     "menu": {
       "technicianFunctionalities": "Technician functionalities"
@@ -64,9 +83,14 @@
     "chat": "chat",
     "debug": "debug",
     "description": "description",
+    "english": "english",
     "error": "error",
+    "french": "french",
     "genericError": "generic error",
+    "german": "german",
+    "hide": "hide",
     "info": "info",
+    "italian": "italian",
     "log": "log",
     "login": "login",
     "logout": "logout",
@@ -76,6 +100,8 @@
     "password": "password",
     "save": "save",
     "settings": "settings",
+    "show": "show",
+    "spanish": "spanish",
     "user": "user",
     "username": "username",
     "warning": "warning",

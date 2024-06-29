@@ -1,9 +1,10 @@
 import sys
 from txtai.embeddings import Embeddings
-from engine.tools.schema_multi_extractor import Schema_Multi_Extractor
+from tools.schema_multi_extractor import Schema_Multi_Extractor
 import os
 import time
 from pathlib import Path
+import shutil
 
 current_dir = Path(__file__).resolve().parent
 indexesOutFileBasePath = "/opt/chatsql/indexes"
@@ -74,6 +75,12 @@ class IndexManager:
     # Metodo per caricare l'indice già salvato
     def loadIndex(self, dictionary_id):
         self.embeddings.load(f"{indexesOutFileBasePath}/index_{dictionary_id}")
+
+    # Metodo per eliminare l'indice
+    def deleteIndex(self, dictionary_id):
+        delete_path = f"{indexesOutFileBasePath}/index_{dictionary_id}"
+        if os.path.exists(delete_path):
+            shutil.rmtree(delete_path)
 
     # Metodo per eseguire la ricerca semantica (rimosso il "private" per i test di unità)
     def getTuples(self, user_request, activate_log):

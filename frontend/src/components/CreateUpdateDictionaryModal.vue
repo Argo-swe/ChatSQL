@@ -24,6 +24,7 @@ let fileSelected = ref(false);
 let fileUpload = ref();
 
 let selectedFile: string | null;
+let loading = ref(false)
 
 onMounted(() => {
   const props = dialogRef?.value.data;
@@ -40,6 +41,7 @@ const closeDialog = (status: boolean) => {
 }
 
 function createDictionary() {
+  loading.value = true;
   client.createDictionary(
     {
       name: dictionaryName.value,
@@ -68,14 +70,17 @@ function createDictionary() {
         default:
           messageError(t('dictionary.title'), `${t('actions.create.error')}\n${response.data?.message}`)
       }
+      loading.value = false;
     },
     error => {
       messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error}`)
+      loading.value = false;
     }
   )
 }
 
 function updateDictionaryMetadata() {
+  loading.value = true;
   client.updateDictionaryMetadata(dictionaryId.value, {
     id: dictionaryId.value,
     name: dictionaryName.value,
@@ -99,14 +104,17 @@ function updateDictionaryMetadata() {
         default:
           messageError(t('dictionary.title'), `${t('actions.update.error')}\n${response.data?.message}`)
       }
+      loading.value = false;
     },
     error => {
       messageError(t('dictionary.title'), `${t('actions.update.error')}\n${error}`)
+      loading.value = false;
     }
   )
 }
 
 function updateDictionaryFile() {
+  loading.value = true;
   client.updateDictionaryFile(
     dictionaryId.value,
     {
@@ -123,15 +131,20 @@ function updateDictionaryFile() {
           messageSuccess(t('dictionary.file.title'), t('actions.update.success'))
           closeDialog(true)
           break;
+        case "BAD_REQUEST":
+          messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${t('actions.formatError')}`)
+          break;
         case "NOT_FOUND":
           messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`)
           break;
         default:
           messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${response.data?.message}`)
       }
+      loading.value = false;
     },
     error => {
       messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${error}`)
+      loading.value = false;
     }
   )
 }
@@ -194,7 +207,7 @@ const onSelectedFile = async (event: FileUploadSelectEvent) => {
         <div class="flex">
         </div>
         <div class="flex">
-          <Button :label="t('text.Save')" type="submit" class="mt-4" severity="success" :disabled="!isFormValid()" />
+          <Button :label="t('text.Save')" :icon="loading ? 'pi pi-spinner' : ''" type="submit" class="mt-4" severity="success" :disabled="!isFormValid() || loading" />
         </div>
     </div>
   </form>

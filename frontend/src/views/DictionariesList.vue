@@ -127,6 +127,7 @@ function onClickDelete(dictionaryId: number) {
         header: t('dictionary.delete'),
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: t('text.Yes'),
+        acceptClass: 'p-button-success',
         rejectLabel: t('text.No'),
         accept: () => {
             client.deleteDictionary(dictionaryId).then(
