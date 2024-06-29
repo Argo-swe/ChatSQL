@@ -25,12 +25,12 @@ const TECHNICIAN_MENU = [
         label: computed(() => t('general.menu.technicianFunctionalities')),
         items: [
             { label: computed(() => t('dictionary.title', 2)), icon: 'pi pi-fw pi-database', to: '/dictionary' },
-            { label: computed(() => t('text.Debug')), icon: 'pi pi-fw pi-eye', to: '/debug' }
+            // { label: computed(() => t('text.Debug')), icon: 'pi pi-fw pi-eye', to: '/debug' }
         ]
     }
 ];
 
-let model = ref(AuthService.isLogged() ? TECHNICIAN_MENU : USER_MENU);
+let model = ref<any>(AuthService.isLogged() ? TECHNICIAN_MENU : USER_MENU);
 
 onMounted(() => {
     window.addEventListener('token-localstorage-changed', () => {

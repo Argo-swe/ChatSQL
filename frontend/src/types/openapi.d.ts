@@ -226,18 +226,8 @@ declare namespace Paths {
         }
     }
     namespace GeneratePromptDebug {
-        namespace Parameters {
-            /**
-             * Query
-             */
-            export type Query = string;
-        }
-        export interface QueryParameters {
-            query: /* Query */ Parameters.Query;
-        }
         namespace Responses {
             export type $200 = /* StringDataResponseDto */ Components.Schemas.StringDataResponseDto;
-            export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
     namespace GetAllDictionaries {
@@ -395,7 +385,7 @@ export interface OperationMethods {
    * generatePromptDebug - Generatepromptdebug
    */
   'generatePromptDebug'(
-    parameters?: Parameters<Paths.GeneratePromptDebug.QueryParameters> | null,
+    parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GeneratePromptDebug.Responses.$200>
@@ -503,7 +493,7 @@ export interface PathsDictionary {
      * generatePromptDebug - Generatepromptdebug
      */
     'get'(
-      parameters?: Parameters<Paths.GeneratePromptDebug.QueryParameters> | null,
+      parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GeneratePromptDebug.Responses.$200>

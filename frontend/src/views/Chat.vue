@@ -3,14 +3,23 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import { messageService } from '@/services/message.service'
 import { getApiClient } from '@/services/api-client.service';
 import ChatMessage from '@/components/ChatMessage.vue'
+import AuthService from '@/services/auth.service';
+import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 const client = getApiClient()
 
 function t(str: string) {
     return str;
 }
 
+let loading = ref(false);
+let loadingDebug = ref(false);
+let debugMessage = ref();
+
 onMounted(() => {
     retrieveDictionaries();
+    window.addEventListener('token-localstorage-changed', () => {
+        isLogged.value = AuthService.isLogged();
+    });
 });
 
 function retrieveDictionaries() {
@@ -61,6 +70,7 @@ const { messageSuccess, messageError, messageInfo, messageWarning } = messageSer
 function runRequest() {
     addMessage(request.value.trim(), true);
     console.log(request.value);
+    loading.value = true;
     client.generatePrompt({
       dictionaryId: parseInt(selectedDictionary.value!),
       query: request.value.trim(),
@@ -68,21 +78,46 @@ function runRequest() {
       lang: selectedLanguage.value
     }).then(
         response => {
-        switch(response.data?.status) {
-            case "OK":
-                addMessage(response.data.data, false);
-            break;
-            case "BAD_REQUEST":
-            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.formatError')}`)
-            break;
-            case "CONFLICT":
-            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`)
-            break;
-            default:
-            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${response.data?.message}`)
-        }
+            switch(response.data?.status) {
+                case "OK":
+                    addMessage(response.data.data, false);
+                break;
+                case "BAD_REQUEST":
+                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.formatError')}`)
+                break;
+                case "CONFLICT":
+                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`)
+                break;
+                default:
+                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${response.data?.message}`)
+            }
+            loading.value = false;
         },
         error => {
+            loading.value = false;
+            // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error}`)
+        }
+    )
+}
+
+function loadDebug() {
+    loadingDebug.value = true;
+    client.generatePromptDebug().then(
+        response => {
+            switch(response.data?.status) {
+                case "OK":
+                    debugMessage.value = response.data.data
+                    break;
+                case "NOT_FOUND":
+                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${t('actions.formatError')}`)
+                break;
+                default:
+                // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${response.data?.message}`)
+            }
+            loadingDebug.value = false;
+        },
+        error => {
+            loadingDebug.value = false;
             // messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error}`)
         }
     )
@@ -99,6 +134,23 @@ function addMessage(message: String, isSent: Boolean) {
     })
 }
 
+function onTabChange(event: TabMenuChangeEvent) {
+    if (event.index != 1) {
+        // todo clean log
+        debugMessage.value = null;
+    } else {
+        // load log
+        loadDebug();
+    }
+}
+
+let isLogged = ref(AuthService.isLogged());
+const active = ref(0);
+const items = ref([
+    { label: 'Chat', icon: 'pi pi-comments' },
+    { label: 'Debug', icon: 'pi pi-receipt' }
+]);
+
 
 // Switch Hide/Show per il toggle button
 const checked = ref(false);
@@ -111,15 +163,16 @@ const toggleSelectView = () => {
 }
 
 // Ritorno il nome del dizionario dati selezionato
-const getDictionaryName = (id) => {
+const getDictionaryName = (id: number) => {
   const dict = dictionaries.value?.find(dict => dict.id === id);
   return dict ? dict.name + ' (.json)' : 'Choose a dictionary';
 };
 
 </script>
 <template>
+    <TabMenu v-model:activeIndex="active" :model="items" v-if="isLogged" @tab-change="onTabChange"/>
 
-    <div id="chat" class="flex flex-column justify-between">
+    <div v-if="active == 0" id="chat" class="flex flex-column justify-between">
         <!-- TITLE -->
         <div id="titlebar-container" class="card p-3">
             <div id="chat-title" class="flex flex-row align-items-center">
@@ -143,20 +196,23 @@ const getDictionaryName = (id) => {
 
         <!-- CHAT MESSAGES -->
         <div id="messages">
-            <ChatMessage v-for="msg in messages" :is-sent="msg.isSent" :message="msg.message"></ChatMessage>
-            <!-- <ChatMessage :is-sent="true" message="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem unde tenetur labore accusantium quae quia inventore quisquam eligendi aliquid doloremque qui amet sit et cum cupiditate consectetur quorerum maiores adipisci assumenda impedit, sequi excepturi. Adipisci, in. Similique, natus illofacere, quas, ea optio saepe architecto unde aliquid vero itaque!"></ChatMessage>
-
-            <ChatMessage :is-sent="false" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatem soluta quidem ea sit,quisquam unde dolor dicta temporibus error."></ChatMessage> -->
+            <ChatMessage v-for="(msg, index) in messages" :key="index" :is-sent="msg.isSent" :message="msg.message"></ChatMessage>
         </div>
 
         <InputGroup id="input-container" class="mt-1">
             <Textarea v-model="request" autoResize placeholder="Enter a natural language request" rows="1"
-                class="w-full" aria-label="Enter a natural language request" :disabled="!selectedDictionary" />
-            <Button @click="runRequest" icon="pi pi-send" aria-label="Send a request" :disabled="!selectedDictionary" />
+                class="w-full" aria-label="Enter a natural language request" />
+            <Button @click="runRequest" :icon="loading ? 'pi pi-spin pi-spinner' : 'pi pi-send'" aria-label="Send a request" :disabled="loading || !selectedDictionary || !request" />
         </InputGroup>
     </div>
 
+    <div v-if="active == 1" id="debug">
+        <div class="card p-3">
 
+            <h3>Viene mostrato il debug riferito all'ultima richiesta operatore</h3>
+            <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
+        </div>
+    </div>
 </template>
 
 <style scoped>
@@ -180,40 +236,6 @@ const getDictionaryName = (id) => {
     flex-direction: column;
     overflow-y: scroll;
 }
-
-/* .message {
-    width: 95%;
-    position: relative;
-}
-
-.message .p-avatar {
-    margin-bottom: 0.5em;
-}
-
-.message p {
-    padding: 1em;
-}
-
-.copy-to-clipboard {
-    position: absolute;
-    top: 0.1rem;
-    right: 0.1rem;
-}
-
-.message.sent {
-    align-self: flex-end;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.message.sent .messageBox {
-    background-color: var(--message-sent);
-}
-
-.message.received .messageBox {
-    background-color: var(--message-received);
-} */
 
 #input-container {
     width: 100%;

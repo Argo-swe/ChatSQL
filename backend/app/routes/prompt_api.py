@@ -1,3 +1,4 @@
+from engine.tools.utils import Utils
 from models.responses.response_dto import ResponseStatusEnum
 from models.responses.string_data_response_dto import StringDataResponseDto
 
@@ -67,19 +68,16 @@ def generatePrompt(dictionaryId: int, query: str, dbms: str, lang: str, db: Sess
 #     )
 
 @router.get("/debug", tags=[tag], response_model=StringDataResponseDto)
-def generatePromptDebug(query: str) -> StringDataResponseDto:
+def generatePromptDebug() -> StringDataResponseDto:
 
-    # FIXME: set debug method
-    if query == None:
-        query = "the surname of users who paid for all their orders with PayPal"
-
-    # prompt = manager.promptGenerator(query, activate_log=True)
-    prompt = "Un giorno produrrò un log di debug"
-
-    print(prompt)
-
-    # return { "data": prompt, "message": "OK" }
-    return StringDataResponseDto(
-        data=prompt,
-        status=ResponseStatusEnum.OK
+    try:
+        with open('/opt/chatsql/logs/chatsql_log.txt', 'r') as file:
+            return StringDataResponseDto(
+                data=file.read(),
+                status=ResponseStatusEnum.OK
     )
+    except FileNotFoundError:
+        return StringDataResponseDto(
+            message="Log file not found",
+            status=ResponseStatusEnum.NOT_FOUND
+        )
