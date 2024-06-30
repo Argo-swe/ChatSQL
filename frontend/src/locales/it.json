@@ -25,7 +25,10 @@
   "chat": {
     "debug": {
       "subject": "Viene mostrato il debug riferito all'ultima richiesta operatore",
-      "title": "Debug"
+      "title": "Debug",
+      "file": {
+        "download": "Scarica file (.txt)"
+      }
     },
     "dictionary": {
       "placeholder": "Scegli un dizionario"
@@ -80,6 +83,13 @@
     "language": "Lingua",
     "scale": "Scala"
   },
+  "footer": {
+    "title": "Gruppo ARGO",
+    "copyright": {
+      "title": "Gruppo ARGO",
+      "section": "Tutti i diritti riservati"
+    }
+  },
   "text": {
     "cancel": "annulla",
     "chat": "chat",
@@ -104,6 +114,7 @@
     "settings": "impostazioni",
     "show": "mostra",
     "spanish": "spagnolo",
+    "toggle_view": "attiva/disattiva visualizzazione",
     "user": "utente",
     "username": "nome utente",
     "warning": "avviso",

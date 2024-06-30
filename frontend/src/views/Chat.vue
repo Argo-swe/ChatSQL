@@ -5,6 +5,8 @@ import { getApiClient } from '@/services/api-client.service';
 import ChatMessage from '@/components/ChatMessage.vue'
 import AuthService from '@/services/auth.service';
 import type { TabMenuChangeEvent } from 'primevue/tabmenu';
+import UtilsService from '@/services/utils.service';
+
 const client = getApiClient()
 
 import { useI18n } from 'vue-i18n'
@@ -15,7 +17,17 @@ let loadingDebug = ref(false);
 let debugMessage = ref();
 
 onMounted(() => {
-    retrieveDictionaries();
+    retrieveDictionaries()
+        .then(retrieved => {
+            if (retrieved) {
+                checked.value = !checked.value;
+                toggleSelectView();
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
     window.addEventListener('token-localstorage-changed', () => {
         isLogged.value = AuthService.isLogged();
         if (!isLogged.value) {
@@ -25,26 +37,32 @@ onMounted(() => {
 });
 
 function retrieveDictionaries() {
-    dictionaries.value = [];
-    client.getAllDictionaries().then(
-        response => {
-            switch (response.data?.status) {
-                case "OK": {
-                    dictionaries.value = response.data.data;
-                    let localStorageDictionaryId = localStorage.getItem('chat-dictionary-id');
-                    if (localStorageDictionaryId && response.data.data.findIndex(d => d?.id) != -1) {
-                        selectedDictionary.value = parseInt(localStorageDictionaryId);
+    return new Promise((resolve, reject) => {
+        dictionaries.value = [];
+        client.getAllDictionaries().then(
+            response => {
+                switch (response.data?.status) {
+                    case "OK": {
+                        dictionaries.value = response.data.data;
+                        let localStorageDictionaryId = localStorage.getItem('chat-dictionary-id');
+                        if (localStorageDictionaryId && response.data.data.findIndex(d => d?.id) != -1) {
+                            selectedDictionary.value = parseInt(localStorageDictionaryId);
+                            resolve(true);
+                        }
+                        resolve(false);
+                        break;
                     }
-                    break;
+                    default:
+                        messageError(t('dictionary.title'), `${t('general.list.error')}\n${response.data?.message}`);
+                        reject(`${t('general.list.error')}\n${response.data?.message}`);
                 }
-                default:
-                    messageError(t('dictionary.title'), `${t('general.list.error')}\n${response.data?.message}`)
-            }
-        },
-        error => {
-            messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`)
-        },
-    );
+            },
+            error => {
+                messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
+                reject(`${t('general.list.error')}\n${error}`);
+            },
+        );
+    });
 }
 
 const selectedDbms = ref(localStorage.getItem('chat-dbms') || "Mysql");
@@ -181,6 +199,11 @@ const getDictionaryName = (id: number | null) => {
   return dict ? dict.name + ' (.json)' : t('chat.dictionary.placeholder');
 };
 
+// Download del file di log
+function onClickDownloadFile() {
+    UtilsService.downloadFile('chatsql_log.txt', debugMessage.value);
+}
+
 </script>
 <template>
     <TabMenu v-model:activeIndex="active" :model="items" v-if="isLogged" class="tab-chat mb-2" @tab-change="onTabChange"/>
@@ -190,7 +213,7 @@ const getDictionaryName = (id: number | null) => {
         <div id="titlebar-container" class="card p-3">
             <div id="chat-title" class="flex flex-row align-items-center">
                 <h1 class="m-1 text-xl font-semibold">{{ getDictionaryName(selectedDictionary) }}</h1>
-                <ToggleButton v-model="checked" :onLabel="t('text.Show')" :offLabel="t('text.Hide')" onIcon="pi pi-check" offIcon="pi pi-times" class="w-9rem m-1" aria-label="Hide or Show" @click="toggleSelectView"/>
+                <ToggleButton v-model="checked" :onLabel="t('text.Show')" :offLabel="t('text.Hide')" onIcon="pi pi-check" offIcon="pi pi-times" class="w-9rem m-1" :aria-label="t('text.toggle_view')" @click="toggleSelectView"/>
             </div>
             <Divider :class="{hide: hide}" />
             <div :class="{hide: hide}" class="flex flex-wrap flex-row">
@@ -231,10 +254,9 @@ const getDictionaryName = (id: number | null) => {
     </div>
 
     <div v-if="active == 1" id="debug" class="h-full mt-3">
-        <div class="card p-3">
-            <h1 class="m-1 mb-3 text-xl font-semibold">{{ t('chat.debug.subject') }}</h1>
-            <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
-        </div>
+        <h1 class="m-1 mb-3 text-xl font-semibold">{{ t('chat.debug.subject') }}</h1>
+        <Button v-if="!loadingDebug && debugMessage" icon="pi pi-download" :label="t('chat.debug.file.download')" severity="help" class="mb-3" @click="onClickDownloadFile()" />
+        <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
     </div>
 </template>
 
