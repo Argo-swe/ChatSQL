@@ -6,6 +6,6 @@ parameterized
 # pydantic
 python-multipart
 sqlalchemy
-txtai
+# txtai
 psycopg2    # per usare database PostgreSQL
 pyjwt

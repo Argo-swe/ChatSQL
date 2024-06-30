@@ -2,8 +2,12 @@ from models.responses.response_dto import ResponseDto, ResponseStatusEnum
 from models.responses.dictionaries_response_dto import DictionariesResponseDto
 from models.responses.dictionary_response_dto import DictionaryResponseDto
 from models.dictionary_dto import DictionaryDto
+from tools.dictionary_validator import DictionaryValidator
+from tools.utils import Utils
 
-from engine.backend.jwt_bearer import JwtBearer
+from engine.index_manager import IndexManager
+
+from auth.jwt_bearer import JwtBearer
 from fastapi import APIRouter, File, UploadFile, Depends
 from fastapi.responses import FileResponse
 from typing import Annotated, List
@@ -26,6 +30,8 @@ tag = "dictionary"
 router = APIRouter()
 
 outFileBasePath = "/opt/chatsql/dictionary_schemas"
+
+manager = IndexManager()
 
 @router.get("/", tags=[tag], response_model=DictionariesResponseDto)
 def getAllDictionaries(db: Session = Depends(getDb)) -> DictionariesResponseDto:
@@ -78,12 +84,22 @@ async def createDictionary(file: Annotated[UploadFile, File()], dictionary: Dict
 
         newDic = crud.createDictionary(db=db, dictionary=dictionary)
 
-        # TODO: validare dizionario e create indice txtai
+        # validate dictionary schema
+        content = await file.read()
+        isValid = DictionaryValidator.validate(Utils.string_to_json(content))
+
+        if not isValid:
+            return DictionaryResponseDto(
+                    data=None,
+                    message=f"Dictionary schema is bad formatted",
+                    status=ResponseStatusEnum.BAD_REQUEST
+                )
 
         async with aiofiles.open(__generateSchemaFileName(newDic.id), 'wb') as out_file:
-            content = await file.read()
             await out_file.write(content)
 
+        # create txtai index
+        manager.createIndex(newDic.id)
 
         return DictionaryResponseDto(
                 data=newDic,
@@ -114,11 +130,22 @@ async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()], db:
                 status=ResponseStatusEnum.NOT_FOUND
             )
 
+    # validate dictionary schema
+    content = await file.read()
+    isValid = DictionaryValidator.validate(Utils.string_to_json(content))
+
+    if not isValid:
+        return DictionaryResponseDto(
+                data=None,
+                message=f"Dictionary schema is bad formatted",
+                status=ResponseStatusEnum.BAD_REQUEST
+            )
+
     async with aiofiles.open(__generateSchemaFileName(id), 'wb') as out_file:
-        content = await file.read()
         await out_file.write(content)
 
-    # TODO: validare dizionario e aggiornare indice txtai
+    # update txtai index
+    manager.createIndex(foundDic.id)
 
     return DictionaryResponseDto(
                 data=foundDic,
@@ -173,7 +200,8 @@ def deleteDictionary(id: int, db: Session = Depends(getDb)) -> ResponseDto:
     if os.path.exists(__generateSchemaFileName(id)):
         os.remove(__generateSchemaFileName(id))
 
-    # TODO: rimuovere indice txtai
+    # delete txtai index
+    manager.deleteIndex(foundDic.id)
 
     return ResponseDto(
                 status=ResponseStatusEnum.OK

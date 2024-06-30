@@ -194,6 +194,20 @@
     --primary-900: #264264;
 }
 
+/* 
+*
+* Stile personalizzato
+*
+*/
+.argo-logo {
+    filter: invert(100%);
+}
+/* 
+*
+* Stile personalizzato
+*
+*/
+
 .p-editor-container .p-editor-toolbar {
     background: #18181b;
     border-top-right-radius: 6px;

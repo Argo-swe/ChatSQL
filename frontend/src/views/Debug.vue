@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue';
-import { useLayout } from '@/layout/composables/layout';
+import { useLayout } from '@/components/layout/composables/layout';
 
 const { isDarkTheme } = useLayout();
 

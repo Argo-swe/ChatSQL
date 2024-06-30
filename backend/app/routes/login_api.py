@@ -1,6 +1,5 @@
 from enum import Enum
-from engine.backend.database_connector import DatabaseConnector
-from engine.backend.jwt_handler import JwtHandler
+from auth.jwt_handler import JwtHandler
 from models.responses.response_dto import ResponseStatusEnum
 from models.login_dto import LoginDto
 from models.responses.auth_response_dto import AuthResponseDto
@@ -20,19 +19,6 @@ def getDb():
 
 tag = "login"
 router = APIRouter()
-connector = DatabaseConnector()
-class CheckUserResult(Enum):
-    OK = "OK"
-    WRONG_USERNAME = "WRONG USERNAME"
-    WRONG_PASSWORD = "WRONG PASSWORD"
-
-def _checkUser(data: LoginDto, db: Session = Depends(getDb)) -> CheckUserResult:
-    query = crud.getUserByUsername(db, data.username)
-    if(query == None):
-        return CheckUserResult.WRONG_USERNAME
-    if(query.password != data.password):
-        return CheckUserResult.WRONG_PASSWORD
-    return CheckUserResult.OK
 
 @router.post("/", tags=[tag], response_model=AuthResponseDto)
 def login(data: LoginDto, db: Session = Depends(getDb)):

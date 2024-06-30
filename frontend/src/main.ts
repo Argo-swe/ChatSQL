@@ -37,9 +37,11 @@ import RadioButton from 'primevue/radiobutton';
 import SelectButton from 'primevue/selectbutton';
 import Sidebar from 'primevue/sidebar';
 import Slider from 'primevue/slider';
+import TabMenu from 'primevue/tabmenu';
 import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
 import ToggleButton from 'primevue/togglebutton';
+import ScrollTop from 'primevue/scrolltop';
 // END import PrimeVue components (alphabetical order)
 
 // locale files
@@ -98,9 +100,11 @@ app.component('RadioButton', RadioButton);
 app.component('SelectButton', SelectButton);
 app.component('Sidebar', Sidebar);
 app.component('Slider', Slider);
+app.component('TabMenu', TabMenu);
 app.component('Textarea', Textarea);
 app.component('Toast', Toast);
 app.component('ToggleButton', ToggleButton);
+app.component('ScrollTop', ScrollTop);
 // END PrimeVue components (alphabetical order)
 
 app.mount('#app');
