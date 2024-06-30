@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useLayout } from '@/components/layout/composables/layout';
 import { computed } from 'vue';
 
-const { layoutConfig } = useLayout();
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n();
 
 const logoUrl = computed(() => {
     return `/layout/images/argo_trasparente.svg`;
@@ -13,9 +13,9 @@ const logoUrl = computed(() => {
     <div class="layout-footer w-full">
         <div class="titolo">
             <img :src="logoUrl" alt="Logo" height="40" class="mr-2" />
-            <span class="font-medium ml-2">Gruppo ARGO</span>
+            <!-- <span class="font-medium ml-2">{{ t('general.groupName') }}</span> -->
         </div>
-        <p class="copyright">© 2024 Gruppo ARGO<br>Tutti i diritti riservati</p>
+        <p class="copyright">© {{ new Date().getFullYear() }} {{ t('general.groupName') }}<br>{{ t('general.copyright') }}</p>
     </div>
 </template>
 <style lang="scss" scoped></style>

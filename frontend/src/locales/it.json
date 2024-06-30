@@ -52,6 +52,8 @@
     "confirm": {
       "proceed": "Sei sicuro di vole proseguire?"
     },
+    "copyright": "Tutti i diritti riservati",
+    "groupName": "Gruppo ARGO",
     "input": {
       "fileupload": "Carica file"
     },
