@@ -24,11 +24,11 @@
   },
   "chat": {
     "debug": {
-      "subject": "The debug referring to the last operator request is shown",
-      "title": "Debug",
       "file": {
         "download": "Download file (.txt)"
-      }
+      },
+      "subject": "The debug referring to the last operator request is shown",
+      "title": "Debug"
     },
     "dictionary": {
       "placeholder": "Choose a dictionary"
@@ -50,6 +50,13 @@
     },
     "title": "Data dictionary | Data dictionaries",
     "update": "Update data dictionary"
+  },
+  "footer": {
+    "copyright": {
+      "section": "All rights reserved",
+      "title": "ARGO Group"
+    },
+    "title": "ARGO Group"
   },
   "general": {
     "confirm": {
@@ -83,13 +90,6 @@
     "language": "Language",
     "scale": "Scale"
   },
-  "footer": {
-    "title": "ARGO Group",
-    "copyright": {
-      "title": "ARGO Group",
-      "section": "All rights reserved"
-    }
-  },
   "text": {
     "cancel": "cancel",
     "chat": "chat",
@@ -117,6 +117,7 @@
     "toggle_view": "toggle view",
     "user": "user",
     "username": "username",
+    "version": "version",
     "warning": "warning",
     "yes": "yes"
   }

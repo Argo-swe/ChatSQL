@@ -24,11 +24,11 @@
   },
   "chat": {
     "debug": {
-      "subject": "Viene mostrato il debug riferito all'ultima richiesta operatore",
-      "title": "Debug",
       "file": {
         "download": "Scarica file (.txt)"
-      }
+      },
+      "subject": "Viene mostrato il debug riferito all'ultima richiesta operatore",
+      "title": "Debug"
     },
     "dictionary": {
       "placeholder": "Scegli un dizionario"
@@ -50,6 +50,13 @@
     },
     "title": "Dizionario dati | Dizionari dati",
     "update": "Aggiorna dizionario dati"
+  },
+  "footer": {
+    "copyright": {
+      "section": "Tutti i diritti riservati",
+      "title": "Gruppo ARGO"
+    },
+    "title": "Gruppo ARGO"
   },
   "general": {
     "confirm": {
@@ -83,13 +90,6 @@
     "language": "Lingua",
     "scale": "Scala"
   },
-  "footer": {
-    "title": "Gruppo ARGO",
-    "copyright": {
-      "title": "Gruppo ARGO",
-      "section": "Tutti i diritti riservati"
-    }
-  },
   "text": {
     "cancel": "annulla",
     "chat": "chat",
@@ -117,6 +117,7 @@
     "toggle_view": "attiva/disattiva visualizzazione",
     "user": "utente",
     "username": "nome utente",
+    "version": "versione",
     "warning": "avviso",
     "yes": "si"
   }
