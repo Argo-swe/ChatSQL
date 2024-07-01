@@ -11,6 +11,8 @@ indexesOutFileBasePath = "/opt/chatsql/indexes"
 logsOutFileBasePath = "/opt/chatsql/logs"
 logsFileOutFileBasePath = f"{logsOutFileBasePath}/chatsql_log.txt"
 
+os.makedirs(indexesOutFileBasePath, exist_ok=True)
+os.makedirs(logsOutFileBasePath, exist_ok=True)
 
 class IndexManager:
     def __init__(self):
