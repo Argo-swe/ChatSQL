@@ -29,6 +29,7 @@ tag = "dictionary"
 router = APIRouter()
 
 outFileBasePath = "/opt/chatsql/dictionary_schemas"
+os.makedirs(outFileBasePath, exist_ok=True)
 
 manager = IndexManager()
 
