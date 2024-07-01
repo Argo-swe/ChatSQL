@@ -8,6 +8,10 @@ from routes.dictionaries_api import router as dictionaries_router
 from routes.prompt_api import router as prompt_router
 from routes.login_api import router as login_router
 
+from database import models
+from database.base import engine
+models.Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 
 app.include_router(dictionaries_router, prefix="/api/dictionary")

@@ -15,9 +15,8 @@ import aiofiles
 import os
 
 from sqlalchemy.orm import Session
-from database import crud, models
-from database.base import SessionLocal, engine
-models.Base.metadata.create_all(bind=engine)
+from database import crud
+from database.base import SessionLocal
 
 def getDb():
     db = SessionLocal()
