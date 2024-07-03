@@ -5,15 +5,37 @@ class Schema_Multi_Extractor:
     """
     A class used for dictionary extraction methods
     """
-    # Dizionario dati in inglese
     __dictionary_schema_dir_path = "/opt/chatsql/dictionary_schemas"
-    # Dizionario dati in italiano
-    #__dictionary_schema_dir_path = Path(__file__).parent / '../../DizionarioDati/Ordini/ITA/'
 
+    """
+    # Ritorna lo schema del dizionario dati
+    """
     def get_json_schema(dictionary_id: int):
         file_path = f'{Schema_Multi_Extractor.__dictionary_schema_dir_path}/dic_schema_{dictionary_id}.json'
         schema = Utils.read_json_file_content(file_path)
         return schema
+
+    """
+    # Estrazione delle seguenti informazioni:
+    # nome del database
+    # descrizione del database
+    # lista delle tabelle (nome + descrizione)
+    """
+    def extract_preview(dictionary_id: int):
+        dictionary_preview = {}
+        schema = Schema_Multi_Extractor.get_json_schema(dictionary_id)
+        dictionary_preview["database_name"] = schema['database_name']
+        dictionary_preview["database_description"] = schema['database_description']
+        tables = []
+        
+        for table in schema['tables']:
+            temp = {
+                "name": table['name'],
+                "description": table['description']
+            }
+            tables.append(temp)
+        dictionary_preview["tables"] = tables
+        return dictionary_preview
 
     # Estrazione di tutti gli elementi del dizionario dati
     def extract_all(dictionary_id: int):
@@ -75,7 +97,13 @@ class Schema_Multi_Extractor:
             documents.append(doc)
         return documents
 
-    # Estrazione per il primo indice (ricerca semantica tramite LLM)
+    """
+    # Estrazione delle seguenti informazioni (formato per LLM):
+    # nome della tabella
+    # descrizione della tabella
+    # posizione della tabella nel dizionario dati
+    # descrizione della colonna
+    """
     def extract_first_index(dictionary_id: int):
         documents = []
         schema = Schema_Multi_Extractor.get_json_schema(dictionary_id)
@@ -87,7 +115,6 @@ class Schema_Multi_Extractor:
                 doc = {
                     "table_name": table['name'],
                     "text": table["description"],
-                    # table_pos è la posizione della tabella nel dizionario dati, funzionale alla generazione del prompt
                     "table_pos": pos,
                     "column_description": column['description']
                 }
