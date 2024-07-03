@@ -263,7 +263,7 @@ function onClickDownloadFile() {
                     </div>
                     <div class="desc card h-full">
                         <ScrollPanel class="h-full">
-                            <h3>Tables</h3>
+                            <h3>{{t('chat.dictionary.details.tables.title')}}</h3>
                             <p>
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae beatae veritatis similique harum aperiam et explicabo hic voluptate aliquid? Quo sequi repudiandae tempora reprehenderit, perferendis error quas necessitatibus, incidunt, corporis blanditiis libero excepturi ut nemo? Veniam accusamus aliquid sint voluptates quos vel minus fuga, harum sapiente ratione doloremque tempore molestias blanditiis assumenda quas nihil adipisci minima corporis repellendus id laborum soluta beatae. Consequatur, doloribus, quas ipsa neque nesciunt numquam iste nemo maiores reiciendis est iure voluptatem, placeat tempora nam labore assumenda optio quae dicta excepturi commodi nihil? Maiores adipisci rerum aspernatur odit molestiae, voluptates officia? Quidem, harum. In, expedita inventore?
                             </p>

@@ -1,124 +1,129 @@
 {
-  "actions": {
-    "alreadyExistsById": "{item} con id {id} esiste già",
-    "alreadyExistsByName": "{item} con nome '{name}' esiste già",
-    "create": {
-      "error": "Errore durante la creazione",
-      "success": "Creato con successo"
+    "actions": {
+        "alreadyExistsById": "{item} con id {id} esiste già",
+        "alreadyExistsByName": "{item} con nome '{name}' esiste già",
+        "create": {
+            "error": "Errore durante la creazione",
+            "success": "Creato con successo"
+        },
+        "delete": {
+            "error": "Errore durante l'eliminazione",
+            "success": "Eliminato con successo"
+        },
+        "formatError": "Formato errato",
+        "generate": {
+            "error": "Errore durante la generazione",
+            "success": "Generazione avvenuta con successo"
+        },
+        "notFoundById": "{item} con id {id} non trovato",
+        "notFoundByName": "{item} con nome '{name}' non trovato",
+        "update": {
+            "error": "Errore durante l'aggiornamento",
+            "success": "Aggiornato con successo"
+        }
     },
-    "delete": {
-      "error": "Errore durante l'eliminazione",
-      "success": "Eliminato con successo"
-    },
-    "formatError": "Formato errato",
-    "generate": {
-      "error": "Errore durante la generazione",
-      "success": "Generazione avvenuta con successo"
-    },
-    "notFoundById": "{item} con id {id} non trovato",
-    "notFoundByName": "{item} con nome '{name}' non trovato",
-    "update": {
-      "error": "Errore durante l'aggiornamento",
-      "success": "Aggiornato con successo"
-    }
-  },
-  "chat": {
-    "debug": {
-      "file": {
-        "download": "Scarica file (.txt)"
-      },
-      "subject": "Viene mostrato il debug riferito all'ultima richiesta operatore",
-      "title": "Debug"
+    "chat": {
+        "debug": {
+            "file": {
+                "download": "Scarica file (.txt)"
+            },
+            "subject": "Viene mostrato il debug riferito all'ultima richiesta operatore",
+            "title": "Debug"
+        },
+        "dictionary": {
+            "placeholder": "Scegli un dizionario",
+            "details": {
+                "tables": {
+                    "title": "Tabelle"
+                }
+            }
+        },
+        "prompt": {
+            "generate": "Genera prompt",
+            "placeholder": "Inserisci una richiesta in linguaggio naturale",
+            "title": "Prompt"
+        },
+        "title": "Chat"
     },
     "dictionary": {
-      "placeholder": "Scegli un dizionario"
+        "create": "Crea dizionario dati",
+        "delete": "Elimina dizionario dati",
+        "file": {
+            "download": "Scarica file dizionario dati",
+            "title": "File dizionario dati",
+            "update": "Aggiorna file dizionario dati"
+        },
+        "title": "Dizionario dati | Dizionari dati",
+        "update": "Aggiorna dizionario dati"
     },
-    "prompt": {
-      "generate": "Genera prompt",
-      "placeholder": "Inserisci una richiesta in linguaggio naturale",
-      "title": "Prompt"
+    "footer": {
+        "copyright": {
+            "section": "Tutti i diritti riservati",
+            "title": "Gruppo ARGO"
+        },
+        "title": "Gruppo ARGO"
     },
-    "title": "Chat"
-  },
-  "dictionary": {
-    "create": "Crea dizionario dati",
-    "delete": "Elimina dizionario dati",
-    "file": {
-      "download": "Scarica file dizionario dati",
-      "title": "File dizionario dati",
-      "update": "Aggiorna file dizionario dati"
+    "general": {
+        "confirm": {
+            "proceed": "Sei sicuro di vole proseguire?"
+        },
+        "copyright": "Tutti i diritti riservati",
+        "groupName": "Gruppo ARGO",
+        "input": {
+            "fileupload": "Carica file"
+        },
+        "list": {
+            "empty": "Nessun risultato trovato",
+            "error": "Errore nel recupero dei dati",
+            "loading": "Caricamento dati! Attendere..."
+        },
+        "menu": {
+            "technicianFunctionalities": "Funzionalità del tecnico"
+        }
     },
-    "title": "Dizionario dati | Dizionari dati",
-    "update": "Aggiorna dizionario dati"
-  },
-  "footer": {
-    "copyright": {
-      "section": "Tutti i diritti riservati",
-      "title": "Gruppo ARGO"
+    "locale": {
+        "en": "inglese",
+        "it": "italiano"
     },
-    "title": "Gruppo ARGO"
-  },
-  "general": {
-    "confirm": {
-      "proceed": "Sei sicuro di vole proseguire?"
+    "login": {
+        "badCredential": "Credenziali errate",
+        "subject": "Accedi all'area del tecnico",
+        "title": "Accedi"
     },
-    "copyright": "Tutti i diritti riservati",
-    "groupName": "Gruppo ARGO",
-    "input": {
-      "fileupload": "Carica file"
+    "settings": {
+        "darkMode": "Modalità scuro",
+        "language": "Lingua",
+        "scale": "Scala"
     },
-    "list": {
-      "empty": "Nessun risultato trovato",
-      "error": "Errore nel recupero dei dati",
-      "loading": "Caricamento dati! Attendere..."
-    },
-    "menu": {
-      "technicianFunctionalities": "Funzionalità del tecnico"
+    "text": {
+        "cancel": "annulla",
+        "chat": "chat",
+        "debug": "debug",
+        "description": "descrizione",
+        "english": "inglese",
+        "error": "errore",
+        "french": "francese",
+        "genericError": "errore generico",
+        "german": "tedesco",
+        "hide": "nascondi",
+        "info": "info",
+        "italian": "italiano",
+        "log": "log",
+        "login": "accedi",
+        "logout": "esci",
+        "name": "nome",
+        "no": "no",
+        "ok": "ok",
+        "password": "password",
+        "save": "salva",
+        "settings": "impostazioni",
+        "show": "mostra",
+        "spanish": "spagnolo",
+        "toggle_view": "attiva/disattiva visualizzazione",
+        "user": "utente",
+        "username": "nome utente",
+        "version": "versione",
+        "warning": "avviso",
+        "yes": "si"
     }
-  },
-  "locale": {
-    "en": "inglese",
-    "it": "italiano"
-  },
-  "login": {
-    "badCredential": "Credenziali errate",
-    "subject": "Accedi all'area del tecnico",
-    "title": "Accedi"
-  },
-  "settings": {
-    "darkMode": "Modalità scuro",
-    "language": "Lingua",
-    "scale": "Scala"
-  },
-  "text": {
-    "cancel": "annulla",
-    "chat": "chat",
-    "debug": "debug",
-    "description": "descrizione",
-    "english": "inglese",
-    "error": "errore",
-    "french": "francese",
-    "genericError": "errore generico",
-    "german": "tedesco",
-    "hide": "nascondi",
-    "info": "info",
-    "italian": "italiano",
-    "log": "log",
-    "login": "accedi",
-    "logout": "esci",
-    "name": "nome",
-    "no": "no",
-    "ok": "ok",
-    "password": "password",
-    "save": "salva",
-    "settings": "impostazioni",
-    "show": "mostra",
-    "spanish": "spagnolo",
-    "toggle_view": "attiva/disattiva visualizzazione",
-    "user": "utente",
-    "username": "nome utente",
-    "version": "versione",
-    "warning": "avviso",
-    "yes": "si"
-  }
 }
