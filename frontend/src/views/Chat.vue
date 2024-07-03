@@ -208,7 +208,7 @@ function onClickDownloadFile() {
 <template>
     <TabMenu v-model:activeIndex="active" :model="items" v-if="isLogged" class="tab-chat mb-2" @tab-change="onTabChange"/>
 
-    <div v-if="active == 0" id="chat" class="flex flex-column justify-between">
+    <div v-if="active == 0" id="chat" :class="{isLogged: isLogged}" class="flex flex-column justify-between">
         <!-- TITLE -->
         <div id="titlebar-container" class="card p-3">
             <div id="chat-title" class="flex flex-row align-items-center">
@@ -266,9 +266,14 @@ function onClickDownloadFile() {
 }
 
 #chat {
-    height: calc(100vh - 5rem - 4rem - 2rem);
+    height: calc(100vh - 5rem - 4rem);
     max-height: 100%;
     position: relative;
+    margin-bottom: -2rem;
+}
+
+#chat.isLogged {
+    height: calc(100vh - 5rem - 4rem - 3.5rem);
 }
 
 .hide {
