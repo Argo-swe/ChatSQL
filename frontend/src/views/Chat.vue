@@ -247,7 +247,7 @@ function onClickDownloadFile() {
         </div>
 
         <InputGroup id="input-container" class="mt-1">
-            <Textarea v-model="request" :placeholder="t('chat.prompt.placeholder')" rows="5"
+            <Textarea v-model="request" :placeholder="t('chat.prompt.placeholder')" rows="1" autoResize
                 class="w-full" :aria-label="t('chat.prompt.placeholder')" />
             <Button @click="runRequest" :icon="loading ? 'pi pi-spin pi-spinner' : 'pi pi-send'" :title="t('chat.prompt.generate')" :disabled="loading || !selectedDictionary || !request" />
         </InputGroup>
@@ -280,7 +280,6 @@ function onClickDownloadFile() {
 }
 
 #messages {
-    height: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
@@ -288,16 +287,14 @@ function onClickDownloadFile() {
 
 #input-container {
     width: 100%;
-    max-height: 10rem;
 }
 
 #input-container textarea {
-    max-height: 20rem;
+    max-height: 8rem;
     overflow-y: scroll !important;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
     box-sizing: content-box;
-    resize: none;
 }
 
 #input-container textarea::placeholder {
