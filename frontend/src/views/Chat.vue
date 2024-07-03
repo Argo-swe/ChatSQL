@@ -102,6 +102,9 @@ const request = ref('');
 const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
 
 function runRequest() {
+    if (detailsVisible.value) {
+        toggleDetails();
+    }
     addMessage(request.value.trim(), true);
     console.log(request.value);
     loading.value = true;
@@ -188,8 +191,15 @@ const checked = ref(false);
 // Variabile per controllare lo stato del container
 const hide = ref(false);
 
+// Variabile per controllare la visibilità dei dettagli
+const detailsVisible = ref(false);
+
 const toggleSelectView = () => {
     hide.value = !hide.value;
+}
+
+const toggleDetails = () => {
+    detailsVisible.value = !detailsVisible.value;
 }
 
 // Ritorno il nome del dizionario dati selezionato
@@ -219,7 +229,7 @@ function onClickDownloadFile() {
                 <InputGroup class="w-full sm:w-fit">
                     <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name" @update:modelValue="onDictionaryChange"
                         optionValue="id" :placeholder="t('chat.dictionary.placeholder')" class="h-fit m-2 mr-0" />
-                    <Button severity="info" icon="pi pi-info" class="h-fit m-2 ml-0" />
+                    <Button severity="info" :icon="detailsVisible ? 'pi pi-times' : 'pi pi-info'" class="h-fit m-2 ml-0" @click="toggleDetails" />
                 </InputGroup>
 
                 <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
@@ -240,9 +250,31 @@ function onClickDownloadFile() {
             </div>
         </div>
 
-        <!-- CHAT MESSAGES -->
-        <div id="messages">
-            <ChatMessage v-for="(msg, index) in messages" :key="index" :is-sent="msg.isSent" :message="msg.message"></ChatMessage>
+        <div id="content">
+
+            <!-- DETAILS -->
+            <div id="details" v-if="detailsVisible" class="flex w-full h-full">
+                    <div class="desc card h-full">
+                        <ScrollPanel class="h-full">
+                            <h3>Database</h3>
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi vel doloribus quisquam soluta necessitatibus voluptatum voluptates praesentium, rerum magnam ad fugiat aspernatur consequuntur delectus pariatur cumque sint, mollitia libero officia! Ad, tenetur nulla. Sint, aspernatur quo deleniti assumenda minima, ipsam a expedita sed quod distinctio officia? Doloremque ratione illo ab. Eligendi ad, laborum accusantium eius ut sit consequuntur? Voluptates natus excepturi corrupti aliquam reiciendis porro animi rerum consequatur molestias consequuntur, qui autem ut officia deleniti voluptas reprehenderit fugiat minus hic optio neque! Officia iure fuga praesentium rerum cupiditate dicta animi quaerat explicabo itaque reprehenderit ea, eum necessitatibus velit quisquam facere. Sunt harum ratione exercitationem debitis commodi necessitatibus natus blanditiis distinctio odit! A, facere nesciunt. In dolorem amet tempore sequi animi, voluptatum ratione fugiat laudantium magnam hic? Exercitationem deleniti quam harum dignissimos quas et quae illum possimus, illo ipsum mollitia nesciunt dicta magni ex qui praesentium dolor tempora corrupti expedita ullam. Ex minima ea dolor deserunt dolores, quae repellendus? Doloribus, quibusdam aliquid magnam voluptate officiis minus. Eius possimus vitae ut nemo voluptate, facere nulla libero fuga blanditiis quis illum ipsam sunt mollitia dolor pariatur quod, odit quam officia alias quibusdam eos? Dolorum est obcaecati libero quas iusto inventore vitae earum voluptatibus!</p>
+                        </ScrollPanel>
+
+                    </div>
+                    <div class="desc card h-full">
+                        <ScrollPanel class="h-full">
+                            <h3>Tables</h3>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae beatae veritatis similique harum aperiam et explicabo hic voluptate aliquid? Quo sequi repudiandae tempora reprehenderit, perferendis error quas necessitatibus, incidunt, corporis blanditiis libero excepturi ut nemo? Veniam accusamus aliquid sint voluptates quos vel minus fuga, harum sapiente ratione doloremque tempore molestias blanditiis assumenda quas nihil adipisci minima corporis repellendus id laborum soluta beatae. Consequatur, doloribus, quas ipsa neque nesciunt numquam iste nemo maiores reiciendis est iure voluptatem, placeat tempora nam labore assumenda optio quae dicta excepturi commodi nihil? Maiores adipisci rerum aspernatur odit molestiae, voluptates officia? Quidem, harum. In, expedita inventore?
+                            </p>
+                        </ScrollPanel>               
+                    </div> 
+            </div>
+
+            <!-- CHAT MESSAGES -->
+            <div id="messages" v-if="!detailsVisible">
+                <ChatMessage v-for="(msg, index) in messages" :key="index" :is-sent="msg.isSent" :message="msg.message"></ChatMessage>
+            </div>
         </div>
 
         <InputGroup id="input-container" class="mt-1">
@@ -283,11 +315,41 @@ function onClickDownloadFile() {
     justify-content: space-between;
 }
 
+#chat #content {
+    height: 100%;
+    overflow-y: hidden;
+}
+
+#details .desc {
+    width: 50%;
+}
+
+#details .desc:first-child {
+    margin-right: 1rem;
+}
+
 #messages {
     height: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
+}
+
+@media (max-width: 991px) {
+    #details {
+        width: 100%;
+        flex-direction: column;
+        overflow-y: scroll;
+    }
+
+    #details .desc {
+        width: 100%;
+    }
+
+    #details .desc:first-child {
+        margin-right: unset;
+    }
+    
 }
 
 #input-container {
