@@ -285,6 +285,7 @@ function onClickDownloadFile() {
 }
 
 #messages {
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
