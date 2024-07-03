@@ -21,10 +21,10 @@ class IndexManager:
             content=True,
             indexes={
                 "table_description": {
-                    "path": "sentence-transformers/all-MiniLM-L12-v2"
+                    "path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
                 },
                 "column_description": {
-                    "path": "sentence-transformers/all-MiniLM-L12-v2",
+                    "path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
                     "columns": {
                         "text": "column_description"
                     }
