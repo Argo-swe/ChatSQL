@@ -138,17 +138,16 @@ function loadDebug() {
             switch(response.data?.status) {
                 case "OK":
                     debugMessage.value = response.data.data
+                    loadingDebug.value = false;
                     break;
                 case "NOT_FOUND":
-                    messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${t('actions.formatError')}`)
+                    console.log(response.data.message)
                 break;
                 default:
                     messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${response.data?.message}`)
             }
-            loadingDebug.value = false;
         },
         error => {
-            loadingDebug.value = false;
             messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error}`)
         }
     )
