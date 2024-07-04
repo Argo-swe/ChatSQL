@@ -274,8 +274,8 @@ function onClickDownloadFile() {
                 </InputGroup>
 
                 <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                    class="w-fit h-fit m-2" :aria-label="t('chat.dictionary.dbms.placeholder')" @update:modelValue="onDbmsChange"/>
-                <Dropdown v-model="selectedLanguage" :options="languages" :aria-label="t('chat.dictionary.lang.placeholder')" @update:modelValue="onLanguageChange"
+                    class="w-fit h-fit m-2" :aria-label="t('chat.dbms.placeholder')" @update:modelValue="onDbmsChange"/>
+                <Dropdown v-model="selectedLanguage" :options="languages" :aria-label="t('chat.lang.placeholder')" @update:modelValue="onLanguageChange"
                 class="w-fit h-fit m-2">
                     <template #value="slotProps">
                         <div class="capitalize">

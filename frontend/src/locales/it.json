@@ -90,7 +90,7 @@
         },
         "menu": {
             "openMainNavMenu": "Apri il menu di navigazione principale",
-            "openControlMenu": "Apri il menu di gestione",
+            "closeMainNavMenu": "Chiudi il menu di navigazione principale",
             "technicianFunctionalities": "Funzionalità del tecnico"
         }
     },
@@ -134,6 +134,7 @@
         "show": "mostra",
         "shrink_view": "riduci finestra",
         "spanish": "spagnolo",
+        "toggle_menu": "attiva/disattiva menu",
         "toggle_view": "attiva/disattiva visualizzazione",
         "user": "utente",
         "username": "nome utente",
