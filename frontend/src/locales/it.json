@@ -89,6 +89,8 @@
             "loading": "Caricamento dati! Attendere..."
         },
         "menu": {
+            "openMainNavMenu": "Apri il menu di navigazione principale",
+            "openControlMenu": "Apri il menu di gestione",
             "technicianFunctionalities": "Funzionalità del tecnico"
         }
     },

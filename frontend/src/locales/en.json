@@ -89,6 +89,8 @@
             "loading": "Loading data! Please wait..."
         },
         "menu": {
+            "openMainNavMenu": "Open main navigation menu",
+            "openControlMenu": "Open management menu",
             "technicianFunctionalities": "Technician functionalities"
         }
     },

@@ -15,10 +15,9 @@ const logoUrl = computed(() => {
     <div class="layout-footer w-full">
         <div class="titolo">
             <img :src="logoUrl" alt="Logo" height="40" class="argo-logo mr-2" />
-            <!-- <span class="font-medium ml-2">{{ t('footer.title') }}</span> -->
         </div>
         <p class="copyright">
-            <span v-if="version"> v{{ version }} </span>
+            <strong v-if="version"> v{{ version }} </strong>
             <span>© {{ new Date().getFullYear() }} {{ t('footer.copyright.title') }}</span>
             <span>{{ t('footer.copyright.section') }}</span>
         </p>
