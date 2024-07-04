@@ -207,7 +207,7 @@ const onSelectedFile = async (event: FileUploadSelectEvent) => {
         <div class="flex">
         </div>
         <div class="flex">
-          <Button :label="t('text.Save')" :icon="loading ? 'pi pi-spinner' : ''" type="submit" class="mt-4" severity="success" :disabled="!isFormValid() || loading" />
+          <Button :label="t('text.Save')" :icon="loading ? 'pi pi-spin pi-spinner' : ''" type="submit" class="mt-4" severity="success" :disabled="!isFormValid() || loading" />
         </div>
     </div>
   </form>
