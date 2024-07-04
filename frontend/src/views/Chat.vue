@@ -65,6 +65,33 @@ function retrieveDictionaries() {
     });
 }
 
+// Visualizzo una preview del dizionario dati
+function getDictionaryInfo() {
+    toggleDetails();
+    if (!detailsVisible.value) {
+        return;
+    }
+    client.getDictionaryPreview({
+        id: selectedDictionary.value!
+    }).then(
+        response => {
+            switch(response.data?.status) {
+                case "OK":
+                    Object.assign(dictionaryPreview.value, response.data.data);
+                    break;
+                case "NOT_FOUND":
+                    messageError(t('dictionary.title'), `${t('general.list.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: selectedDictionary.value! })}`)
+                    break;
+                default:
+                    messageError(t('dictionary.title'), `${t('general.list.error')}\n${response.data?.message}`);
+            }
+        },
+        error => {
+            messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`)
+        }
+    )
+}
+
 const selectedDbms = ref(localStorage.getItem('chat-dbms') || "Mysql");
 const dbms = ref([
     { name: 'Mysql', code: 'Mysql' },
@@ -86,6 +113,7 @@ const languages = ref([
 
 const selectedDictionary = ref<null|number>(null);
 const dictionaries = ref();
+const dictionaryPreview = ref<any>({});
 
 const onLanguageChange = (value: string) => {
     localStorage.setItem('chat-language', value);
@@ -96,6 +124,7 @@ const onDbmsChange = (value: string) => {
 const onDictionaryChange = (value: number) => {
     localStorage.setItem('chat-dictionary-id', value.toString());
 };
+
 const messages = ref<any>([]);
 
 const request = ref('');
@@ -195,12 +224,19 @@ const hide = ref(false);
 // Variabile per controllare la visibilità dei dettagli
 const detailsVisible = ref(false);
 
+// Variabile per controllare l'espansione dei dettagli
+const expanded = ref(false);
+
 const toggleSelectView = () => {
     hide.value = !hide.value;
 }
 
 const toggleDetails = () => {
     detailsVisible.value = !detailsVisible.value;
+}
+
+const toggleExpansion = () => {
+    expanded.value = !expanded.value;
 }
 
 // Ritorno il nome del dizionario dati selezionato
@@ -230,7 +266,7 @@ function onClickDownloadFile() {
                 <InputGroup class="w-full sm:w-fit">
                     <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name" @update:modelValue="onDictionaryChange"
                         optionValue="id" :placeholder="t('chat.dictionary.placeholder')" class="h-fit m-2 mr-0" />
-                    <Button severity="info" :icon="detailsVisible ? 'pi pi-times' : 'pi pi-info'" class="h-fit m-2 ml-0" @click="toggleDetails" />
+                    <Button severity="info" :icon="detailsVisible ? 'pi pi-times' : 'pi pi-info'" class="h-fit m-2 ml-0" @click="getDictionaryInfo()" />
                 </InputGroup>
 
                 <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
@@ -252,12 +288,18 @@ function onClickDownloadFile() {
         </div>
 
         <!-- Dictionary details -->
-        <div id="dictionary-details" v-if="detailsVisible" class="flex w-full h-full">
-            <div class="card h-full">
+        <div id="dictionary-details" v-if="detailsVisible" :class="{expanded: expanded}" class="w-full h-full">
+            <div class="card h-full dict-preview">
                 <ScrollPanel class="h-full">
-                        <h3>Database</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi vel doloribus quisquam soluta necessitatibus voluptatum voluptates praesentium, rerum magnam ad fugiat aspernatur consequuntur delectus pariatur cumque sint, mollitia libero officia! Ad, tenetur nulla. Sint, aspernatur quo deleniti assumenda minima, ipsam a expedita sed quod distinctio officia? Doloremque ratione illo ab. Eligendi ad, laborum accusantium eius ut sit consequuntur? Voluptates natus excepturi corrupti aliquam reiciendis porro animi rerum consequatur molestias consequuntur, qui autem ut officia deleniti voluptas reprehenderit fugiat minus hic optio neque! Officia iure fuga praesentium rerum cupiditate dicta animi quaerat explicabo itaque reprehenderit ea, eum necessitatibus velit quisquam facere. Sunt harum ratione exercitationem debitis commodi necessitatibus natus blanditiis distinctio odit! A, facere nesciunt. In dolorem amet tempore sequi animi, voluptatum ratione fugiat laudantium magnam hic? Exercitationem deleniti quam harum dignissimos quas et quae illum possimus, illo ipsum mollitia nesciunt dicta magni ex qui praesentium dolor tempora corrupti expedita ullam. Ex minima ea dolor deserunt dolores, quae repellendus? Doloribus, quibusdam aliquid magnam voluptate officiis minus. Eius possimus vitae ut nemo voluptate, facere nulla libero fuga blanditiis quis illum ipsam sunt mollitia dolor pariatur quod, odit quam officia alias quibusdam eos? Dolorum est obcaecati libero quas iusto inventore vitae earum voluptatibus!</p>
+                    <h2>{{ dictionaryPreview.database_name }}</h2>
+                    <p>{{ dictionaryPreview.database_description }}</p>
+                    <ul>
+                        <li v-for="(table, index) in dictionaryPreview.tables" :key="index" class="my-3">
+                            <strong>{{ table.name }}</strong>: {{ table.description }}
+                        </li>
+                    </ul>
                 </ScrollPanel>
+                <Button :icon="expanded ? 'pi pi-window-minimize' : 'pi pi-expand'" class="expand-btn" aria-label="Expand view" @click="toggleExpansion" />
             </div>
             <!--<div class="desc card h-full">
                 <ScrollPanel class="h-full">
@@ -316,12 +358,35 @@ function onClickDownloadFile() {
     overflow-y: hidden;
 }
 
+#dictionary-details.expanded {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
 #dictionary-details .desc {
     width: 50%;
 }
 
 #dictionary-details .desc:first-child {
     margin-right: 1rem;
+}
+
+#dictionary-details .dict-preview {
+    position: relative;
+}
+
+#dictionary-details .expand-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1000;
+}
+
+#dictionary-details ul {
+    list-style-type: none;
+    padding: 0;
 }
 
 #messages {

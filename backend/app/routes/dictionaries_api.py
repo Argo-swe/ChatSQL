@@ -73,7 +73,7 @@ def getDictionaryFile(id: int, db: Session = Depends(getDb)):
                 status=ResponseStatusEnum.NOT_FOUND
             )
 
-@router.get("/{id}/dictionary-preview", tags=[tag])
+@router.get("/{id}/dictionary-preview", tags=[tag], response_model=DictionaryResponseDto)
 def getDictionaryPreview(id: int, db: Session = Depends(getDb)) -> DictionaryResponseDto:
     foundDic = crud.getDictionaryById(db, id)
 

@@ -74,7 +74,7 @@
         },
         "list": {
             "empty": "No results found",
-            "error": "Error while loagind data",
+            "error": "Error while loading data",
             "loading": "Loading data! Please wait..."
         },
         "menu": {
