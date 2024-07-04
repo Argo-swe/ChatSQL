@@ -33,15 +33,26 @@
         "dictionary": {
             "placeholder": "Choose a dictionary",
             "details": {
+                "show_details": "show dictionary details",
+                "hide_details": "hide dictionary details",
                 "tables": {
                     "title": "Tables"
                 }
             }
         },
+        "dbms": {
+            "placeholder": "Choose a DBMS"
+        },
+        "lang": {
+            "placeholder": "Choose a language"
+        },
         "prompt": {
             "generate": "Generate prompts",
             "placeholder": "Enter a natural language request",
             "title": "Prompt"
+        },
+        "history": {
+            "clean": "Clean chat history"
         },
         "title": "Chat"
     },
@@ -102,6 +113,7 @@
         "description": "description",
         "english": "english",
         "error": "error",
+        "expand_view": "expand view",
         "french": "french",
         "genericError": "generic error",
         "german": "german",
@@ -118,6 +130,7 @@
         "save": "save",
         "settings": "settings",
         "show": "show",
+        "shrink_view": "shrink view",
         "spanish": "spanish",
         "toggle_view": "toggle view",
         "user": "user",

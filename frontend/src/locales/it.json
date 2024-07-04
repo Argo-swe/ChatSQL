@@ -33,15 +33,26 @@
         "dictionary": {
             "placeholder": "Scegli un dizionario",
             "details": {
+                "show_details": "mostra i dettagli del dizionario",
+                "hide_details": "nascondi i dettagli del dizionario",
                 "tables": {
                     "title": "Tabelle"
                 }
             }
         },
+        "dbms": {
+            "placeholder": "Scegli un DBMS"
+        },
+        "lang": {
+            "placeholder": "Scegli una lingua"
+        },
         "prompt": {
             "generate": "Genera prompt",
             "placeholder": "Inserisci una richiesta in linguaggio naturale",
             "title": "Prompt"
+        },
+        "history": {
+            "clean": "Elimina cronologia della chat"
         },
         "title": "Chat"
     },
@@ -102,6 +113,7 @@
         "description": "descrizione",
         "english": "inglese",
         "error": "errore",
+        "expand_view": "espandi finestra",
         "french": "francese",
         "genericError": "errore generico",
         "german": "tedesco",
@@ -118,6 +130,7 @@
         "save": "salva",
         "settings": "impostazioni",
         "show": "mostra",
+        "shrink_view": "riduci finestra",
         "spanish": "spagnolo",
         "toggle_view": "attiva/disattiva visualizzazione",
         "user": "utente",

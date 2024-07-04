@@ -127,6 +127,10 @@ const onDictionaryChange = (value: number) => {
 
 const messages = ref<any>([]);
 
+const clearMessages = () => {
+    messages.value = []
+}
+
 const request = ref('');
 const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
 
@@ -266,12 +270,12 @@ function onClickDownloadFile() {
                 <InputGroup class="w-full sm:w-fit">
                     <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name" @update:modelValue="onDictionaryChange"
                         optionValue="id" :placeholder="t('chat.dictionary.placeholder')" class="h-fit m-2 mr-0" />
-                    <Button severity="info" :icon="detailsVisible ? 'pi pi-times' : 'pi pi-info'" class="h-fit m-2 ml-0" @click="getDictionaryInfo()" />
+                    <Button severity="info" :icon="detailsVisible ? 'pi pi-times' : 'pi pi-info'" class="h-fit m-2 ml-0" :aria-label="detailsVisible ? t('chat.dictionary.details.hide_details') : t('chat.dictionary.details.show_details')" @click="getDictionaryInfo()" />
                 </InputGroup>
 
                 <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                    class="w-fit h-fit m-2" @update:modelValue="onDbmsChange"/>
-                <Dropdown v-model="selectedLanguage" :options="languages" @update:modelValue="onLanguageChange"
+                    class="w-fit h-fit m-2" :aria-label="t('chat.dictionary.dbms.placeholder')" @update:modelValue="onDbmsChange"/>
+                <Dropdown v-model="selectedLanguage" :options="languages" :aria-label="t('chat.dictionary.lang.placeholder')" @update:modelValue="onLanguageChange"
                 class="w-fit h-fit m-2">
                     <template #value="slotProps">
                         <div class="capitalize">
@@ -284,6 +288,7 @@ function onClickDownloadFile() {
                         </div>
                     </template>
                 </Dropdown>
+                <Button :label="t('chat.history.clean')" icon="pi pi-eraser" class="m-2" :disabled="messages.length <= 0 || loading" severity="danger" iconPos="right" @click="clearMessages" />
             </div>
         </div>
 
@@ -299,16 +304,8 @@ function onClickDownloadFile() {
                         </li>
                     </ul>
                 </ScrollPanel>
-                <Button :icon="expanded ? 'pi pi-window-minimize' : 'pi pi-expand'" class="expand-btn" aria-label="Expand view" @click="toggleExpansion" />
+                <Button :icon="expanded ? 'pi pi-window-minimize' : 'pi pi-expand'" class="expand-btn" :aria-label="expanded ? t('text.shrink_view') : t('text.expand_view')" @click="toggleExpansion" />
             </div>
-            <!--<div class="desc card h-full">
-                <ScrollPanel class="h-full">
-                    <h3>{{t('chat.dictionary.details.tables.title')}}</h3>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae beatae veritatis similique harum aperiam et explicabo hic voluptate aliquid? Quo sequi repudiandae tempora reprehenderit, perferendis error quas necessitatibus, incidunt, corporis blanditiis libero excepturi ut nemo? Veniam accusamus aliquid sint voluptates quos vel minus fuga, harum sapiente ratione doloremque tempore molestias blanditiis assumenda quas nihil adipisci minima corporis repellendus id laborum soluta beatae. Consequatur, doloribus, quas ipsa neque nesciunt numquam iste nemo maiores reiciendis est iure voluptatem, placeat tempora nam labore assumenda optio quae dicta excepturi commodi nihil? Maiores adipisci rerum aspernatur odit molestiae, voluptates officia? Quidem, harum. In, expedita inventore?
-                    </p>
-                </ScrollPanel>               
-            </div>-->
         </div>
 
         <!-- CHAT MESSAGES -->
@@ -319,7 +316,7 @@ function onClickDownloadFile() {
         <InputGroup id="input-container" class="mt-1">
             <Textarea v-model="request" :placeholder="t('chat.prompt.placeholder')" rows="1" autoResize
                 class="w-full" :aria-label="t('chat.prompt.placeholder')" />
-            <Button @click="runRequest" :icon="loading ? 'pi pi-spin pi-spinner' : 'pi pi-send'" :title="t('chat.prompt.generate')" :disabled="loading || !selectedDictionary || !request" />
+            <Button @click="runRequest" :icon="loading ? 'pi pi-spin pi-spinner' : 'pi pi-send'" :title="t('chat.prompt.generate')" :aria-label="t('chat.prompt.generate')" :disabled="loading || !selectedDictionary || !request" />
         </InputGroup>
     </div>
 
@@ -365,14 +362,6 @@ function onClickDownloadFile() {
     z-index: 999;
 }
 
-#dictionary-details .desc {
-    width: 50%;
-}
-
-#dictionary-details .desc:first-child {
-    margin-right: 1rem;
-}
-
 #dictionary-details .dict-preview {
     position: relative;
 }
@@ -395,22 +384,6 @@ function onClickDownloadFile() {
     flex-direction: column;
     overflow-y: scroll;
 }
-
-/* @media (max-width: 991px) {
-    #dictionary-details {
-        width: 100%;
-        flex-direction: column;
-        overflow-y: scroll;
-    }
-
-    #dictionary-details .desc {
-        width: 100%;
-    }
-
-    #dictionary-details .desc:first-child {
-        margin-right: unset;
-    }
-} */
 
 #input-container {
     width: 100%;
