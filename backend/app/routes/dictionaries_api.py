@@ -2,8 +2,11 @@ from models.responses.response_dto import ResponseDto, ResponseStatusEnum
 from models.responses.dictionaries_response_dto import DictionariesResponseDto
 from models.responses.dictionary_response_dto import DictionaryResponseDto
 from models.dictionary_dto import DictionaryDto
+from models.dictionary_preview_dto import DictionaryPreviewDto
+from models.dictionary_internal_structure.table_dto import TableDto
 from tools.dictionary_validator import DictionaryValidator
 from tools.utils import Utils
+from tools.schema_multi_extractor import Schema_Multi_Extractor
 
 from engine.index_manager import IndexManager
 
@@ -69,6 +72,29 @@ def getDictionaryFile(id: int, db: Session = Depends(getDb)):
                 message=f"Dictionary with id {id} not found",
                 status=ResponseStatusEnum.NOT_FOUND
             )
+
+@router.get("/{id}/dictionary-preview", tags=[tag], response_model=DictionaryResponseDto)
+def getDictionaryPreview(id: int, db: Session = Depends(getDb)) -> DictionaryResponseDto:
+    foundDic = crud.getDictionaryById(db, id)
+
+    if foundDic != None:
+        dictionary_sub_schema = Schema_Multi_Extractor.extract_preview(id)
+
+        dictionary_preview_dto = DictionaryPreviewDto(
+            database_name=dictionary_sub_schema["database_name"],
+            database_description=dictionary_sub_schema["database_description"],
+            tables=[TableDto(**table) for table in dictionary_sub_schema["tables"]]
+        )
+
+        return DictionaryResponseDto(
+            data = dictionary_preview_dto,
+            status=ResponseStatusEnum.OK
+        )
+
+    return ResponseDto(
+        message=f"Dictionary with id {id} not found",
+        status=ResponseStatusEnum.NOT_FOUND
+    )
 
 @router.post("/", tags=[tag], response_model=DictionaryResponseDto, dependencies=[Depends(JwtBearer())])
 async def createDictionary(file: Annotated[UploadFile, File()], dictionary: DictionaryDto = Depends(), db: Session = Depends(getDb)) -> DictionaryResponseDto:

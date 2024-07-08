@@ -74,6 +74,23 @@ declare namespace Components {
             description: string;
         }
         /**
+         * DictionaryPreviewDto
+         */
+        export interface DictionaryPreviewDto {
+            /**
+             * Database Name
+             */
+            database_name: string;
+            /**
+             * Database Description
+             */
+            database_description: string;
+            /**
+             * Tables
+             */
+            tables: /* TableDto */ TableDto[];
+        }
+        /**
          * DictionaryResponseDto
          */
         export interface DictionaryResponseDto {
@@ -82,7 +99,10 @@ declare namespace Components {
              */
             message?: /* Message */ string | null;
             status: /* ResponseStatusEnum */ ResponseStatusEnum;
-            data: /* DictionaryDto */ DictionaryDto | null;
+            /**
+             * Data
+             */
+            data?: /* Data */ /* DictionaryDto */ DictionaryDto | /* DictionaryPreviewDto */ DictionaryPreviewDto | null;
         }
         /**
          * HTTPValidationError
@@ -132,7 +152,20 @@ declare namespace Components {
             /**
              * Data
              */
-            data: string;
+            data?: /* Data */ string | null;
+        }
+        /**
+         * TableDto
+         */
+        export interface TableDto {
+            /**
+             * Name
+             */
+            name: string;
+            /**
+             * Description
+             */
+            description: string;
         }
         /**
          * ValidationError
@@ -265,6 +298,21 @@ declare namespace Paths {
             export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
         }
     }
+    namespace GetDictionaryPreview {
+        namespace Parameters {
+            /**
+             * Id
+             */
+            export type Id = number;
+        }
+        export interface PathParameters {
+            id: /* Id */ Parameters.Id;
+        }
+        namespace Responses {
+            export type $200 = /* DictionaryResponseDto */ Components.Schemas.DictionaryResponseDto;
+            export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
+        }
+    }
     namespace Healthcheck {
         namespace Responses {
             export type $200 = any;
@@ -374,6 +422,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.UpdateDictionaryFile.Responses.$200>
   /**
+   * getDictionaryPreview - Getdictionarypreview
+   */
+  'getDictionaryPreview'(
+    parameters?: Parameters<Paths.GetDictionaryPreview.PathParameters> | null,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.GetDictionaryPreview.Responses.$200>
+  /**
    * generatePrompt - Generateprompt
    */
   'generatePrompt'(
@@ -477,6 +533,16 @@ export interface PathsDictionary {
       data?: Paths.UpdateDictionaryFile.RequestBody,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateDictionaryFile.Responses.$200>
+  }
+  ['/api/dictionary/{id}/dictionary-preview']: {
+    /**
+     * getDictionaryPreview - Getdictionarypreview
+     */
+    'get'(
+      parameters?: Parameters<Paths.GetDictionaryPreview.PathParameters> | null,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.GetDictionaryPreview.Responses.$200>
   }
   ['/api/prompt/']: {
     /**

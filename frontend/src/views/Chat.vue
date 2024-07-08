@@ -65,6 +65,33 @@ function retrieveDictionaries() {
     });
 }
 
+// Visualizzo una preview del dizionario dati
+function getDictionaryInfo() {
+    toggleDetails();
+    if (!detailsVisible.value) {
+        return;
+    }
+    client.getDictionaryPreview({
+        id: selectedDictionary.value!
+    }).then(
+        response => {
+            switch(response.data?.status) {
+                case "OK":
+                    Object.assign(dictionaryPreview.value, response.data.data);
+                    break;
+                case "NOT_FOUND":
+                    messageError(t('dictionary.title'), `${t('general.list.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: selectedDictionary.value! })}`)
+                    break;
+                default:
+                    messageError(t('dictionary.title'), `${t('general.list.error')}\n${response.data?.message}`);
+            }
+        },
+        error => {
+            messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`)
+        }
+    )
+}
+
 const selectedDbms = ref(localStorage.getItem('chat-dbms') || "Mysql");
 const dbms = ref([
     { name: 'Mysql', code: 'Mysql' },
@@ -86,6 +113,7 @@ const languages = ref([
 
 const selectedDictionary = ref<null|number>(null);
 const dictionaries = ref();
+const dictionaryPreview = ref<any>({});
 
 const onLanguageChange = (value: string) => {
     localStorage.setItem('chat-language', value);
@@ -96,12 +124,21 @@ const onDbmsChange = (value: string) => {
 const onDictionaryChange = (value: number) => {
     localStorage.setItem('chat-dictionary-id', value.toString());
 };
+
 const messages = ref<any>([]);
+
+const clearMessages = () => {
+    messages.value = []
+}
 
 const request = ref('');
 const { messageSuccess, messageError, messageInfo, messageWarning } = messageService();
 
 function runRequest() {
+    // Nascondo l'overlay dei dettagli del dizionario dati (se visibile)
+    if (detailsVisible.value) {
+        toggleDetails();
+    }
     addMessage(request.value.trim(), true);
     console.log(request.value);
     loading.value = true;
@@ -138,17 +175,16 @@ function loadDebug() {
             switch(response.data?.status) {
                 case "OK":
                     debugMessage.value = response.data.data
+                    loadingDebug.value = false;
                     break;
                 case "NOT_FOUND":
-                    messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${t('actions.formatError')}`)
-                break;
+                    console.log(response.data.message)
+                    break;
                 default:
                     messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${response.data?.message}`)
             }
-            loadingDebug.value = false;
         },
         error => {
-            loadingDebug.value = false;
             messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error}`)
         }
     )
@@ -189,8 +225,22 @@ const checked = ref(false);
 // Variabile per controllare lo stato del container
 const hide = ref(false);
 
+// Variabile per controllare la visibilità dei dettagli
+const detailsVisible = ref(false);
+
+// Variabile per controllare l'espansione dei dettagli
+const expanded = ref(false);
+
 const toggleSelectView = () => {
     hide.value = !hide.value;
+}
+
+const toggleDetails = () => {
+    detailsVisible.value = !detailsVisible.value;
+}
+
+const toggleExpansion = () => {
+    expanded.value = !expanded.value;
 }
 
 // Ritorno il nome del dizionario dati selezionato
@@ -208,7 +258,7 @@ function onClickDownloadFile() {
 <template>
     <TabMenu v-model:activeIndex="active" :model="items" v-if="isLogged" class="tab-chat mb-2" @tab-change="onTabChange"/>
 
-    <div v-if="active == 0" id="chat" class="flex flex-column justify-between">
+    <div v-if="active == 0" id="chat" :class="{isLogged: isLogged}" class="flex flex-column">
         <!-- TITLE -->
         <div id="titlebar-container" class="card p-3">
             <div id="chat-title" class="flex flex-row align-items-center">
@@ -220,12 +270,12 @@ function onClickDownloadFile() {
                 <InputGroup class="w-full sm:w-fit">
                     <Dropdown filter v-model="selectedDictionary" :options="dictionaries" optionLabel="name" @update:modelValue="onDictionaryChange"
                         optionValue="id" :placeholder="t('chat.dictionary.placeholder')" class="h-fit m-2 mr-0" />
-                    <Button severity="info" icon="pi pi-info" class="h-fit m-2 ml-0" />
+                    <Button severity="info" :icon="detailsVisible ? 'pi pi-times' : 'pi pi-info'" class="h-fit m-2 ml-0" :aria-label="detailsVisible ? t('chat.dictionary.details.hide_details') : t('chat.dictionary.details.show_details')" @click="getDictionaryInfo()" />
                 </InputGroup>
 
                 <Dropdown v-model="selectedDbms" :options="dbms" optionLabel="name" optionValue="code"
-                    class="w-fit h-fit m-2" @update:modelValue="onDbmsChange"/>
-                <Dropdown v-model="selectedLanguage" :options="languages" @update:modelValue="onLanguageChange"
+                    class="w-fit h-fit m-2" :aria-label="t('chat.dbms.placeholder')" @update:modelValue="onDbmsChange"/>
+                <Dropdown v-model="selectedLanguage" :options="languages" :aria-label="t('chat.lang.placeholder')" @update:modelValue="onLanguageChange"
                 class="w-fit h-fit m-2">
                     <template #value="slotProps">
                         <div class="capitalize">
@@ -238,18 +288,35 @@ function onClickDownloadFile() {
                         </div>
                     </template>
                 </Dropdown>
+                <Button :label="t('chat.history.clean')" icon="pi pi-eraser" class="m-2" :disabled="messages.length <= 0 || loading" severity="danger" iconPos="right" @click="clearMessages" />
+            </div>
+        </div>
+
+        <!-- Dictionary details -->
+        <div id="dictionary-details" v-if="detailsVisible" :class="{expanded: expanded}" class="w-full h-full">
+            <div class="card h-full dict-preview">
+                <ScrollPanel class="h-full">
+                    <h2>{{ dictionaryPreview.database_name }}</h2>
+                    <p>{{ dictionaryPreview.database_description }}</p>
+                    <ul>
+                        <li v-for="(table, index) in dictionaryPreview.tables" :key="index" class="my-3">
+                            <strong>{{ table.name }}</strong>: {{ table.description }}
+                        </li>
+                    </ul>
+                </ScrollPanel>
+                <Button :icon="expanded ? 'pi pi-window-minimize' : 'pi pi-expand'" class="expand-btn" :aria-label="expanded ? t('text.shrink_view') : t('text.expand_view')" @click="toggleExpansion" />
             </div>
         </div>
 
         <!-- CHAT MESSAGES -->
-        <div id="messages">
+        <div id="messages" v-if="!detailsVisible">
             <ChatMessage v-for="(msg, index) in messages" :key="index" :is-sent="msg.isSent" :message="msg.message"></ChatMessage>
         </div>
 
         <InputGroup id="input-container" class="mt-1">
-            <Textarea v-model="request" :placeholder="t('chat.prompt.placeholder')" rows="5"
+            <Textarea v-model="request" :placeholder="t('chat.prompt.placeholder')" rows="1" autoResize
                 class="w-full" :aria-label="t('chat.prompt.placeholder')" />
-            <Button @click="runRequest" :icon="loading ? 'pi pi-spin pi-spinner' : 'pi pi-send'" :title="t('chat.prompt.generate')" :disabled="loading || !selectedDictionary || !request" />
+            <Button @click="runRequest" :icon="loading ? 'pi pi-spin pi-spinner' : 'pi pi-send'" :title="t('chat.prompt.generate')" :aria-label="t('chat.prompt.generate')" :disabled="loading || !selectedDictionary || !request" />
         </InputGroup>
     </div>
 
@@ -266,9 +333,14 @@ function onClickDownloadFile() {
 }
 
 #chat {
-    height: calc(100vh - 5rem - 4rem - 2rem);
+    height: calc(100vh - 5rem - 4rem);
     max-height: 100%;
     position: relative;
+    margin-bottom: -2rem;
+}
+
+#chat.isLogged {
+    height: calc(100vh - 5rem - 4rem - 3.5rem);
 }
 
 .hide {
@@ -277,6 +349,33 @@ function onClickDownloadFile() {
 
 #chat-title {
     justify-content: space-between;
+}
+
+#dictionary-details {
+    overflow-y: hidden;
+}
+
+#dictionary-details.expanded {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+#dictionary-details .dict-preview {
+    position: relative;
+}
+
+#dictionary-details .expand-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1000;
+}
+
+#dictionary-details ul {
+    list-style-type: none;
+    padding: 0;
 }
 
 #messages {
@@ -288,16 +387,14 @@ function onClickDownloadFile() {
 
 #input-container {
     width: 100%;
-    max-height: 10rem;
 }
 
 #input-container textarea {
-    max-height: 20rem;
+    max-height: 8rem;
     overflow-y: scroll !important;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
     box-sizing: content-box;
-    resize: none;
 }
 
 #input-container textarea::placeholder {

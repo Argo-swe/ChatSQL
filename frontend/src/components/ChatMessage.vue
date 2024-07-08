@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps } from 'vue';
+import { ref } from 'vue';
 import { useLayout } from '@/components/layout/composables/layout';
 import { getApiClient } from '@/services/api-client.service';
 import { useRouter } from 'vue-router'
