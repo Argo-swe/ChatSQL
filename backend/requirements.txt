@@ -1,0 +1,11 @@
+aiofiles
+fastapi
+fastapi_utils[all]
+jsonschema
+parameterized
+# pydantic
+python-multipart
+sqlalchemy
+# txtai
+psycopg2    # per usare database PostgreSQL
+pyjwt

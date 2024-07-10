@@ -1,0 +1,244 @@
+{
+  "database_name": "Ordini",
+  "database_description": "Il database è progettato per monitorare e gestire le transazioni di acquisto.",
+  "tables": [
+    {
+      "name": "utenti",
+      "description": "Tabella contenente i dettagli dell'account e le informazioni personali degli utenti che effettuano acquisti.",
+      "table_synonyms": [
+        "clienti",
+        "consumatori"
+      ],
+      "columns": [
+        {
+          "name": "username",
+          "type": "string",
+          "description": "Il nome univoco utilizzato dall'utente in fase di login",
+          "column_synonyms": [
+            "soprannome",
+            "alias"
+          ]
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "description": "L'indirizzo email dell'utente.",
+          "column_synonyms": null
+        },
+        {
+          "name": "nome",
+          "type": "string",
+          "description": "Il nome dell'utente.",
+          "column_synonyms": null
+        },
+        {
+          "name": "cognome",
+          "type": "string",
+          "description": "Il cognome dell'utente.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "username"
+      ]
+    },
+    {
+      "name": "prodotti",
+      "description": "Tabella contenente informazioni sui prodotti memorizzati nel catalogo.",
+      "table_synonyms": [
+        "articoli",
+        "oggetti"
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "L'identificatore univoco per un prodotto.",
+          "column_synonyms": [
+            "etichetta"
+          ]
+        },
+        {
+          "name": "nome",
+          "type": "string",
+          "description": "Il nome del prodotto.",
+          "column_synonyms": null
+        },
+        {
+          "name": "prezzo",
+          "type": "numeric(10,2)",
+          "description": "Il prezzo del prodotto.",
+          "column_synonyms": [
+            "costo",
+            "valore"
+          ]
+        },
+        {
+          "name": "categoria",
+          "type": "integer",
+          "description": "Chiave esterna che fa riferimento alla categoria a cui appartiene il prodotto.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "categoria"
+          ],
+          "reference_table_name": "categorie",
+          "reference_column_names": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ordini",
+      "description": "Tabella contenente informazioni sugli ordini effettuati dagli utenti, inclusi i dettagli generali di fatturazione.",
+      "table_synonyms": [
+        "consegne",
+        "acquisti",
+        "vendite",
+        "transazioni"
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "L'identificatore univoco per un ordine.",
+          "column_synonyms": [
+            "etichetta"
+          ]
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "description": "Chiave esterna che fa riferimento all'utente che ha effettuato l'ordine.",
+          "column_synonyms": null
+        },
+        {
+          "name": "data_ordine",
+          "type": "date",
+          "description": "La data in cui è stato effettuato l'ordine.",
+          "column_synonyms": null
+        },
+        {
+          "name": "metodo_pagamento",
+          "type": "string",
+          "description": "Il metodo di pagamento utilizzato per l'ordine.",
+          "column_synonyms": null
+        },
+        {
+          "name": "totale",
+          "type": "numeric(10,2)",
+          "description": "L'importo totale dell'ordine.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "username"
+          ],
+          "reference_table_name": "utenti",
+          "reference_column_names": [
+            "username"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "categorie",
+      "description": "Tabella contenente informazioni sulle categorie, che corrispondono al tipo o alla classe di prodotti.",
+      "table_synonyms": [
+        "classi",
+        "gruppi",
+        "tipi"
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "L'identificatore univoco per una categoria.",
+          "column_synonyms": [
+            "etichetta"
+          ]
+        },
+        {
+          "name": "nome",
+          "type": "string",
+          "description": "Il nome della categoria.",
+          "column_synonyms": null
+        },
+        {
+          "name": "descrizione",
+          "type": "string",
+          "description": "La descrizione della categoria.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "id"
+      ]
+    },
+    {
+      "name": "articoli_ordine",
+      "description": "Tabella contenente i prodotti associati a un ordine e la loro quantità.",
+      "table_synonyms": [
+        "dettagli"
+      ],
+      "columns": [
+        {
+          "name": "id_ordine",
+          "type": "integer",
+          "description": "Chiave esterna che fa riferimento all'ordine a cui appartiene il prodotto.",
+          "column_synonyms": null
+        },
+        {
+          "name": "id_prodotto",
+          "type": "integer",
+          "description": "Chiave esterna che fa riferimento al prodotto ordinato.",
+          "column_synonyms": null
+        },
+        {
+          "name": "quantità",
+          "type": "integer",
+          "description": "La quantità del prodotto nell'ordine.",
+          "column_synonyms": [
+            "numero"
+          ]
+        }
+      ],
+      "primary_key": [
+        "id_ordine",
+        "id_prodotto"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "id_ordine"
+          ],
+          "reference_table_name": "ordini",
+          "reference_column_names": [
+            "id"
+          ]
+        },
+        {
+          "foreign_key_column_names": [
+            "id_prodotto"
+          ],
+          "reference_table_name": "prodotti",
+          "reference_column_names": [
+            "id"
+          ]
+        }
+      ]
+    }
+  ]
+}

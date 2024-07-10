@@ -1,0 +1,145 @@
+{
+    "actions": {
+        "alreadyExistsById": "{item} with id {id} already exists",
+        "alreadyExistsByName": "{item} with name '{name}' already exists",
+        "create": {
+            "error": "Error during creation",
+            "success": "Successfully created"
+        },
+        "delete": {
+            "error": "Error while deleting",
+            "success": "Successfully deleted"
+        },
+        "formatError": "Wrong format",
+        "generate": {
+            "error": "Error during generation",
+            "success": "Generation successful"
+        },
+        "notFoundById": "{item} with id {id} not found",
+        "notFoundByName": "{item} with name '{name}' not found",
+        "update": {
+            "error": "Error during update",
+            "success": "Successfully updated"
+        }
+    },
+    "chat": {
+        "debug": {
+            "file": {
+                "download": "Download file (.txt)"
+            },
+            "subject": "The debug referring to the last operator request is shown",
+            "title": "Debug"
+        },
+        "dictionary": {
+            "placeholder": "Choose a dictionary",
+            "details": {
+                "show_details": "show dictionary details",
+                "hide_details": "hide dictionary details",
+                "tables": {
+                    "title": "Tables"
+                }
+            }
+        },
+        "dbms": {
+            "placeholder": "Choose a DBMS"
+        },
+        "lang": {
+            "placeholder": "Choose a language"
+        },
+        "prompt": {
+            "generate": "Generate prompts",
+            "placeholder": "Enter a natural language request",
+            "title": "Prompt"
+        },
+        "history": {
+            "clean": "Clean chat history"
+        },
+        "title": "Chat"
+    },
+    "dictionary": {
+        "create": "Create data dictionary",
+        "delete": "Delete data dictionary",
+        "file": {
+            "download": "Download data dictionary file",
+            "title": "Data dictionary file",
+            "update": "Update data dictionary file"
+        },
+        "title": "Data dictionary | Data dictionaries",
+        "update": "Update data dictionary"
+    },
+    "footer": {
+        "copyright": {
+            "section": "All rights reserved",
+            "title": "ARGO Group"
+        },
+        "title": "ARGO Group"
+    },
+    "general": {
+        "confirm": {
+            "proceed": "Are you sure you want to proceed?"
+        },
+        "copyright": "All rights reserved",
+        "groupName": "ARGO group",
+        "input": {
+            "fileupload": "Upload file"
+        },
+        "list": {
+            "empty": "No results found",
+            "error": "Error while loading data",
+            "loading": "Loading data! Please wait..."
+        },
+        "menu": {
+            "openMainNavMenu": "Open main navigation menu",
+            "closeMainNavMenu": "Close main navigation menu",
+            "technicianFunctionalities": "Technician functionalities"
+        }
+    },
+    "locale": {
+        "en": "english",
+        "it": "italian"
+    },
+    "login": {
+        "badCredential": "Wrong credential",
+        "subject": "Login to the technician area",
+        "title": "Login"
+    },
+    "settings": {
+        "darkMode": "Dark mode",
+        "language": "Language",
+        "scale": "Scale"
+    },
+    "text": {
+        "cancel": "cancel",
+        "chat": "chat",
+        "debug": "debug",
+        "description": "description",
+        "english": "english",
+        "error": "error",
+        "expand_view": "expand view",
+        "french": "french",
+        "genericError": "generic error",
+        "german": "german",
+        "hide": "hide",
+        "info": "info",
+        "italian": "italian",
+        "log": "log",
+        "login": "login",
+        "logout": "logout",
+        "name": "name",
+        "no": "no",
+        "ok": "ok",
+        "password": "password",
+        "save": "save",
+        "settings": "settings",
+        "show": "show",
+        "shrink_view": "shrink view",
+        "spanish": "spanish",
+        "toggle_menu": "toggle menu",
+        "toggle_view": "toggle view",
+        "user": "user",
+        "username": "username",
+        "version": "version",
+        "warning": "warning",
+        "yes": "yes"
+    }
+}

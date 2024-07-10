@@ -1,0 +1,75 @@
+name: chatsql
+
+services:
+  backend:
+    build:
+        context: ./backend
+        dockerfile: ./Dockerfile
+    command: fastapi dev app.py --host 0.0.0.0
+    ports:
+      - '8000:8000'
+    entrypoint:
+      - /usr/src/entrypoint-backend.sh
+    env_file:
+      - backend/.env.postgres
+      - backend/.env.local
+    links:
+      - postgresdb
+    volumes:
+      - ./backend/app:/usr/src/app
+      - backend-db-volume:/opt/chatsql
+    healthcheck:
+      test: curl --fail http://localhost:8000/healthcheck || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - chatsql-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    ports:
+      - "5173:5173"
+    entrypoint:
+      - /usr/src/app/entrypoint-frontend.sh
+    env_file:
+      - frontend/.env
+      - frontend/.env.local
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - ./frontend/src:/usr/src/app/src
+      - ./frontend/public:/usr/src/app/public
+      - ./frontend/environments:/usr/src/app/environments
+      - ./frontend/index.html:/usr/src/app/index.html
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - chatsql-network
+
+  postgresdb:
+    image: postgres:alpine3.16
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresdb-volume:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: chatsql
+    networks:
+      - chatsql-network
+
+networks:
+  chatsql-network:
+    driver: bridge
+
+volumes:
+  backend-db-volume:
+    external: false
+  postgresdb-volume:
+    external: false

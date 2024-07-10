@@ -1,0 +1,23 @@
+.layout-footer {
+    transition: margin-left $transitionDuration;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--surface-border);
+    .titolo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .copyright {
+        display: block;
+        font-size: small;
+        margin: 0.5em;
+        text-align: center;
+        span {
+            display: block;
+        }
+    }
+}
