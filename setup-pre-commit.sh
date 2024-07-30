@@ -8,4 +8,4 @@ then
 fi
 
 # Installa gli hook definiti in .pre-commit-config.yaml
-pre-commit install
+#pre-commit install
