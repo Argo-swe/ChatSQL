@@ -1,5 +1,6 @@
 import logging
 
+
 class EndpointFilter(logging.Filter):
     """Filter class to exclude specific endpoints from log entries."""
 
@@ -22,4 +23,8 @@ class EndpointFilter(logging.Filter):
         Returns:
             bool: True if the log entry should be included, False otherwise.
         """
-        return record.args and len(record.args) >= 3 and record.args[2] not in self.excluded_endpoints
+        return (
+            record.args
+            and len(record.args) >= 3
+            and record.args[2] not in self.excluded_endpoints
+        )

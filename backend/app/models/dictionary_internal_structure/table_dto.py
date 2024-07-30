@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from fastapi_camelcase import CamelModel
 
-class TableDto(BaseModel):
+
+class TableDto(CamelModel):
     name: str
     description: str
 

@@ -3,36 +3,47 @@ from sqlalchemy.orm import Session
 from . import models
 from models.dictionary_dto import DictionaryDto
 
-## Admin
-def getUserByUsername(db: Session, username: str):
+
+# Admin
+def get_user_by_username(db: Session, username: str):
     return db.query(models.Admins).filter(models.Admins.username == username).first()
 
-## Dictionaries
-def getAllDictionaries(db: Session):
+
+# Dictionaries
+def get_all_dictionaries(db: Session):
     return db.query(models.Dictionaries).all()
 
-def getDictionaryById(db: Session, id: int):
+
+def get_dictionary_by_id(db: Session, id: int):
     return db.query(models.Dictionaries).filter(models.Dictionaries.id == id).first()
 
-def getDictionaryByName(db: Session, name: str):
-    return db.query(models.Dictionaries).filter(models.Dictionaries.name == name).first()
 
-def createDictionary(db: Session, dictionary: DictionaryDto):
-    dbDictionary = models.Dictionaries(name=dictionary.name, description=dictionary.description)
-    db.add(dbDictionary)
+def get_dictionary_by_name(db: Session, name: str):
+    return (
+        db.query(models.Dictionaries).filter(models.Dictionaries.name == name).first()
+    )
+
+
+def create_dictionary(db: Session, dictionary: DictionaryDto):
+    db_dictionary = models.Dictionaries(
+        name=dictionary.name, description=dictionary.description
+    )
+    db.add(db_dictionary)
     db.commit()
-    db.refresh(dbDictionary)
-    return dbDictionary
+    db.refresh(db_dictionary)
+    return db_dictionary
 
-def updateDictionary(db: Session, dictionary: DictionaryDto):
-    currentDictionary = getDictionaryById(db, dictionary.id)
-    currentDictionary.name = dictionary.name
-    currentDictionary.description = dictionary.description
+
+def update_dictionary(db: Session, dictionary: DictionaryDto):
+    current_dictionary = get_dictionary_by_id(db, dictionary.id)
+    current_dictionary.name = dictionary.name
+    current_dictionary.description = dictionary.description
     db.commit()
-    db.refresh(currentDictionary)
-    return currentDictionary
+    db.refresh(current_dictionary)
+    return current_dictionary
 
-def deleteDictionary(db: Session, id: int):
-    dictionary = getDictionaryById(db, id)
+
+def delete_dictionary(db: Session, id: int):
+    dictionary = get_dictionary_by_id(db, id)
     db.delete(dictionary)
     db.commit()
