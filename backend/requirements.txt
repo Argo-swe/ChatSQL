@@ -1,5 +1,6 @@
 aiofiles
 fastapi
+fastapi_camelcase
 fastapi_utils[all]
 jsonschema
 parameterized

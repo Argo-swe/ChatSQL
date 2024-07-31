@@ -1,0 +1,9 @@
+{
+  "modelPropertyNaming": "camelCase",
+  "propertyNaming": "camelCase",
+  "enumPropertyNaming": "camelCase",
+  "apiPackage": "api",
+  "modelPackage": "models",
+  "invokerPackage": "invoker",
+  "typescriptThreePlus": true
+}

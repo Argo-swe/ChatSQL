@@ -1,7 +1,8 @@
 from typing import Optional
-from pydantic import BaseModel
+from fastapi_camelcase import CamelModel
 
-class DictionaryDto(BaseModel):
+
+class DictionaryDto(CamelModel):
     id: Optional[int] = None
     name: str
     description: str

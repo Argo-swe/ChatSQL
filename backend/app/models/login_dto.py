@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from fastapi_camelcase import CamelModel
 
-class LoginDto(BaseModel):
+
+class LoginDto(CamelModel):
     username: str
     password: str

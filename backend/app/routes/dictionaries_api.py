@@ -6,14 +6,14 @@ from models.dictionary_preview_dto import DictionaryPreviewDto
 from models.dictionary_internal_structure.table_dto import TableDto
 from tools.dictionary_validator import DictionaryValidator
 from tools.utils import Utils
-from tools.schema_multi_extractor import Schema_Multi_Extractor
+from tools.schema_multi_extractor import SchemaMultiExtractor
 
 from engine.index_manager import IndexManager
 
 from auth.jwt_bearer import JwtBearer
 from fastapi import APIRouter, File, UploadFile, Depends
 from fastapi.responses import FileResponse
-from typing import Annotated, List
+from typing import Annotated
 import aiofiles
 import os
 
@@ -21,218 +21,250 @@ from sqlalchemy.orm import Session
 from database import crud
 from database.base import SessionLocal
 
-def getDb():
+
+def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
+
 tag = "dictionary"
 router = APIRouter()
 
-outFileBasePath = "/opt/chatsql/dictionary_schemas"
-os.makedirs(outFileBasePath, exist_ok=True)
+out_file_base_path = "/opt/chatsql/dictionary_schemas"
+os.makedirs(out_file_base_path, exist_ok=True)
 
 manager = IndexManager()
 
-@router.get("/", tags=[tag], response_model=DictionariesResponseDto)
-def getAllDictionaries(db: Session = Depends(getDb)) -> DictionariesResponseDto:
-    dictionaries = crud.getAllDictionaries(db)
 
-    return DictionariesResponseDto(
-            data=dictionaries,
-            status=ResponseStatusEnum.OK
-        )
+@router.get(
+    "/", tags=[tag], response_model=DictionariesResponseDto, name="getAllDictionaries"
+)
+def get_all_dictionaries(db: Session = Depends(get_db)) -> DictionariesResponseDto:
+    dictionaries = crud.get_all_dictionaries(db)
 
-@router.get("/{id}", tags=[tag], response_model=DictionaryResponseDto)
-def getDictionary(id: int, db: Session = Depends(getDb)) -> DictionaryResponseDto:
-    foundDic = crud.getDictionaryById(db, id)
+    return DictionariesResponseDto(data=dictionaries, status=ResponseStatusEnum.OK)
 
-    if foundDic != None:
-        return DictionaryResponseDto(
-                data=foundDic,
-                status=ResponseStatusEnum.OK
-            )
+
+@router.get(
+    "/{id}", tags=[tag], response_model=DictionaryResponseDto, name="getDictionary"
+)
+def get_dictionary(id: int, db: Session = Depends(get_db)) -> DictionaryResponseDto:
+    found_dic = crud.get_dictionary_by_id(db, id)
+
+    if found_dic is not None:
+        return DictionaryResponseDto(data=found_dic, status=ResponseStatusEnum.OK)
 
     return DictionaryResponseDto(
-                data=None,
-                message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND
-            )
+        data=None,
+        message=f"Dictionary with id {id} not found",
+        status=ResponseStatusEnum.NOT_FOUND,
+    )
 
-@router.get("/{id}/file", tags=[tag])
-def getDictionaryFile(id: int, db: Session = Depends(getDb)):
-    foundDic = crud.getDictionaryById(db, id)
 
-    if foundDic != None:
-        return FileResponse(__generateSchemaFileName(id))
+@router.get("/{id}/file", tags=[tag], name="getDictionaryFile")
+def get_dictionary_file(id: int, db: Session = Depends(get_db)):
+    found_dic = crud.get_dictionary_by_id(db, id)
+
+    if found_dic is not None:
+        return FileResponse(__generate_schema_file_name(id))
 
     return ResponseDto(
-                message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND
-            )
+        message=f"Dictionary with id {id} not found",
+        status=ResponseStatusEnum.NOT_FOUND,
+    )
 
-@router.get("/{id}/dictionary-preview", tags=[tag], response_model=DictionaryResponseDto)
-def getDictionaryPreview(id: int, db: Session = Depends(getDb)) -> DictionaryResponseDto:
-    foundDic = crud.getDictionaryById(db, id)
 
-    if foundDic != None:
-        dictionary_sub_schema = Schema_Multi_Extractor.extract_preview(id)
+@router.get(
+    "/{id}/dictionary-preview",
+    tags=[tag],
+    response_model=DictionaryResponseDto,
+    name="getDictionaryPreview",
+)
+def get_dictionary_preview(
+    id: int, db: Session = Depends(get_db)
+) -> DictionaryResponseDto:
+    found_dic = crud.get_dictionary_by_id(db, id)
+
+    if found_dic is not None:
+        dictionary_sub_schema = SchemaMultiExtractor.extract_preview(id)
 
         dictionary_preview_dto = DictionaryPreviewDto(
             database_name=dictionary_sub_schema["database_name"],
             database_description=dictionary_sub_schema["database_description"],
-            tables=[TableDto(**table) for table in dictionary_sub_schema["tables"]]
+            tables=[TableDto(**table) for table in dictionary_sub_schema["tables"]],
         )
 
         return DictionaryResponseDto(
-            data = dictionary_preview_dto,
-            status=ResponseStatusEnum.OK
+            data=dictionary_preview_dto, status=ResponseStatusEnum.OK
         )
 
     return ResponseDto(
         message=f"Dictionary with id {id} not found",
-        status=ResponseStatusEnum.NOT_FOUND
+        status=ResponseStatusEnum.NOT_FOUND,
     )
 
-@router.post("/", tags=[tag], response_model=DictionaryResponseDto, dependencies=[Depends(JwtBearer())])
-async def createDictionary(file: Annotated[UploadFile, File()], dictionary: DictionaryDto = Depends(), db: Session = Depends(getDb)) -> DictionaryResponseDto:
-    if dictionary.name != None and dictionary.description != None and file:
-        foundDic = crud.getDictionaryByName(db, name=dictionary.name)
 
-        if foundDic:
+@router.post(
+    "/",
+    tags=[tag],
+    response_model=DictionaryResponseDto,
+    dependencies=[Depends(JwtBearer())],
+    name="createDictionary",
+)
+async def create_dictionary(
+    file: Annotated[UploadFile, File()],
+    dictionary: DictionaryDto = Depends(),
+    db: Session = Depends(get_db),
+) -> DictionaryResponseDto:
+    if dictionary.name is not None and dictionary.description is not None and file:
+        found_dic = crud.get_dictionary_by_name(db, name=dictionary.name)
+
+        if found_dic:
             return DictionaryResponseDto(
                 data=None,
                 message=f"Dictionary with name '{dictionary.name}' already exists",
-                status=ResponseStatusEnum.CONFLICT
+                status=ResponseStatusEnum.CONFLICT,
             )
 
-        newDic = crud.createDictionary(db=db, dictionary=dictionary)
+        new_dic = crud.create_dictionary(db=db, dictionary=dictionary)
 
         # validate dictionary schema
         content = await file.read()
-        isValid = DictionaryValidator.validate(Utils.string_to_json(content))
+        is_valid = DictionaryValidator.validate(Utils.string_to_json(content))
 
-        if not isValid:
+        if not is_valid:
             return DictionaryResponseDto(
-                    data=None,
-                    message=f"Dictionary schema is bad formatted",
-                    status=ResponseStatusEnum.BAD_REQUEST
-                )
+                data=None,
+                message="Dictionary schema is bad formatted",
+                status=ResponseStatusEnum.BAD_REQUEST,
+            )
 
-        async with aiofiles.open(__generateSchemaFileName(newDic.id), 'wb') as out_file:
+        async with aiofiles.open(
+            __generate_schema_file_name(new_dic.id), "wb"
+        ) as out_file:
             await out_file.write(content)
 
         # create txtai index
-        manager.createIndex(newDic.id)
+        manager.create_index(new_dic.id)
 
-        return DictionaryResponseDto(
-                data=newDic,
-                status=ResponseStatusEnum.OK
-        )
+        return DictionaryResponseDto(data=new_dic, status=ResponseStatusEnum.OK)
 
     if not file:
         return DictionaryResponseDto(
-                data=None,
-                message=f"Dictionary file is mandatory",
-                status=ResponseStatusEnum.BAD_REQUEST
-            )
+            data=None,
+            message="Dictionary file is mandatory",
+            status=ResponseStatusEnum.BAD_REQUEST,
+        )
 
     return DictionaryResponseDto(
-                data=None,
-                message=f"Dictionary name and description are mandatory",
-                status=ResponseStatusEnum.BAD_REQUEST
-            )
+        data=None,
+        message="Dictionary name and description are mandatory",
+        status=ResponseStatusEnum.BAD_REQUEST,
+    )
 
-@router.put("/{id}/file", tags=[tag], response_model=DictionaryResponseDto, dependencies=[Depends(JwtBearer())])
-async def updateDictionaryFile(id: int, file: Annotated[UploadFile, File()], db: Session = Depends(getDb)) -> DictionaryResponseDto:
-    foundDic = crud.getDictionaryById(db, id)
 
-    if foundDic == None:
+@router.put(
+    "/{id}/file",
+    tags=[tag],
+    response_model=DictionaryResponseDto,
+    dependencies=[Depends(JwtBearer())],
+    name="updateDictionaryFile",
+)
+async def update_dictionary_file(
+    id: int, file: Annotated[UploadFile, File()], db: Session = Depends(get_db)
+) -> DictionaryResponseDto:
+    found_dic = crud.get_dictionary_by_id(db, id)
+
+    if found_dic is None:
         return DictionaryResponseDto(
-                data=None,
-                message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND
-            )
+            data=None,
+            message=f"Dictionary with id {id} not found",
+            status=ResponseStatusEnum.NOT_FOUND,
+        )
 
     # validate dictionary schema
     content = await file.read()
-    isValid = DictionaryValidator.validate(Utils.string_to_json(content))
+    is_valid = DictionaryValidator.validate(Utils.string_to_json(content))
 
-    if not isValid:
+    if not is_valid:
         return DictionaryResponseDto(
-                data=None,
-                message=f"Dictionary schema is bad formatted",
-                status=ResponseStatusEnum.BAD_REQUEST
-            )
+            data=None,
+            message="Dictionary schema is bad formatted",
+            status=ResponseStatusEnum.BAD_REQUEST,
+        )
 
-    async with aiofiles.open(__generateSchemaFileName(id), 'wb') as out_file:
+    async with aiofiles.open(__generate_schema_file_name(id), "wb") as out_file:
         await out_file.write(content)
 
     # update txtai index
-    manager.createIndex(foundDic.id)
+    manager.create_index(found_dic.id)
 
-    return DictionaryResponseDto(
-                data=foundDic,
-                status=ResponseStatusEnum.OK
-            )
+    return DictionaryResponseDto(data=found_dic, status=ResponseStatusEnum.OK)
 
-@router.put("/{id}", tags=[tag], response_model=DictionaryResponseDto, dependencies=[Depends(JwtBearer())])
-def updateDictionaryMetadata(id: int, dictionary: DictionaryDto, db: Session = Depends(getDb)) -> DictionaryResponseDto:
-    foundDic = crud.getDictionaryById(db, id)
 
-    if foundDic == None:
+@router.put(
+    "/{id}",
+    tags=[tag],
+    response_model=DictionaryResponseDto,
+    dependencies=[Depends(JwtBearer())],
+    name="updateDictionaryMetadata",
+)
+def update_dictionary_metadata(
+    id: int, dictionary: DictionaryDto, db: Session = Depends(get_db)
+) -> DictionaryResponseDto:
+    found_dic = crud.get_dictionary_by_id(db, id)
+
+    if found_dic is None:
         return DictionaryResponseDto(
-                data=None,
-                message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND
-            )
+            data=None,
+            message=f"Dictionary with id {id} not found",
+            status=ResponseStatusEnum.NOT_FOUND,
+        )
 
-    if dictionary.name == None or dictionary.description == None:
+    if dictionary.name is None or dictionary.description is None:
         return DictionaryResponseDto(
-                data=None,
-                message="Dictionary name and description are mandatory",
-                status=ResponseStatusEnum.BAD_REQUEST
-            )
+            data=None,
+            message="Dictionary name and description are mandatory",
+            status=ResponseStatusEnum.BAD_REQUEST,
+        )
 
-    dicWithName = crud.getDictionaryByName(db, dictionary.name)
-    if dicWithName != None and dicWithName.id != id:
+    dic_with_name = crud.get_dictionary_by_name(db, dictionary.name)
+    if dic_with_name is not None and dic_with_name.id != id:
         return DictionaryResponseDto(
             data=None,
             message=f"Dictionary with name '{dictionary.name}' already exists",
-            status=ResponseStatusEnum.CONFLICT
+            status=ResponseStatusEnum.CONFLICT,
         )
 
-    newDic = crud.updateDictionary(db, dictionary)
+    new_dic = crud.update_dictionary(db, dictionary)
 
-    return DictionaryResponseDto(
-                data=newDic,
-                status=ResponseStatusEnum.OK
-            )
+    return DictionaryResponseDto(data=new_dic, status=ResponseStatusEnum.OK)
 
-@router.delete("/{id}", tags=[tag], response_model=ResponseDto)
-def deleteDictionary(id: int, db: Session = Depends(getDb)) -> ResponseDto:
-    foundDic = crud.getDictionaryById(db, id)
 
-    if foundDic == None:
+@router.delete("/{id}", tags=[tag], response_model=ResponseDto, name="deleteDictionary")
+def delete_dictionary(id: int, db: Session = Depends(get_db)) -> ResponseDto:
+    found_dic = crud.get_dictionary_by_id(db, id)
+
+    if found_dic is None:
         return ResponseDto(
-                message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND
-            )
+            message=f"Dictionary with id {id} not found",
+            status=ResponseStatusEnum.NOT_FOUND,
+        )
 
-    crud.deleteDictionary(db, id)
+    crud.delete_dictionary(db, id)
 
-    if os.path.exists(__generateSchemaFileName(id)):
-        os.remove(__generateSchemaFileName(id))
+    if os.path.exists(__generate_schema_file_name(id)):
+        os.remove(__generate_schema_file_name(id))
 
     # delete txtai index
-    manager.deleteIndex(foundDic.id)
+    manager.delete_index(found_dic.id)
 
-    return ResponseDto(
-                status=ResponseStatusEnum.OK
-            )
+    return ResponseDto(status=ResponseStatusEnum.OK)
 
-def __generateSchemaFileName(id: int) -> str:
-    global outFileBasePath
-    return f'{outFileBasePath}/dic_schema_{id}.json'
+
+def __generate_schema_file_name(id: int) -> str:
+    global out_file_base_path
+    return f"{out_file_base_path}/dic_schema_{id}.json"

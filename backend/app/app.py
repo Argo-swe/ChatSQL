@@ -10,20 +10,22 @@ from routes.login_api import router as login_router
 
 from database import models
 from database.base import engine
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 app.include_router(dictionaries_router, prefix="/api/dictionary")
 app.include_router(prompt_router, prefix="/api/prompt")
-app.include_router(login_router, prefix= "/api/login")
+app.include_router(login_router, prefix="/api/login")
 
-app.add_middleware(CORSMiddleware,
-                   allow_credentials=True,
-                   allow_origins=["*"],
-                   allow_methods=["*"],
-                   allow_headers=["*"],
-                   )
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Define excluded endpoints
 excluded_endpoints = ["/healthcheck", "/openapi.json"]
@@ -31,13 +33,16 @@ excluded_endpoints = ["/healthcheck", "/openapi.json"]
 # Add filter to the logger
 logging.getLogger("uvicorn.access").addFilter(EndpointFilter(excluded_endpoints))
 
+
 @app.get("/")
 async def main():
     return {"message": "Hello World"}
 
+
 @app.get("/healthcheck")
 async def healthcheck():
-    return { "status": "running" }
+    return {"status": "running"}
+
 
 simplify_operation_ids(app)
 

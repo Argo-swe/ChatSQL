@@ -1,35 +1,35 @@
-import { jwtDecode, type JwtPayload } from "jwt-decode";
+import { jwtDecode, type JwtPayload } from 'jwt-decode';
 
 export default class AuthService {
-    static LS_TOKEN_KEY = 'token';
+  static LS_TOKEN_KEY = 'token';
 
-    static logout() {
-        localStorage.removeItem(AuthService.LS_TOKEN_KEY);
-        window.dispatchEvent(new CustomEvent('token-localstorage-changed'));
+  static logout() {
+    localStorage.removeItem(AuthService.LS_TOKEN_KEY);
+    window.dispatchEvent(new CustomEvent('token-localstorage-changed'));
+  }
+
+  static isLogged(): boolean {
+    const token = localStorage.getItem(AuthService.LS_TOKEN_KEY);
+
+    if (!token) {
+      return false;
     }
 
-    static isLogged(): boolean {
-        const token = localStorage.getItem(AuthService.LS_TOKEN_KEY);
+    return AuthService.checkJwtExpiration(token);
+  }
 
-        if (!token) {
-            return false;
-        }
+  private static checkJwtExpiration(token: string): boolean {
+    const decoded = jwtDecode<JwtPayload>(token);
 
-        return AuthService.checkJwtExpiration(token);
+    return !AuthService.isTokenExpired(decoded.exp);
+  }
+
+  private static isTokenExpired(exp: number | undefined): boolean {
+    const actualTime: number = new Date().getTime();
+
+    if (exp) {
+      return 1000 * exp - actualTime < 5000;
     }
-
-    private static checkJwtExpiration(token: string): boolean {
-        const decoded = jwtDecode<JwtPayload>(token);
-
-        return !AuthService.isTokenExpired(decoded.exp);
-    }
-
-    private static isTokenExpired(exp: number | undefined): boolean {
-        const actualTime: number = (new Date()).getTime();
-
-        if (exp) {
-          return ((1000 * exp) - actualTime) < 5000;
-        }
-        return true;
-    }
+    return true;
+  }
 }

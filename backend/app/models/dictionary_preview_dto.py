@@ -1,8 +1,9 @@
 from typing import List
-from pydantic import BaseModel
+from fastapi_camelcase import CamelModel
 from models.dictionary_internal_structure.table_dto import TableDto
 
-class DictionaryPreviewDto(BaseModel):
+
+class DictionaryPreviewDto(CamelModel):
     database_name: str
     database_description: str
     tables: List[TableDto]
