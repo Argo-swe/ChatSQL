@@ -13,17 +13,17 @@ const router = createRouter({
         {
           path: '/chat',
           name: 'chat',
-          component: () => import('@/views/ChatView.vue')
+          component: () => import('@/views/Chat.vue')
         },
         {
           path: '/dictionary',
           name: 'dictionary',
-          component: () => import('@/views/DictionariesListView.vue')
+          component: () => import('@/views/DictionariesList.vue')
         },
         {
           path: '/debug',
           name: 'debug',
-          component: () => import('@/views/DebugView.vue')
+          component: () => import('@/views/Debug.vue')
         }
       ]
     }
