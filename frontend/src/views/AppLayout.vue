@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLayout } from '@/components/layout/composables/layout';
+import { useLayout } from '@/composables/layout';
 import { computed, ref, watch } from 'vue';
 import LoginDialog from '@/components/LoginDialog.vue';
 import AppConfig from '@/components/layout/AppConfig.vue';

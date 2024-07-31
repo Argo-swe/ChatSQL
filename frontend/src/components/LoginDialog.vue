@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLayout } from '@/components/layout/composables/layout';
+import { useLayout } from '@/composables/layout';
 import { getApiClient } from '@/services/api-client.service';
 import { messageService } from '@/services/message.service';
 import { ref } from 'vue';
