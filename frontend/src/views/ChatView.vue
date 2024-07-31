@@ -6,10 +6,9 @@ import { messageService } from '@/services/message.service';
 import UtilsService from '@/services/utils.service';
 import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 import { onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const client = getApiClient();
-
-import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 let loading = ref(false);
