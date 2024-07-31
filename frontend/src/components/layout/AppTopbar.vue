@@ -31,7 +31,7 @@ onBeforeUnmount(() => {
 });
 
 const logoUrl = computed(() => {
-  return '/layout/images/argo_icona.svg';
+  return '/icons/argo_icona.svg';
 });
 
 const onTopBarMenuButton = () => {
