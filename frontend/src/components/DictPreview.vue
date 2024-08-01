@@ -74,7 +74,7 @@ export default defineComponent({
 
 <style scoped>
 #dictionary-details {
-    overflow-y: hidden;
+  overflow-y: hidden;
 }
 
 #dictionary-details.expanded {
