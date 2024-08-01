@@ -1,4 +1,4 @@
-import AppLayout from '@/components/layout/AppLayout.vue';
+import AppLayout from '@/views/AppLayout.vue';
 import AuthService from '@/services/auth.service';
 import { createRouter, createWebHistory } from 'vue-router';
 

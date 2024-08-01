@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useLayout } from '@/components/layout/composables/layout';
+import { useLayout } from '@/composables/layout';
 import { computed, ref, watch } from 'vue';
-import LoginDialog from '../LoginDialog.vue';
-import AppConfig from './AppConfig.vue';
-import AppSidebar from './AppSidebar.vue';
-import AppTopbar from './AppTopbar.vue';
+import LoginDialog from '@/components/LoginDialog.vue';
+import AppConfig from '@/components/layout/AppConfig.vue';
+import AppSidebar from '@/components/layout/AppSidebar.vue';
+import AppTopbar from '@/components/layout/AppTopbar.vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 

@@ -7,7 +7,7 @@ const { t } = useI18n();
 const version = ref(import.meta.env.VITE_VERSION ?? null);
 
 const logoUrl = computed(() => {
-  return '/layout/images/argo_trasparente.svg';
+  return '/icons/argo_trasparente.svg';
 });
 </script>
 
