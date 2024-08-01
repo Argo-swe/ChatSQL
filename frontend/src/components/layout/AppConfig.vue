@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLayout } from '@/components/layout/composables/layout';
+import { useLayout } from '@/composables/layout';
 import { usePrimeVue } from 'primevue/config';
 import { onMounted, ref } from 'vue';
 

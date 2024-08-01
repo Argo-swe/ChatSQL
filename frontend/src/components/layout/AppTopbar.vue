@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { useLayout } from '@/components/layout/composables/layout';
+import { useLayout } from '@/composables/layout';
 import AuthService from '@/services/auth.service';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+import AppLogo from '@/components/AppLogo.vue';
 
 import { useConfirm } from 'primevue/useconfirm';
 const confirm = useConfirm();
@@ -28,10 +30,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   unbindOutsideClickListener();
-});
-
-const logoUrl = computed(() => {
-  return '/layout/images/argo_icona.svg';
 });
 
 const onTopBarMenuButton = () => {
@@ -98,7 +96,7 @@ const isOutsideClicked = (event) => {
 <template>
   <div class="layout-topbar">
     <router-link to="/" class="layout-topbar-logo">
-      <img :src="logoUrl" alt="Logo" class="argo-logo" />
+      <app-logo></app-logo>
       <span>ChatSQL</span>
     </router-link>
 

@@ -1,11 +1,12 @@
 <template>
-  <img src="../public/images/argo_trasparente.png" alt="Logo" height="40" class="logo" />
+  <img src="../../public/icons/argo_icona.svg" alt="Logo" height="40" class="logo" />
 </template>
 
 <script>
 export default {
-  name: 'LogoComponent'
+  name: 'AppLogo'
 };
+
 </script>
 
 <style scoped>
