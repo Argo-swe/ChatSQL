@@ -1,23 +1,47 @@
-<script setup lang="ts">
-import { messageService } from '@/services/message.service';
-import { ref } from 'vue';
+<script lang="ts">
+// External libraries
+import { defineComponent, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { messageSuccess, messageError } = messageService();
-const { t } = useI18n();
+export default defineComponent({
+    name: 'DictPreview',
+    /**
+     * Props for DictPreview component.
+     * @prop {Boolean} detailsVisible - Flag for toggle view.
+     * @prop {Object} dictionaryPreview - Object holding details of the data dictionary.
+     */
+    props: {
+        detailsVisible: {
+            type: Boolean,
+            required: true
+        },
+        dictionaryPreview: {
+            type: Object,
+            required: true
+        }
+    },
+    setup(props) {
+        /**
+         * @var {boolean} expanded - Track whether the details are expanded or collapsed.
+         */
+        const { t } = useI18n();
+        const expanded = ref(false);
 
-const props = defineProps<{
-  detailsVisible: boolean;
-  dictionaryPreview: Object;
-}>();
+        /**
+         * @function
+         * @description Toggles the value of the `expanded` state between true and false.
+         */
+        const toggleExpansion = () => {
+            expanded.value = !expanded.value;
+        };
 
-// Variabile per controllare l'espansione dei dettagli
-const expanded = ref(false);
-
-const toggleExpansion = () => {
-  expanded.value = !expanded.value;
-};
-
+        return {
+            t,
+            expanded,
+            toggleExpansion
+        };
+    }
+});
 </script>
 
 <template>
