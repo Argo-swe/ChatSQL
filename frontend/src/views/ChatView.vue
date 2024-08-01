@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ChatMessage from '@/components/ChatMessage.vue';
+import DictPreview from '@/components/DictPreview.vue';
 import { getApiClient } from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
@@ -242,19 +243,12 @@ const hide = ref(false);
 // Variabile per controllare la visibilità dei dettagli
 const detailsVisible = ref(false);
 
-// Variabile per controllare l'espansione dei dettagli
-const expanded = ref(false);
-
 const toggleSelectView = () => {
   hide.value = !hide.value;
 };
 
 const toggleDetails = () => {
   detailsVisible.value = !detailsVisible.value;
-};
-
-const toggleExpansion = () => {
-  expanded.value = !expanded.value;
 };
 
 // Ritorno il nome del dizionario dati selezionato
@@ -358,32 +352,9 @@ function onClickDownloadFile() {
       </div>
     </div>
 
-    <!-- Dictionary details -->
-    <div
-      v-if="detailsVisible"
-      id="dictionary-details"
-      :class="{ expanded: expanded }"
-      class="w-full h-full"
-    >
-      <div class="card h-full dict-preview">
-        <PgScrollPanel class="h-full">
-          <h2>{{ dictionaryPreview.database_name }}</h2>
-          <p>{{ dictionaryPreview.database_description }}</p>
-          <ul>
-            <li v-for="(table, index) in dictionaryPreview.tables" :key="index" class="my-3">
-              <strong>{{ table.name }}</strong
-              >: {{ table.description }}
-            </li>
-          </ul>
-        </PgScrollPanel>
-        <PgButton
-          :icon="expanded ? 'pi pi-window-minimize' : 'pi pi-expand'"
-          class="expand-btn"
-          :aria-label="expanded ? t('text.shrink_view') : t('text.expand_view')"
-          @click="toggleExpansion"
-        />
-      </div>
-    </div>
+    <DictPreview
+    :detailsVisible="detailsVisible"
+    :dictionaryPreview="dictionaryPreview"></DictPreview>
 
     <!-- CHAT MESSAGES -->
     <div v-if="!detailsVisible" id="messages">
@@ -450,33 +421,6 @@ function onClickDownloadFile() {
 
 #chat-title {
   justify-content: space-between;
-}
-
-#dictionary-details {
-  overflow-y: hidden;
-}
-
-#dictionary-details.expanded {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 999;
-}
-
-#dictionary-details .dict-preview {
-  position: relative;
-}
-
-#dictionary-details .expand-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  z-index: 1000;
-}
-
-#dictionary-details ul {
-  list-style-type: none;
-  padding: 0;
 }
 
 #messages {
