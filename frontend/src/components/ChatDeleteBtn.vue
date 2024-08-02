@@ -31,7 +31,7 @@ export default defineComponent({
       required: true
     }
   },
-  emits: ["clear-messages"],
+  emits: ['clear-messages'],
 
   setup(props, { emit }) {
     const { t } = useI18n();
@@ -39,9 +39,9 @@ export default defineComponent({
     /**
      * Emits an event to the parent component to clear the messages.
      * @function clearMessages
-    */
+     */
     const clearMessages = () => {
-      emit('clear-messages')
+      emit('clear-messages');
     };
 
     return {
@@ -54,14 +54,14 @@ export default defineComponent({
 
 <template>
   <PgButton
-          :label="t('chat.history.clean')"
-          icon="pi pi-eraser"
-          class="m-2"
-          :disabled="messages.length <= 0 || loading"
-          severity="danger"
-          icon-pos="right"
-          @click="clearMessages"
-        />
+    :label="t('chat.history.clean')"
+    icon="pi pi-eraser"
+    class="m-2"
+    :disabled="messages.length <= 0 || loading"
+    severity="danger"
+    icon-pos="right"
+    @click="clearMessages"
+  />
 </template>
 
 <style scoped></style>

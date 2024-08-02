@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ChatMessage from '@/components/ChatMessage.vue';
 import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
+import ChatMessage from '@/components/ChatMessage.vue';
 import DictPreview from '@/components/DictPreview.vue';
 import { getApiClient } from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
@@ -342,9 +342,9 @@ function onClickDownloadFile() {
           </template>
         </PgDropdown>
         <ChatDeleteBtn
-        :messages="messages"
-        :loading="loading"
-        @clear-messages="clearMessages"
+          :messages="messages"
+          :loading="loading"
+          @clear-messages="clearMessages"
         ></ChatDeleteBtn>
       </div>
     </div>
