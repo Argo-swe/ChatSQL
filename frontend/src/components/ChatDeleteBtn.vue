@@ -3,8 +3,14 @@
 import { defineComponent, PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+/**
+ * Interface representing a message object.
+ * @interface MessageWrapper
+ * @property {string} message - The content of the message.
+ * @property {boolean} isSent - A flag indicating whether the message has been sent or received by the user.
+ */
 interface MessageWrapper {
-  message?: string;
+  message: string;
   isSent: boolean;
 }
 
