@@ -353,8 +353,9 @@ function onClickDownloadFile() {
     </div>
 
     <DictPreview
-    :detailsVisible="detailsVisible"
-    :dictionaryPreview="dictionaryPreview"></DictPreview>
+      :details-visible="detailsVisible"
+      :dictionary-preview="dictionaryPreview"
+    ></DictPreview>
 
     <!-- CHAT MESSAGES -->
     <div v-if="!detailsVisible" id="messages">
