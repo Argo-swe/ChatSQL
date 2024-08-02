@@ -24,7 +24,7 @@
 ## Formattazione codice
 
 Per automatizzare la formattazione del codice sono stati implementati i linter per Frontend e Backend.
-Installando le dipendenze del frontend verrà attivata il controllo automatico pre-commit del codice statico e dello stile.
+Installando le dipendenze del frontend verrà attivato il controllo automatico pre-commit del codice statico e dello stile.
 ```bash
 cd frontend
 npm i
