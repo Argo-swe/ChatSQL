@@ -140,7 +140,7 @@ const request = ref('');
 const { messageError } = messageService();
 
 function runRequest() {
-  // Nascondo l'overlay dei dettagli del dizionario dati (se visibile)
+  // Hide the data dictionary preview (if visible)
   if (detailsVisible.value) {
     toggleDetails();
   }
