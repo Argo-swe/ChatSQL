@@ -68,7 +68,7 @@ function retrieveDictionaries() {
   });
 }
 
-// Visualizzo una preview del dizionario dati
+// Display data dictionary preview
 function getDictionaryInfo() {
   toggleDetails();
   if (!detailsVisible.value) {
