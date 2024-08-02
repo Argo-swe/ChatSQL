@@ -28,8 +28,8 @@ export default defineComponent({
     const expanded = ref(false);
 
     /**
-     * @function
-     * @description Toggles the value of the `expanded` state between true and false.
+     * Toggles the value of the `expanded` state between true and false.
+     * @function toggleExpansion
      */
     const toggleExpansion = () => {
       expanded.value = !expanded.value;
