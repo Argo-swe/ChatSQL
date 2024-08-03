@@ -1,18 +1,18 @@
 <script setup lang="ts">
 // External libraries
+import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 
 // Internal dependencies
-import type { DictionaryPreview, MessageWrapper } from '@/types/wrapper';
+import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
+import ChatMessage from '@/components/ChatMessage.vue';
+import DictPreview from '@/components/DictPreview.vue';
 import { getApiClient } from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
 import UtilsService from '@/services/utils.service';
-import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
-import ChatMessage from '@/components/ChatMessage.vue';
-import DictPreview from '@/components/DictPreview.vue';
+import type { DictionaryPreview, MessageWrapper } from '@/types/wrapper';
 
 const client = getApiClient();
 const { t } = useI18n();

@@ -1,9 +1,9 @@
 import type { Components } from '@/types/openapi';
 
-/** 
+/**
  * Type representing the dictionary preview data structure.
  * @type DictionaryPreview
-*/
+ */
 export type DictionaryPreview = Components.Schemas.DictionaryPreviewDto;
 
 /**
@@ -13,7 +13,6 @@ export type DictionaryPreview = Components.Schemas.DictionaryPreviewDto;
  * @property {boolean} isSent - A flag indicating whether the message has been sent or received by the user.
  */
 export interface MessageWrapper {
-    message: string;
-    isSent: boolean;
+  message: string;
+  isSent: boolean;
 }
-
