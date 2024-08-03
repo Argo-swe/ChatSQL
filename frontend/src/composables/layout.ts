@@ -46,7 +46,7 @@ export function useLayout() {
     () => layoutState.overlayMenuActive || layoutState.staticMenuMobileActive
   );
 
-  const isDarkTheme = computed (() => layoutConfig.darkTheme);
+  const isDarkTheme = computed(() => layoutConfig.darkTheme);
 
   return {
     layoutConfig: toRefs(layoutConfig),

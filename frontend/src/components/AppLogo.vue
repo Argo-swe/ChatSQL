@@ -8,11 +8,11 @@ import { useLayout } from '@/composables/layout';
 export default defineComponent({
   name: 'AppLogo',
   /**
-  * Props for AppLogo component.
-  * @prop {String} path - The URL or path to the image to display.
-  * @prop {String} [width='auto'] - The width of the image. Default is 'auto'.
-  * @prop {String} [height='auto'] - The height of the image. Default is 'auto'.
-  */
+   * Props for AppLogo component.
+   * @prop {String} path - The URL or path to the image to display.
+   * @prop {String} [width='auto'] - The width of the image. Default is 'auto'.
+   * @prop {String} [height='auto'] - The height of the image. Default is 'auto'.
+   */
   props: {
     path: {
       type: String,
