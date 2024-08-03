@@ -23,7 +23,7 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props) {
+  setup() {
     /**
      * @var {boolean} expanded - Track whether the details are expanded or collapsed.
      */
