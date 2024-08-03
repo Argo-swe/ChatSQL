@@ -260,7 +260,7 @@ const toggleDetails = () => {
   detailsVisible.value = !detailsVisible.value;
 };
 
-// Ritorno il nome del dizionario dati selezionato
+// Return selected dictionary name
 const getDictionaryName = (id: number | null) => {
   const dict = dictionaries.value?.find((dict: any) => dict.id === id);
   return dict ? dict.name + ' (.json)' : t('chat.dictionary.placeholder');
