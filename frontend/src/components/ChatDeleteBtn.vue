@@ -1,29 +1,18 @@
 <script lang="ts">
 // External libraries
-import { defineComponent, PropType } from 'vue';
+import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
-
-/**
- * Interface representing a message object.
- * @interface MessageWrapper
- * @property {string} message - The content of the message.
- * @property {boolean} isSent - A flag indicating whether the message has been sent or received by the user.
- */
-interface MessageWrapper {
-  message: string;
-  isSent: boolean;
-}
 
 export default defineComponent({
   name: 'ChatDeleteBtn',
   /**
    * Props for ChatDeleteBtn component.
-   * @prop {Array.<MessageWrapper>} messages - An array of message objects.
+   * @prop {Array} messages - An array of messages.
    * @prop {Boolean} loading - A flag indicating whether data is loading.
    */
   props: {
     messages: {
-      type: Array as PropType<MessageWrapper[]>,
+      type: Array,
       required: true
     },
     loading: {

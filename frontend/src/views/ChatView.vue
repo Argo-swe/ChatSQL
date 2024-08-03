@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
-import ChatMessage from '@/components/ChatMessage.vue';
-import DictPreview from '@/components/DictPreview.vue';
+// External libraries
+import { onMounted, ref, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { TabMenuChangeEvent } from 'primevue/tabmenu';
+
+// Internal dependencies
+import type { DictionaryPreview, MessageWrapper } from '@/types/wrapper';
 import { getApiClient } from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
 import UtilsService from '@/services/utils.service';
-import type { TabMenuChangeEvent } from 'primevue/tabmenu';
-import { onMounted, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
+import ChatMessage from '@/components/ChatMessage.vue';
+import DictPreview from '@/components/DictPreview.vue';
 
 const client = getApiClient();
 const { t } = useI18n();
@@ -119,7 +123,11 @@ const languages = ref(['english', 'italian', 'french', 'spanish', 'german']);
 
 const selectedDictionary = ref<null | number>(null);
 const dictionaries = ref();
-const dictionaryPreview = ref<any>({});
+const dictionaryPreview: Ref<DictionaryPreview> = ref<DictionaryPreview>({
+  databaseName: '',
+  databaseDescription: '',
+  tables: []
+});
 
 const onLanguageChange = (value: string) => {
   localStorage.setItem('chat-language', value);
@@ -131,7 +139,7 @@ const onDictionaryChange = (value: number) => {
   localStorage.setItem('chat-dictionary-id', value.toString());
 };
 
-const messages = ref<any>([]);
+const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
 
 const clearMessages = () => {
   messages.value = [];
