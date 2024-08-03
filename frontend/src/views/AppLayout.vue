@@ -33,7 +33,7 @@ const containerClass = computed(() => {
 });
 const bindOutsideClickListener = () => {
   if (!outsideClickListener.value) {
-    outsideClickListener.value = (event: any) => {
+    outsideClickListener.value = (event: MouseEvent) => {
       if (isOutsideClicked(event)) {
         layoutState.overlayMenuActive.value = false;
         layoutState.staticMenuMobileActive.value = false;
