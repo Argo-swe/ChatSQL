@@ -249,7 +249,7 @@ const checked = ref(false);
 // Variabile per controllare lo stato del container
 const hide = ref(false);
 
-// Variabile per controllare la visibilità dei dettagli
+// Variable to handle details visibility
 const detailsVisible = ref(false);
 
 const toggleSelectView = () => {
