@@ -50,7 +50,7 @@ const unbindOutsideClickListener = () => {
   }
 };
 
-const checkNodeRelation = (element: Element | null, target: any): boolean => {
+const checkNodeRelation = (element: Element | null, target: Node | null): boolean => {
   return element ? element.isSameNode(target) || element.contains(target) : false;
 };
 
