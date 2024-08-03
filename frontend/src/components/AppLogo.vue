@@ -27,7 +27,7 @@ export default defineComponent({
       default: 'auto'
     }
   },
-  setup(props) {
+  setup() {
     const { isDarkTheme } = useLayout();
 
     /**
