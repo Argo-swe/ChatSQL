@@ -215,7 +215,7 @@ function loadDebug() {
   );
 }
 
-function addMessage(message: String, isSent: Boolean) {
+function addMessage(message: string, isSent: boolean) {
   if (!messages.value) {
     messages.value = [];
   }
@@ -262,7 +262,7 @@ const toggleDetails = () => {
 
 // Ritorno il nome del dizionario dati selezionato
 const getDictionaryName = (id: number | null) => {
-  const dict = dictionaries.value?.find((dict) => dict.id === id);
+  const dict = dictionaries.value?.find((dict: any) => dict.id === id);
   return dict ? dict.name + ' (.json)' : t('chat.dictionary.placeholder');
 };
 

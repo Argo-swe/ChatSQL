@@ -4,11 +4,11 @@ import AppConfig from '@/components/layout/AppConfig.vue';
 import AppSidebar from '@/components/layout/AppSidebar.vue';
 import AppTopbar from '@/components/layout/AppTopbar.vue';
 import { useLayout } from '@/composables/layout';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, type Ref } from 'vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
-const outsideClickListener = ref(null);
+const outsideClickListener: Ref<((event: any) => void) | null> = ref(null);
 
 watch(isSidebarActive, (newVal) => {
   if (newVal) {
@@ -20,8 +20,8 @@ watch(isSidebarActive, (newVal) => {
 
 const containerClass = computed(() => {
   return {
-    'layout-theme-light': layoutConfig.darkTheme.value === 'light',
-    'layout-theme-dark': layoutConfig.darkTheme.value === 'dark',
+    'layout-theme-light': layoutConfig.darkTheme.value === false,
+    'layout-theme-dark': layoutConfig.darkTheme.value === true,
     'layout-overlay': layoutConfig.menuMode.value === 'overlay',
     'layout-static': layoutConfig.menuMode.value === 'static',
     'layout-static-inactive':
@@ -33,7 +33,7 @@ const containerClass = computed(() => {
 });
 const bindOutsideClickListener = () => {
   if (!outsideClickListener.value) {
-    outsideClickListener.value = (event) => {
+    outsideClickListener.value = (event: any) => {
       if (isOutsideClicked(event)) {
         layoutState.overlayMenuActive.value = false;
         layoutState.staticMenuMobileActive.value = false;
@@ -45,19 +45,23 @@ const bindOutsideClickListener = () => {
 };
 const unbindOutsideClickListener = () => {
   if (outsideClickListener.value) {
-    document.removeEventListener('click', outsideClickListener);
+    document.removeEventListener('click', outsideClickListener.value);
     outsideClickListener.value = null;
   }
 };
-const isOutsideClicked = (event) => {
+
+const checkNodeRelation = (element: Element | null, target: any): boolean => {
+  return element ? element.isSameNode(target) || element.contains(target) : false;
+}
+
+const isOutsideClicked = (event: any): boolean => {
   const sidebarEl = document.querySelector('.layout-sidebar');
   const topbarEl = document.querySelector('.layout-menu-button');
+  const target = event.target;
 
   return !(
-    sidebarEl.isSameNode(event.target) ||
-    sidebarEl.contains(event.target) ||
-    topbarEl.isSameNode(event.target) ||
-    topbarEl.contains(event.target)
+    checkNodeRelation(sidebarEl, target) || 
+    checkNodeRelation(topbarEl, target)
   );
 };
 </script>
@@ -73,7 +77,6 @@ const isOutsideClicked = (event) => {
       <div class="layout-main">
         <router-view></router-view>
       </div>
-      <!-- <app-footer></app-footer> -->
     </div>
     <app-config></app-config>
     <PgScrollTop />
@@ -81,5 +84,3 @@ const isOutsideClicked = (event) => {
   </div>
   <PgToast position="bottom-right" />
 </template>
-
-<style lang="scss" scoped></style>

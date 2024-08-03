@@ -52,5 +52,3 @@ export default defineComponent({
     @click="clearMessages"
   />
 </template>
-
-<style scoped></style>
