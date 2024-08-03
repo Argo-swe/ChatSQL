@@ -8,7 +8,7 @@ import { computed, ref, watch, type Ref } from 'vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
-const outsideClickListener: Ref<((event: any) => void) | null> = ref(null);
+const outsideClickListener: Ref<((event: MouseEvent) => void) | null> = ref(null);
 
 watch(isSidebarActive, (newVal) => {
   if (newVal) {
