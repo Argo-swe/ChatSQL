@@ -1,0 +1,14 @@
+{
+    "plugin": [
+        "typedoc-plugin-vue"
+    ],
+    "entryPoints": [
+        "src"
+    ],
+    "out": "docs",
+    "exclude": [
+        "**/node_modules/**"
+    ],
+    "tsconfig": "./tsconfig.json",
+    "entryPointStrategy": "expand"
+}

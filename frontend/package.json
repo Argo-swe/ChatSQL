@@ -2,7 +2,6 @@
   "name": "frontend",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -13,7 +12,8 @@
     "format": "prettier --write src/",
     "build-api": "npx openapicmd typegen http://localhost:8000/openapi.json > src/types/openapi.d.ts",
     "precommit": "npm run lint && npm run format",
-    "docs": "typedoc src/ --skipErrorChecking --entryPointStrategy expand"
+    "typedocs": "typedoc src/ --skipErrorChecking --entryPointStrategy expand",
+    "jsdocs": "typedoc src/ --skipErrorChecking --entryPointStrategy expand"
   },
   "husky": {
     "hooks": {
@@ -50,6 +50,7 @@
     "primevue": "~3.52.0",
     "sass": "~1.77.5",
     "typedoc": "^0.26.5",
+    "typedoc-plugin-vue": "^1.2.0",
     "typescript": "~5.4.0",
     "vite": "~5.2.8",
     "vue-tsc": "~2.0.11",

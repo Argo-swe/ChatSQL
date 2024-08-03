@@ -1,0 +1,15 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".+\\.(js|ts|vue)$",
+    "excludePattern": "(node_modules|dist)"
+  },
+  "plugins": ["node_modules/jsdoc-babel"],
+  "babel": {
+    "extensions": ["ts", "vue"],
+    "presets": ["@babel/preset-env", "@babel/preset-typescript"]
+  },
+  "opts": {
+    "destination": "./docs"
+  }
+}
