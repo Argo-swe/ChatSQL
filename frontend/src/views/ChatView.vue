@@ -263,7 +263,7 @@ const toggleDetails = () => {
 
 // Return selected dictionary name
 const getDictionaryName = (id: number | null) => {
-  const dict = dictionaries.value?.find((dict: any) => dict.id === id);
+  const dict = dictionaries.value?.find((dict: Components.Schemas.DictionaryDto) => dict.id === id);
   return dict ? dict.name + ' (.json)' : t('chat.dictionary.placeholder');
 };
 
