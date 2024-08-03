@@ -123,7 +123,7 @@ const selectedLanguage = ref(localStorage.getItem('chat-language') || 'english')
 const languages = ref(['english', 'italian', 'french', 'spanish', 'german']);
 
 const selectedDictionary = ref<null | number>(null);
-const dictionaries = ref();
+const dictionaries = ref<Components.Schemas.DictionaryDto[]>();
 const dictionaryPreview: Ref<DictionaryPreview> = ref<DictionaryPreview>({
   databaseName: '',
   databaseDescription: '',
