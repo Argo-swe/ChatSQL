@@ -13,6 +13,7 @@ import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
 import UtilsService from '@/services/utils.service';
 import type { DictionaryPreview, MessageWrapper } from '@/types/wrapper';
+import type { Components } from '@/types/openapi';
 
 const client = getApiClient();
 const { t } = useI18n();
