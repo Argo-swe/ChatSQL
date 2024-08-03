@@ -26,7 +26,7 @@ export function useLayout() {
     localStorage.setItem('scale', scale.toString());
   };
 
-  const setActiveMenuItem = (item: any) => {
+  const setActiveMenuItem = (item) => {
     layoutConfig.activeMenuItem = item.value || item;
   };
 
