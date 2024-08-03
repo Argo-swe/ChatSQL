@@ -52,17 +52,14 @@ const unbindOutsideClickListener = () => {
 
 const checkNodeRelation = (element: Element | null, target: any): boolean => {
   return element ? element.isSameNode(target) || element.contains(target) : false;
-}
+};
 
 const isOutsideClicked = (event: any): boolean => {
   const sidebarEl = document.querySelector('.layout-sidebar');
   const topbarEl = document.querySelector('.layout-menu-button');
   const target = event.target;
 
-  return !(
-    checkNodeRelation(sidebarEl, target) || 
-    checkNodeRelation(topbarEl, target)
-  );
+  return !(checkNodeRelation(sidebarEl, target) || checkNodeRelation(topbarEl, target));
 };
 </script>
 
