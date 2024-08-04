@@ -1,19 +1,24 @@
 <script setup lang="ts">
+// External libraries
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+// Internal dependencies
 import AuthService from '@/services/auth.service';
+import type { Menu } from '@/types/wrapper';
+
+// Child Components
 import AppMenuItem from './AppMenuItem.vue';
 
 const { t } = useI18n();
 
-const USER_MENU = [
+const USER_MENU: Menu = [
   {
     items: [{ label: computed(() => t('text.Chat')), icon: 'pi pi-fw pi-comments', to: '/chat' }]
   }
 ];
 
-const TECHNICIAN_MENU = [
+const TECHNICIAN_MENU: Menu = [
   {
     items: [{ label: computed(() => t('text.Chat')), icon: 'pi pi-fw pi-comments', to: '/chat' }]
   },
@@ -30,9 +35,13 @@ const TECHNICIAN_MENU = [
   }
 ];
 
-let model = ref<any>(AuthService.isLogged() ? TECHNICIAN_MENU : USER_MENU);
+let model = ref<Menu>(AuthService.isLogged() ? TECHNICIAN_MENU : USER_MENU);
 
 onMounted(() => {
+  /**
+   * Sets up an event listener for `token-localstorage-changed` to update the `model` with `TECHNICIAN_MENU`
+   * if the user is logged in; otherwise sets it to `USER_MENU`.
+   */
   window.addEventListener('token-localstorage-changed', () => {
     model.value = AuthService.isLogged() ? TECHNICIAN_MENU : USER_MENU;
   });
