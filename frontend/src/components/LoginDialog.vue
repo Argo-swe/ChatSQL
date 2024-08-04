@@ -1,16 +1,17 @@
 <script setup lang="ts">
+// External libraries
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+// Internal dependencies
 import { useLayout } from '@/composables/layout';
 import { getApiClient } from '@/services/api-client.service';
 import { messageService } from '@/services/message.service';
-import { ref } from 'vue';
-const { messageError } = messageService();
 
-import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
-
-const { layoutState } = useLayout();
 const client = getApiClient();
-
+const { layoutState } = useLayout();
+const { messageError } = messageService();
 const username = ref(null);
 const password = ref(null);
 
