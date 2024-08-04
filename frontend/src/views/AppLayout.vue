@@ -51,7 +51,9 @@ const unbindOutsideClickListener = () => {
 };
 
 const checkNodeRelation = (element: Element | null, target: EventTarget | null): boolean =>
-  element !== null && target instanceof Node && (element.isSameNode(target) || element.contains(target));
+  element !== null &&
+  target instanceof Node &&
+  (element.isSameNode(target) || element.contains(target));
 
 const isOutsideClicked = (event: MouseEvent): boolean => {
   const sidebarEl = document.querySelector('.layout-sidebar');
