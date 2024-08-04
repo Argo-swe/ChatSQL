@@ -33,9 +33,8 @@ jobs:
     - name: Parent Folder
       continue-on-error: true
       run: |
-        mkdir -p ChatSQL/PoC
-        cp -r App ChatSQL/PoC
-        cp -r DizionarioDati ChatSQL/PoC
+        mkdir -p ChatSQL/MVP
+        cp -r ./ ChatSQL/MVP
 
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
