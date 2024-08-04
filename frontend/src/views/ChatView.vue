@@ -1,15 +1,22 @@
 <script setup lang="ts">
+// External libraries
+import type { TabMenuChangeEvent } from 'primevue/tabmenu';
+import { onMounted, ref, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+// Internal dependencies
+import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
 import ChatMessage from '@/components/ChatMessage.vue';
+import DictPreview from '@/components/DictPreview.vue';
 import { getApiClient } from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
 import UtilsService from '@/services/utils.service';
-import type { TabMenuChangeEvent } from 'primevue/tabmenu';
-import { onMounted, ref } from 'vue';
+import type { DictionaryPreview, MessageWrapper } from '@/types/wrapper';
+import type { Components } from '@/types/openapi';
+import type { Components } from '@/types/openapi';
 
 const client = getApiClient();
-
-import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 let loading = ref(false);
@@ -68,7 +75,7 @@ function retrieveDictionaries() {
   });
 }
 
-// Visualizzo una preview del dizionario dati
+// Display data dictionary preview
 function getDictionaryInfo() {
   toggleDetails();
   if (!detailsVisible.value) {
@@ -117,8 +124,12 @@ const selectedLanguage = ref(localStorage.getItem('chat-language') || 'english')
 const languages = ref(['english', 'italian', 'french', 'spanish', 'german']);
 
 const selectedDictionary = ref<null | number>(null);
-const dictionaries = ref();
-const dictionaryPreview = ref<any>({});
+const dictionaries = ref<Components.Schemas.DictionaryDto[]>();
+const dictionaryPreview: Ref<DictionaryPreview> = ref<DictionaryPreview>({
+  databaseName: '',
+  databaseDescription: '',
+  tables: []
+});
 
 const onLanguageChange = (value: string) => {
   localStorage.setItem('chat-language', value);
@@ -130,7 +141,7 @@ const onDictionaryChange = (value: number) => {
   localStorage.setItem('chat-dictionary-id', value.toString());
 };
 
-const messages = ref<any>([]);
+const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
 
 const clearMessages = () => {
   messages.value = [];
@@ -140,7 +151,7 @@ const request = ref('');
 const { messageError } = messageService();
 
 function runRequest() {
-  // Nascondo l'overlay dei dettagli del dizionario dati (se visibile)
+  // Hide the data dictionary preview (if visible)
   if (detailsVisible.value) {
     toggleDetails();
   }
@@ -206,7 +217,7 @@ function loadDebug() {
   );
 }
 
-function addMessage(message: String, isSent: Boolean) {
+function addMessage(message: string, isSent: boolean) {
   if (!messages.value) {
     messages.value = [];
   }
@@ -240,11 +251,8 @@ const checked = ref(false);
 // Variabile per controllare lo stato del container
 const hide = ref(false);
 
-// Variabile per controllare la visibilità dei dettagli
+// Variable to handle details visibility
 const detailsVisible = ref(false);
-
-// Variabile per controllare l'espansione dei dettagli
-const expanded = ref(false);
 
 const toggleSelectView = () => {
   hide.value = !hide.value;
@@ -254,13 +262,9 @@ const toggleDetails = () => {
   detailsVisible.value = !detailsVisible.value;
 };
 
-const toggleExpansion = () => {
-  expanded.value = !expanded.value;
-};
-
-// Ritorno il nome del dizionario dati selezionato
+// Return selected dictionary name
 const getDictionaryName = (id: number | null) => {
-  const dict = dictionaries.value?.find((dict) => dict.id === id);
+  const dict = dictionaries.value?.find((dict: Components.Schemas.DictionaryDto) => dict.id === id);
   return dict ? dict.name + ' (.json)' : t('chat.dictionary.placeholder');
 };
 
@@ -347,44 +351,18 @@ function onClickDownloadFile() {
             </div>
           </template>
         </PgDropdown>
-        <PgButton
-          :label="t('chat.history.clean')"
-          icon="pi pi-eraser"
-          class="m-2"
-          :disabled="messages.length <= 0 || loading"
-          severity="danger"
-          icon-pos="right"
-          @click="clearMessages"
-        />
+        <ChatDeleteBtn
+          :messages="messages"
+          :loading="loading"
+          @clear-messages="clearMessages"
+        ></ChatDeleteBtn>
       </div>
     </div>
 
-    <!-- Dictionary details -->
-    <div
-      v-if="detailsVisible"
-      id="dictionary-details"
-      :class="{ expanded: expanded }"
-      class="w-full h-full"
-    >
-      <div class="card h-full dict-preview">
-        <PgScrollPanel class="h-full">
-          <h2>{{ dictionaryPreview.database_name }}</h2>
-          <p>{{ dictionaryPreview.database_description }}</p>
-          <ul>
-            <li v-for="(table, index) in dictionaryPreview.tables" :key="index" class="my-3">
-              <strong>{{ table.name }}</strong
-              >: {{ table.description }}
-            </li>
-          </ul>
-        </PgScrollPanel>
-        <PgButton
-          :icon="expanded ? 'pi pi-window-minimize' : 'pi pi-expand'"
-          class="expand-btn"
-          :aria-label="expanded ? t('text.shrink_view') : t('text.expand_view')"
-          @click="toggleExpansion"
-        />
-      </div>
-    </div>
+    <DictPreview
+      :details-visible="detailsVisible"
+      :dictionary-preview="dictionaryPreview"
+    ></DictPreview>
 
     <!-- CHAT MESSAGES -->
     <div v-if="!detailsVisible" id="messages">
@@ -451,33 +429,6 @@ function onClickDownloadFile() {
 
 #chat-title {
   justify-content: space-between;
-}
-
-#dictionary-details {
-  overflow-y: hidden;
-}
-
-#dictionary-details.expanded {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 999;
-}
-
-#dictionary-details .dict-preview {
-  position: relative;
-}
-
-#dictionary-details .expand-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  z-index: 1000;
-}
-
-#dictionary-details ul {
-  list-style-type: none;
-  padding: 0;
 }
 
 #messages {

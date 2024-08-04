@@ -96,7 +96,7 @@ const isOutsideClicked = (event) => {
 <template>
   <div class="layout-topbar">
     <router-link to="/" class="layout-topbar-logo">
-      <app-logo></app-logo>
+      <app-logo path="icons/argo_icona.svg" height="40"></app-logo>
       <span>ChatSQL</span>
     </router-link>
 

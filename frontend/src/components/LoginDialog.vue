@@ -70,21 +70,7 @@ async function submitForm() {
         </div>
         <div class="flex align-items-center gap-3 mb-5">
           <label for="password" class="font-semibold w-6rem">{{ t('text.Password') }}</label>
-          <PgPassword v-model="password" input-id="password">
-            <template #header>
-              <h6>Pick a password</h6>
-            </template>
-            <template #footer>
-              <PgDivider />
-              <p class="mt-2">Suggestions</p>
-              <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
-                <li>At least one lowercase</li>
-                <li>At least one uppercase</li>
-                <li>At least one numeric</li>
-                <li>Minimum 8 characters</li>
-              </ul>
-            </template>
-          </PgPassword>
+          <PgPassword v-model="password" input-id="password" :feedback="false"></PgPassword>
         </div>
         <div class="flex justify-content-end gap-2">
           <PgButton
