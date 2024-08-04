@@ -1,14 +1,20 @@
 <script setup lang="ts">
+// External libraries
+import { computed, ref, watch } from 'vue';
+
+// Internal dependencies
+import { useCheckOutsideClick } from '@/composables/check-click';
+import { useLayout } from '@/composables/layout';
+
+// Child Components
 import LoginDialog from '@/components/LoginDialog.vue';
 import AppConfig from '@/components/layout/AppConfig.vue';
 import AppSidebar from '@/components/layout/AppSidebar.vue';
 import AppTopbar from '@/components/layout/AppTopbar.vue';
-import { useLayout } from '@/composables/layout';
-import { computed, ref, watch, type Ref } from 'vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
-
-const outsideClickListener: Ref<((event: MouseEvent) => void) | null> = ref(null);
+const { isOutsideClicked } = useCheckOutsideClick(['.layout-sidebar', '.layout-menu-button']);
+const outsideClickListener = ref<((event: Event) => void) | null>(null);
 
 watch(isSidebarActive, (newVal) => {
   if (newVal) {
@@ -31,6 +37,7 @@ const containerClass = computed(() => {
     'p-ripple-disabled': layoutConfig.ripple.value === false
   };
 });
+
 const bindOutsideClickListener = () => {
   if (!outsideClickListener.value) {
     outsideClickListener.value = (event: MouseEvent) => {
@@ -43,24 +50,12 @@ const bindOutsideClickListener = () => {
     document.addEventListener('click', outsideClickListener.value);
   }
 };
+
 const unbindOutsideClickListener = () => {
   if (outsideClickListener.value) {
     document.removeEventListener('click', outsideClickListener.value);
     outsideClickListener.value = null;
   }
-};
-
-const checkNodeRelation = (element: Element | null, target: EventTarget | null): boolean =>
-  element !== null &&
-  target instanceof Node &&
-  (element.isSameNode(target) || element.contains(target));
-
-const isOutsideClicked = (event: MouseEvent): boolean => {
-  const sidebarEl = document.querySelector('.layout-sidebar');
-  const topbarEl = document.querySelector('.layout-menu-button');
-  const target = event.target;
-
-  return !(checkNodeRelation(sidebarEl, target) || checkNodeRelation(topbarEl, target));
 };
 </script>
 

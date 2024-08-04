@@ -3,6 +3,9 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+// Child Components
+import AppLogo from '@/components/AppLogo.vue';
+
 const { t } = useI18n();
 
 // Reference to the application version.
