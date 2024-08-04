@@ -21,6 +21,16 @@
    - frontend: sviluppato in VueJs ed espone l'interfaccia utente
    - backend: espone l'interfaccia di backend e i funzionamenti di ricerca semantica
 
+## Formattazione codice
+
+Per automatizzare la formattazione del codice sono stati implementati i linter per Frontend e Backend.
+Installando le dipendenze del frontend verrà attivato il controllo automatico pre-commit del codice statico e dello stile.
+```bash
+cd frontend
+npm i
+```
+Ogni volta prima di eseguire un commit verranno eseguiti i controlli e solo in caso di successo il commit verrà portato a termine.
+
 ## Backend
 
 L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhost:8000/docs](http://localhost:8000/docs)

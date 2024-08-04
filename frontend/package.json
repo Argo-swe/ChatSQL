@@ -16,7 +16,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "sh ../setup-pre-commit.sh && pre-commit run --all-files && npm run precommit"
+      "pre-commit": "sh ../setup-pre-commit.sh && pre-commit run --all-files && npm run precommit && git add src && git add ../backend/app"
     }
   },
   "dependencies": {
