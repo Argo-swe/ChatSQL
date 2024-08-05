@@ -8,13 +8,11 @@ export default class UtilsService {
   }
 
   static stringToSnakeCase(string: string) {
-    return (
-      string &&
-      string
-        .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-        .map((s) => s.toLowerCase())
-        .join('_')
-    );
+    //match(/[A-Z][A-Z]*(?=[A-Z][a-z]*\d*|\b)|[A-Z]?[a-z]+\d*|[A-Z]|\d+/g)
+    return string
+      ?.match(/[A-Z]{2,}(?=[a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+      ?.map((s) => s.toLowerCase())
+      ?.join('_');
   }
 
   static addCapitalizeValues(data: any) {

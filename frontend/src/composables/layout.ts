@@ -1,3 +1,4 @@
+// External libraries
 import { computed, reactive, toRefs } from 'vue';
 
 // Reactive object to hold the layout configuration settings
