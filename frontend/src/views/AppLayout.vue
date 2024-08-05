@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import LoginDialog from '@/components/LoginDialog.vue';
-import AppConfig from '@/components/layout/AppConfig.vue';
-import AppSidebar from '@/components/layout/AppSidebar.vue';
-import AppTopbar from '@/components/layout/AppTopbar.vue';
+// External libraries
+import { computed, ref, watch } from 'vue';
+
+// Internal dependencies
+import { useCheckOutsideClick } from '@/composables/check-click';
 import { useLayout } from '@/composables/layout';
-import { computed, ref, watch, type Ref } from 'vue';
+
+// Child Components
+import LoginDialog from '@/components/LoginDialog.vue';
+import AppTopbar from '@/components/layout/AppTopbar.vue';
+import ConfigSidebar from '@/components/layout/ConfigSidebar.vue';
+import MenuSidebar from '@/components/layout/MenuSidebar.vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
-
-const outsideClickListener: Ref<((event: MouseEvent) => void) | null> = ref(null);
+const { isOutsideClicked } = useCheckOutsideClick(['.layout-sidebar', '.layout-menu-button']);
+const outsideClickListener = ref<((event: Event) => void) | null>(null);
 
 watch(isSidebarActive, (newVal) => {
   if (newVal) {
@@ -31,9 +37,10 @@ const containerClass = computed(() => {
     'p-ripple-disabled': layoutConfig.ripple.value === false
   };
 });
+
 const bindOutsideClickListener = () => {
   if (!outsideClickListener.value) {
-    outsideClickListener.value = (event: MouseEvent) => {
+    outsideClickListener.value = (event: Event) => {
       if (isOutsideClicked(event)) {
         layoutState.overlayMenuActive.value = false;
         layoutState.staticMenuMobileActive.value = false;
@@ -43,24 +50,12 @@ const bindOutsideClickListener = () => {
     document.addEventListener('click', outsideClickListener.value);
   }
 };
+
 const unbindOutsideClickListener = () => {
   if (outsideClickListener.value) {
     document.removeEventListener('click', outsideClickListener.value);
     outsideClickListener.value = null;
   }
-};
-
-const checkNodeRelation = (element: Element | null, target: EventTarget | null): boolean =>
-  element !== null &&
-  target instanceof Node &&
-  (element.isSameNode(target) || element.contains(target));
-
-const isOutsideClicked = (event: MouseEvent): boolean => {
-  const sidebarEl = document.querySelector('.layout-sidebar');
-  const topbarEl = document.querySelector('.layout-menu-button');
-  const target = event.target;
-
-  return !(checkNodeRelation(sidebarEl, target) || checkNodeRelation(topbarEl, target));
 };
 </script>
 
@@ -69,14 +64,14 @@ const isOutsideClicked = (event: MouseEvent): boolean => {
     <app-topbar></app-topbar>
     <login-dialog />
     <div class="layout-sidebar">
-      <app-sidebar></app-sidebar>
+      <menu-sidebar></menu-sidebar>
     </div>
     <div class="layout-main-container">
       <div class="layout-main">
         <router-view></router-view>
       </div>
     </div>
-    <app-config></app-config>
+    <config-sidebar></config-sidebar>
     <PgScrollTop />
     <div class="layout-mask"></div>
   </div>

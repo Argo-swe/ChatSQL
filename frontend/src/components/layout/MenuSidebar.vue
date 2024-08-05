@@ -1,10 +1,15 @@
 <script setup lang="ts">
+// External libraries
+import { useI18n } from 'vue-i18n';
+
+// Internal dependencies
 import { useLayout } from '@/composables/layout';
+
+// Child Components
 import AppFooter from './AppFooter.vue';
 import AppMenu from './AppMenu.vue';
-const { onMenuToggle } = useLayout();
 
-import { useI18n } from 'vue-i18n';
+const { onMenuToggle } = useLayout();
 const { t } = useI18n();
 </script>
 
@@ -31,6 +36,7 @@ const { t } = useI18n();
 #close-menu-sidebar {
   display: none;
 }
+
 @media (max-width: 991px) {
   #close-menu-sidebar {
     display: block;
