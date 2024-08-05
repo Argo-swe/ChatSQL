@@ -9,7 +9,7 @@ import type { CSSClasses } from '@/types/wrapper';
 /**
  * Props for AppLogo component.
  */
-const props = withDefaults(
+withDefaults(
   defineProps<{
     /**
      * @prop {String} path

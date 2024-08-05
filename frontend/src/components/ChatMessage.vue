@@ -9,7 +9,7 @@ import type { MessageWrapper } from '@/types/wrapper';
 /**
  * Props for ChatMessage component.
  */
-const props = defineProps<MessageWrapper>();
+defineProps<MessageWrapper>();
 
 const { messageSuccess, messageError } = messageService();
 const { message, isSent } = props;

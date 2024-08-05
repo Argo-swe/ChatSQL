@@ -1,4 +1,4 @@
-<script lang="ts">
+<script setup lang="ts">
 // External libraries
 import { useI18n } from 'vue-i18n';
 
@@ -8,7 +8,7 @@ import type { MessageWrapper } from '@/types/wrapper';
 /**
  * Props for ChatDeleteBtn component.
  */
-const props = defineProps<{
+defineProps<{
   /**
    * @prop {MessageWrapper[]} messages
    * @description An array of messages.
