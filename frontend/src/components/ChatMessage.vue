@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { messageService } from '@/services/message.service';
+// External libraries
 import { ref } from 'vue';
+
+// Internal dependencies
+import { messageService } from '@/services/message.service';
+import type { MessageWrapper } from '@/types/wrapper';
+
+/**
+ * Props for ChatMessage component.
+ */
+const props = defineProps<MessageWrapper>();
+
 const { messageSuccess, messageError } = messageService();
-
-const props = defineProps<{
-  message: string;
-  isSent: boolean;
-}>();
-
 const { message, isSent } = props;
-
 const isCopying = ref(false);
 
 const copyToClipboard = (event) => {

@@ -1,49 +1,48 @@
-<script lang="ts">
+<script setup lang="ts">
 // External libraries
-import { computed, defineComponent } from 'vue';
+import { computed, type ComputedRef } from 'vue';
 
 // Internal dependencies
 import { useLayout } from '@/composables/layout';
+import type { CSSClasses } from '@/types/wrapper';
 
-export default defineComponent({
-  name: 'AppLogo',
-  /**
-   * Props for AppLogo component.
-   * @prop {String} path - The URL or path to the image.
-   * @prop {String} [width='auto'] - The width of the image. Default is 'auto'.
-   * @prop {String} [height='auto'] - The height of the image. Default is 'auto'.
-   */
-  props: {
-    path: {
-      type: String,
-      required: true
-    },
-    width: {
-      type: String,
-      default: 'auto'
-    },
-    height: {
-      type: String,
-      default: 'auto'
-    }
-  },
-  setup() {
-    const { isDarkTheme } = useLayout();
-
+/**
+ * Props for AppLogo component.
+ */
+const props = withDefaults(
+  defineProps<{
     /**
-     * Computed property that returns an object with a CSS class based on the current theme.
-     * @type {Object}
-     * @property {Boolean} 'logo-dark-theme-filter' - True if the theme is dark, otherwise false.
+     * @prop {String} path
+     * @description The URL or path to the image.
      */
-    const logoClass = computed(() => ({
-      'logo-dark-theme-filter': isDarkTheme.value
-    }));
-
-    return {
-      logoClass
-    };
+    path: string;
+    /**
+     * @prop {String} [width='auto']
+     * @description The width of the image. Default is 'auto'.
+     */
+    width: string;
+    /**
+     * @prop {String} [height='auto']
+     * @description The height of the image. Default is 'auto'.
+     */
+    height: string;
+  }>(),
+  {
+    width: 'auto',
+    height: 'auto'
   }
-});
+);
+
+const { isDarkTheme } = useLayout();
+
+/**
+ * Computed property that returns an object with CSS classes based on the current theme.
+ * @type {CSSClasses}
+ * @property {Boolean} 'logo-dark-theme-filter' - True if the theme is dark, otherwise false.
+ */
+const logoClass: ComputedRef<CSSClasses> = computed(() => ({
+  'logo-dark-theme-filter': isDarkTheme.value
+}));
 </script>
 
 <template>

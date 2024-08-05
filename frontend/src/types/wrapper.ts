@@ -49,3 +49,12 @@ export interface MenuWrapper {
  * @type {MenuWrapper[]} Menu
  */
 export type Menu = MenuWrapper[];
+
+/**
+ * Interface representing a map of strings (CSS class names) to boolean values.
+ * @interface CSSClasses
+ * @description This type of declaration is especially useful when working with objects that represent conditional CSS classes.
+ */
+export interface CSSClasses {
+  [key: string]: boolean;
+}
