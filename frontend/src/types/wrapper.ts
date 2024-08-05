@@ -8,6 +8,13 @@ import type { ComputedRef } from 'vue';
 export type DictionaryPreview = Components.Schemas.DictionaryPreviewDto;
 
 /**
+ * Type representing a dictionary of login error messages.
+ */
+export type LoginErrorMessages = {
+  [key in Components.Schemas.ResponseStatusEnum]?: () => string;
+};
+
+/**
  * Interface representing a message object.
  * @interface MessageWrapper
  * @property {String} message - The content of the message.
