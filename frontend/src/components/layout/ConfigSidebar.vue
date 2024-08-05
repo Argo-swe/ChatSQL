@@ -43,8 +43,8 @@ const incrementScale = () => {
 
 /**
  * Changes the application theme and updates the them configuration.
- * @param {String} theme - The name of the theme to be applied.
- * @param {Boolean} mode - Flag indicating whether the theme is light or dark.
+ * @param theme - The name of the theme to be applied.
+ * @param mode - Flag indicating whether the theme is light or dark.
  */
 const onChangeTheme = (theme: string, mode: boolean) => {
   $primevue.changeTheme(layoutConfig.theme.value, theme, 'theme-css', () => {
@@ -56,7 +56,7 @@ const onChangeTheme = (theme: string, mode: boolean) => {
 
 /**
  * Toggles between dark and light modes and updates the theme accordingly.
- * @param {Boolean} value - Flag indicating whether dark mode is enabled.
+ * @param value - Flag indicating whether dark mode is enabled.
  */
 const onDarkModeChange = (value: boolean) => {
   const newThemeName = value
@@ -69,7 +69,7 @@ const onDarkModeChange = (value: boolean) => {
 
 /**
  * Updates the active language in localStorage.
- * @param {String} value - The new language value to be set.
+ * @param value - The new language value to be set.
  */
 const onLanguageChange = (value: string) => {
   localStorage.setItem('language', value);

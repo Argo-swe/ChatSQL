@@ -89,11 +89,13 @@ const handleMenuToggle = (item: any) => {
  * Updates the currently active menu item based on the clicked item.
  */
 const updateActiveMenuItem = (item: any) => {
-  const foundItemKey = item.items
-    ? isActiveMenu.value
-      ? props.parentItemKey
-      : itemKey
-    : itemKey.value;
+  let foundItemKey;
+
+  if (item.items) {
+    foundItemKey = isActiveMenu.value ? props.parentItemKey : itemKey;
+  } else {
+    foundItemKey = itemKey.value;
+  }
 
   setActiveMenuItem(foundItemKey);
 };
