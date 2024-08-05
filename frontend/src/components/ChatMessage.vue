@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // External libraries
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import { messageService } from '@/services/message.service';
@@ -9,34 +10,48 @@ import type { MessageWrapper } from '@/types/wrapper';
 /**
  * Props for ChatMessage component.
  */
-defineProps<MessageWrapper>();
+const props = defineProps<MessageWrapper>();
 
-const { messageSuccess, messageError } = messageService();
+const { t } = useI18n();
 const { message, isSent } = props;
+const { messageSuccess, messageError } = messageService();
 const isCopying = ref(false);
 
-const copyToClipboard = (event) => {
-  // Interrompo se c'è già una copia in corso
-  if (isCopying.value) return;
-  isCopying.value = true;
-  // Risalgo al messaggio più vicino al bottone cliccato
-  const messageContent = event.currentTarget.closest('.message').querySelector('p');
-  if (!messageContent) return;
-  // Estraggo il contenuto dall'elemento ed elimino eventuali spazi all'inizio e alla fine della stringa
-  const text = messageContent.textContent.trim();
+/**
+ * Copy the provided text to the clipboard.
+ * @param text - The text to copy to the clipboard.
+ */
+const performCopy = (text: string) => {
   navigator.clipboard
     .writeText(text)
     .then(() => {
-      console.log('Text copied to clipboard: ', text);
-      messageSuccess('Copy', 'Text copied to clipboard');
+      console.log(t('general.clipboard.success') + ': ', text);
+      messageSuccess(t('general.clipboard.name'), t('general.clipboard.success'));
       setTimeout(() => {
         isCopying.value = false;
       }, 2000);
     })
     .catch((err) => {
-      console.error('Error when copying to clipboard: ', err);
-      messageError('Copy', 'Error when copying to clipboard');
+      console.error(t('general.clipboard.error') + ': ', err);
+      messageError(t('general.clipboard.name'), t('general.clipboard.error'));
     });
+};
+
+/**
+ * Event handler to copy the text from the message element closest to the clicked button.
+ * @param event - The event object from the click event.
+ */
+const copyToClipboard = (event: any) => {
+  if (isCopying.value) return;
+  isCopying.value = true;
+
+  // Go back to the message closest to the button clicked
+  const messageContent = event.currentTarget.closest('.message').querySelector('p');
+  if (messageContent) {
+    // Extract the text and remove spaces at the beginning and end of the string
+    const text = messageContent.textContent.trim();
+    performCopy(text);
+  }
 };
 </script>
 
@@ -53,7 +68,7 @@ const copyToClipboard = (event) => {
           :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'"
           class="copy-to-clipboard"
           severity="contrast"
-          aria-label="Copy to clipboard"
+          :aria-label="t('general.clipboard.action')"
           @click="copyToClipboard"
         />
         <p>{{ message }}</p>
