@@ -6,7 +6,7 @@ const layoutConfig = reactive({
   inputStyle: 'outlined',
   menuMode: 'static',
   theme: 'aura-light-blue',
-  scale: localStorage.getItem('scale') ? parseInt(localStorage.getItem('scale')) : 14,
+  scale: parseInt(localStorage.getItem('scale') ?? '14'),
   activeMenuItem: null
 });
 
@@ -21,9 +21,9 @@ const layoutState = reactive({
 });
 
 export function useLayout() {
-  const setScale = (scale) => {
+  const setScale = (scale: number) => {
     layoutConfig.scale = scale;
-    localStorage.setItem('scale', scale);
+    localStorage.setItem('scale', scale.toString());
   };
 
   const setActiveMenuItem = (item) => {

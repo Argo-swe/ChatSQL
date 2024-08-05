@@ -1,5 +1,5 @@
-import AppLayout from '@/components/layout/AppLayout.vue';
 import AuthService from '@/services/auth.service';
+import AppLayout from '@/views/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
