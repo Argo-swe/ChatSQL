@@ -105,6 +105,7 @@
     "it": "italian"
   },
   "login": {
+    "success": "You are logged in as '{name}'",
     "badCredential": "Wrong credential",
     "subject": "Login to the technician area",
     "title": "Login"

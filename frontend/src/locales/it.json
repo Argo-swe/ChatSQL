@@ -105,6 +105,7 @@
     "it": "italiano"
   },
   "login": {
+    "success": "Hai effettuato l'accesso come '{name}'",
     "badCredential": "Credenziali errate",
     "subject": "Accedi all'area del tecnico",
     "title": "Accedi"

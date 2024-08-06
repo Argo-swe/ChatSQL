@@ -13,11 +13,11 @@ import type { LoginErrorMessages } from '@/types/wrapper';
 const { t } = useI18n();
 const client = getApiClient();
 const { layoutState } = useLayout();
-const { messageError } = messageService();
+const { messageSuccess, messageError } = messageService();
 const username = ref(null);
 const password = ref(null);
 const errorMessages: LoginErrorMessages = {
-  NOT_FOUND: () => t('actions.notFoundById', { item: t('text.User'), name: username.value }),
+  NOT_FOUND: () => t('actions.notFoundByName', { item: t('text.User'), name: username.value }),
   BAD_CREDENTIAL: () => t('login.badCredential')
 };
 
@@ -71,9 +71,11 @@ const handleError = (status: Components.Schemas.ResponseStatusEnum, message?: st
 async function submitForm() {
   client.login(undefined, { username: username.value ?? '', password: password.value ?? '' }).then(
     (response) => {
+      const tempUsername = username.value;
       if (response.data.status === 'OK') {
         const accessToken = response.data.data?.access_token || '';
         handleSuccessfulLogin(accessToken);
+        messageSuccess(t('Login'), t('login.success', { name: tempUsername }));
       } else {
         handleError(response.data.status, response.data.message);
       }
