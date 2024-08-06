@@ -62,7 +62,8 @@
     "file": {
       "download": "Scarica file dizionario dati",
       "title": "File dizionario dati",
-      "update": "Aggiorna file dizionario dati"
+      "update": "Aggiorna file dizionario dati",
+      "clear": "Annulla la selezione del file"
     },
     "title": "Dizionario dati | Dizionari dati",
     "update": "Aggiorna dizionario dati"
