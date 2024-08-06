@@ -1,5 +1,5 @@
-import type { Components } from '@/types/openapi';
 import type { ComputedRef } from 'vue';
+import type { Components } from './openapi';
 
 /**
  * Type representing the dictionary preview data structure.

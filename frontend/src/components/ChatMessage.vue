@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import { messageService } from '@/services/message.service';
-import type { MessageWrapper } from '@/types/wrapper';
+import { type MessageWrapper } from '../types/wrapper';
 
 /**
  * Props for ChatMessage component.
