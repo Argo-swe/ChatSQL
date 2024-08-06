@@ -9,18 +9,22 @@ import { useI18n } from 'vue-i18n';
 import { useSharedState } from '@/composables/CreateUpdateDictionary/shared-state';
 import { useMessages } from '@/composables/CreateUpdateDictionary/status-messages';
 import { getApiClient } from '@/services/api-client.service';
+import { messageService } from '@/services/message.service';
 
 const { t } = useI18n();
 const client = getApiClient();
+const { messageSuccess, messageError } = messageService();
 const dialogRef = inject<Ref<DynamicDialogInstance>>('dialogRef');
-const { getMessages, handleStatusMex } = useMessages();
+
+// Gain access to functions and maps to view status messages
+const { getMessages, getStatusMex } = useMessages();
 const onCreateMessages = getMessages('create');
 const onUpdateMessages = getMessages('update');
 
 let onCreation = ref(true);
 let withFile = ref(true);
 
-const { dictionaryName, dictionaryId, setDictionaryName, setDictionaryId } = useSharedState();
+let { dictionaryName, dictionaryId } = useSharedState();
 let dictionaryDescription = ref('');
 
 let fileSelected = ref(false);
@@ -34,8 +38,8 @@ onMounted(() => {
 
   onCreation.value = props?.dictionaryId == null;
   withFile.value = props?.withFile;
-  setDictionaryId(props?.dictionaryId);
-  setDictionaryName(props?.dictionaryName);
+  dictionaryId.value = props?.dictionaryId;
+  dictionaryName.value = props?.dictionaryName;
   dictionaryDescription.value = props?.dictionaryDescription;
 });
 
@@ -114,19 +118,17 @@ function createDictionary() {
     )
     .then((response) => {
       if (response.data?.status == 'OK') {
-        handleStatusMex('dictionary.title', onCreateMessages, response.data?.status);
+        messageSuccess(t('dictionary.title'), t('actions.create.success'));
         closeDialog(true);
       } else {
-        handleStatusMex(
-          'dictionary.title',
-          onCreateMessages,
-          response.data?.status,
-          response.data?.message
+        messageError(
+          t('dictionary.title'),
+          getStatusMex(onCreateMessages, response.data?.status, response.data?.message)
         );
       }
     })
     .catch((error) => {
-      handleStatusMex('dictionary.title', onCreateMessages, error);
+      messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error.message}`);
     })
     .finally(() => {
       loading.value = false;
@@ -148,19 +150,17 @@ function updateDictionaryMetadata() {
     })
     .then((response) => {
       if (response.data?.status == 'OK') {
-        handleStatusMex('dictionary.title', onUpdateMessages, response.data?.status);
+        messageSuccess(t('dictionary.title'), t('actions.update.success'));
         closeDialog(true);
       } else {
-        handleStatusMex(
-          'dictionary.title',
-          onUpdateMessages,
-          response.data?.status,
-          response.data?.message
+        messageError(
+          t('dictionary.title'),
+          getStatusMex(onUpdateMessages, response.data?.status, response.data?.message)
         );
       }
     })
     .catch((error) => {
-      handleStatusMex('dictionary.title', onUpdateMessages, error);
+      messageError(t('dictionary.title'), `${t('actions.update.error')}\n${error.message}`);
     })
     .finally(() => {
       loading.value = false;
@@ -169,7 +169,7 @@ function updateDictionaryMetadata() {
 
 /**
  * Sends a request to update the file associated with an existing dictionary.
- * @fucntion updateDictionaryFile
+ * @function updateDictionaryFile
  * @description This function updates only the file, without changing the metadata.
  */
 function updateDictionaryFile() {
@@ -188,19 +188,17 @@ function updateDictionaryFile() {
     )
     .then((response) => {
       if (response.data?.status == 'OK') {
-        handleStatusMex('dictionary.file.title', onUpdateMessages, response.data?.status);
+        messageSuccess(t('dictionary.file.title'), t('actions.update.success'));
         closeDialog(true);
       } else {
-        handleStatusMex(
-          'dictionary.file.title',
-          onUpdateMessages,
-          response.data?.status,
-          response.data?.message
+        messageError(
+          t('dictionary.file.title'),
+          getStatusMex(onUpdateMessages, response.data?.status, response.data?.message)
         );
       }
     })
     .catch((error) => {
-      handleStatusMex('dictionary.file.title', onUpdateMessages, error);
+      messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${error.message}`);
     })
     .finally(() => {
       loading.value = false;

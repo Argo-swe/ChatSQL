@@ -64,6 +64,8 @@ const i18n = createI18n<[MessageSchema], 'en' | 'it'>({
   }
 });
 
+export default i18n;
+
 const app = createApp(App);
 
 app.use(router);

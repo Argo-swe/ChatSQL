@@ -2,7 +2,7 @@ import { ref } from 'vue';
 
 // Shared reactive variables
 const dictionaryId = ref();
-const dictionaryName = ref('');
+const dictionaryName = ref('Antonio');
 
 /**
  * Sets the value of the dictionaryId reactive variable.

@@ -18,9 +18,9 @@ export type LoginErrorMessages = {
  * Type representing a map of dictionary management messages.
  */
 export type DictionaryMgmtMessages = {
-  [key in Components.Schemas.ResponseStatusEnum]?: (message?: string | null) => string;
+  [key in Components.Schemas.ResponseStatusEnum]?: () => string;
 } & {
-  DEFAULT?: (message?: string | null) => string;
+  DEFAULT: (message?: string | null) => string;
 };
 
 /**
