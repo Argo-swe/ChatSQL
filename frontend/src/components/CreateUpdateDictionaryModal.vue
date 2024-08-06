@@ -1,17 +1,36 @@
 <script setup lang="ts">
-import { getApiClient } from '@/services/api-client.service';
+// External libraries
 import type { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';
 import { type FileUploadSelectEvent } from 'primevue/fileupload';
 import { inject, onMounted, ref, type Ref } from 'vue';
-
-import { messageService } from '@/services/message.service';
-const { messageSuccess, messageError } = messageService();
-
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
 
+// Internal dependencies
+import { getApiClient } from '@/services/api-client.service';
+import { messageService } from '@/services/message.service';
+import type { Components } from '@/types/openapi';
+import type { DictionaryMgmtMessages } from '@/types/wrapper';
+
+const { t } = useI18n();
 const client = getApiClient();
+const { messageSuccess, messageError } = messageService();
 const dialogRef = inject<Ref<DynamicDialogInstance>>('dialogRef');
+const onCreateMessages: DictionaryMgmtMessages = {
+  OK: () => t('actions.create.success'),
+  BAD_REQUEST: () => `${t('actions.create.error')}\n${t('actions.formatError')}`,
+  CONFLICT: () =>
+    `${t('actions.create.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`,
+  DEFAULT: (message?: string | null) => `${t('actions.create.error')}\n${message}`
+};
+const onUpdateMessages: DictionaryMgmtMessages = {
+  OK: () => t('actions.update.success'),
+  BAD_REQUEST: () => `${t('actions.update.error')}\n${t('actions.formatError')}`,
+  NOT_FOUND: () =>
+    `${t('actions.update.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`,
+  CONFLICT: () =>
+    `${t('actions.update.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`,
+  DEFAULT: (message?: string | null) => `${t('actions.update.error')}\n${message}`
+};
 
 let onCreation = ref(true);
 let withFile = ref(true);
@@ -36,8 +55,31 @@ onMounted(() => {
   dictionaryDescription.value = props?.dictionaryDescription;
 });
 
+/**
+ * Closes the dialog with a specified status.
+ */
 const closeDialog = (status: boolean) => {
   dialogRef?.value.close(status);
+};
+
+/**
+ * Handles messages based on the response status.
+ * @function handleMex
+ * @param statusMessages
+ * @param status - The response status code.
+ * @param defaultMessage -
+ */
+const handleMex = (
+  messageHeader: string,
+  statusMessages: DictionaryMgmtMessages,
+  status?: Components.Schemas.ResponseStatusEnum,
+  message?: string | null
+) => {
+  const getMessage =
+    status && statusMessages[status] ? statusMessages[status] : statusMessages['DEFAULT'];
+  let errorMessage;
+  errorMessage = getMessage ? getMessage(message) : '';
+  messageError(t(messageHeader), errorMessage);
 };
 
 function createDictionary() {
@@ -57,38 +99,25 @@ function createDictionary() {
         }
       }
     )
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            messageSuccess(t('dictionary.title'), t('actions.create.success'));
-            closeDialog(true);
-            break;
-          case 'BAD_REQUEST':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.create.error')}\n${t('actions.formatError')}`
-            );
-            break;
-          case 'CONFLICT':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.create.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`
-            );
-            break;
-          default:
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.create.error')}\n${response.data?.message}`
-            );
-        }
-        loading.value = false;
-      },
-      (error) => {
-        messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error}`);
-        loading.value = false;
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        handleMex('dictionary.title', onCreateMessages, response.data?.status);
+        closeDialog(true);
+      } else {
+        handleMex(
+          'dictionary.title',
+          onCreateMessages,
+          response.data?.status,
+          response.data?.message
+        );
       }
-    );
+    })
+    .catch((error) => {
+      handleMex('dictionary.title', onCreateMessages, error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
 function updateDictionaryMetadata() {
@@ -99,44 +128,25 @@ function updateDictionaryMetadata() {
       name: dictionaryName.value,
       description: dictionaryDescription.value
     })
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            messageSuccess(t('dictionary.title'), t('actions.update.success'));
-            closeDialog(true);
-            break;
-          case 'BAD_REQUEST':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.update.error')}\n${t('actions.formatError')}`
-            );
-            break;
-          case 'NOT_FOUND':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.update.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`
-            );
-            break;
-          case 'CONFLICT':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.update.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`
-            );
-            break;
-          default:
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.update.error')}\n${response.data?.message}`
-            );
-        }
-        loading.value = false;
-      },
-      (error) => {
-        messageError(t('dictionary.title'), `${t('actions.update.error')}\n${error}`);
-        loading.value = false;
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        handleMex('dictionary.title', onUpdateMessages, response.data?.status);
+        closeDialog(true);
+      } else {
+        handleMex(
+          'dictionary.title',
+          onUpdateMessages,
+          response.data?.status,
+          response.data?.message
+        );
       }
-    );
+    })
+    .catch((error) => {
+      handleMex('dictionary.title', onUpdateMessages, error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
 function updateDictionaryFile() {
@@ -153,38 +163,25 @@ function updateDictionaryFile() {
         }
       }
     )
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            messageSuccess(t('dictionary.file.title'), t('actions.update.success'));
-            closeDialog(true);
-            break;
-          case 'BAD_REQUEST':
-            messageError(
-              t('dictionary.file.title'),
-              `${t('actions.update.error')}\n${t('actions.formatError')}`
-            );
-            break;
-          case 'NOT_FOUND':
-            messageError(
-              t('dictionary.file.title'),
-              `${t('actions.update.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`
-            );
-            break;
-          default:
-            messageError(
-              t('dictionary.file.title'),
-              `${t('actions.update.error')}\n${response.data?.message}`
-            );
-        }
-        loading.value = false;
-      },
-      (error) => {
-        messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${error}`);
-        loading.value = false;
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        handleMex('dictionary.file.title', onUpdateMessages, response.data?.status);
+        closeDialog(true);
+      } else {
+        handleMex(
+          'dictionary.file.title',
+          onUpdateMessages,
+          response.data?.status,
+          response.data?.message
+        );
       }
-    );
+    })
+    .catch((error) => {
+      handleMex('dictionary.file.title', onUpdateMessages, error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
 function submitForm() {
