@@ -92,6 +92,12 @@
       "openMainNavMenu": "Apri il menu di navigazione principale",
       "closeMainNavMenu": "Chiudi il menu di navigazione principale",
       "technicianFunctionalities": "Funzionalità del tecnico"
+    },
+    "clipboard": {
+      "name": "Copia",
+      "action": "Copia negli appunti",
+      "success": "Testo copiato negli appunti",
+      "error": "Errore durante la copia"
     }
   },
   "locale": {

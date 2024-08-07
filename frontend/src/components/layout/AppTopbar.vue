@@ -38,7 +38,7 @@ onBeforeUnmount(() => {
 
 /**
  * Binds a click event listener to the document to detect clicks outside a specific area.
- * @function unbindOutsideClickListener
+ * @function bindOutsideClickListener
  * @description This arrow function will toggle the visibility of the topbar menu when a click outside is detected.
  */
 const bindOutsideClickListener = () => {

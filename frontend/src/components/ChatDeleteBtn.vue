@@ -1,44 +1,40 @@
-<script lang="ts">
+<script setup lang="ts">
 // External libraries
-import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-  name: 'ChatDeleteBtn',
+// Internal dependencies
+import type { MessageWrapper } from '@/types/wrapper';
+
+/**
+ * Props for ChatDeleteBtn component.
+ */
+defineProps<{
   /**
-   * Props for ChatDeleteBtn component.
-   * @prop {Array} messages - An array of messages.
-   * @prop {Boolean} loading - A flag indicating whether data is loading.
+   * @prop {MessageWrapper[]} messages
+   * @description An array of messages.
    */
-  props: {
-    messages: {
-      type: Array,
-      required: true
-    },
-    loading: {
-      type: Boolean,
-      required: true
-    }
-  },
-  emits: ['clear-messages'],
+  messages: MessageWrapper[];
+  /**
+   * @prop {Boolean} loading
+   * @description A flag indicating whether data is loading.
+   */
+  loading: boolean;
+}>();
 
-  setup(props, { emit }) {
-    const { t } = useI18n();
+/**
+ * Emits for ChatDeleteBtn component.
+ */
+const emit = defineEmits(['clear-messages']);
 
-    /**
-     * Emits an event to the parent component to clear the messages.
-     * @function clearMessages
-     */
-    const clearMessages = () => {
-      emit('clear-messages');
-    };
+const { t } = useI18n();
 
-    return {
-      t,
-      clearMessages
-    };
-  }
-});
+/**
+ * Emits an event to the parent component to clear the messages.
+ * @function clearMessages
+ */
+const clearMessages = () => {
+  emit('clear-messages');
+};
 </script>
 
 <template>

@@ -3,6 +3,9 @@ import { useToast } from 'primevue/usetoast';
 
 const defaultLifeTime = 5000;
 
+/**
+ * Provides a set of functions to display different types of toast messages.
+ */
 export const messageService = () => {
   const toast = useToast();
 
@@ -11,7 +14,7 @@ export const messageService = () => {
    *
    * @param title - The title or summary of the message.
    * @param detail - Description of the message.
-   * @param lifeTime - (Optional) The duration in milliseconds for which the message will be displayed. If not provided, a default lifetime will be used.
+   * @param lifeTime - (Optional) The duration in milliseconds for which the message will be displayed.
    */
   const messageInfo = (title: string, detail: string, lifeTime?: number) => {
     message({
@@ -22,6 +25,13 @@ export const messageService = () => {
     });
   };
 
+  /**
+   * Displays a success message with optional lifetime.
+   *
+   * @param title - The title or summary of the message.
+   * @param detail - Description of the message.
+   * @param lifeTime - (Optional) The duration in milliseconds for which the message will be displayed.
+   */
   const messageSuccess = (title: string, detail: string, lifeTime?: number) => {
     message({
       severity: 'success',
@@ -31,6 +41,13 @@ export const messageService = () => {
     });
   };
 
+  /**
+   * Displays a warning message with optional lifetime.
+   *
+   * @param title - The title or summary of the message.
+   * @param detail - Description of the message.
+   * @param lifeTime - (Optional) The duration in milliseconds for which the message will be displayed.
+   */
   const messageWarning = (title: string, detail: string, lifeTime?: number) => {
     message({
       severity: 'warn',
@@ -40,6 +57,13 @@ export const messageService = () => {
     });
   };
 
+  /**
+   * Displays an error message with optional lifetime.
+   *
+   * @param title - The title or summary of the message.
+   * @param detail - Description of the message.
+   * @param lifeTime - (Optional) The duration in milliseconds for which the message will be displayed.
+   */
   const messageError = (title: string, detail: string, lifeTime?: number) => {
     message({
       severity: 'error',
@@ -49,6 +73,9 @@ export const messageService = () => {
     });
   };
 
+  /**
+   * Adds a message to the toast display.
+   */
   const message = (message: ToastMessageOptions) => {
     toast.add(message);
   };
