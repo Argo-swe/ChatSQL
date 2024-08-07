@@ -1,4 +1,5 @@
 import json
+import os
 
 
 class Utils:
@@ -51,3 +52,21 @@ class Utils:
         except ValueError:
             return False
         return True
+
+    @staticmethod
+    def get_file(path, mode):
+        try:
+            directory = os.path.dirname(path)
+            os.makedirs(directory, exist_ok=True)
+            file = open(path, mode)
+            return file
+        except Exception:
+            return False
+
+    @staticmethod
+    def read_file(path):
+        try:
+            with open(path, "r") as file:
+                return file.read()
+        except Exception:
+            return False

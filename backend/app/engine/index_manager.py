@@ -1,4 +1,5 @@
 from txtai.embeddings import Embeddings
+from tools.utils import Utils
 from tools.schema_multi_extractor import SchemaMultiExtractor
 import os
 import time
@@ -7,11 +8,10 @@ import shutil
 
 current_dir = Path(__file__).resolve().parent
 indexes_out_file_base_path = "/opt/chatsql/indexes"
-logs_out_file_base_path = "/opt/chatsql/logs"
-logs_file_out_file_base_path = f"{logs_out_file_base_path}/chatsql_log.txt"
+logs_file_out_file_base_path = "/opt/chatsql/logs/chatsql_log.txt"
 
 os.makedirs(indexes_out_file_base_path, exist_ok=True)
-os.makedirs(logs_out_file_base_path, exist_ok=True)
+os.makedirs(os.path.dirname(logs_file_out_file_base_path), exist_ok=True)
 
 
 class IndexManager:
@@ -105,7 +105,7 @@ class IndexManager:
 
     # Metodo per generare i log della ricerca semantica
     def semantic_search_log(self, user_request, tuples):
-        log = self.get_log_file("w")
+        log = Utils.get_file(logs_file_out_file_base_path, "w")
         if log is False:
             return log
         log.write(
@@ -146,7 +146,7 @@ class IndexManager:
     # Metodo per raffinare i risultati della ricerca semantica
     def get_relevant_tuples(self, tuples, activate_log):
         if activate_log:
-            log = self.get_log_file("a")
+            log = Utils.get_file(logs_file_out_file_base_path, "a")
             if log is False:
                 return log
             log.write(f"{self.get_debug_header()} - Phase 2 - second extraction\n")
@@ -192,23 +192,6 @@ class IndexManager:
     def get_debug_header(self, level="DEBUG", system="ChatSQL"):
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         return f"[{timestamp}] [{system}] [{level}]"
-
-    # Metodo per ottenere un oggetto relativo al file di log
-    def get_log_file(self, mode):
-        try:
-            os.makedirs(logs_out_file_base_path, exist_ok=True)
-            file = open(logs_file_out_file_base_path, mode)
-            return file
-        except Exception:
-            return False
-
-    # Metodo per leggere il file di log
-    def read_log_file(self):
-        try:
-            with open(logs_file_out_file_base_path, "r") as file:
-                return file.read()
-        except Exception:
-            return False
 
     # Metodo per generare il prompt dopo la doppia estrazione
     def prompt_generator(
