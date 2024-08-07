@@ -7,47 +7,77 @@ import { useI18n } from 'vue-i18n';
 import { useLayout } from '@/composables/layout';
 import { getApiClient } from '@/services/api-client.service';
 import { messageService } from '@/services/message.service';
+import type { Components } from '@/types/openapi';
+import type { LoginErrorMessages } from '@/types/wrapper';
 
 const { t } = useI18n();
 const client = getApiClient();
 const { layoutState } = useLayout();
-const { messageError } = messageService();
+const { messageSuccess, messageError } = messageService();
 const username = ref(null);
 const password = ref(null);
+const errorMessages: LoginErrorMessages = {
+  NOT_FOUND: () => t('actions.notFoundByName', { item: t('text.User'), name: username.value }),
+  BAD_CREDENTIAL: () => t('login.badCredential')
+};
 
 function resetForm() {
   username.value = null;
   password.value = null;
 }
 
+/**
+ * Handles a successful login by:
+ * - Storing the access token;
+ * - Hiding the login dialog;
+ * - Resetting the form fields.
+ * @function handleSuccessfulLogin
+ * @param accessToken - The access token to store in local storage.
+ */
+const handleSuccessfulLogin = (accessToken: string) => {
+  localStorage.setItem('token', accessToken);
+  layoutState.loginDialogVisible.value = false;
+  resetForm();
+  window.dispatchEvent(
+    new CustomEvent('token-localstorage-changed', {
+      detail: {
+        storage: localStorage.getItem('token')
+      }
+    })
+  );
+};
+
+/**
+ * Handles errors based on the response status.
+ * @function handleError
+ * @param status - The response status code indicating the type of error.
+ * @param message - (Optional) Additional message to include in the error.
+ */
+const handleError = (status: Components.Schemas.ResponseStatusEnum, message?: string | null) => {
+  const getErrorMessage = errorMessages[status];
+  let errorMessage;
+  if (getErrorMessage) {
+    errorMessage = getErrorMessage();
+  } else {
+    errorMessage = `${t('text.genericError')}:\n${message}`;
+  }
+  messageError(t('Login'), errorMessage);
+};
+
+/**
+ * Submits the login form with the provided username and password.
+ * @function submitForm
+ */
 async function submitForm() {
   client.login(undefined, { username: username.value ?? '', password: password.value ?? '' }).then(
     (response) => {
-      switch (response.data.status) {
-        case 'OK':
-          localStorage.setItem('token', response.data.data?.access_token || '');
-          layoutState.loginDialogVisible.value = false;
-          resetForm();
-          window.dispatchEvent(
-            new CustomEvent('token-localstorage-changed', {
-              detail: {
-                storage: localStorage.getItem('token')
-              }
-            })
-          );
-          break;
-        case 'NOT_FOUND':
-          messageError(
-            t('Login'),
-            t('actions.notFoundById', { item: t('text.User'), name: username.value })
-          );
-          break;
-        case 'BAD_CREDENTIAL':
-          messageError(t('Login'), t('login.badCredential'));
-          break;
-        default:
-          messageError(t('Login'), `${t('text.genericError')}:\n${response.data.message}`);
-          break;
+      const tempUsername = username.value;
+      if (response.data.status === 'OK') {
+        const accessToken = response.data.data?.access_token || '';
+        handleSuccessfulLogin(accessToken);
+        messageSuccess(t('Login'), t('login.success', { name: tempUsername }));
+      } else {
+        handleError(response.data.status, response.data.message);
       }
     },
     (error) => {

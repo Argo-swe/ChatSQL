@@ -1,23 +1,30 @@
 <script setup lang="ts">
-import { getApiClient } from '@/services/api-client.service';
+// External libraries
 import type { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';
 import { type FileUploadSelectEvent } from 'primevue/fileupload';
 import { inject, onMounted, ref, type Ref } from 'vue';
-
-import { messageService } from '@/services/message.service';
-const { messageSuccess, messageError } = messageService();
-
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
 
+// Internal dependencies
+import { useSharedState } from '@/composables/CreateUpdateDictionary/shared-state';
+import { useMessages } from '@/composables/CreateUpdateDictionary/status-messages';
+import { getApiClient } from '@/services/api-client.service';
+import { messageService } from '@/services/message.service';
+
+const { t } = useI18n();
 const client = getApiClient();
+const { messageSuccess, messageError } = messageService();
 const dialogRef = inject<Ref<DynamicDialogInstance>>('dialogRef');
+
+// Gain access to functions and maps to view status messages
+const { getMessages, getStatusMex } = useMessages();
+const onCreateMessages = getMessages('create');
+const onUpdateMessages = getMessages('update');
 
 let onCreation = ref(true);
 let withFile = ref(true);
 
-let dictionaryId = ref();
-let dictionaryName = ref('');
+let { dictionaryName, dictionaryId } = useSharedState();
 let dictionaryDescription = ref('');
 
 let fileSelected = ref(false);
@@ -36,10 +43,62 @@ onMounted(() => {
   dictionaryDescription.value = props?.dictionaryDescription;
 });
 
+/**
+ * Closes the dialog with a specified status.
+ * @function closeDialog
+ */
 const closeDialog = (status: boolean) => {
   dialogRef?.value.close(status);
 };
 
+/**
+ * Clears the selected file and resets related state.
+ * @function clearSelectedFile
+ */
+function clearSelectedFile() {
+  fileUpload.value.clear();
+  selectedFile = null;
+  fileSelected.value = false;
+}
+
+/**
+ * Handles the file selection event.
+ * @function onSelectedFile
+ * @param event - The event triggered when a file is selected.
+ */
+const onSelectedFile = async (event: FileUploadSelectEvent) => {
+  selectedFile = event.files[0];
+  fileSelected.value = selectedFile != null;
+};
+
+/**
+ * Checks if a file is selected.
+ */
+function isFileSelected(): boolean {
+  return !withFile.value || selectedFile != null;
+}
+
+/**
+ * Validates the form based on the current state.
+ */
+function isFormValid(): boolean {
+  if (onCreation.value || !withFile.value) {
+    return (
+      isFileSelected() &&
+      dictionaryName.value?.length > 0 &&
+      dictionaryDescription.value?.length > 0
+    );
+  } else {
+    return isFileSelected();
+  }
+}
+
+/**
+ * Sends a request to create a new dictionary.
+ * @function createDictionary
+ * @description This function handles the process of uploading a new dictionary,
+ * including its metadata and optional file.
+ */
 function createDictionary() {
   loading.value = true;
   client
@@ -57,40 +116,30 @@ function createDictionary() {
         }
       }
     )
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            messageSuccess(t('dictionary.title'), t('actions.create.success'));
-            closeDialog(true);
-            break;
-          case 'BAD_REQUEST':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.create.error')}\n${t('actions.formatError')}`
-            );
-            break;
-          case 'CONFLICT':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.create.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`
-            );
-            break;
-          default:
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.create.error')}\n${response.data?.message}`
-            );
-        }
-        loading.value = false;
-      },
-      (error) => {
-        messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error}`);
-        loading.value = false;
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        messageSuccess(t('dictionary.title'), t('actions.create.success'));
+        closeDialog(true);
+      } else {
+        messageError(
+          t('dictionary.title'),
+          getStatusMex(onCreateMessages, response.data?.status, response.data?.message)
+        );
       }
-    );
+    })
+    .catch((error) => {
+      messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error.message}`);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
+/**
+ * Sends a request to update the metadata of an existing dictionary.
+ * @function updateDictionaryMetadata
+ * @description This function updates the dictionary's name and description without changing its file.
+ */
 function updateDictionaryMetadata() {
   loading.value = true;
   client
@@ -99,46 +148,30 @@ function updateDictionaryMetadata() {
       name: dictionaryName.value,
       description: dictionaryDescription.value
     })
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            messageSuccess(t('dictionary.title'), t('actions.update.success'));
-            closeDialog(true);
-            break;
-          case 'BAD_REQUEST':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.update.error')}\n${t('actions.formatError')}`
-            );
-            break;
-          case 'NOT_FOUND':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.update.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`
-            );
-            break;
-          case 'CONFLICT':
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.update.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName.value })}`
-            );
-            break;
-          default:
-            messageError(
-              t('dictionary.title'),
-              `${t('actions.update.error')}\n${response.data?.message}`
-            );
-        }
-        loading.value = false;
-      },
-      (error) => {
-        messageError(t('dictionary.title'), `${t('actions.update.error')}\n${error}`);
-        loading.value = false;
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        messageSuccess(t('dictionary.title'), t('actions.update.success'));
+        closeDialog(true);
+      } else {
+        messageError(
+          t('dictionary.title'),
+          getStatusMex(onUpdateMessages, response.data?.status, response.data?.message)
+        );
       }
-    );
+    })
+    .catch((error) => {
+      messageError(t('dictionary.title'), `${t('actions.update.error')}\n${error.message}`);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
+/**
+ * Sends a request to update the file associated with an existing dictionary.
+ * @function updateDictionaryFile
+ * @description This function updates only the file, without changing the metadata.
+ */
 function updateDictionaryFile() {
   loading.value = true;
   client
@@ -153,101 +186,61 @@ function updateDictionaryFile() {
         }
       }
     )
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            messageSuccess(t('dictionary.file.title'), t('actions.update.success'));
-            closeDialog(true);
-            break;
-          case 'BAD_REQUEST':
-            messageError(
-              t('dictionary.file.title'),
-              `${t('actions.update.error')}\n${t('actions.formatError')}`
-            );
-            break;
-          case 'NOT_FOUND':
-            messageError(
-              t('dictionary.file.title'),
-              `${t('actions.update.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`
-            );
-            break;
-          default:
-            messageError(
-              t('dictionary.file.title'),
-              `${t('actions.update.error')}\n${response.data?.message}`
-            );
-        }
-        loading.value = false;
-      },
-      (error) => {
-        messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${error}`);
-        loading.value = false;
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        messageSuccess(t('dictionary.file.title'), t('actions.update.success'));
+        closeDialog(true);
+      } else {
+        messageError(
+          t('dictionary.file.title'),
+          getStatusMex(onUpdateMessages, response.data?.status, response.data?.message)
+        );
       }
-    );
+    })
+    .catch((error) => {
+      messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${error.message}`);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
+/**
+ * Determines which action to perform based on the form's state.
+ * @function submitForm
+ */
 function submitForm() {
   if (onCreation.value) {
     createDictionary();
+  } else if (withFile.value) {
+    updateDictionaryFile();
   } else {
-    if (withFile.value) {
-      updateDictionaryFile();
-    } else {
-      updateDictionaryMetadata();
-    }
+    updateDictionaryMetadata();
   }
 }
-
-function isFileSelected(): boolean {
-  return !withFile.value || selectedFile != null;
-}
-
-function isFormValid(): boolean {
-  if (onCreation.value || !withFile.value) {
-    return (
-      isFileSelected() &&
-      dictionaryName.value?.length > 0 &&
-      dictionaryDescription.value?.length > 0
-    );
-  } else {
-    return isFileSelected();
-  }
-}
-
-function clearSelectedFile() {
-  fileUpload.value.clear();
-  selectedFile = null;
-  fileSelected.value = false;
-}
-
-const onSelectedFile = async (event: FileUploadSelectEvent) => {
-  selectedFile = event.files[0];
-  fileSelected.value = selectedFile != null;
-};
 </script>
 
 <template>
   <form @submit.prevent="submitForm">
     <div v-if="onCreation || !withFile" class="mb-4">
       <div class="flex flex-column gap-2">
-        <label for="name"> {{ t('text.Name') }} </label>
+        <label id="l-name" for="name"> {{ t('text.Name') }} </label>
         <PgInputText
           id="name"
           v-model="dictionaryName"
           required
-          aria-describedby="name-help"
+          aria-labelledby="l-name"
           autocomplete="off"
           :invalid="!dictionaryName"
         />
       </div>
       <div class="flex flex-column gap-2 mt-4">
-        <label for="description"> {{ t('text.Description') }} </label>
+        <label id="l-description" for="description"> {{ t('text.Description') }} </label>
         <PgInputText
           id="description"
           v-model="dictionaryDescription"
           required
-          aria-describedby="description-help"
+          aria-labelledby="l-description"
           autocomplete="off"
           :invalid="!dictionaryDescription"
         />
@@ -260,7 +253,7 @@ const onSelectedFile = async (event: FileUploadSelectEvent) => {
         icon="pi pi-times"
         class="mr-2"
         severity="danger"
-        aria-label="Clear file"
+        :aria-label="t('dictionary.file.clear')"
         @click="clearSelectedFile()"
       />
       <PgFileUpload

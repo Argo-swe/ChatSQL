@@ -14,8 +14,8 @@ import Ripple from 'primevue/ripple';
 import StyleClass from 'primevue/styleclass';
 import Tooltip from 'primevue/tooltip';
 
-// import PrimeVue components (alphabetical order)
-import PgAvatar from 'primevue/avatar';
+// START import PrimeVue components (alphabetical order)
+import Avatar from 'primevue/avatar';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Checkbox from 'primevue/checkbox';
@@ -64,6 +64,8 @@ const i18n = createI18n<[MessageSchema], 'en' | 'it'>({
   }
 });
 
+export default i18n;
+
 const app = createApp(App);
 
 app.use(router);
@@ -78,8 +80,8 @@ app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
 
-// PrimeVue components (alphabetical order)
-app.component('PgAvatar', PgAvatar);
+// START PrimeVue components (alphabetical order)
+app.component('PgAvatar', Avatar);
 app.component('PgButton', Button);
 app.component('PgCard', Card);
 app.component('PgCheckbox', Checkbox);

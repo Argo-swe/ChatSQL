@@ -1,11 +1,27 @@
-import type { Components } from '@/types/openapi';
 import type { ComputedRef } from 'vue';
+import type { Components } from './openapi';
 
 /**
  * Type representing the dictionary preview data structure.
  * @type {DictionaryPreviewDto} DictionaryPreview
  */
 export type DictionaryPreview = Components.Schemas.DictionaryPreviewDto;
+
+/**
+ * Type representing a dictionary of login error messages.
+ */
+export type LoginErrorMessages = {
+  [key in Components.Schemas.ResponseStatusEnum]?: () => string;
+};
+
+/**
+ * Type representing a map of dictionary management messages.
+ */
+export type DictionaryMgmtMessages = {
+  [key in Components.Schemas.ResponseStatusEnum]?: () => string;
+} & {
+  DEFAULT: (message?: string | null) => string;
+};
 
 /**
  * Interface representing a message object.
@@ -49,3 +65,12 @@ export interface MenuWrapper {
  * @type {MenuWrapper[]} Menu
  */
 export type Menu = MenuWrapper[];
+
+/**
+ * Interface representing a map of strings (CSS class names) to boolean values.
+ * @interface CSSClasses
+ * @description This type of declaration is especially useful when working with objects that represent conditional CSS classes.
+ */
+export interface CSSClasses {
+  [key: string]: boolean;
+}
