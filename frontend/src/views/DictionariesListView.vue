@@ -1,22 +1,29 @@
 <script setup lang="ts">
-import CreateUpdateDictionaryModal from '@/components/CreateUpdateDictionaryModal.vue';
-import { getApiClient } from '@/services/api-client.service';
-import UtilsService from '@/services/utils.service';
-import type { Components } from '@/types/openapi';
+// External libraries
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
 import { onMounted, ref } from 'vue';
-
-import { messageService } from '@/services/message.service';
-const { messageSuccess, messageError } = messageService();
-
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
 
+// Internal dependencies
+import { useMessages } from '@/composables/crud-status-messages';
+import { getApiClient } from '@/services/api-client.service';
+import { messageService } from '@/services/message.service';
+import UtilsService from '@/services/utils.service';
+import type { Components } from '@/types/openapi';
+
+// Child Components
+import CreateUpdateDictionaryModal from '@/components/CreateUpdateDictionaryModal.vue';
+
+const { t } = useI18n();
 const dialog = useDialog();
 const confirm = useConfirm();
-
 let client = getApiClient();
+const { messageSuccess, messageError } = messageService();
+
+// Gain access to functions and maps to view status messages
+const { getMessages, getStatusMex } = useMessages();
+const onDeleteMessages = getMessages('delete');
 
 let dictionaries = ref();
 let loading = ref(false);
@@ -36,27 +43,34 @@ onMounted(() => {
   retrieveDictionaries();
 });
 
+/**
+ * Retrieves a list of dictionaries and updates the component state accordingly.
+ * @function retrieveDictionaries
+ */
 function retrieveDictionaries() {
   loading.value = true;
   dictionaries.value = [];
-  client.getAllDictionaries().then(
-    (response) => {
-      switch (response.data?.status) {
-        case 'OK':
-          dictionaries.value = response.data.data;
-          break;
-        default:
-          console.warn(response.data);
+  client
+    .getAllDictionaries()
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        dictionaries.value = response.data.data;
+      } else {
+        console.warn(response.data);
       }
+    })
+    .catch((error) => {
+      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+    })
+    .finally(() => {
       loading.value = false;
-    },
-    (error) => {
-      loading.value = false;
-      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
-    }
-  );
+    });
 }
 
+/**
+ * Opens a dialog for creating a dictionary.
+ * @function onClickCreate
+ */
 function onClickCreate() {
   dialog.open(CreateUpdateDictionaryModal, {
     data: {
@@ -67,13 +81,18 @@ function onClickCreate() {
       ...dialogPropsPreset
     },
     onClose: (opt) => {
-      if (opt?.data == true) {
+      if (opt?.data) {
         retrieveDictionaries();
       }
     }
   });
 }
 
+/**
+ * Opens a dialog for updating the metadata of a dictionary.
+ * @function onClickUpdateMetadata
+ * @param dictionary - The dictionary object containing the metadata to be updated.
+ */
 function onClickUpdateMetadata(dictionary: Components.Schemas.DictionaryDto) {
   dialog.open(CreateUpdateDictionaryModal, {
     data: {
@@ -87,13 +106,18 @@ function onClickUpdateMetadata(dictionary: Components.Schemas.DictionaryDto) {
       ...dialogPropsPreset
     },
     onClose: (opt) => {
-      if (opt?.data == true) {
+      if (opt?.data) {
         retrieveDictionaries();
       }
     }
   });
 }
 
+/**
+ * Opens a dialog for updating the file associated with a dictionary.
+ * @function onClickUpdateFile
+ * @param dictionary - The dictionary object containing the file to be updated.
+ */
 function onClickUpdateFile(dictionary: Components.Schemas.DictionaryDto) {
   dialog.open(CreateUpdateDictionaryModal, {
     data: {
@@ -107,24 +131,32 @@ function onClickUpdateFile(dictionary: Components.Schemas.DictionaryDto) {
   });
 }
 
+/**
+ * Handles the download for a file associated with a specific dictionary.
+ * @function onClickDownloadFile
+ * @param dictionary - The dictionary object containing metadata needed to fetch and download the file.
+ */
 function onClickDownloadFile(dictionary: Components.Schemas.DictionaryDto) {
   client
     .getDictionaryFile(dictionary.id, undefined, {
       responseType: 'blob'
     })
-    .then(
-      (response) => {
-        UtilsService.downloadFile(
-          `${UtilsService.stringToSnakeCase(dictionary.name)}_schema.json`,
-          response.data
-        );
-      },
-      (error) => {
-        console.warn(error);
-      }
-    );
+    .then((response) => {
+      UtilsService.downloadFile(
+        `${UtilsService.stringToSnakeCase(dictionary.name)}_schema.json`,
+        response.data
+      );
+    })
+    .catch((error) => {
+      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+    });
 }
 
+/**
+ * Handles the deletion of a data dictionary.
+ * @function onClickDelete
+ * @param dictionaryId - The ID of the dictionary to be deleted.
+ */
 function onClickDelete(dictionaryId: number) {
   confirm.require({
     message: t('general.confirm.proceed'),
@@ -134,30 +166,25 @@ function onClickDelete(dictionaryId: number) {
     acceptClass: 'p-button-success',
     rejectLabel: t('text.No'),
     accept: () => {
-      client.deleteDictionary(dictionaryId).then(
-        (response) => {
-          switch (response.data?.status) {
-            case 'OK':
-              retrieveDictionaries();
-              messageSuccess(t('dictionary.title'), t('actions.delete.success'));
-              break;
-            case 'NOT_FOUND':
-              messageError(
-                t('dictionary.title'),
-                `${t('actions.delete.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`
-              );
-              break;
-            default:
-              messageError(
-                t('dictionary.title'),
-                `${t('actions.delete.error')}\n${response.data?.message}`
-              );
+      client
+        .deleteDictionary(dictionaryId)
+        .then((response) => {
+          if (response.data?.status == 'OK') {
+            retrieveDictionaries();
+            messageSuccess(t('dictionary.title'), t('actions.delete.success'));
+          } else {
+            messageError(
+              t('dictionary.title'),
+              getStatusMex(onDeleteMessages, response.data?.status, {
+                message: response.data?.message,
+                dictionaryId
+              })
+            );
           }
-        },
-        (error) => {
-          messageError(t('dictionary.title'), `${t('actions.delete.error')}\n${error}`);
-        }
-      );
+        })
+        .catch((error) => {
+          messageError(t('dictionary.title'), `${t('actions.delete.error')}\n${error.message}`);
+        });
     }
   });
 }

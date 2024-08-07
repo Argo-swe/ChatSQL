@@ -15,12 +15,25 @@ export type LoginErrorMessages = {
 };
 
 /**
+ * Interface representing options for dictionary status messages.
+ * @interface DictStatusMessageOptions
+ * @property {String} message - (Optional) An additional message to be appended.
+ * @property {Number} dictionaryId - (Optional) The ID of the dictionary.
+ * @property {String} dictionaryName - (Optional) The name of the dictionary.
+ */
+export interface DictStatusMessageOptions {
+  message?: string | null;
+  dictionaryId?: number | null;
+  dictionaryName?: string | null;
+}
+
+/**
  * Type representing a map of dictionary management messages.
  */
 export type DictionaryMgmtMessages = {
-  [key in Components.Schemas.ResponseStatusEnum]?: () => string;
+  [key in Components.Schemas.ResponseStatusEnum]?: (options?: DictStatusMessageOptions) => string;
 } & {
-  DEFAULT: (message?: string | null) => string;
+  DEFAULT: (options?: DictStatusMessageOptions) => string;
 };
 
 /**
