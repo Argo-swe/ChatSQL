@@ -62,7 +62,8 @@
     "file": {
       "download": "Download data dictionary file",
       "title": "Data dictionary file",
-      "update": "Update data dictionary file"
+      "update": "Update data dictionary file",
+      "clear": "Clear the selected file"
     },
     "title": "Data dictionary | Data dictionaries",
     "update": "Update data dictionary"
@@ -105,6 +106,7 @@
     "it": "italian"
   },
   "login": {
+    "success": "You are logged in as '{name}'",
     "badCredential": "Wrong credential",
     "subject": "Login to the technician area",
     "title": "Login"

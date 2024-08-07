@@ -20,12 +20,12 @@ withDefaults(
      * @prop {String} [width='auto']
      * @description The width of the image. Default is 'auto'.
      */
-    width: string;
+    width?: string;
     /**
      * @prop {String} [height='auto']
      * @description The height of the image. Default is 'auto'.
      */
-    height: string;
+    height?: string;
   }>(),
   {
     width: 'auto',

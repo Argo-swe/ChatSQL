@@ -15,6 +15,15 @@ export type LoginErrorMessages = {
 };
 
 /**
+ * Type representing a map of dictionary management messages.
+ */
+export type DictionaryMgmtMessages = {
+  [key in Components.Schemas.ResponseStatusEnum]?: () => string;
+} & {
+  DEFAULT: (message?: string | null) => string;
+};
+
+/**
  * Interface representing a message object.
  * @interface MessageWrapper
  * @property {String} message - The content of the message.

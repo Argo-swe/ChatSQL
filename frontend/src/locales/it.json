@@ -62,7 +62,8 @@
     "file": {
       "download": "Scarica file dizionario dati",
       "title": "File dizionario dati",
-      "update": "Aggiorna file dizionario dati"
+      "update": "Aggiorna file dizionario dati",
+      "clear": "Annulla la selezione del file"
     },
     "title": "Dizionario dati | Dizionari dati",
     "update": "Aggiorna dizionario dati"
@@ -105,6 +106,7 @@
     "it": "italiano"
   },
   "login": {
+    "success": "Hai effettuato l'accesso come '{name}'",
     "badCredential": "Credenziali errate",
     "subject": "Accedi all'area del tecnico",
     "title": "Accedi"
