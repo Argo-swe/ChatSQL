@@ -31,7 +31,6 @@ const performCopy = (text: string) => {
       }, 2000);
     })
     .catch((err) => {
-      console.error(t('general.clipboard.error') + ': ', err);
       messageError(t('general.clipboard.name'), t('general.clipboard.error'));
     });
 };
