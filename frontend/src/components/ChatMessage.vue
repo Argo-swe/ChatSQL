@@ -25,14 +25,12 @@ const performCopy = (text: string) => {
   navigator.clipboard
     .writeText(text)
     .then(() => {
-      console.log(t('general.clipboard.success') + ': ', text);
       messageSuccess(t('general.clipboard.name'), t('general.clipboard.success'));
       setTimeout(() => {
         isCopying.value = false;
       }, 2000);
     })
     .catch((err) => {
-      console.error(t('general.clipboard.error') + ': ', err);
       messageError(t('general.clipboard.name'), t('general.clipboard.error'));
     });
 };
