@@ -1,5 +1,10 @@
 import type { Components } from '@/types/openapi';
-import type { StatusMessages, DictStatusMessageOptions, LoginMessageOptions, BaseMessageOptions } from '@/types/wrapper';
+import type {
+  BaseMessageOptions,
+  DictionaryMessageOptions,
+  LoginMessageOptions,
+  StatusMessages
+} from '@/types/wrapper';
 import i18n from '../main';
 
 /**
@@ -15,12 +20,12 @@ function getI18n() {
  * List of messages associated with a status code.
  * Triggered when the data dictionary is created.
  */
-const onCreateMessages: StatusMessages<DictStatusMessageOptions> = {
+const onCreateMessages: StatusMessages<DictionaryMessageOptions> = {
   OK: () => getI18n()('actions.create.success'),
   BAD_REQUEST: () => `${getI18n()('actions.create.error')}\n${getI18n()('actions.formatError')}`,
-  CONFLICT: ({ dictionaryName }: DictStatusMessageOptions = {}) =>
+  CONFLICT: ({ dictionaryName }: DictionaryMessageOptions = {}) =>
     `${getI18n()('actions.create.error')}\n${getI18n()('actions.alreadyExistsByName', { item: getI18n()('dictionary.title'), name: dictionaryName })}`,
-  DEFAULT: ({ message }: DictStatusMessageOptions = {}) =>
+  DEFAULT: ({ message }: DictionaryMessageOptions = {}) =>
     `${getI18n()('actions.create.error')}\n${message}`
 };
 
@@ -28,14 +33,14 @@ const onCreateMessages: StatusMessages<DictStatusMessageOptions> = {
  * List of messages associated with a status code.
  * Triggered when the data dictionary is updated.
  */
-const onUpdateMessages: StatusMessages<DictStatusMessageOptions> = {
+const onUpdateMessages: StatusMessages<DictionaryMessageOptions> = {
   OK: () => getI18n()('actions.update.success'),
-  BAD_REQUEST: () => `${getI18n()('actions.update.error')}\n${t('actions.formatError')}`,
-  NOT_FOUND: ({ dictionaryId }: DictStatusMessageOptions = {}) =>
+  BAD_REQUEST: () => `${getI18n()('actions.update.error')}\n${getI18n()('actions.formatError')}`,
+  NOT_FOUND: ({ dictionaryId }: DictionaryMessageOptions = {}) =>
     `${getI18n()('actions.update.error')}\n${getI18n()('actions.notFoundById', { item: getI18n()('dictionary.title'), id: dictionaryId })}`,
-  CONFLICT: ({ dictionaryName }: DictStatusMessageOptions = {}) =>
+  CONFLICT: ({ dictionaryName }: DictionaryMessageOptions = {}) =>
     `${getI18n()('actions.update.error')}\n${getI18n()('actions.alreadyExistsByName', { item: getI18n()('dictionary.title'), name: dictionaryName })}`,
-  DEFAULT: ({ message }: DictStatusMessageOptions = {}) =>
+  DEFAULT: ({ message }: DictionaryMessageOptions = {}) =>
     `${getI18n()('actions.update.error')}\n${message}`
 };
 
@@ -43,21 +48,22 @@ const onUpdateMessages: StatusMessages<DictStatusMessageOptions> = {
  * List of messages associated with a status code.
  * Triggered when one or more data dictionaries are retrieved.
  */
-const onRetrieveMessages: StatusMessages<DictStatusMessageOptions> = {
-  NOT_FOUND: ({ dictionaryId }: DictStatusMessageOptions = {}) =>
+const onRetrieveMessages: StatusMessages<DictionaryMessageOptions> = {
+  NOT_FOUND: ({ dictionaryId }: DictionaryMessageOptions = {}) =>
     `${getI18n()('general.list.error')}\n${getI18n()('actions.notFoundById', { item: getI18n()('dictionary.title'), id: dictionaryId })}`,
-  DEFAULT: ({ message }: DictStatusMessageOptions = {}) => `${getI18n()('general.list.error')}\n${message}`
+  DEFAULT: ({ message }: DictionaryMessageOptions = {}) =>
+    `${getI18n()('general.list.error')}\n${message}`
 };
 
 /**
  * List of messages associated with a status code.
  * Triggered when the data dictionary is deleted.
  */
-const onDeleteMessages: StatusMessages<DictStatusMessageOptions> = {
+const onDeleteMessages: StatusMessages<DictionaryMessageOptions> = {
   OK: () => getI18n()('actions.delete.success'),
-  NOT_FOUND: ({ dictionaryId }: DictStatusMessageOptions = {}) =>
+  NOT_FOUND: ({ dictionaryId }: DictionaryMessageOptions = {}) =>
     `${getI18n()('actions.delete.error')}\n${getI18n()('actions.notFoundById', { item: getI18n()('dictionary.title'), id: dictionaryId })}`,
-  DEFAULT: ({ message }: DictStatusMessageOptions = {}) =>
+  DEFAULT: ({ message }: DictionaryMessageOptions = {}) =>
     `${getI18n()('actions.delete.error')}\n${message}`
 };
 
@@ -66,8 +72,9 @@ const onDeleteMessages: StatusMessages<DictStatusMessageOptions> = {
  * Triggered when the user logs in.
  */
 const onLoginMessages: StatusMessages<LoginMessageOptions> = {
-  OK: ({ username }:  LoginMessageOptions = {}) => getI18n()('login.success', { name: username }),
-  NOT_FOUND: ({ username }:  LoginMessageOptions = {}) => getI18n()('actions.notFoundByName', { item: getI18n()('text.User'), name: username }),
+  OK: ({ username }: LoginMessageOptions = {}) => getI18n()('login.success', { name: username }),
+  NOT_FOUND: ({ username }: LoginMessageOptions = {}) =>
+    getI18n()('actions.notFoundByName', { item: getI18n()('text.User'), name: username }),
   BAD_CREDENTIAL: () => getI18n()('login.badCredential'),
   DEFAULT: ({ message }: LoginMessageOptions = {}) =>
     `${getI18n()('text.genericError')}:\n${message}`
@@ -81,7 +88,7 @@ const onLoginMessages: StatusMessages<LoginMessageOptions> = {
  * @param status - (Optional) The response status code.
  * @param options - (Optional) An object containing options for message generation.
  */
-const getStatusMex = <TOptions extends BaseMessageOptions> (
+const getStatusMex = <TOptions extends BaseMessageOptions>(
   statusMessages: StatusMessages<TOptions>,
   status?: Components.Schemas.ResponseStatusEnum,
   options?: TOptions
@@ -95,7 +102,7 @@ const getStatusMex = <TOptions extends BaseMessageOptions> (
 /**
  * Define a mapping of message types to their corresponding message handlers.
  */
-const messagesMap = {
+const messagesCrudMap = {
   create: onCreateMessages,
   read: onRetrieveMessages,
   update: onUpdateMessages,
@@ -108,7 +115,7 @@ const messagesMap = {
 export function useMessages() {
   return {
     getMessages: (type: 'create' | 'read' | 'update' | 'delete') =>
-      messagesMap[type] || messagesMap['create'],
+      messagesCrudMap[type] || messagesCrudMap['create'],
     onLoginMessages,
     getStatusMex
   };

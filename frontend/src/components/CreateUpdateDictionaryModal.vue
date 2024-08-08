@@ -139,6 +139,28 @@ function createDictionary() {
 }
 
 /**
+ * Handles the response of an update operation.
+ * @function handleUpdateResponse
+ * @param messageHeader - The header to be displayed in the message.
+ * @param response - The response object returned from the update operation.
+ */
+function handleUpdateResponse(messageHeader: string, response: any) {
+  if (response.data?.status == 'OK') {
+    messageSuccess(t(messageHeader), t('actions.update.success'));
+    closeDialog(true);
+  } else {
+    messageError(
+      t(messageHeader),
+      getStatusMex(onUpdateMessages, response.data?.status, {
+        message: response.data?.message,
+        dictionaryId: dictionaryId.value,
+        dictionaryName: dictionaryName.value
+      })
+    );
+  }
+}
+
+/**
  * Sends a request to update the metadata of an existing dictionary.
  * @function updateDictionaryMetadata
  * @description This function updates the dictionary's name and description without changing its file.
@@ -152,19 +174,7 @@ function updateDictionaryMetadata() {
       description: dictionaryDescription.value
     })
     .then((response) => {
-      if (response.data?.status == 'OK') {
-        messageSuccess(t('dictionary.title'), t('actions.update.success'));
-        closeDialog(true);
-      } else {
-        messageError(
-          t('dictionary.title'),
-          getStatusMex(onUpdateMessages, response.data?.status, {
-            message: response.data?.message,
-            dictionaryId: dictionaryId.value,
-            dictionaryName: dictionaryName.value
-          })
-        );
-      }
+      handleUpdateResponse('dictionary.title', response);
     })
     .catch((error) => {
       messageError(t('dictionary.title'), `${t('actions.update.error')}\n${error.message}`);
@@ -194,19 +204,7 @@ function updateDictionaryFile() {
       }
     )
     .then((response) => {
-      if (response.data?.status == 'OK') {
-        messageSuccess(t('dictionary.file.title'), t('actions.update.success'));
-        closeDialog(true);
-      } else {
-        messageError(
-          t('dictionary.file.title'),
-          getStatusMex(onUpdateMessages, response.data?.status, {
-            message: response.data?.message,
-            dictionaryId: dictionaryId.value,
-            dictionaryName: dictionaryName.value
-          })
-        );
-      }
+      handleUpdateResponse('dictionary.file.title', response);
     })
     .catch((error) => {
       messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${error.message}`);

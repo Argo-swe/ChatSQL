@@ -5,9 +5,9 @@ import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import { useLayout } from '@/composables/layout';
+import { useMessages } from '@/composables/status-messages';
 import { getApiClient } from '@/services/api-client.service';
 import { messageService } from '@/services/message.service';
-import { useMessages } from '@/composables/status-messages';
 
 const { t } = useI18n();
 const client = getApiClient();
@@ -50,24 +50,27 @@ const handleSuccessfulLogin = (accessToken: string) => {
  * @function submitForm
  */
 async function submitForm() {
-  client.login(undefined, { username: username.value ?? '', password: password.value ?? '' }).then(
-    (response) => {
+  client
+    .login(undefined, { username: username.value ?? '', password: password.value ?? '' })
+    .then((response) => {
       if (response.data.status === 'OK') {
         const accessToken = response.data.data?.access_token || '';
         messageSuccess(
-              t('Login'),
-              getStatusMex(onLoginMessages, response.data.status, {
-                message: response.data.message, username: username.value
-              })
-            );
+          t('Login'),
+          getStatusMex(onLoginMessages, response.data.status, {
+            message: response.data.message,
+            username: username.value
+          })
+        );
         handleSuccessfulLogin(accessToken);
       } else {
         messageError(
-              t('Login'),
-              getStatusMex(onLoginMessages, response.data.status, {
-                message: response.data.message, username: username.value
-              })
-            );
+          t('Login'),
+          getStatusMex(onLoginMessages, response.data.status, {
+            message: response.data.message,
+            username: username.value
+          })
+        );
       }
     })
     .catch((error) => {

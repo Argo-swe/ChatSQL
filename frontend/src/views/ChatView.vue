@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // External libraries
+import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 
 // Internal dependencies
 import { getApiClient } from '@/services/api-client.service';
@@ -87,13 +87,17 @@ onMounted(() => {
 function retrieveDictionaries() {
   return new Promise((resolve, reject) => {
     dictionaries.value = [];
-    client.getAllDictionaries().then(
-      (response) => {
+    client
+      .getAllDictionaries()
+      .then((response) => {
         switch (response.data?.status) {
           case 'OK': {
             dictionaries.value = response.data.data;
             let localStorageDictionaryId = localStorage.getItem('chat-dictionary-id');
-            if (localStorageDictionaryId && response.data.data.findIndex((d: { id: number; }) => d?.id) != -1) {
+            if (
+              localStorageDictionaryId &&
+              response.data.data.findIndex((d: { id: number }) => d?.id) != -1
+            ) {
               selectedDictionary.value = parseInt(localStorageDictionaryId);
               resolve(true);
             }
@@ -108,15 +112,15 @@ function retrieveDictionaries() {
             reject(`${t('general.list.error')}\n${response.data?.message}`);
         }
       })
-    .catch((error) => {
-      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
+      .catch((error) => {
+        messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
         reject(`${t('general.list.error')}\n${error}`);
-    })
+      });
   });
 }
 
 // Display data dictionary preview
-function getDictionaryInfo() { 
+function getDictionaryInfo() {
   toggleDetails();
   if (!detailsVisible.value) {
     return;
@@ -178,25 +182,24 @@ function runRequest() {
       dbms: selectedDbms.value,
       lang: selectedLanguage.value
     })
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            addMessage(response.data.data!, false);
-            break;
-          case 'BAD_REQUEST':
-            messageError(
-              t('chat.prompt.title'),
-              `${t('actions.generate.error')}\n${t('actions.formatError')}`
-            );
-            break;
-          default:
-            messageError(
-              t('chat.prompt.title'),
-              `${t('actions.generate.error')}\n${response.data?.message}`
-            );
-        }
-      })
+    .then((response) => {
+      switch (response.data?.status) {
+        case 'OK':
+          addMessage(response.data.data!, false);
+          break;
+        case 'BAD_REQUEST':
+          messageError(
+            t('chat.prompt.title'),
+            `${t('actions.generate.error')}\n${t('actions.formatError')}`
+          );
+          break;
+        default:
+          messageError(
+            t('chat.prompt.title'),
+            `${t('actions.generate.error')}\n${response.data?.message}`
+          );
+      }
+    })
     .catch((error) => {
       messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`);
     })

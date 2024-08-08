@@ -7,55 +7,43 @@ import type { Components } from './openapi';
  */
 export type DictionaryPreview = Components.Schemas.DictionaryPreviewDto;
 
+/**
+ * Base options for configuring a message.
+ * @interface BaseMessageOptions
+ * @property {String} message - (Optional) An additional message to be appended.
+ */
 export interface BaseMessageOptions {
   message?: string | null;
 }
 
 /**
  * Interface representing options for dictionary status messages.
- * @interface DictStatusMessageOptions
- * @property {String} message - (Optional) An additional message to be appended.
+ * @interface DictionaryMessageOptions
  * @property {Number} dictionaryId - (Optional) The ID of the dictionary.
  * @property {String} dictionaryName - (Optional) The name of the dictionary.
  */
-export interface DictStatusMessageOptions extends BaseMessageOptions {
+export interface DictionaryMessageOptions extends BaseMessageOptions {
   dictionaryId?: number | null;
   dictionaryName?: string | null;
 }
 
 /**
- * Interface representing options for dictionary status messages.
- * @interface DictStatusMessageOptions
- * @property {String} message - (Optional) An additional message to be appended.
- * @property {Number} dictionaryId - (Optional) The ID of the dictionary.
- * @property {String} dictionaryName - (Optional) The name of the dictionary.
+ * Interface representing options for login status messages.
+ * @interface LoginMessageOptions
+ * @property {String} username - (Optional) The username of the user.
  */
 export interface LoginMessageOptions extends BaseMessageOptions {
- username?: string | null;
+  username?: string | null;
 }
 
 /**
- * Type representing a dictionary of login error messages.
+ * Type representing a dictionary of status messages.
  */
-/* export type LoginErrorMessages = {
-  [key in Components.Schemas.ResponseStatusEnum]?: (options?: BaseMessageOptions) => string;
-}; */
-
 export type StatusMessages<TOptions extends BaseMessageOptions> = {
   [key in Components.Schemas.ResponseStatusEnum]?: (options?: TOptions) => string;
 } & {
   DEFAULT: (options?: TOptions) => string;
 };
-
-
-/**
- * Type representing a map of dictionary management messages.
- */
-/* export type DictionaryMgmtMessages = {
-  [key in Components.Schemas.ResponseStatusEnum]?: (options?: DictStatusMessageOptions) => string;
-} & {
-  DEFAULT: (options?: DictStatusMessageOptions) => string;
-}; */
 
 /**
  * Interface representing a message object.
