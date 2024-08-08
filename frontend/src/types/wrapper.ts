@@ -11,8 +11,10 @@ export type DictionaryPreview = Components.Schemas.DictionaryPreviewDto;
  * @interface MessageWrapper
  * @property {string} message - The content of the message.
  * @property {boolean} isSent - A flag indicating whether the message has been sent or received by the user.
+ * @property {string} debug - The content of the debug.
  */
 export interface MessageWrapper {
   message: string;
   isSent: boolean;
+  debug?: string;
 }
