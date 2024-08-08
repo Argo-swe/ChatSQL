@@ -1,13 +1,10 @@
 <script setup lang="ts">
 // External libraries
-import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 
 // Internal dependencies
-import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
-import ChatMessage from '@/components/ChatMessage.vue';
-import DictPreview from '@/components/DictPreview.vue';
 import { getApiClient } from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
@@ -15,12 +12,57 @@ import UtilsService from '@/services/utils.service';
 import type { Components } from '@/types/openapi';
 import type { DictionaryPreview, MessageWrapper } from '@/types/wrapper';
 
-const client = getApiClient();
+// Child Components
+import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
+import ChatMessage from '@/components/ChatMessage.vue';
+import DictPreview from '@/components/DictPreview.vue';
+
 const { t } = useI18n();
+const client = getApiClient();
+const { messageError } = messageService();
+
+const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
+const selectedDbms = ref(localStorage.getItem('chat-dbms') || 'Mysql');
+const dbms = ref([
+  { name: 'Mysql', code: 'Mysql' },
+  { name: 'PostgreSQL', code: 'PostgreSQL' },
+  { name: 'MariaDB', code: 'MariaDB' },
+  { name: 'Microsoft SQL Server', code: 'Microsoft' },
+  { name: 'Oracle DB', code: 'Oracle' },
+  { name: 'SQLite', code: 'SQLite' }
+]);
+
+const selectedLanguage = ref(localStorage.getItem('chat-language') || 'english');
+const languages = ref(['english', 'italian', 'french', 'spanish', 'german']);
+
+const selectedDictionary = ref<null | number>(null);
+const dictionaries = ref<Components.Schemas.DictionaryDto[]>();
+const dictionaryPreview: Ref<DictionaryPreview> = ref<DictionaryPreview>({
+  databaseName: '',
+  databaseDescription: '',
+  tables: []
+});
 
 let loading = ref(false);
 let loadingDebug = ref(false);
+const request = ref('');
 let debugMessage = ref();
+
+let isLogged = ref(AuthService.isLogged());
+const active = ref(0);
+const items = ref([
+  { label: () => t('chat.title'), icon: 'pi pi-comments' },
+  { label: () => t('chat.debug.title'), icon: 'pi pi-receipt' }
+]);
+
+// Switch Hide/Show per il toggle button
+const checked = ref(false);
+
+// Variabile per controllare lo stato del container
+const hide = ref(false);
+
+// Variable to handle details visibility
+const detailsVisible = ref(false);
 
 onMounted(() => {
   retrieveDictionaries()
@@ -51,7 +93,7 @@ function retrieveDictionaries() {
           case 'OK': {
             dictionaries.value = response.data.data;
             let localStorageDictionaryId = localStorage.getItem('chat-dictionary-id');
-            if (localStorageDictionaryId && response.data.data.findIndex((d) => d?.id) != -1) {
+            if (localStorageDictionaryId && response.data.data.findIndex((d: { id: number; }) => d?.id) != -1) {
               selectedDictionary.value = parseInt(localStorageDictionaryId);
               resolve(true);
             }
@@ -65,17 +107,16 @@ function retrieveDictionaries() {
             );
             reject(`${t('general.list.error')}\n${response.data?.message}`);
         }
-      },
-      (error) => {
-        messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
+      })
+    .catch((error) => {
+      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
         reject(`${t('general.list.error')}\n${error}`);
-      }
-    );
+    })
   });
 }
 
 // Display data dictionary preview
-function getDictionaryInfo() {
+function getDictionaryInfo() { 
   toggleDetails();
   if (!detailsVisible.value) {
     return;
@@ -109,27 +150,6 @@ function getDictionaryInfo() {
     );
 }
 
-const selectedDbms = ref(localStorage.getItem('chat-dbms') || 'Mysql');
-const dbms = ref([
-  { name: 'Mysql', code: 'Mysql' },
-  { name: 'PostgreSQL', code: 'PostgreSQL' },
-  { name: 'MariaDB', code: 'MariaDB' },
-  { name: 'Microsoft SQL Server', code: 'Microsoft' },
-  { name: 'Oracle DB', code: 'Oracle' },
-  { name: 'SQLite', code: 'SQLite' }
-]);
-
-const selectedLanguage = ref(localStorage.getItem('chat-language') || 'english');
-const languages = ref(['english', 'italian', 'french', 'spanish', 'german']);
-
-const selectedDictionary = ref<null | number>(null);
-const dictionaries = ref<Components.Schemas.DictionaryDto[]>();
-const dictionaryPreview: Ref<DictionaryPreview> = ref<DictionaryPreview>({
-  databaseName: '',
-  databaseDescription: '',
-  tables: []
-});
-
 const onLanguageChange = (value: string) => {
   localStorage.setItem('chat-language', value);
 };
@@ -140,14 +160,9 @@ const onDictionaryChange = (value: number) => {
   localStorage.setItem('chat-dictionary-id', value.toString());
 };
 
-const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
-
 const clearMessages = () => {
   messages.value = [];
 };
-
-const request = ref('');
-const { messageError } = messageService();
 
 function runRequest() {
   // Hide the data dictionary preview (if visible)
@@ -155,7 +170,6 @@ function runRequest() {
     toggleDetails();
   }
   addMessage(request.value.trim(), true);
-  console.log(request.value);
   loading.value = true;
   client
     .generatePrompt({
@@ -182,13 +196,13 @@ function runRequest() {
               `${t('actions.generate.error')}\n${response.data?.message}`
             );
         }
-        loading.value = false;
-      },
-      (error) => {
-        loading.value = false;
-        messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`);
-      }
-    );
+      })
+    .catch((error) => {
+      messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
 function loadDebug() {
@@ -236,22 +250,6 @@ function onTabChange(event: TabMenuChangeEvent) {
     loadDebug();
   }
 }
-
-let isLogged = ref(AuthService.isLogged());
-const active = ref(0);
-const items = ref([
-  { label: () => t('chat.title'), icon: 'pi pi-comments' },
-  { label: () => t('chat.debug.title'), icon: 'pi pi-receipt' }
-]);
-
-// Switch Hide/Show per il toggle button
-const checked = ref(false);
-
-// Variabile per controllare lo stato del container
-const hide = ref(false);
-
-// Variable to handle details visibility
-const detailsVisible = ref(false);
 
 const toggleSelectView = () => {
   hide.value = !hide.value;

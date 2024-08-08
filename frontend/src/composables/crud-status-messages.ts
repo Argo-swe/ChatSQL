@@ -1,5 +1,5 @@
 import type { Components } from '@/types/openapi';
-import type { DictStatusMessageOptions, DictionaryMgmtMessages } from '@/types/wrapper';
+import type { StatusMessages, DictStatusMessageOptions, BaseMessageOptions } from '@/types/wrapper';
 import i18n from '../main';
 
 // Required for using VueI18n outside of a component
@@ -9,7 +9,7 @@ const { t } = i18n.global;
  * List of messages associated with a status code.
  * Triggered when the data dictionary is created.
  */
-const onCreateMessages: DictionaryMgmtMessages = {
+const onCreateMessages: StatusMessages<DictStatusMessageOptions> = {
   OK: () => t('actions.create.success'),
   BAD_REQUEST: () => `${t('actions.create.error')}\n${t('actions.formatError')}`,
   CONFLICT: ({ dictionaryName }: DictStatusMessageOptions = {}) =>
@@ -22,7 +22,7 @@ const onCreateMessages: DictionaryMgmtMessages = {
  * List of messages associated with a status code.
  * Triggered when the data dictionary is updated.
  */
-const onUpdateMessages: DictionaryMgmtMessages = {
+const onUpdateMessages: StatusMessages<DictStatusMessageOptions> = {
   OK: () => t('actions.update.success'),
   BAD_REQUEST: () => `${t('actions.update.error')}\n${t('actions.formatError')}`,
   NOT_FOUND: ({ dictionaryId }: DictStatusMessageOptions = {}) =>
@@ -37,7 +37,7 @@ const onUpdateMessages: DictionaryMgmtMessages = {
  * List of messages associated with a status code.
  * Triggered when one or more data dictionaries are retrieved.
  */
-const onRetrieveMessages: DictionaryMgmtMessages = {
+const onRetrieveMessages: StatusMessages<DictStatusMessageOptions> = {
   NOT_FOUND: ({ dictionaryId }: DictStatusMessageOptions = {}) =>
     `${t('general.list.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`,
   DEFAULT: ({ message }: DictStatusMessageOptions = {}) => `${t('general.list.error')}\n${message}`
@@ -47,7 +47,7 @@ const onRetrieveMessages: DictionaryMgmtMessages = {
  * List of messages associated with a status code.
  * Triggered when the data dictionary is deleted.
  */
-const onDeleteMessages: DictionaryMgmtMessages = {
+const onDeleteMessages: StatusMessages<DictStatusMessageOptions> = {
   OK: () => t('actions.delete.success'),
   NOT_FOUND: ({ dictionaryId }: DictStatusMessageOptions = {}) =>
     `${t('actions.delete.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`,
@@ -63,10 +63,10 @@ const onDeleteMessages: DictionaryMgmtMessages = {
  * @param status - (Optional) The response status code.
  * @param options - (Optional) An object containing options for message generation.
  */
-const getStatusMex = (
-  statusMessages: DictionaryMgmtMessages,
+const getStatusMex = <TOptions extends BaseMessageOptions> (
+  statusMessages: StatusMessages<TOptions>,
   status?: Components.Schemas.ResponseStatusEnum,
-  options?: DictStatusMessageOptions
+  options?: TOptions
 ) => {
   const getMessage =
     status && statusMessages[status] ? statusMessages[status] : statusMessages['DEFAULT'];
