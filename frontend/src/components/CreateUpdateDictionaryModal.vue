@@ -6,7 +6,7 @@ import { inject, onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
-import { useMessages } from '@/composables/crud-status-messages';
+import { useMessages } from '@/composables/status-messages';
 import { getApiClient } from '@/services/api-client.service';
 import { messageService } from '@/services/message.service';
 

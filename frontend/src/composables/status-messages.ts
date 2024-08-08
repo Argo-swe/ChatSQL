@@ -1,21 +1,27 @@
 import type { Components } from '@/types/openapi';
-import type { StatusMessages, DictStatusMessageOptions, BaseMessageOptions } from '@/types/wrapper';
+import type { StatusMessages, DictStatusMessageOptions, LoginMessageOptions, BaseMessageOptions } from '@/types/wrapper';
 import i18n from '../main';
 
-// Required for using VueI18n outside of a component
-const { t } = i18n.global;
+/**
+ * Provides access to the `t` function from VueI18n for translating messages.
+ * @function getI18n
+ * @description Required for using VueI18n outside of a component.
+ */
+function getI18n() {
+  return i18n.global.t;
+}
 
 /**
  * List of messages associated with a status code.
  * Triggered when the data dictionary is created.
  */
 const onCreateMessages: StatusMessages<DictStatusMessageOptions> = {
-  OK: () => t('actions.create.success'),
-  BAD_REQUEST: () => `${t('actions.create.error')}\n${t('actions.formatError')}`,
+  OK: () => getI18n()('actions.create.success'),
+  BAD_REQUEST: () => `${getI18n()('actions.create.error')}\n${getI18n()('actions.formatError')}`,
   CONFLICT: ({ dictionaryName }: DictStatusMessageOptions = {}) =>
-    `${t('actions.create.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName })}`,
+    `${getI18n()('actions.create.error')}\n${getI18n()('actions.alreadyExistsByName', { item: getI18n()('dictionary.title'), name: dictionaryName })}`,
   DEFAULT: ({ message }: DictStatusMessageOptions = {}) =>
-    `${t('actions.create.error')}\n${message}`
+    `${getI18n()('actions.create.error')}\n${message}`
 };
 
 /**
@@ -23,14 +29,14 @@ const onCreateMessages: StatusMessages<DictStatusMessageOptions> = {
  * Triggered when the data dictionary is updated.
  */
 const onUpdateMessages: StatusMessages<DictStatusMessageOptions> = {
-  OK: () => t('actions.update.success'),
-  BAD_REQUEST: () => `${t('actions.update.error')}\n${t('actions.formatError')}`,
+  OK: () => getI18n()('actions.update.success'),
+  BAD_REQUEST: () => `${getI18n()('actions.update.error')}\n${t('actions.formatError')}`,
   NOT_FOUND: ({ dictionaryId }: DictStatusMessageOptions = {}) =>
-    `${t('actions.update.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`,
+    `${getI18n()('actions.update.error')}\n${getI18n()('actions.notFoundById', { item: getI18n()('dictionary.title'), id: dictionaryId })}`,
   CONFLICT: ({ dictionaryName }: DictStatusMessageOptions = {}) =>
-    `${t('actions.update.error')}\n${t('actions.alreadyExistsByName', { item: t('dictionary.title'), name: dictionaryName })}`,
+    `${getI18n()('actions.update.error')}\n${getI18n()('actions.alreadyExistsByName', { item: getI18n()('dictionary.title'), name: dictionaryName })}`,
   DEFAULT: ({ message }: DictStatusMessageOptions = {}) =>
-    `${t('actions.update.error')}\n${message}`
+    `${getI18n()('actions.update.error')}\n${message}`
 };
 
 /**
@@ -39,8 +45,8 @@ const onUpdateMessages: StatusMessages<DictStatusMessageOptions> = {
  */
 const onRetrieveMessages: StatusMessages<DictStatusMessageOptions> = {
   NOT_FOUND: ({ dictionaryId }: DictStatusMessageOptions = {}) =>
-    `${t('general.list.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`,
-  DEFAULT: ({ message }: DictStatusMessageOptions = {}) => `${t('general.list.error')}\n${message}`
+    `${getI18n()('general.list.error')}\n${getI18n()('actions.notFoundById', { item: getI18n()('dictionary.title'), id: dictionaryId })}`,
+  DEFAULT: ({ message }: DictStatusMessageOptions = {}) => `${getI18n()('general.list.error')}\n${message}`
 };
 
 /**
@@ -48,11 +54,23 @@ const onRetrieveMessages: StatusMessages<DictStatusMessageOptions> = {
  * Triggered when the data dictionary is deleted.
  */
 const onDeleteMessages: StatusMessages<DictStatusMessageOptions> = {
-  OK: () => t('actions.delete.success'),
+  OK: () => getI18n()('actions.delete.success'),
   NOT_FOUND: ({ dictionaryId }: DictStatusMessageOptions = {}) =>
-    `${t('actions.delete.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: dictionaryId })}`,
+    `${getI18n()('actions.delete.error')}\n${getI18n()('actions.notFoundById', { item: getI18n()('dictionary.title'), id: dictionaryId })}`,
   DEFAULT: ({ message }: DictStatusMessageOptions = {}) =>
-    `${t('actions.delete.error')}\n${message}`
+    `${getI18n()('actions.delete.error')}\n${message}`
+};
+
+/**
+ * List of messages associated with a status code.
+ * Triggered when the data dictionary is deleted.
+ */
+const onLoginMessages: StatusMessages<LoginMessageOptions> = {
+  OK: ({ username }:  LoginMessageOptions = {}) => getI18n()('login.success', { name: username }),
+  NOT_FOUND: ({ username }:  LoginMessageOptions = {}) => getI18n()('actions.notFoundByName', { item: getI18n()('text.User'), name: username }),
+  BAD_CREDENTIAL: () => getI18n()('login.badCredential'),
+  DEFAULT: ({ message }: LoginMessageOptions = {}) =>
+    `${getI18n()('text.genericError')}:\n${message}`
 };
 
 /**
@@ -91,6 +109,7 @@ export function useMessages() {
   return {
     getMessages: (type: 'create' | 'read' | 'update' | 'delete') =>
       messagesMap[type] || messagesMap['create'],
+    onLoginMessages,
     getStatusMex
   };
 }

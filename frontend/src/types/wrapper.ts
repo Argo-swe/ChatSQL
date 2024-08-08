@@ -24,6 +24,17 @@ export interface DictStatusMessageOptions extends BaseMessageOptions {
 }
 
 /**
+ * Interface representing options for dictionary status messages.
+ * @interface DictStatusMessageOptions
+ * @property {String} message - (Optional) An additional message to be appended.
+ * @property {Number} dictionaryId - (Optional) The ID of the dictionary.
+ * @property {String} dictionaryName - (Optional) The name of the dictionary.
+ */
+export interface LoginMessageOptions extends BaseMessageOptions {
+ username?: string | null;
+}
+
+/**
  * Type representing a dictionary of login error messages.
  */
 /* export type LoginErrorMessages = {
