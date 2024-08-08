@@ -63,7 +63,7 @@ const onDeleteMessages: StatusMessages<DictStatusMessageOptions> = {
 
 /**
  * List of messages associated with a status code.
- * Triggered when the data dictionary is deleted.
+ * Triggered when the user logs in.
  */
 const onLoginMessages: StatusMessages<LoginMessageOptions> = {
   OK: ({ username }:  LoginMessageOptions = {}) => getI18n()('login.success', { name: username }),
