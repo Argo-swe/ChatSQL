@@ -23,6 +23,10 @@
     }
   },
   "chat": {
+    "actions": {
+      "copy": "Copy to clipboard",
+      "open_debug": "Open debug details"
+    },
     "debug": {
       "file": {
         "download": "Download file (.txt)"

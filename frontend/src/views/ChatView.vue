@@ -156,6 +156,14 @@ function runRequest() {
   }
   addMessage(request.value.trim(), true);
   console.log(request.value);
+  if (isLogged.value) {
+    generatePromptWithDebug();
+  } else {
+    generatePrompt();
+  }
+}
+
+function generatePrompt() {
   loading.value = true;
   client
     .generatePrompt({
@@ -191,38 +199,75 @@ function runRequest() {
     );
 }
 
-function loadDebug() {
-  loadingDebug.value = true;
-  client.generatePromptDebug().then(
-    (response) => {
-      switch (response.data?.status) {
-        case 'OK':
-          debugMessage.value = response.data.data;
-          loadingDebug.value = false;
-          break;
-        case 'NOT_FOUND':
-          console.log(response.data.message);
-          break;
-        default:
-          messageError(
-            t('chat.debug.title'),
-            `${t('actions.generate.error')}\n${response.data?.message}`
-          );
+function generatePromptWithDebug() {
+  loading.value = true;
+  client
+    .generatePromptWithDebug({
+      dictionaryId: selectedDictionary.value!,
+      query: request.value.trim(),
+      dbms: selectedDbms.value,
+      lang: selectedLanguage.value
+    })
+    .then(
+      (response) => {
+        switch (response.data?.status) {
+          case 'OK':
+            addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
+            break;
+          case 'BAD_REQUEST':
+            messageError(
+              t('chat.prompt.title'),
+              `${t('actions.generate.error')}\n${t('actions.formatError')}`
+            );
+            break;
+          default:
+            messageError(
+              t('chat.prompt.title'),
+              `${t('actions.generate.error')}\n${response.data?.message}`
+            );
+        }
+        loading.value = false;
+      },
+      (error) => {
+        loading.value = false;
+        messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`);
       }
-    },
-    (error) => {
-      messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error}`);
-    }
-  );
+    );
 }
 
-function addMessage(message: string, isSent: boolean) {
+// function loadDebug() {
+//   loadingDebug.value = true;
+//   client.generatePromptDebug().then(
+//     (response) => {
+//       switch (response.data?.status) {
+//         case 'OK':
+//           debugMessage.value = response.data.data;
+//           loadingDebug.value = false;
+//           break;
+//         case 'NOT_FOUND':
+//           console.log(response.data.message);
+//           break;
+//         default:
+//           messageError(
+//             t('chat.debug.title'),
+//             `${t('actions.generate.error')}\n${response.data?.message}`
+//           );
+//       }
+//     },
+//     (error) => {
+//       messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error}`);
+//     }
+//   );
+// }
+
+function addMessage(message: string, isSent: boolean, debug?: string) {
   if (!messages.value) {
     messages.value = [];
   }
 
   messages.value.push({
     message,
+    debug,
     isSent
   });
 }
@@ -233,7 +278,7 @@ function onTabChange(event: TabMenuChangeEvent) {
     debugMessage.value = null;
   } else {
     // load log
-    loadDebug();
+    //loadDebug();
   }
 }
 
@@ -370,6 +415,7 @@ function onClickDownloadFile() {
         :key="index"
         :is-sent="msg.isSent"
         :message="msg.message"
+        :debug="msg.debug"
       ></ChatMessage>
     </div>
 
