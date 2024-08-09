@@ -50,10 +50,14 @@ export type StatusMessages<TOptions extends BaseMessageOptions> = {
  * @interface MessageWrapper
  * @property {String} message - The content of the message.
  * @property {Boolean} isSent - A flag indicating whether the message has been sent or received by the user.
+ * @property {String} debug - The content of the debug.
+ * @property {Boolean} fullWidth - A flag indicating
  */
 export interface MessageWrapper {
   message: string;
   isSent: boolean;
+  debug?: string;
+  fullWidth?: boolean;
 }
 
 /**

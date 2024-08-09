@@ -98,7 +98,7 @@ function onTabChange(event: TabMenuChangeEvent) {
   if (event.index != 1) {
     debugMessage.value = null;
   } else {
-    loadDebug();
+    //loadDebug();
   }
 }
 
@@ -159,13 +159,14 @@ const toggleDetails = () => {
  * @param message - The content of the message.
  * @param isSent - A flag indicating whether the message has been sent or received by the user.
  */
-function addMessage(message: string, isSent: boolean) {
+function addMessage(message: string, isSent: boolean, debug?: string) {
   if (!messages.value) {
     messages.value = [];
   }
 
   messages.value.push({
     message,
+    debug,
     isSent
   });
 }
@@ -232,7 +233,6 @@ function getDictionaryInfo() {
     .then((response) => {
       if (response.data?.status == 'OK') {
         Object.assign(dictionaryPreview.value, response.data?.data);
-        toggleDetails();
       } else {
         messageError(
           t('dictionary.title'),
@@ -250,23 +250,27 @@ function getDictionaryInfo() {
 
 /**
  * Prepares the prompt generation request.
- * @function setUpRequest
+ * @function runRequest
  */
-function setUpRequest() {
+function runRequest() {
   // Hide the data dictionary preview (if visible)
   if (detailsVisible.value) {
     toggleDetails();
   }
   addMessage(request.value.trim(), true);
-  loading.value = true;
+  if (isLogged.value) {
+    generatePromptWithDebug();
+  } else {
+    generatePrompt();
+  }
 }
 
 /**
  * Executes the prompt generation request.
- * @function runRequest
+ * @function generatePrompt
  */
-function runRequest() {
-  setUpRequest();
+function generatePrompt() {
+  loading.value = true;
   client
     .generatePrompt({
       dictionaryId: selectedDictionary.value!,
@@ -295,18 +299,23 @@ function runRequest() {
 }
 
 /**
- * Loads debug information about the prompt generation process.
+ * Executes the prompt generation request and loads debug information about the generation process.
  */
-function loadDebug() {
-  loadingDebug.value = true;
+function generatePromptWithDebug() {
+  loading.value = true;
   client
-    .generatePromptDebug()
+    .generatePromptWithDebug({
+      dictionaryId: selectedDictionary.value!,
+      query: request.value.trim(),
+      dbms: selectedDbms.value,
+      lang: selectedLanguage.value
+    })
     .then((response) => {
       if (response.data?.status == 'OK') {
-        debugMessage.value = response.data.data;
+        addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
       } else {
         messageError(
-          t('chat.debug.title'),
+          t('chat.prompt.title'),
           getStatusMex(onGenerateMessages, response.data?.status, {
             message: response.data?.message
           })
@@ -314,10 +323,10 @@ function loadDebug() {
       }
     })
     .catch((error) => {
-      messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error.message}`);
+      messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
     })
     .finally(() => {
-      loadingDebug.value = false;
+      loading.value = false;
     });
 }
 
@@ -424,6 +433,7 @@ function onClickDownloadFile() {
         :key="index"
         :is-sent="msg.isSent"
         :message="msg.message"
+        :debug="msg.debug"
       ></ChatMessage>
     </div>
 

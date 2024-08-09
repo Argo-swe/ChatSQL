@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // External libraries
+import { useDialog } from 'primevue/usedialog';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -7,15 +8,38 @@ import { useI18n } from 'vue-i18n';
 import { messageService } from '@/services/message.service';
 import { type MessageWrapper } from '../types/wrapper';
 
+// Child Components
+import StringDataModal from './StringDataModal.vue';
+
 /**
  * Props for ChatMessage component.
  */
 const props = defineProps<MessageWrapper>();
 
 const { t } = useI18n();
-const { message, isSent } = props;
+const dialog = useDialog();
 const { messageSuccess, messageError } = messageService();
 const isCopying = ref(false);
+const { message, debug, isSent, fullWidth } = props;
+
+const openDebugMessage = () => {
+  dialog.open(StringDataModal, {
+    data: {
+      stringData: props.debug
+    },
+    props: {
+      header: t('chat.debug.title'),
+      style: {
+        width: '70vw'
+      },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      modal: true
+    }
+  });
+};
 
 /**
  * Copy the provided text to the clipboard.
@@ -54,21 +78,42 @@ const copyToClipboard = (event: any) => {
 </script>
 
 <template>
-  <div class="message md:w-10 mx-1 my-2" :class="isSent ? 'sent' : 'received'">
+  <div
+    class="message mx-1 my-2"
+    :class="{
+      sent: isSent,
+      received: !isSent,
+      'md:w-10': !fullWidth
+    }"
+  >
     <div class="flex gap-3" :class="isSent ? 'flex-row-reverse' : ''">
       <div class="flex-shrink-0">
         <PgAvatar v-if="isSent" icon="pi pi-user" size="large" shape="circle" />
         <PgAvatar v-else icon="pi pi-database" class="" size="large" shape="circle" />
       </div>
       <div class="w-full border-round-lg messageBox">
-        <PgButton
-          v-if="!isSent"
-          :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'"
-          class="copy-to-clipboard"
-          severity="contrast"
-          :aria-label="t('general.clipboard.action')"
-          @click="copyToClipboard"
-        />
+        <div class="message-action-area">
+          <PgButton
+            v-if="!isSent"
+            :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'"
+            class="m-1"
+            outlined
+            severity="contrast"
+            :title="t('chat.actions.copy')"
+            :aria-label="t('chat.actions.copy')"
+            @click="copyToClipboard"
+          />
+          <PgButton
+            v-if="!isSent && debug"
+            icon="pi pi-receipt"
+            outlined
+            class="m-1"
+            severity="contrast"
+            :title="t('chat.actions.open_debug')"
+            :aria-label="t('chat.actions.open_debug')"
+            @click="openDebugMessage"
+          />
+        </div>
         <p>{{ message }}</p>
       </div>
     </div>
@@ -90,7 +135,7 @@ const copyToClipboard = (event: any) => {
   white-space: pre-wrap;
 }
 
-.copy-to-clipboard {
+.message-action-area {
   position: absolute;
   top: 0.1rem;
   right: 0.1rem;
