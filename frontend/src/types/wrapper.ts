@@ -8,19 +8,41 @@ import type { Components } from './openapi';
 export type DictionaryPreview = Components.Schemas.DictionaryPreviewDto;
 
 /**
- * Type representing a dictionary of login error messages.
+ * Base options for configuring a message.
+ * @interface BaseMessageOptions
+ * @property {String} message - (Optional) An additional message to be appended.
  */
-export type LoginErrorMessages = {
-  [key in Components.Schemas.ResponseStatusEnum]?: () => string;
-};
+export interface BaseMessageOptions {
+  message?: string | null;
+}
 
 /**
- * Type representing a map of dictionary management messages.
+ * Interface representing options for dictionary status messages.
+ * @interface DictionaryMessageOptions
+ * @property {Number} dictionaryId - (Optional) The ID of the dictionary.
+ * @property {String} dictionaryName - (Optional) The name of the dictionary.
  */
-export type DictionaryMgmtMessages = {
-  [key in Components.Schemas.ResponseStatusEnum]?: () => string;
+export interface DictionaryMessageOptions extends BaseMessageOptions {
+  dictionaryId?: number | null;
+  dictionaryName?: string | null;
+}
+
+/**
+ * Interface representing options for login status messages.
+ * @interface LoginMessageOptions
+ * @property {String} username - (Optional) The username of the user.
+ */
+export interface LoginMessageOptions extends BaseMessageOptions {
+  username?: string | null;
+}
+
+/**
+ * Type representing a dictionary of status messages.
+ */
+export type StatusMessages<TOptions extends BaseMessageOptions> = {
+  [key in Components.Schemas.ResponseStatusEnum]?: (options?: TOptions) => string;
 } & {
-  DEFAULT: (message?: string | null) => string;
+  DEFAULT: (options?: TOptions) => string;
 };
 
 /**
@@ -73,4 +95,44 @@ export type Menu = MenuWrapper[];
  */
 export interface CSSClasses {
   [key: string]: boolean;
+}
+
+// Define an enum for DBMS codes
+export enum DbmsCode {
+  Mysql = 'Mysql',
+  PostgreSQL = 'PostgreSQL',
+  MariaDB = 'MariaDB',
+  Microsoft = 'Microsoft',
+  Oracle = 'Oracle',
+  SQLite = 'SQLite'
+}
+
+// Define an enum for DBMS names
+export enum DbmsName {
+  Mysql = 'Mysql',
+  PostgreSQL = 'PostgreSQL',
+  MariaDB = 'MariaDB',
+  Microsoft = 'Microsoft SQL Server',
+  Oracle = 'Oracle DB',
+  SQLite = 'SQLite'
+}
+
+/**
+ * Interface representing a Database Management System (DBMS) option.
+ * @interface DbmsOption
+ * @property {DbmsName} name - The human-readable name of the DBMS.
+ * @property {DbmsCode} code - The unique code for the DBMS.
+ */
+export interface DbmsOption {
+  name: DbmsName;
+  code: DbmsCode;
+}
+
+// Define an enum for languages
+export enum Languages {
+  en = 'english',
+  it = 'italian',
+  fr = 'french',
+  es = 'spanish',
+  ge = 'german'
 }

@@ -6,8 +6,7 @@ import { inject, onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
-import { useSharedState } from '@/composables/CreateUpdateDictionary/shared-state';
-import { useMessages } from '@/composables/CreateUpdateDictionary/status-messages';
+import { useMessages } from '@/composables/status-messages';
 import { getApiClient } from '@/services/api-client.service';
 import { messageService } from '@/services/message.service';
 
@@ -24,7 +23,8 @@ const onUpdateMessages = getMessages('update');
 let onCreation = ref(true);
 let withFile = ref(true);
 
-let { dictionaryName, dictionaryId } = useSharedState();
+let dictionaryId = ref();
+let dictionaryName = ref();
 let dictionaryDescription = ref('');
 
 let fileSelected = ref(false);
@@ -123,7 +123,10 @@ function createDictionary() {
       } else {
         messageError(
           t('dictionary.title'),
-          getStatusMex(onCreateMessages, response.data?.status, response.data?.message)
+          getStatusMex(onCreateMessages, response.data?.status, {
+            message: response.data?.message,
+            dictionaryName: dictionaryName.value
+          })
         );
       }
     })
@@ -133,6 +136,28 @@ function createDictionary() {
     .finally(() => {
       loading.value = false;
     });
+}
+
+/**
+ * Handles the response of an update operation.
+ * @function handleUpdateResponse
+ * @param messageHeader - The header to be displayed in the message.
+ * @param response - The response object returned from the update operation.
+ */
+function handleUpdateResponse(messageHeader: string, response: any) {
+  if (response.data?.status == 'OK') {
+    messageSuccess(t(messageHeader), t('actions.update.success'));
+    closeDialog(true);
+  } else {
+    messageError(
+      t(messageHeader),
+      getStatusMex(onUpdateMessages, response.data?.status, {
+        message: response.data?.message,
+        dictionaryId: dictionaryId.value,
+        dictionaryName: dictionaryName.value
+      })
+    );
+  }
 }
 
 /**
@@ -149,15 +174,7 @@ function updateDictionaryMetadata() {
       description: dictionaryDescription.value
     })
     .then((response) => {
-      if (response.data?.status == 'OK') {
-        messageSuccess(t('dictionary.title'), t('actions.update.success'));
-        closeDialog(true);
-      } else {
-        messageError(
-          t('dictionary.title'),
-          getStatusMex(onUpdateMessages, response.data?.status, response.data?.message)
-        );
-      }
+      handleUpdateResponse('dictionary.title', response);
     })
     .catch((error) => {
       messageError(t('dictionary.title'), `${t('actions.update.error')}\n${error.message}`);
@@ -187,15 +204,7 @@ function updateDictionaryFile() {
       }
     )
     .then((response) => {
-      if (response.data?.status == 'OK') {
-        messageSuccess(t('dictionary.file.title'), t('actions.update.success'));
-        closeDialog(true);
-      } else {
-        messageError(
-          t('dictionary.file.title'),
-          getStatusMex(onUpdateMessages, response.data?.status, response.data?.message)
-        );
-      }
+      handleUpdateResponse('dictionary.file.title', response);
     })
     .catch((error) => {
       messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${error.message}`);
