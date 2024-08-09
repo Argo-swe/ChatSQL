@@ -96,3 +96,34 @@ export type Menu = MenuWrapper[];
 export interface CSSClasses {
   [key: string]: boolean;
 }
+
+// Define an enum for DBMS codes
+export enum DbmsCode {
+  Mysql = 'Mysql',
+  PostgreSQL = 'PostgreSQL',
+  MariaDB = 'MariaDB',
+  Microsoft = 'Microsoft',
+  Oracle = 'Oracle',
+  SQLite = 'SQLite'
+}
+
+// Define an enum for DBMS names
+export enum DbmsName {
+  Mysql = 'Mysql',
+  PostgreSQL = 'PostgreSQL',
+  MariaDB = 'MariaDB',
+  Microsoft = 'Microsoft SQL Server',
+  Oracle = 'Oracle DB',
+  SQLite = 'SQLite'
+}
+
+/**
+ * Interface representing a Database Management System (DBMS) option.
+ * @interface DbmsOptions
+ * @property {DbmsName} name - The human-readable name of the DBMS.
+ * @property {DbmsCode} code - The unique code for the DBMS.
+ */
+export interface DbmsOptions {
+  name: DbmsName;
+  code: DbmsCode;
+}

@@ -11,7 +11,13 @@ import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
 import UtilsService from '@/services/utils.service';
 import type { Components } from '@/types/openapi';
-import type { DictionaryPreview, MessageWrapper } from '@/types/wrapper';
+import {
+  DbmsCode,
+  DbmsName,
+  type DbmsOptions,
+  type DictionaryPreview,
+  type MessageWrapper
+} from '@/types/wrapper';
 
 // Child Components
 import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
@@ -39,13 +45,13 @@ const dictionaries = ref<Components.Schemas.DictionaryDto[] | null[]>();
 const selectedDictionary = ref<null | number>(null);
 const languages = ref(['english', 'italian', 'french', 'spanish', 'german']);
 const selectedLanguage = ref(localStorage.getItem('chat-language') || 'english');
-const dbms = ref([
-  { name: 'Mysql', code: 'Mysql' },
-  { name: 'PostgreSQL', code: 'PostgreSQL' },
-  { name: 'MariaDB', code: 'MariaDB' },
-  { name: 'Microsoft SQL Server', code: 'Microsoft' },
-  { name: 'Oracle DB', code: 'Oracle' },
-  { name: 'SQLite', code: 'SQLite' }
+const dbms: Ref<DbmsOptions[]> = ref([
+  { name: DbmsName.Mysql, code: DbmsCode.Mysql },
+  { name: DbmsName.PostgreSQL, code: DbmsCode.PostgreSQL },
+  { name: DbmsName.MariaDB, code: DbmsCode.MariaDB },
+  { name: DbmsName.Microsoft, code: DbmsCode.Microsoft },
+  { name: DbmsName.Oracle, code: DbmsCode.Oracle },
+  { name: DbmsName.SQLite, code: DbmsCode.SQLite }
 ]);
 const selectedDbms = ref(localStorage.getItem('chat-dbms') || 'Mysql');
 // Variable to control the state of the form container

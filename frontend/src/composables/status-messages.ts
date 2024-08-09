@@ -80,6 +80,10 @@ const onLoginMessages: StatusMessages<LoginMessageOptions> = {
     `${getI18n()('text.genericError')}:\n${message}`
 };
 
+/**
+ * List of messages associated with a status code.
+ * Triggered when prompt or debug messages are generated.
+ */
 const onGenerateMessages: StatusMessages<BaseMessageOptions> = {
   BAD_REQUEST: () => `${getI18n()('actions.generate.error')}\n${getI18n()('actions.formatError')}`,
   DEFAULT: ({ message }: BaseMessageOptions = {}) =>
