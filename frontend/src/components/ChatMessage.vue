@@ -30,7 +30,7 @@ const performCopy = (text: string) => {
         isCopying.value = false;
       }, 2000);
     })
-    .catch((err) => {
+    .catch(() => {
       messageError(t('general.clipboard.name'), t('general.clipboard.error'));
     });
 };

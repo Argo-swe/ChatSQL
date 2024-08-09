@@ -80,6 +80,12 @@ const onLoginMessages: StatusMessages<LoginMessageOptions> = {
     `${getI18n()('text.genericError')}:\n${message}`
 };
 
+const onGenerateMessages: StatusMessages<BaseMessageOptions> = {
+  BAD_REQUEST: () => `${getI18n()('actions.generate.error')}\n${getI18n()('actions.formatError')}`,
+  DEFAULT: ({ message }: BaseMessageOptions = {}) =>
+    `${getI18n()('actions.generate.error')}\n${message}`
+};
+
 /**
  * Generates messages based on the response status.
  * @function getStatusMex
@@ -117,6 +123,7 @@ export function useMessages() {
     getMessages: (type: 'create' | 'read' | 'update' | 'delete') =>
       messagesCrudMap[type] || messagesCrudMap['create'],
     onLoginMessages,
+    onGenerateMessages,
     getStatusMex
   };
 }
