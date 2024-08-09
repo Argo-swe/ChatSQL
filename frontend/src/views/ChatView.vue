@@ -14,7 +14,8 @@ import type { Components } from '@/types/openapi';
 import {
   DbmsCode,
   DbmsName,
-  type DbmsOptions,
+  Languages,
+  type DbmsOption,
   type DictionaryPreview,
   type MessageWrapper
 } from '@/types/wrapper';
@@ -42,10 +43,16 @@ let isLogged = ref(AuthService.isLogged());
 const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
 let debugMessage = ref();
 const dictionaries = ref<Components.Schemas.DictionaryDto[] | null[]>();
-const selectedDictionary = ref<null | number>(null);
-const languages = ref(['english', 'italian', 'french', 'spanish', 'german']);
-const selectedLanguage = ref(localStorage.getItem('chat-language') || 'english');
-const dbms: Ref<DbmsOptions[]> = ref([
+const selectedDictionary = ref<number | null>(null);
+const languages: Ref<Languages[]> = ref([
+  Languages.en,
+  Languages.it,
+  Languages.fr,
+  Languages.es,
+  Languages.ge
+]);
+const selectedLanguage = ref(localStorage.getItem('chat-language') || Languages.en);
+const dbms: Ref<DbmsOption[]> = ref([
   { name: DbmsName.Mysql, code: DbmsCode.Mysql },
   { name: DbmsName.PostgreSQL, code: DbmsCode.PostgreSQL },
   { name: DbmsName.MariaDB, code: DbmsCode.MariaDB },
@@ -53,8 +60,8 @@ const dbms: Ref<DbmsOptions[]> = ref([
   { name: DbmsName.Oracle, code: DbmsCode.Oracle },
   { name: DbmsName.SQLite, code: DbmsCode.SQLite }
 ]);
-const selectedDbms = ref(localStorage.getItem('chat-dbms') || 'Mysql');
-// Variable to control the state of the form container
+const selectedDbms = ref(localStorage.getItem('chat-dbms') || DbmsCode.Mysql);
+// Variable to control the state of the options form container
 const hide = ref(false);
 // Hide/Show switch for the toggle button
 const checked = ref(false);
@@ -178,7 +185,10 @@ const clearMessages = () => {
 function handleSuccessfulRetrieve(response: any) {
   dictionaries.value = response.data?.data;
   let localStorageDictionaryId = localStorage.getItem('chat-dictionary-id');
-  if (localStorageDictionaryId && response.data?.data.findIndex((d) => d?.id) != -1) {
+  if (
+    localStorageDictionaryId &&
+    response.data?.data.findIndex((d: Components.Schemas.DictionaryDto | null) => d?.id) != -1
+  ) {
     selectedDictionary.value = parseInt(localStorageDictionaryId);
     checked.value = !checked.value;
     toggleSelectView();
@@ -186,7 +196,7 @@ function handleSuccessfulRetrieve(response: any) {
 }
 
 /**
- * Retrieves a list of dictionaries and updates the component state accordingly.
+ * Retrieves a list of dictionaries.
  * @function retrieveDictionaries
  */
 function retrieveDictionaries() {
@@ -277,7 +287,7 @@ function runRequest() {
       }
     })
     .catch((error) => {
-      messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`);
+      messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
     })
     .finally(() => {
       loading.value = false;
@@ -304,7 +314,7 @@ function loadDebug() {
       }
     })
     .catch((error) => {
-      messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error}`);
+      messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error.message}`);
     })
     .finally(() => {
       loadingDebug.value = false;

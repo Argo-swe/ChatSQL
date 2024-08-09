@@ -119,11 +119,20 @@ export enum DbmsName {
 
 /**
  * Interface representing a Database Management System (DBMS) option.
- * @interface DbmsOptions
+ * @interface DbmsOption
  * @property {DbmsName} name - The human-readable name of the DBMS.
  * @property {DbmsCode} code - The unique code for the DBMS.
  */
-export interface DbmsOptions {
+export interface DbmsOption {
   name: DbmsName;
   code: DbmsCode;
+}
+
+// Define an enum for languages
+export enum Languages {
+  en = 'english',
+  it = 'italian',
+  fr = 'french',
+  es = 'spanish',
+  ge = 'german'
 }
