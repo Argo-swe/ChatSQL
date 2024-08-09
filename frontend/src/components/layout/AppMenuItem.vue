@@ -15,22 +15,22 @@ const props = withDefaults(
      * @prop {Any} item
      * @description Object representing a menu item.
      */
-    item: any;
+    item?: any;
     /**
      * @prop {Number} index
      * @description Index of the menu item.
      */
-    index: number;
+    index?: number;
     /**
      * @prop {Boolean} root
      * @description Flag indicating whether the menu item is the root of the navigation menu.
      */
-    root: boolean;
+    root?: boolean;
     /**
      * @prop {String | null} parentItemKey
      * @description Key to identify the parent menu item.
      */
-    parentItemKey: string | null;
+    parentItemKey?: string | null;
   }>(),
   {
     item: () => ({}),

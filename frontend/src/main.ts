@@ -64,8 +64,6 @@ const i18n = createI18n<[MessageSchema], 'en' | 'it'>({
   }
 });
 
-export default i18n;
-
 const app = createApp(App);
 
 app.use(router);
@@ -112,3 +110,5 @@ app.component('PgScrollTop', ScrollTop);
 // END PrimeVue components (alphabetical order)
 
 app.mount('#app');
+
+export default i18n;

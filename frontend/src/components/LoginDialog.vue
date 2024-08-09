@@ -5,10 +5,9 @@ import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import { useLayout } from '@/composables/layout';
+import { useMessages } from '@/composables/status-messages';
 import { getApiClient } from '@/services/api-client.service';
 import { messageService } from '@/services/message.service';
-import type { Components } from '@/types/openapi';
-import type { LoginErrorMessages } from '@/types/wrapper';
 
 const { t } = useI18n();
 const client = getApiClient();
@@ -16,10 +15,9 @@ const { layoutState } = useLayout();
 const { messageSuccess, messageError } = messageService();
 const username = ref(null);
 const password = ref(null);
-const errorMessages: LoginErrorMessages = {
-  NOT_FOUND: () => t('actions.notFoundByName', { item: t('text.User'), name: username.value }),
-  BAD_CREDENTIAL: () => t('login.badCredential')
-};
+
+// Gain access to functions and maps to view status messages
+const { onLoginMessages, getStatusMex } = useMessages();
 
 function resetForm() {
   username.value = null;
@@ -32,7 +30,7 @@ function resetForm() {
  * - Hiding the login dialog;
  * - Resetting the form fields.
  * @function handleSuccessfulLogin
- * @param accessToken - The access token to store in local storage.
+ * @param accessToken - The access token to store in localStorage.
  */
 const handleSuccessfulLogin = (accessToken: string) => {
   localStorage.setItem('token', accessToken);
@@ -48,42 +46,36 @@ const handleSuccessfulLogin = (accessToken: string) => {
 };
 
 /**
- * Handles errors based on the response status.
- * @function handleError
- * @param status - The response status code indicating the type of error.
- * @param message - (Optional) Additional message to include in the error.
- */
-const handleError = (status: Components.Schemas.ResponseStatusEnum, message?: string | null) => {
-  const getErrorMessage = errorMessages[status];
-  let errorMessage;
-  if (getErrorMessage) {
-    errorMessage = getErrorMessage();
-  } else {
-    errorMessage = `${t('text.genericError')}:\n${message}`;
-  }
-  messageError(t('Login'), errorMessage);
-};
-
-/**
  * Submits the login form with the provided username and password.
  * @function submitForm
  */
 async function submitForm() {
-  client.login(undefined, { username: username.value ?? '', password: password.value ?? '' }).then(
-    (response) => {
-      const tempUsername = username.value;
+  client
+    .login(undefined, { username: username.value ?? '', password: password.value ?? '' })
+    .then((response) => {
       if (response.data.status === 'OK') {
         const accessToken = response.data.data?.access_token || '';
+        messageSuccess(
+          t('Login'),
+          getStatusMex(onLoginMessages, response.data.status, {
+            message: response.data.message,
+            username: username.value
+          })
+        );
         handleSuccessfulLogin(accessToken);
-        messageSuccess(t('Login'), t('login.success', { name: tempUsername }));
       } else {
-        handleError(response.data.status, response.data.message);
+        messageError(
+          t('Login'),
+          getStatusMex(onLoginMessages, response.data.status, {
+            message: response.data.message,
+            username: username.value
+          })
+        );
       }
-    },
-    (error) => {
-      messageError(t('Login'), `${t('text.genericError')}:\n${error}`);
-    }
-  );
+    })
+    .catch((error) => {
+      messageError(t('Login'), `${t('text.genericError')}:\n${error.message}`);
+    });
 }
 </script>
 
