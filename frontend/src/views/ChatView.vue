@@ -26,17 +26,11 @@ import DictPreview from '@/components/DictPreview.vue';
 const { t } = useI18n();
 const client = getApiClient();
 const { messageError } = messageService();
+let isLogged = ref(AuthService.isLogged());
 
 // Gain access to functions and maps to view status messages
 const { getMessages, onGenerateMessages, getStatusMex } = useMessages();
 const onRetrieveMessages = getMessages('read');
-
-const active = ref(0);
-const items = ref([
-  { label: () => t('chat.title'), icon: 'pi pi-comments' },
-  { label: () => t('chat.debug.title'), icon: 'pi pi-receipt' }
-]);
-let isLogged = ref(AuthService.isLogged());
 
 const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
 const dictionaries = ref<Components.Schemas.DictionaryDto[] | null[]>();
@@ -138,6 +132,7 @@ const toggleDetails = () => {
  * Adds a new message to the messages array.
  * @param message - The content of the message.
  * @param isSent - A flag indicating whether the message has been sent or received by the user.
+ * @param debug - (Optional) The content of the debug.
  */
 function addMessage(message: string, isSent: boolean, debug?: string) {
   if (!messages.value) {
@@ -311,7 +306,7 @@ function generatePromptWithDebug() {
 }
 </script>
 <template>
-  <div v-if="active == 0" id="chat" class="flex flex-column">
+  <div id="chat" class="flex flex-column">
     <div id="titlebar-container" class="card p-3">
       <div id="chat-title" class="flex flex-row align-items-center">
         <h1 class="m-1 text-xl font-semibold">{{ getDictionaryName(selectedDictionary) }}</h1>
@@ -423,10 +418,6 @@ function generatePromptWithDebug() {
 </template>
 
 <style scoped>
-.tab-chat * {
-  background-color: transparent;
-}
-
 #chat {
   height: calc(100vh - 5rem - 4rem);
   max-height: 100%;

@@ -101,7 +101,7 @@ const copyToClipboard = () => {
           />
           <PgButton
             v-if="!isSent && debug && isLogged"
-            icon="pi pi-receipt"
+            icon="pi pi-question-circle"
             outlined
             class="m-1"
             severity="contrast"
