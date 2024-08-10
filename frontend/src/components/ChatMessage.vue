@@ -1,10 +1,11 @@
 <script setup lang="ts">
 // External libraries
 import { useDialog } from 'primevue/usedialog';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
+import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
 import { type MessageWrapper } from '../types/wrapper';
 
@@ -18,10 +19,21 @@ const props = defineProps<MessageWrapper>();
 
 const { t } = useI18n();
 const dialog = useDialog();
+let isLogged = ref(AuthService.isLogged());
 const { messageSuccess, messageError } = messageService();
+const { message, debug, isSent } = props;
 const isCopying = ref(false);
-const { message, debug, isSent, fullWidth } = props;
 
+onMounted(() => {
+  window.addEventListener('token-localstorage-changed', () => {
+    isLogged.value = AuthService.isLogged();
+  });
+});
+
+/**
+ * Opens a modal to display the debug message.
+ * @function openDebugMessage
+ */
 const openDebugMessage = () => {
   dialog.open(StringDataModal, {
     data: {
@@ -42,12 +54,12 @@ const openDebugMessage = () => {
 };
 
 /**
- * Copy the provided text to the clipboard.
- * @param text - The text to copy to the clipboard.
+ * Copy the message to the clipboard.
  */
-const performCopy = (text: string) => {
+const copyToClipboard = () => {
+  isCopying.value = true;
   navigator.clipboard
-    .writeText(text)
+    .writeText(message.trim())
     .then(() => {
       messageSuccess(t('general.clipboard.name'), t('general.clipboard.success'));
       setTimeout(() => {
@@ -56,34 +68,17 @@ const performCopy = (text: string) => {
     })
     .catch(() => {
       messageError(t('general.clipboard.name'), t('general.clipboard.error'));
+      isCopying.value = false;
     });
-};
-
-/**
- * Event handler to copy the text from the message element closest to the clicked button.
- * @param event - The event object from the click event.
- */
-const copyToClipboard = (event: any) => {
-  if (isCopying.value) return;
-  isCopying.value = true;
-
-  // Go back to the message closest to the button clicked
-  const messageContent = event.currentTarget.closest('.message').querySelector('p');
-  if (messageContent) {
-    // Extract the text and remove spaces at the beginning and end of the string
-    const text = messageContent.textContent.trim();
-    performCopy(text);
-  }
 };
 </script>
 
 <template>
   <div
-    class="message mx-1 my-2"
+    class="message mx-1 my-2 md:w-10"
     :class="{
       sent: isSent,
-      received: !isSent,
-      'md:w-10': !fullWidth
+      received: !isSent
     }"
   >
     <div class="flex gap-3" :class="isSent ? 'flex-row-reverse' : ''">
@@ -101,10 +96,11 @@ const copyToClipboard = (event: any) => {
             severity="contrast"
             :title="t('chat.actions.copy')"
             :aria-label="t('chat.actions.copy')"
+            :disabled="isCopying"
             @click="copyToClipboard"
           />
           <PgButton
-            v-if="!isSent && debug"
+            v-if="!isSent && debug && isLogged"
             icon="pi pi-receipt"
             outlined
             class="m-1"

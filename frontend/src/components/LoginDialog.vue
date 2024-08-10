@@ -56,7 +56,7 @@ async function submitForm() {
       if (response.data.status === 'OK') {
         const accessToken = response.data.data?.access_token || '';
         messageSuccess(
-          t('Login'),
+          t('login.title'),
           getStatusMex(onLoginMessages, response.data.status, {
             message: response.data.message,
             username: username.value
@@ -65,7 +65,7 @@ async function submitForm() {
         handleSuccessfulLogin(accessToken);
       } else {
         messageError(
-          t('Login'),
+          t('login.title'),
           getStatusMex(onLoginMessages, response.data.status, {
             message: response.data.message,
             username: username.value
@@ -74,7 +74,7 @@ async function submitForm() {
       }
     })
     .catch((error) => {
-      messageError(t('Login'), `${t('text.genericError')}:\n${error.message}`);
+      messageError(t('login.title'), `${t('text.genericError')}:\n${error.message}`);
     });
 }
 </script>

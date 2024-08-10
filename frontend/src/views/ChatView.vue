@@ -1,6 +1,5 @@
 <script setup lang="ts">
 // External libraries
-import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -9,7 +8,6 @@ import { useMessages } from '@/composables/status-messages';
 import { getApiClient } from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
-import UtilsService from '@/services/utils.service';
 import type { Components } from '@/types/openapi';
 import {
   DbmsCode,
@@ -41,7 +39,6 @@ const items = ref([
 let isLogged = ref(AuthService.isLogged());
 
 const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
-let debugMessage = ref();
 const dictionaries = ref<Components.Schemas.DictionaryDto[] | null[]>();
 const selectedDictionary = ref<number | null>(null);
 const languages: Ref<Languages[]> = ref([
@@ -75,7 +72,6 @@ const dictionaryPreview: Ref<DictionaryPreview> = ref<DictionaryPreview>({
 });
 
 let loading = ref(false);
-let loadingDebug = ref(false);
 const request = ref('');
 
 onMounted(() => {
@@ -83,24 +79,8 @@ onMounted(() => {
 
   window.addEventListener('token-localstorage-changed', () => {
     isLogged.value = AuthService.isLogged();
-    if (!isLogged.value) {
-      // Shows the default chat tab
-      active.value = 0;
-    }
   });
 });
-
-/**
- * Handles the tab change event.
- * @param event - The event object of type TabMenuChangeEvent.
- */
-function onTabChange(event: TabMenuChangeEvent) {
-  if (event.index != 1) {
-    debugMessage.value = null;
-  } else {
-    //loadDebug();
-  }
-}
 
 /**
  * Saves the selected language to localStorage.
@@ -329,24 +309,9 @@ function generatePromptWithDebug() {
       loading.value = false;
     });
 }
-
-/**
- * Download a log file.
- */
-function onClickDownloadFile() {
-  UtilsService.downloadFile('chatsql_log.txt', debugMessage.value);
-}
 </script>
 <template>
-  <PgTabMenu
-    v-if="isLogged"
-    v-model:activeIndex="active"
-    :model="items"
-    class="tab-chat mb-2"
-    @tab-change="onTabChange"
-  />
-
-  <div v-if="active == 0" id="chat" :class="{ isLogged: isLogged }" class="flex flex-column">
+  <div v-if="active == 0" id="chat" class="flex flex-column">
     <div id="titlebar-container" class="card p-3">
       <div id="chat-title" class="flex flex-row align-items-center">
         <h1 class="m-1 text-xl font-semibold">{{ getDictionaryName(selectedDictionary) }}</h1>
@@ -455,19 +420,6 @@ function onClickDownloadFile() {
       />
     </PgInputGroup>
   </div>
-
-  <div v-if="active == 1" id="debug" class="h-full mt-3">
-    <h1 class="m-1 mb-3 text-xl font-semibold">{{ t('chat.debug.subject') }}</h1>
-    <PgButton
-      v-if="!loadingDebug && debugMessage"
-      icon="pi pi-download"
-      :label="t('chat.debug.file.download')"
-      severity="help"
-      class="mb-3"
-      @click="onClickDownloadFile()"
-    />
-    <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
-  </div>
 </template>
 
 <style scoped>
@@ -480,10 +432,6 @@ function onClickDownloadFile() {
   max-height: 100%;
   position: relative;
   margin-bottom: -2rem;
-}
-
-#chat.isLogged {
-  height: calc(100vh - 5rem - 4rem - 3.5rem);
 }
 
 .hide {
