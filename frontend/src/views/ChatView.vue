@@ -74,6 +74,8 @@ onMounted(() => {
   window.addEventListener('token-localstorage-changed', () => {
     isLogged.value = AuthService.isLogged();
   });
+
+  loadMessages();
 });
 
 /**
@@ -135,15 +137,32 @@ const toggleDetails = () => {
  * @param debug - (Optional) The content of the debug.
  */
 function addMessage(message: string, isSent: boolean, debug?: string) {
-  if (!messages.value) {
-    messages.value = [];
-  }
-
   messages.value.push({
     message,
     debug,
     isSent
   });
+
+  saveMessages();
+}
+
+/**
+ * Loads messages from the sessionStorage and updates the chat state accordingly.
+ */
+const loadMessages = () => {
+  const savedMessages = sessionStorage.getItem('chat-messages');
+  if (savedMessages) {
+    messages.value = JSON.parse(savedMessages);
+  } else {
+    messages.value = [];
+  }
+}
+
+/**
+ * Saves all chat messages in the sessionStorage.
+ */
+const saveMessages = () => {
+  sessionStorage.setItem('chat-messages', JSON.stringify(messages.value));
 }
 
 /**
