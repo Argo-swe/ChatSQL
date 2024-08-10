@@ -305,6 +305,7 @@ function generatePromptWithDebug() {
     });
 }
 </script>
+
 <template>
   <div id="chat" class="flex flex-column">
     <div id="titlebar-container" class="card p-3">
