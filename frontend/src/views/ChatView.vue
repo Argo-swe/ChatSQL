@@ -147,6 +147,13 @@ function addMessage(message: string, isSent: boolean, debug?: string) {
 }
 
 /**
+ * Saves all chat messages in the sessionStorage.
+ */
+const saveMessages = () => {
+  sessionStorage.setItem('chat-messages', JSON.stringify(messages.value));
+};
+
+/**
  * Loads messages from the sessionStorage and updates the chat state accordingly.
  */
 const loadMessages = () => {
@@ -156,14 +163,7 @@ const loadMessages = () => {
   } else {
     messages.value = [];
   }
-}
-
-/**
- * Saves all chat messages in the sessionStorage.
- */
-const saveMessages = () => {
-  sessionStorage.setItem('chat-messages', JSON.stringify(messages.value));
-}
+};
 
 /**
  * Clears all messages from the messages array.
