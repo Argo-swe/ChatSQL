@@ -49,7 +49,7 @@ jobs:
         mkdir -p ChatSQL/MVP
         cd ChatSQL
         cd MVP
-        ls
+        cd ../../* ./
         
 
     # Pubblicazione dell'artefatto generato durante il processo di build
