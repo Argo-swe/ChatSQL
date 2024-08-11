@@ -63,6 +63,11 @@ jobs:
         cd frontend
         npm run test
 
+    - name: Commit files
+      run: |
+        git status
+        git add .
+
     # Creazione della directory principale
     - name: Parent Folder
       continue-on-error: true
