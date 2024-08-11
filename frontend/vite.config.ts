@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
      vue(),
 +    istanbul({
-+      include: 'src/*',
++      include: ["src/**/*", "src/**/*.vue"],
 +      exclude: ['node_modules', 'tests/', 'cypress/'],
 +      extension: ['.js', '.ts', '.vue'],
 +      requireEnv: false
