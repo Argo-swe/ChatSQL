@@ -3,18 +3,13 @@ run-name: Build Artifact on PR Merge
 
 # Trigger: pull request sul main o sul develop
 on:
-  pull_request:
+  push:
     branches: 
-      - main
-      - develop
-    types: [closed]
+      - feature-update-workflow
 
 # Unità di lavoro all'interno del workflow
 jobs:
   build:
-
-    # Controllo se la pull request è stata unita al ramo specificato
-    if: github.event.pull_request.merged == true
 
     # Esecuzione in ambiente Ubuntu con le ultime versioni di pacchetti e librerie
     runs-on: ubuntu-latest
@@ -28,6 +23,24 @@ jobs:
       with:
           # Recupero tutta la cronologia (branch e tag)
           fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+          node-version: '20'
+
+    - name: Check Node Version
+      run: node -v
+
+    - name: Installing dependencies
+      run: |
+        cd frontend
+        npm i
+    
+    - name: Build Unit Test
+      run: |
+        cd frontend
+        npm run test
 
     # Creazione della directory principale
     - name: Parent Folder
