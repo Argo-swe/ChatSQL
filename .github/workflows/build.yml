@@ -46,7 +46,7 @@ jobs:
     # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
     - name: Code Linting and Formatting (backend)
       run: |
-        sh ../setup-pre-commit.sh && pre-commit run --all-files
+        sh setup-pre-commit.sh && pre-commit run --all-files
 
     # Esegue la build del frontend
     - name: Build Frontend
