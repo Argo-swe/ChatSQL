@@ -46,11 +46,14 @@ jobs:
     - name: Parent Folder
       continue-on-error: true
       run: |
+        mkdir -p ChatSQL/MVP
         ls
+        cp -r ./ ChatSQL/MVP
+        
 
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ChatSQL/MVP
-        path: ./
+        name: ChatSQL
+        path: ChatSQL/MVP
