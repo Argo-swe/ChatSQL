@@ -47,7 +47,9 @@ jobs:
       continue-on-error: true
       run: |
         mkdir -p ChatSQL/MVP
-        cp -r ./* ChatSQL/MVP/
+        cd ChatSQL
+        cd MVP
+        ls
         
 
     # Pubblicazione dell'artefatto generato durante il processo di build
