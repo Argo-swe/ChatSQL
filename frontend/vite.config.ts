@@ -1,18 +1,18 @@
-import { fileURLToPath, URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-     vue(),
-     istanbul({
+    vue(),
+    istanbul({
       include: 'src/*',
       exclude: ['node_modules', 'test/', 'cypress/'],
       extension: ['.js', '.ts', '.vue'],
-      requireEnv: true,
-    }),
+      requireEnv: true
+    })
   ],
   resolve: {
     alias: {

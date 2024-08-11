@@ -1,7 +1,7 @@
-import App from '../../src/App.vue'
+import App from '../../src/App.vue';
 
 describe('<App />', () => {
   it('renders', () => {
-    cy.mount(App)
-  })
-})
+    cy.mount(App);
+  });
+});
