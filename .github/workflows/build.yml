@@ -3,7 +3,7 @@ run-name: Build Artifact when PR is opened or updated
 
 # Definizione dei permessi
 permissions:       
-  contents: read
+  contents: write
   pull-requests: write
 
 # Trigger: pull request aperta o aggiornata
