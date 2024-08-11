@@ -32,12 +32,32 @@ jobs:
     - name: Check Node Version
       run: node -v
 
-    - name: Installing dependencies
+    - name: Installing Dependencies
       run: |
         cd frontend
         npm i
+
+    - name: Code Linting and Formatting (backend)
+      run: |
+        cd frontend
+        sh ../setup-pre-commit.sh && pre-commit run --all-files
+
+    - name: Build FrontEnd
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Code Linting (frontend)
+      run: |
+        cd frontend
+        npm run lint
+
+    - name: Code Formatting (frontend)
+      run: |
+        cd frontend
+        npm run format
     
-    - name: Build Unit Test
+    - name: Build Unit Test (frontend)
       run: |
         cd frontend
         npm run test
@@ -49,11 +69,10 @@ jobs:
         mkdir -p ChatSQL/MVP
         shopt -s extglob
         cp -r !(ChatSQL) ChatSQL/MVP/
-        
 
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
       uses: actions/upload-artifact@v4
       with:
         name: ChatSQL
-        path: ChatSQL/MVP
+        path: ChatSQL
