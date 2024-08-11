@@ -47,9 +47,8 @@ jobs:
       continue-on-error: true
       run: |
         mkdir -p ChatSQL/MVP
-        cd ChatSQL
-        cd MVP
-        cp -r ../../* ./
+        shopt -s extglob
+        cp -r !(ChatSQL/MVP) ChatSQL/MVP/
         
 
     # Pubblicazione dell'artefatto generato durante il processo di build
