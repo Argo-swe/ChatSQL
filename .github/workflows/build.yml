@@ -48,7 +48,7 @@ jobs:
       run: |
         mkdir -p ChatSQL/MVP
         shopt -s extglob
-        cp -r !(ChatSQL/MVP) ChatSQL/MVP/
+        cp -r !(ChatSQL) ChatSQL/MVP/
         
 
     # Pubblicazione dell'artefatto generato durante il processo di build
