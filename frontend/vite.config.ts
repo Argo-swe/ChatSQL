@@ -7,13 +7,13 @@ import istanbul from 'vite-plugin-istanbul';
 export default defineConfig({
   plugins: [
      vue(),
-+    istanbul({
+     istanbul({
       include: 'src/*',
       exclude: ['node_modules', 'test/', 'cypress/'],
       extension: ['.js', '.ts', '.vue'],
       requireEnv: true,
     }),
-+  ],
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
