@@ -56,7 +56,11 @@ jobs:
     - name: Code Formatting (frontend)
       run: |
         cd frontend
+        cd src 
+        cat main.ts
+        cd ..
         npm run format
+        
     
     - name: Build Unit Test (frontend)
       run: |
