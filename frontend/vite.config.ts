@@ -8,11 +8,11 @@ export default defineConfig({
   plugins: [
      vue(),
 +    istanbul({
-      include: ['src/**/*', 'src/**/*.vue'],
-      exclude: ['node_modules', 'tests/', 'cypress/'],
+      include: 'src/*',
+      exclude: ['node_modules', 'test/', 'cypress/'],
       extension: ['.js', '.ts', '.vue'],
-      requireEnv: false
-    })
+      requireEnv: true,
+    }),
 +  ],
   resolve: {
     alias: {
