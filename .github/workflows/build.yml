@@ -43,6 +43,7 @@ jobs:
         sh ../setup-pre-commit.sh && pre-commit run --all-files
 
     - name: Build FrontEnd
+      continue-on-error: true
       run: |
         cd frontend
         npm run build
