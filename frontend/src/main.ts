@@ -12,7 +12,7 @@ import ToastService from 'primevue/toastservice';
 import BadgeDirective from 'primevue/badgedirective';
 import Ripple from 'primevue/ripple';
 import StyleClass from 'primevue/styleclass';
-import Tooltip from 'primevue/tooltip';
+    import Tooltip from 'primevue/tooltip';
 
 // import PrimeVue components (alphabetical order)
 import PgAvatar from 'primevue/avatar';
