@@ -48,7 +48,7 @@ jobs:
       run: |
         mkdir -p ChatSQL/MVP
         ls
-        cp -r ./ ChatSQL/MVP
+        cp -r ./* ChatSQL/MVP
         
 
     # Pubblicazione dell'artefatto generato durante il processo di build
