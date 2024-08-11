@@ -60,7 +60,15 @@ jobs:
         cat main.ts
         cd ..
         npm run format
-        
+
+    - name: Commit and push changes
+      run: |
+        cd frontend
+        git config --global user.name 'github-actions'
+        git config --global user.email 'argo.unipd@gmail.com'
+        git add .
+        git commit -m "Apply code formatting"
+        git push origin HEAD:${{ github.head_ref }}
     
     - name: Build Unit Test (frontend)
       run: |
