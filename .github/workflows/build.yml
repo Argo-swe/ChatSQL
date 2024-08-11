@@ -1,16 +1,19 @@
 name: Build Artifact 
-run-name: Build Artifact on PR Merge
+run-name: Build Artifact when PR is opened or updated
 
-# Trigger: pull request sul main o sul develop
+# Definizione dei permessi
+permissions:       
+  contents: read
+  pull-requests: write
+
+# Trigger: pull request aperta o aggiornata
 on:
-  push:
-    branches: 
-      - feature-update-workflow
+  pull_request:
+    types: [opened, synchronize]
 
 # Unità di lavoro all'interno del workflow
 jobs:
   build:
-
     # Esecuzione in ambiente Ubuntu con le ultime versioni di pacchetti e librerie
     runs-on: ubuntu-latest
 
@@ -19,68 +22,73 @@ jobs:
 
     # Clonazione del repository all'interno dell'ambiente di esecuzione del job
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
           # Recupero tutta la cronologia (branch e tag)
           fetch-depth: 0
 
+    # Configura l'ambiente Node.js     
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
           node-version: '20'
 
+    # Controlla la versione di Node.js
     - name: Check Node Version
       run: node -v
 
+    # Installa le dipendenze del progetto
     - name: Installing Dependencies
       run: |
         cd frontend
         npm i
 
+    # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
     - name: Code Linting and Formatting (backend)
       run: |
-        cd frontend
         sh ../setup-pre-commit.sh && pre-commit run --all-files
 
-    - name: Build FrontEnd
+    # Esegue la build del frontend
+    - name: Build Frontend
       continue-on-error: true
       run: |
         cd frontend
         npm run build
 
+    # Esegue il linting del codice nel frontend
     - name: Code Linting (frontend)
       run: |
         cd frontend
         npm run lint
 
+    # Esegue la formattazione del codice nel frontend
     - name: Code Formatting (frontend)
       run: |
         cd frontend
-        cd src
-        git status
-        cat main.ts
-        cd ..
         npm run format
 
-    - name: Commit and push changes
+    # Esegue il commit dei file formattati
+    - name: Commit changes
+      if: github.event_name == 'pull_request'
       run: |
-        cd frontend
         git config --global user.name 'github-actions'
         git config --global user.email 'argo.unipd@gmail.com'
         git status
         git add .
-        git commit -m "Apply code formatting"
-        git push origin feature-update-workflow
-    
-    - name: Build Unit Test (frontend)
+        git commit -m "Apply code formatting" || true
+
+    # Esegue il push dei file formattati
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.head_ref }}
+
+    # Esegue i test di unità nel frontend
+    - name: Run Unit Test (frontend)
       run: |
         cd frontend
         npm run test
-
-    - name: Commit files
-      run: |
-        git status
-        git add .
 
     # Creazione della directory principale
     - name: Parent Folder
