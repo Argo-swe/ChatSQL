@@ -18,7 +18,7 @@
    docker compose up
    ```
    vengono avviati due container:
-   - frontend: sviluppato in VueJs ed espone l'interfacci utente
+   - frontend: sviluppato in VueJs ed espone l'interfaccia utente
    - backend: espone l'interfaccia di backend e i funzionamenti di ricerca semantica
 
 ## Formattazione codice

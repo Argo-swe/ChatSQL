@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLayout } from '@/components/layout/composables/layout';
+import { useLayout } from '@/composables/layout';
 import AppFooter from './AppFooter.vue';
 import AppMenu from './AppMenu.vue';
 const { onMenuToggle } = useLayout();

@@ -12,7 +12,8 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
     "build-api": "npx openapicmd typegen http://localhost:8000/openapi.json > src/types/openapi.d.ts",
-    "precommit": "npm run lint && npm run format"
+    "precommit": "npm run lint && npm run format",
+    "test": "jest"
   },
   "husky": {
     "hooks": {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLayout } from '@/components/layout/composables/layout';
+import { useLayout } from '@/composables/layout';
 import { usePrimeVue } from 'primevue/config';
 import { onMounted, ref } from 'vue';
 
@@ -20,25 +20,29 @@ const supportedLocales = ref(['it', 'en']);
 
 const { setScale, layoutConfig, layoutState } = useLayout();
 
-const onChangeTheme = (theme: string, mode: string) => {
+const onChangeTheme = (theme: string, mode: boolean) => {
   $primevue.changeTheme(layoutConfig.theme.value, theme, 'theme-css', () => {
     layoutConfig.theme.value = theme;
     layoutConfig.darkTheme.value = mode;
   });
-  localStorage.setItem('darkTheme', mode);
+  localStorage.setItem('darkTheme', mode.toString());
 };
+
 const decrementScale = () => {
   setScale(layoutConfig.scale.value - 1);
   applyScale();
 };
+
 const incrementScale = () => {
   setScale(layoutConfig.scale.value + 1);
   applyScale();
 };
+
 const applyScale = () => {
   document.documentElement.style.fontSize = layoutConfig.scale.value + 'px';
 };
-const onDarkModeChange = (value: string) => {
+
+const onDarkModeChange = (value: boolean) => {
   const newThemeName = value
     ? layoutConfig.theme.value.replace('light', 'dark')
     : layoutConfig.theme.value.replace('dark', 'light');
@@ -46,6 +50,7 @@ const onDarkModeChange = (value: string) => {
   layoutConfig.darkTheme.value = value;
   onChangeTheme(newThemeName, value);
 };
+
 const onLanguageChange = (value: string) => {
   localStorage.setItem('language', value);
 };
@@ -132,5 +137,3 @@ onMounted(() => {
     </div>
   </PgSidebar>
 </template>
-
-<style lang="scss" scoped></style>
