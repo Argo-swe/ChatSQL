@@ -58,9 +58,8 @@ const i18n = createI18n<[MessageSchema], 'en' | 'it'>({
   locale: localStorage.getItem('language') ?? import.meta.env.VITE_DEFAULT_LANGUAGE ?? 'it',
   fallbackLocale: 'en',
   globalInjection: true,
-  messages: 
-  {
-      en: UtilsService.addCapitalizeValues(LocaleEn),
+  messages: {
+    en: UtilsService.addCapitalizeValues(LocaleEn),
     it: UtilsService.addCapitalizeValues(LocaleIt)
   }
 });
