@@ -44,7 +44,7 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm i
 
-    # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
+    # Esegue la formattazione del codice nel backend utilizzando pre-commit
     - name: Code Linting and Formatting (backend)
       continue-on-error: true
       run: |
