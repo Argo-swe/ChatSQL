@@ -27,7 +27,7 @@ RUN ["chmod", "+x", "./entrypoint-backend.sh"]
 RUN \
     # Install required packages
     apt-get update && \
-    apt-get -y --no-install-recommends install curl libpq-dev libgomp1 libsndfile1 gcc g++ python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python3-pip && \
+    apt-get -y --no-install-recommends install curl libpq-dev libgomp1 libsndfile1 gcc g++ python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python3-pip tzdata && \
     rm -rf /var/lib/apt/lists && \
     \
     # Install txtai project and dependencies
