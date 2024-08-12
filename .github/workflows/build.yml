@@ -48,8 +48,8 @@ jobs:
     - name: Start Docker Container and Push Image
       if: steps.cache-docker.outputs.cache-hit != 'true'
       run: |
-        mkdir -p backend/.env.local
-        mkdir -p frontend/.env.local
+        touch backend/.env.local
+        touch frontend/.env.local
         docker compose up -d
         docker tag chatsql-backend:latest ghcr.io/argo-swe/chatsql-backend:latest
         docker push ghcr.io/argo-swe/chatsql-backend:latest
