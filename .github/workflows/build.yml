@@ -1,21 +1,19 @@
 name: Build Artifact 
-run-name: Build Artifact on PR Merge
+run-name: Build Artifact when PR is opened or updated
 
-# Trigger: pull request sul main o sul develop
+# Definizione dei permessi
+permissions:       
+  contents: write
+  pull-requests: write
+
+# Trigger: pull request aperta o aggiornata
 on:
   pull_request:
-    branches: 
-      - main
-      - develop
-    types: [closed]
+    types: [opened, synchronize]
 
 # Unità di lavoro all'interno del workflow
 jobs:
   build:
-
-    # Controllo se la pull request è stata unita al ramo specificato
-    if: github.event.pull_request.merged == true
-
     # Esecuzione in ambiente Ubuntu con le ultime versioni di pacchetti e librerie
     runs-on: ubuntu-latest
 
@@ -29,13 +27,118 @@ jobs:
           # Recupero tutta la cronologia (branch e tag)
           fetch-depth: 0
 
+    # Salvataggio e ripristino della cache
+    - name: Cache Docker
+      uses: actions/cache@v4
+      id: cache-docker
+      with:
+        path: ${{ github.workspace }}/backend
+        key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.yml') }}-${{ hashFiles('**/backend/Dockerfile') }}
+
+    # Autenticazione nel registro dei contenitori di GitHub
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        # Token di accesso per autorizzare l'opzione write: packages
+        password: ${{ secrets.GHCR_TOKEN }}
+
+    # Avvio del contenitore Docker e caricamento dell'immagine su GHCR
+    - name: Start Docker Container and Push Image
+      if: steps.cache-docker.outputs.cache-hit != 'true'
+      run: |
+        touch backend/.env.local
+        touch frontend/.env.local
+        docker compose up -d
+        docker tag chatsql-backend:latest ghcr.io/argo-swe/chatsql-backend:latest
+        docker push ghcr.io/argo-swe/chatsql-backend:latest
+
+    # Recupero dell'immagine da GHCR e avvio del contenitore Docker
+    - name: Pull Image and Start Docker Container
+      if: steps.cache-docker.outputs.cache-hit == 'true'
+      run: |
+        docker pull ghcr.io/argo-swe/chatsql-backend:latest
+        docker tag ghcr.io/argo-swe/chatsql-backend:latest chatsql-backend:latest
+        mkdir -p backend/.env.local
+        mkdir -p frontend/.env.local
+        docker compose up -d
+
+    # Configura l'ambiente Node.js     
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+          node-version: '20'
+
+    # Controlla la versione di Node.js
+    - name: Check Node Version
+      run: node -v
+
+    # Installa le dipendenze del progetto
+    - name: Installing Dependencies
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm i
+
+    # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
+    - name: Code Linting and Formatting (backend)
+      run: |
+        sh setup-pre-commit.sh && pre-commit run --all-files    
+
+    # Esegue la build del frontend
+    - name: Build Frontend
+      continue-on-error: true
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm run build
+
+    # Esegue il linting del codice nel frontend
+    - name: Code Linting (frontend)
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm run lint
+
+    # Esegue la formattazione del codice nel frontend
+    - name: Code Formatting (frontend)
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm run format
+
+    # Esegue il commit dei file formattati
+    - name: Commit changes
+      if: github.event_name == 'pull_request'
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'argo.unipd@gmail.com'
+        git status
+        git add ${{ github.workspace }}/frontend/src ${{ github.workspace }}/backend/app
+        git commit -m "Apply code formatting" || true
+
+    # Esegue il push dei file formattati
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.head_ref }}
+
+    # Esegue i test di unità nel frontend
+    - name: Run Unit Test (frontend)
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm run test:all
+
+    # Esegue i test di unità nel backend
+    - name: Run Unit Test (backend)
+      run: |
+        pytest
+
     # Creazione della directory principale
     - name: Parent Folder
       continue-on-error: true
       run: |
-        mkdir -p ChatSQL/PoC
-        cp -r App ChatSQL/PoC
-        cp -r DizionarioDati ChatSQL/PoC
+        mkdir -p ChatSQL/MVP
+        shopt -s extglob
+        cp -r !(ChatSQL) ChatSQL/MVP/
 
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
