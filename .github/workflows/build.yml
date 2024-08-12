@@ -129,6 +129,7 @@ jobs:
 
     # Arresto dell'esecuzione del contenitore Docker
     - name: Stop Docker Container
+      if: ${{ github.event.action != 'closed' }}
       run: |
         docker compose stop
 
