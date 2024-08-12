@@ -151,7 +151,7 @@ jobs:
         git commit -m "Apply code formatting" || true
         git diff
         ls
-        git push origin ${{ github.head_ref }}
+        git push origin origin/${{ github.head_ref }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
