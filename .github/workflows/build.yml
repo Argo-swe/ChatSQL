@@ -55,7 +55,7 @@ jobs:
     
     # Creazione e caricamento dell'immagine su GHCR
     - name: Build and Push Image
-      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit != true }}
+      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit != 'true' }}
       run: |
         docker compose build backend
         docker tag chatsql-backend:latest ghcr.io/argo-swe/chatsql-backend:latest
@@ -63,7 +63,7 @@ jobs:
 
     # Recupero dell'immagine da GHCR
     - name: Pull Image
-      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit == true }}
+      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit == 'true' }}
       run: |
         docker pull ghcr.io/argo-swe/chatsql-backend:latest
         docker tag ghcr.io/argo-swe/chatsql-backend:latest chatsql-backend:latest
