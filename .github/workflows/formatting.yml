@@ -66,6 +66,3 @@ jobs:
         git config user.email 'riccardo.cavalli@studenti.unipd.it'
         git add frontend/src backend/app
         git commit -m "Apply code formatting" || true
-        git checkout -b ${{ github.head_ref }}
-        git pull origin ${{ github.head_ref }}
-        git push origin ${{ github.head_ref }}
