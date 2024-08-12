@@ -103,7 +103,6 @@ jobs:
     # Esegue la build del frontend
     - name: Build Frontend
       if: ${{ github.event.action != 'closed' }}
-      continue-on-error: true
       run: |
         cd ${{ github.workspace }}/frontend
         npm run build
