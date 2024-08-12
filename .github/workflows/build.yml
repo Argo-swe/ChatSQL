@@ -1,25 +1,24 @@
-name: Build Artifact 
-run-name: Build Artifact on PR Merge
+name: Build BE & FE 
+run-name: Build BE & FE when PR is updated
 
-# Trigger: pull request sul main o sul develop
+# Definizione dei permessi
+permissions:       
+  contents: write
+  pull-requests: write
+
+# Trigger: pull request aperta o aggiornata
 on:
   pull_request:
-    branches: 
-      - main
-      - develop
-    types: [closed]
+    types: [opened, ready_for_review, review_requested, closed]
 
 # Unità di lavoro all'interno del workflow
 jobs:
   build:
-
-    # Controllo se la pull request è stata unita al ramo specificato
-    if: github.event.pull_request.merged == true
-
     # Esecuzione in ambiente Ubuntu con le ultime versioni di pacchetti e librerie
     runs-on: ubuntu-latest
 
     # Azioni atomiche eseguite in sequenza all'interno del job
+    if: ${{ github.event.pull_request.draft == false }}
     steps:
 
     # Clonazione del repository all'interno dell'ambiente di esecuzione del job
@@ -29,16 +28,142 @@ jobs:
           # Recupero tutta la cronologia (branch e tag)
           fetch-depth: 0
 
-    # Creazione della directory principale
-    - name: Parent Folder
+    # Salvataggio e ripristino della cache
+    - name: Cache Docker
+      if: ${{ github.event.action != 'closed' }}
+      uses: actions/cache@v4
+      id: cache-docker
+      with:
+        path: ${{ github.workspace }}/backend
+        key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.yml') }}-${{ hashFiles('**/backend/Dockerfile') }}
+
+    # Autenticazione nel registro dei contenitori di GitHub
+    - name: Login to GHCR
+      if: ${{ github.event.action != 'closed' }}
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        # Token di accesso per autorizzare l'opzione write: packages
+        password: ${{ secrets.GHCR_TOKEN }}
+
+    # Creazione file .env.local
+    - name: Add env.local
+      run: |
+        touch backend/.env.local
+        touch frontend/.env.local
+    
+    # Creazione e caricamento dell'immagine su GHCR
+    - name: Build and Push Image
+      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit != true }}
+      run: |
+        docker compose build backend
+        docker tag chatsql-backend:latest ghcr.io/argo-swe/chatsql-backend:latest
+        docker push ghcr.io/argo-swe/chatsql-backend:latest
+
+    # Recupero dell'immagine da GHCR
+    - name: Pull Image
+      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit == true }}
+      run: |
+        docker pull ghcr.io/argo-swe/chatsql-backend:latest
+        docker tag ghcr.io/argo-swe/chatsql-backend:latest chatsql-backend:latest
+
+    # Avvio del contenitore Docker
+    - name: Start Docker Container
+      run: |
+        docker compose up backend -d
+
+    # Configura l'ambiente Node.js     
+    - name: Setup Node.js
+      if: ${{ github.event.action != 'closed' }}
+      uses: actions/setup-node@v4
+      with:
+          node-version: '20'
+
+    # Controlla la versione di Node.js
+    - name: Check Node Version
+      if: ${{ github.event.action != 'closed' }}
+      run: node -v
+
+    # Installa le dipendenze del progetto
+    - name: Installing Dependencies
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm i
+
+    # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
+    - name: Code Linting and Formatting (backend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        sh setup-pre-commit.sh && pre-commit run --all-files    
+
+    # Esegue la build del frontend
+    - name: Build Frontend
+      if: ${{ github.event.action != 'closed' }}
       continue-on-error: true
       run: |
-        mkdir -p ChatSQL/PoC
-        cp -r App ChatSQL/PoC
-        cp -r DizionarioDati ChatSQL/PoC
+        cd ${{ github.workspace }}/frontend
+        npm run build
+
+    # Esegue il linting del codice nel frontend
+    - name: Code Linting (frontend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm run lint
+
+    # Esegue la formattazione del codice nel frontend
+    - name: Code Formatting (frontend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm run format
+
+    # Esegue il commit dei file formattati
+    - name: Commit changes
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'argo.unipd@gmail.com'
+        git status
+        git add ${{ github.workspace }}/frontend/src ${{ github.workspace }}/backend/app
+        git commit -m "Apply code formatting" || true
+
+    # Esegue il push dei file formattati
+    - name: Push changes
+      if: ${{ github.event.action != 'closed' }}
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.head_ref }}
+
+    # Esegue i test di unità nel frontend
+    - name: Run Unit Test (frontend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm run test:all
+
+    # Esegue i test di unità nel backend
+    - name: Run Unit Test (backend)
+      if: ${{ github.event.action != 'closed' }}
+      continue-on-error: true
+      run: |
+        docker exec chatsql-backend-1 bash -c 'pytest'
+
+    # Creazione della directory principale
+    - name: Parent Folder
+      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+      continue-on-error: true
+      run: |
+        mkdir -p ChatSQL/MVP
+        shopt -s extglob
+        cp -r !(ChatSQL) ChatSQL/MVP/
 
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
+      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
       uses: actions/upload-artifact@v4
       with:
         name: ChatSQL
