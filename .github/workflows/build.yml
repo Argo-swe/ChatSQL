@@ -146,7 +146,7 @@ jobs:
         git config --global user.name 'github-actions'
         git config --global user.email 'argo.unipd@gmail.com'
         git status
-        git add ${{ github.workspace }}/frontend/src ${{ github.workspace }}/backend/app
+        git add frontend/src backend/app
         git commit -m "Apply code formatting" || true
         git push origin ${{ github.head_ref }}
 
