@@ -128,17 +128,6 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm run format
 
-    # Esegue il commit dei file formattati
-    #- name: Commit changes
-      #if: ${{ github.event.action != 'closed' }}
-      #timeout-minutes: 3
-      #run: |
-        #git config --global user.name 'github-actions'
-        #git config --global user.email 'argo.unipd@gmail.com'
-        #git status
-        #git add ${{ github.workspace }}/frontend/src ${{ github.workspace }}/backend/app
-        #git commit -m "Apply code formatting" || true
-
     # Esegue il push dei file formattati
     #- name: Push changes
       #if: ${{ github.event.action != 'closed' }}
@@ -167,6 +156,16 @@ jobs:
       timeout-minutes: 3
       run: |
         docker compose stop
+
+    # Esegue il commit dei file formattati
+    - name: Commit changes
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'argo.unipd@gmail.com'
+        git status
+        git add ${{ github.workspace }}/frontend/src ${{ github.workspace }}/backend/app
+        git commit -m "Apply code formatting" || true
 
     # Creazione della directory principale
     - name: Parent Folder
