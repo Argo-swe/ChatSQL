@@ -72,14 +72,12 @@ jobs:
     # Avvio del contenitore Docker
     - name: Start Docker Container
       if: ${{ github.event.action != 'closed' }}
-      timeout-minutes: 3
       run: |
         docker compose up backend -d
 
     # Configura l'ambiente Node.js     
     - name: Setup Node.js
       if: ${{ github.event.action != 'closed' }}
-      timeout-minutes: 3
       uses: actions/setup-node@v4
       with:
           node-version: '20'
@@ -87,13 +85,11 @@ jobs:
     # Controlla la versione di Node.js
     - name: Check Node Version
       if: ${{ github.event.action != 'closed' }}
-      timeout-minutes: 3
       run: node -v
 
     # Installa le dipendenze del progetto
     - name: Installing Dependencies
       if: ${{ github.event.action != 'closed' }}
-      timeout-minutes: 3
       run: |
         cd ${{ github.workspace }}/frontend
         npm i
@@ -101,7 +97,6 @@ jobs:
     # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
     - name: Code Linting and Formatting (backend)
       if: ${{ github.event.action != 'closed' }}
-      timeout-minutes: 3
       run: |
         sh setup-pre-commit.sh && pre-commit run --all-files    
 
@@ -115,7 +110,6 @@ jobs:
     # Esegue il linting del codice nel frontend
     - name: Code Linting (frontend)
       if: ${{ github.event.action != 'closed' }}
-      timeout-minutes: 3
       run: |
         cd ${{ github.workspace }}/frontend
         npm run lint
@@ -123,7 +117,6 @@ jobs:
     # Esegue la formattazione del codice nel frontend
     - name: Code Formatting (frontend)
       if: ${{ github.event.action != 'closed' }}
-      timeout-minutes: 3
       run: |
         cd ${{ github.workspace }}/frontend
         npm run format
@@ -131,7 +124,6 @@ jobs:
     # Esegue i test di unità nel frontend
     - name: Run Unit Test (frontend)
       if: ${{ github.event.action != 'closed' }}
-      timeout-minutes: 3
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:all
@@ -144,11 +136,10 @@ jobs:
 
     # Arresto dell'esecuzione del contenitore Docker
     - name: Stop Docker Container
-      timeout-minutes: 3
       run: |
         docker compose stop
 
-    # Esegue il commit dei file formattati
+    # Esegue il push dei file formattati
     - name: Commit changes
       if: ${{ github.event.action != 'closed' }}
       run: |
@@ -157,14 +148,7 @@ jobs:
         git status
         git add ${{ github.workspace }}/frontend/src ${{ github.workspace }}/backend/app
         git commit -m "Apply code formatting" || true
-
-    # Esegue il push dei file formattati
-    - name: Push changes
-      if: ${{ github.event.action != 'closed' }}
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.head_ref }}
+        git push origin ${{ github.head_ref }}
 
     # Creazione della directory principale
     - name: Parent Folder
