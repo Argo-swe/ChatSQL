@@ -30,7 +30,6 @@ const TECHNICIAN_MENU: Menu = [
         icon: 'pi pi-fw pi-database',
         to: '/dictionary'
       }
-      // { label: computed(() => t('text.Debug')), icon: 'pi pi-fw pi-eye', to: '/debug' }
     ]
   }
 ];

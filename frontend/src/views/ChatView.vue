@@ -24,7 +24,6 @@ import ChatMessage from '@/components/ChatMessage.vue';
 import DictPreview from '@/components/DictPreview.vue';
 
 const { t } = useI18n();
-const client = getApiClient();
 const { messageError } = messageService();
 let isLogged = ref(AuthService.isLogged());
 
@@ -196,7 +195,7 @@ function handleSuccessfulRetrieve(response: any) {
  */
 function retrieveDictionaries() {
   dictionaries.value = [];
-  client
+  getApiClient()
     .getAllDictionaries()
     .then((response) => {
       if (response.data?.status == 'OK') {
@@ -220,7 +219,7 @@ function retrieveDictionaries() {
  * @function getDictionaryInfo
  */
 function getDictionaryInfo() {
-  client
+  getApiClient()
     .getDictionaryPreview({
       id: selectedDictionary.value!
     })
@@ -265,7 +264,7 @@ function runRequest() {
  */
 function generatePrompt() {
   loading.value = true;
-  client
+  getApiClient()
     .generatePrompt({
       dictionaryId: selectedDictionary.value!,
       query: request.value.trim(),
@@ -297,7 +296,7 @@ function generatePrompt() {
  */
 function generatePromptWithDebug() {
   loading.value = true;
-  client
+  getApiClient()
     .generatePromptWithDebug({
       dictionaryId: selectedDictionary.value!,
       query: request.value.trim(),
