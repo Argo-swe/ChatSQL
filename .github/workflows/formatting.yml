@@ -8,8 +8,10 @@ permissions:
 
 # Trigger: pull request aperta o aggiornata
 on:
-  pull_request:
-    types: [opened, ready_for_review, review_requested]
+  push:
+    branches-ignore:
+      - main
+      - develop
 
 # Unità di lavoro all'interno del workflow
 jobs:
