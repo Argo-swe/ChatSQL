@@ -13,7 +13,10 @@
     "format": "prettier --write src/",
     "build-api": "npx openapicmd typegen http://localhost:8000/openapi.json > src/types/openapi.d.ts",
     "precommit": "npm run lint && npm run format",
-    "test": "jest"
+    "test": "jest",
+    "test:jest": "jest --coverage",
+    "test:cypress": "cypress run --component",
+    "test:all": "npm run test:jest && npm run test:cypress"
   },
   "husky": {
     "hooks": {
@@ -32,25 +35,33 @@
     "vue-router": "~4.3.0"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^3.12.44",
+    "@cypress/vue": "^6.0.1",
     "@openapitools/openapi-generator-cli": "~2.13.4",
     "@rushstack/eslint-patch": "~1.8.0",
     "@tsconfig/node20": "~20.1.4",
+    "@types/jest": "^29.0.0",
     "@types/node": "~20.12.5",
     "@vitejs/plugin-vue": "~5.0.4",
     "@vue/eslint-config-prettier": "~9.0.0",
     "@vue/eslint-config-typescript": "~13.0.0",
     "@vue/tsconfig": "~0.5.1",
+    "cypress": "^13.13.2",
     "eslint": "~8.57.0",
     "eslint-plugin-vue": "~9.23.0",
     "husky": "~4.3.8",
+    "istanbul-lib-coverage": "^3.2.2",
+    "jest": "^29.0.0",
     "node-wget": "~0.4.3",
     "npm-run-all2": "~6.1.2",
     "prettier": "~3.2.5",
     "prettier-plugin-organize-imports": "^4.0.0",
     "primevue": "~3.52.0",
     "sass": "~1.77.5",
+    "ts-jest": "^29.0.0",
     "typescript": "~5.4.0",
     "vite": "~5.2.8",
+    "vite-plugin-istanbul": "^6.0.2",
     "vue-tsc": "~2.0.11",
     "xml-parser": "~1.2.1"
   }
