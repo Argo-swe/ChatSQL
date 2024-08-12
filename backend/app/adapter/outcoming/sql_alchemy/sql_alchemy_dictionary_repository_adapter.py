@@ -5,8 +5,8 @@ from core.port.outcoming.dictionary_repository import DictionaryRepository
 
 class SqlAlchemyDictionaryRepositoryAdapter(DictionaryRepository):
 
-    def __init__(self):
-        self._session = SessionLocal()
+    def __init__(self, session=SessionLocal()):
+        self._session = session
 
     def get_all_dictionaries(self):
         return self._session.query(Dictionaries).all()
