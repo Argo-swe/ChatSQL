@@ -130,7 +130,6 @@ jobs:
     # Esegue i test di unità nel backend
     - name: Run Unit Test (backend)
       run: |
-        cd ${{ github.workspace }}/backend
         pytest
 
     # Creazione della directory principale
