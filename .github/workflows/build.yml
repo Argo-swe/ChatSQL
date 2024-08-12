@@ -146,11 +146,13 @@ jobs:
         git config --global user.name 'github-actions'
         git config --global user.email 'argo.unipd@gmail.com'
         git status
-        git checkout ${{ github.head_ref }}
+        git branch
         git add frontend/src backend/app
         git commit -m "Apply code formatting" || true
         git branch
-        git push -u origin ${{ github.head_ref }}
+        git diff --exit-code || (git push origin ${{ github.head_ref }})
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # Creazione della directory principale
     - name: Parent Folder
