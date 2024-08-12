@@ -13,7 +13,7 @@ on:
 
 # Unità di lavoro all'interno del workflow
 jobs:
-  build:
+  formatting:
     # Esecuzione in ambiente Ubuntu con le ultime versioni di pacchetti e librerie
     runs-on: ubuntu-latest
 
