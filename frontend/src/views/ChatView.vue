@@ -1,6 +1,5 @@
 <script setup lang="ts">
 // External libraries
-import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -9,7 +8,6 @@ import { useMessages } from '@/composables/status-messages';
 import { getApiClient } from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
-import UtilsService from '@/services/utils.service';
 import type { Components } from '@/types/openapi';
 import {
   DbmsCode,
@@ -28,20 +26,13 @@ import DictPreview from '@/components/DictPreview.vue';
 const { t } = useI18n();
 const client = getApiClient();
 const { messageError } = messageService();
+let isLogged = ref(AuthService.isLogged());
 
 // Gain access to functions and maps to view status messages
 const { getMessages, onGenerateMessages, getStatusMex } = useMessages();
 const onRetrieveMessages = getMessages('read');
 
-const active = ref(0);
-const items = ref([
-  { label: () => t('chat.title'), icon: 'pi pi-comments' },
-  { label: () => t('chat.debug.title'), icon: 'pi pi-receipt' }
-]);
-let isLogged = ref(AuthService.isLogged());
-
 const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
-let debugMessage = ref();
 const dictionaries = ref<Components.Schemas.DictionaryDto[] | null[]>();
 const selectedDictionary = ref<number | null>(null);
 const languages: Ref<Languages[]> = ref([
@@ -75,7 +66,6 @@ const dictionaryPreview: Ref<DictionaryPreview> = ref<DictionaryPreview>({
 });
 
 let loading = ref(false);
-let loadingDebug = ref(false);
 const request = ref('');
 
 onMounted(() => {
@@ -83,24 +73,10 @@ onMounted(() => {
 
   window.addEventListener('token-localstorage-changed', () => {
     isLogged.value = AuthService.isLogged();
-    if (!isLogged.value) {
-      // Shows the default chat tab
-      active.value = 0;
-    }
   });
-});
 
-/**
- * Handles the tab change event.
- * @param event - The event object of type TabMenuChangeEvent.
- */
-function onTabChange(event: TabMenuChangeEvent) {
-  if (event.index != 1) {
-    debugMessage.value = null;
-  } else {
-    loadDebug();
-  }
-}
+  loadMessages();
+});
 
 /**
  * Saves the selected language to localStorage.
@@ -158,17 +134,36 @@ const toggleDetails = () => {
  * Adds a new message to the messages array.
  * @param message - The content of the message.
  * @param isSent - A flag indicating whether the message has been sent or received by the user.
+ * @param debug - (Optional) The content of the debug.
  */
-function addMessage(message: string, isSent: boolean) {
-  if (!messages.value) {
-    messages.value = [];
-  }
-
+function addMessage(message: string, isSent: boolean, debug?: string) {
   messages.value.push({
     message,
+    debug,
     isSent
   });
+
+  saveMessages();
 }
+
+/**
+ * Saves all chat messages in the sessionStorage.
+ */
+const saveMessages = () => {
+  sessionStorage.setItem('chat-messages', JSON.stringify(messages.value));
+};
+
+/**
+ * Loads messages from the sessionStorage and updates the chat state accordingly.
+ */
+const loadMessages = () => {
+  const savedMessages = sessionStorage.getItem('chat-messages');
+  if (savedMessages) {
+    messages.value = JSON.parse(savedMessages);
+  } else {
+    messages.value = [];
+  }
+};
 
 /**
  * Clears all messages from the messages array.
@@ -232,7 +227,6 @@ function getDictionaryInfo() {
     .then((response) => {
       if (response.data?.status == 'OK') {
         Object.assign(dictionaryPreview.value, response.data?.data);
-        toggleDetails();
       } else {
         messageError(
           t('dictionary.title'),
@@ -250,23 +244,27 @@ function getDictionaryInfo() {
 
 /**
  * Prepares the prompt generation request.
- * @function setUpRequest
+ * @function runRequest
  */
-function setUpRequest() {
+function runRequest() {
   // Hide the data dictionary preview (if visible)
   if (detailsVisible.value) {
     toggleDetails();
   }
   addMessage(request.value.trim(), true);
-  loading.value = true;
+  if (isLogged.value) {
+    generatePromptWithDebug();
+  } else {
+    generatePrompt();
+  }
 }
 
 /**
  * Executes the prompt generation request.
- * @function runRequest
+ * @function generatePrompt
  */
-function runRequest() {
-  setUpRequest();
+function generatePrompt() {
+  loading.value = true;
   client
     .generatePrompt({
       dictionaryId: selectedDictionary.value!,
@@ -295,18 +293,23 @@ function runRequest() {
 }
 
 /**
- * Loads debug information about the prompt generation process.
+ * Executes the prompt generation request and loads debug information about the generation process.
  */
-function loadDebug() {
-  loadingDebug.value = true;
+function generatePromptWithDebug() {
+  loading.value = true;
   client
-    .generatePromptDebug()
+    .generatePromptWithDebug({
+      dictionaryId: selectedDictionary.value!,
+      query: request.value.trim(),
+      dbms: selectedDbms.value,
+      lang: selectedLanguage.value
+    })
     .then((response) => {
       if (response.data?.status == 'OK') {
-        debugMessage.value = response.data.data;
+        addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
       } else {
         messageError(
-          t('chat.debug.title'),
+          t('chat.prompt.title'),
           getStatusMex(onGenerateMessages, response.data?.status, {
             message: response.data?.message
           })
@@ -314,30 +317,16 @@ function loadDebug() {
       }
     })
     .catch((error) => {
-      messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error.message}`);
+      messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
     })
     .finally(() => {
-      loadingDebug.value = false;
+      loading.value = false;
     });
 }
-
-/**
- * Download a log file.
- */
-function onClickDownloadFile() {
-  UtilsService.downloadFile('chatsql_log.txt', debugMessage.value);
-}
 </script>
-<template>
-  <PgTabMenu
-    v-if="isLogged"
-    v-model:activeIndex="active"
-    :model="items"
-    class="tab-chat mb-2"
-    @tab-change="onTabChange"
-  />
 
-  <div v-if="active == 0" id="chat" :class="{ isLogged: isLogged }" class="flex flex-column">
+<template>
+  <div id="chat" class="flex flex-column">
     <div id="titlebar-container" class="card p-3">
       <div id="chat-title" class="flex flex-row align-items-center">
         <h1 class="m-1 text-xl font-semibold">{{ getDictionaryName(selectedDictionary) }}</h1>
@@ -424,6 +413,7 @@ function onClickDownloadFile() {
         :key="index"
         :is-sent="msg.isSent"
         :message="msg.message"
+        :debug="msg.debug"
       ></ChatMessage>
     </div>
 
@@ -445,35 +435,14 @@ function onClickDownloadFile() {
       />
     </PgInputGroup>
   </div>
-
-  <div v-if="active == 1" id="debug" class="h-full mt-3">
-    <h1 class="m-1 mb-3 text-xl font-semibold">{{ t('chat.debug.subject') }}</h1>
-    <PgButton
-      v-if="!loadingDebug && debugMessage"
-      icon="pi pi-download"
-      :label="t('chat.debug.file.download')"
-      severity="help"
-      class="mb-3"
-      @click="onClickDownloadFile()"
-    />
-    <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
-  </div>
 </template>
 
 <style scoped>
-.tab-chat * {
-  background-color: transparent;
-}
-
 #chat {
   height: calc(100vh - 5rem - 4rem);
   max-height: 100%;
   position: relative;
   margin-bottom: -2rem;
-}
-
-#chat.isLogged {
-  height: calc(100vh - 5rem - 4rem - 3.5rem);
 }
 
 .hide {
