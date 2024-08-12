@@ -157,7 +157,6 @@ jobs:
         git status
         git add ${{ github.workspace }}/frontend/src ${{ github.workspace }}/backend/app
         git commit -m "Apply code formatting" || true
-        git push -u origin 
 
     # Esegue il push dei file formattati
     - name: Push changes
