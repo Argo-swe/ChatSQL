@@ -152,6 +152,12 @@ jobs:
       run: |
         docker exec chatsql-backend-1 bash -c 'pytest'
 
+    # Arresto dell'esecuzione del contenitore Docker
+    - name: Stop Docker Container
+      continue-on-error: true
+      run: |
+        docker compose stop
+
     # Creazione della directory principale
     - name: Parent Folder
       if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
