@@ -1,3 +1,7 @@
+from adapter.outcoming.sql_alchemy.sql_alchemy_dictionary_repository_adapter import (
+    SqlAlchemyDictionaryRepositoryAdapter,
+)
+from core.service.dictionary_service import DictionaryService
 from models.responses.response_dto import ResponseDto, ResponseStatusEnum
 from models.responses.dictionaries_response_dto import DictionariesResponseDto
 from models.responses.dictionary_response_dto import DictionaryResponseDto
@@ -38,14 +42,15 @@ os.makedirs(out_file_base_path, exist_ok=True)
 
 manager = IndexManager()
 
+dictionary_repository = SqlAlchemyDictionaryRepositoryAdapter()
+dictionary_service = DictionaryService(dictionary_repository)
+
 
 @router.get(
     "/", tags=[tag], response_model=DictionariesResponseDto, name="getAllDictionaries"
 )
-def get_all_dictionaries(db: Session = Depends(get_db)) -> DictionariesResponseDto:
-    dictionaries = crud.get_all_dictionaries(db)
-
-    return DictionariesResponseDto(data=dictionaries, status=ResponseStatusEnum.OK)
+def get_all_dictionaries() -> DictionariesResponseDto:
+    return dictionary_service.get_dictionary_list()
 
 
 @router.get(
