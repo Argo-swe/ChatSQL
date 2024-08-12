@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-
+// External libraries
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+// Child Components
+import AppLogo from '@/components/AppLogo.vue';
+
 const { t } = useI18n();
 
+// Reference to the application version.
 const version = ref(import.meta.env.VITE_VERSION ?? null);
-
-const logoUrl = computed(() => {
-  return '/icons/argo_trasparente.svg';
-});
 </script>
 
 <template>
   <div class="layout-footer w-full">
-    <div class="titolo">
-      <img :src="logoUrl" alt="Logo" height="40" class="argo-logo mr-2" />
+    <div class="logo">
+      <app-logo path="icons/argo_trasparente.svg" height="40"></app-logo>
     </div>
     <p class="copyright">
       <strong v-if="version"> v{{ version }} </strong>
@@ -23,4 +24,3 @@ const logoUrl = computed(() => {
     </p>
   </div>
 </template>
-<style lang="scss" scoped></style>
