@@ -94,7 +94,7 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm i
 
-    # Esegue il linting del codice nel backend utilizzando pre-commit
+    # Esegue il linting e la la formattazione del codice nel backend utilizzando pre-commit
     - name: Code Linting (backend)
       if: ${{ github.event.action != 'closed' }}
       run: |
