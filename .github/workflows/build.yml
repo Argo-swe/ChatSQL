@@ -55,7 +55,7 @@ jobs:
     
     # Creazione e caricamento dell'immagine su GHCR
     - name: Build and Push Image
-      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit != 'true' }}
+      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit != true }}
       run: |
         docker compose build backend
         docker tag chatsql-backend:latest ghcr.io/argo-swe/chatsql-backend:latest
@@ -63,7 +63,7 @@ jobs:
 
     # Recupero dell'immagine da GHCR
     - name: Pull Image
-      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit == 'true' }}
+      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit == true }}
       run: |
         docker pull ghcr.io/argo-swe/chatsql-backend:latest
         docker tag ghcr.io/argo-swe/chatsql-backend:latest chatsql-backend:latest
@@ -154,7 +154,7 @@ jobs:
 
     # Creazione della directory principale
     - name: Parent Folder
-      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == 'true' }}
+      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
       continue-on-error: true
       run: |
         mkdir -p ChatSQL/MVP
@@ -163,7 +163,7 @@ jobs:
 
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
-      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == 'true' }}
+      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
       uses: actions/upload-artifact@v4
       with:
         name: ChatSQL
