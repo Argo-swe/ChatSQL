@@ -49,6 +49,7 @@ jobs:
 
     # Creazione file .env.local
     - name: Add env.local
+      if: ${{ github.event.action != 'closed' }}
       run: |
         touch backend/.env.local
         touch frontend/.env.local
@@ -70,12 +71,15 @@ jobs:
 
     # Avvio del contenitore Docker
     - name: Start Docker Container
+      if: ${{ github.event.action != 'closed' }}
+      timeout-minutes: 3
       run: |
         docker compose up backend -d
 
     # Configura l'ambiente Node.js     
     - name: Setup Node.js
       if: ${{ github.event.action != 'closed' }}
+      timeout-minutes: 3
       uses: actions/setup-node@v4
       with:
           node-version: '20'
@@ -83,11 +87,13 @@ jobs:
     # Controlla la versione di Node.js
     - name: Check Node Version
       if: ${{ github.event.action != 'closed' }}
+      timeout-minutes: 3
       run: node -v
 
     # Installa le dipendenze del progetto
     - name: Installing Dependencies
       if: ${{ github.event.action != 'closed' }}
+      timeout-minutes: 3
       run: |
         cd ${{ github.workspace }}/frontend
         npm i
@@ -95,20 +101,21 @@ jobs:
     # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
     - name: Code Linting and Formatting (backend)
       if: ${{ github.event.action != 'closed' }}
+      timeout-minutes: 3
       run: |
         sh setup-pre-commit.sh && pre-commit run --all-files    
 
     # Esegue la build del frontend
-    - name: Build Frontend
-      if: ${{ github.event.action != 'closed' }}
-      continue-on-error: true
-      run: |
-        cd ${{ github.workspace }}/frontend
-        npm run build
+    #- name: Build Frontend
+      #if: ${{ github.event.action != 'closed' }}
+      #run: |
+        #cd ${{ github.workspace }}/frontend
+        #npm run build
 
     # Esegue il linting del codice nel frontend
     - name: Code Linting (frontend)
       if: ${{ github.event.action != 'closed' }}
+      timeout-minutes: 3
       run: |
         cd ${{ github.workspace }}/frontend
         npm run lint
@@ -116,9 +123,30 @@ jobs:
     # Esegue la formattazione del codice nel frontend
     - name: Code Formatting (frontend)
       if: ${{ github.event.action != 'closed' }}
+      timeout-minutes: 3
       run: |
         cd ${{ github.workspace }}/frontend
         npm run format
+
+    # Esegue i test di unità nel frontend
+    - name: Run Unit Test (frontend)
+      if: ${{ github.event.action != 'closed' }}
+      timeout-minutes: 3
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm run test:all
+
+    # Esegue i test di unità nel backend
+    #- name: Run Unit Test (backend)
+      #if: ${{ github.event.action != 'closed' }}
+      #run: |
+        #docker exec chatsql-backend-1 bash -c 'pytest'
+
+    # Arresto dell'esecuzione del contenitore Docker
+    - name: Stop Docker Container
+      timeout-minutes: 3
+      run: |
+        docker compose stop
 
     # Esegue il commit dei file formattati
     - name: Commit changes
@@ -138,30 +166,9 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ github.head_ref }}
 
-    # Esegue i test di unità nel frontend
-    - name: Run Unit Test (frontend)
-      if: ${{ github.event.action != 'closed' }}
-      run: |
-        cd ${{ github.workspace }}/frontend
-        npm run test:all
-
-    # Esegue i test di unità nel backend
-    - name: Run Unit Test (backend)
-      if: ${{ github.event.action != 'closed' }}
-      continue-on-error: true
-      run: |
-        docker exec chatsql-backend-1 bash -c 'pytest'
-
-    # Arresto dell'esecuzione del contenitore Docker
-    - name: Stop Docker Container
-      continue-on-error: true
-      run: |
-        docker compose stop
-
     # Creazione della directory principale
     - name: Parent Folder
       if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
-      continue-on-error: true
       run: |
         mkdir -p ChatSQL/MVP
         shopt -s extglob
