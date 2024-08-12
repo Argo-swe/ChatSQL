@@ -9,7 +9,7 @@ permissions:
 # Trigger: pull request aperta o aggiornata
 on:
   pull_request:
-    types: [opened, synchronize, closed]
+    types: [opened, ready_for_review, review_requested, closed]
 
 # Unità di lavoro all'interno del workflow
 jobs:
