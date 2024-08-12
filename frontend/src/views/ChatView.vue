@@ -1,161 +1,256 @@
 <script setup lang="ts">
 // External libraries
-import type { TabMenuChangeEvent } from 'primevue/tabmenu';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
-import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
-import ChatMessage from '@/components/ChatMessage.vue';
-import DictPreview from '@/components/DictPreview.vue';
+import { useMessages } from '@/composables/status-messages';
 import { getApiClient } from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
 import { messageService } from '@/services/message.service';
-import UtilsService from '@/services/utils.service';
 import type { Components } from '@/types/openapi';
-import type { DictionaryPreview, MessageWrapper } from '@/types/wrapper';
+import {
+  DbmsCode,
+  DbmsName,
+  Languages,
+  type DbmsOption,
+  type DictionaryPreview,
+  type MessageWrapper
+} from '@/types/wrapper';
 
-const client = getApiClient();
+// Child Components
+import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
+import ChatMessage from '@/components/ChatMessage.vue';
+import DictPreview from '@/components/DictPreview.vue';
+
 const { t } = useI18n();
+const { messageError } = messageService();
+let isLogged = ref(AuthService.isLogged());
 
-let loading = ref(false);
-let loadingDebug = ref(false);
-let debugMessage = ref();
+// Gain access to functions and maps to view status messages
+const { getMessages, onGenerateMessages, getStatusMex } = useMessages();
+const onRetrieveMessages = getMessages('read');
 
-onMounted(() => {
-  retrieveDictionaries()
-    .then((retrieved) => {
-      if (retrieved) {
-        checked.value = !checked.value;
-        toggleSelectView();
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  window.addEventListener('token-localstorage-changed', () => {
-    isLogged.value = AuthService.isLogged();
-    if (!isLogged.value) {
-      active.value = 0; // show default chat tab
-    }
-  });
-});
-
-function retrieveDictionaries() {
-  return new Promise((resolve, reject) => {
-    dictionaries.value = [];
-    client.getAllDictionaries().then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK': {
-            dictionaries.value = response.data.data;
-            let localStorageDictionaryId = localStorage.getItem('chat-dictionary-id');
-            if (localStorageDictionaryId && response.data.data.findIndex((d) => d?.id) != -1) {
-              selectedDictionary.value = parseInt(localStorageDictionaryId);
-              resolve(true);
-            }
-            resolve(false);
-            break;
-          }
-          default:
-            messageError(
-              t('dictionary.title'),
-              `${t('general.list.error')}\n${response.data?.message}`
-            );
-            reject(`${t('general.list.error')}\n${response.data?.message}`);
-        }
-      },
-      (error) => {
-        messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
-        reject(`${t('general.list.error')}\n${error}`);
-      }
-    );
-  });
-}
-
-// Display data dictionary preview
-function getDictionaryInfo() {
-  toggleDetails();
-  if (!detailsVisible.value) {
-    return;
-  }
-  client
-    .getDictionaryPreview({
-      id: selectedDictionary.value!
-    })
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            Object.assign(dictionaryPreview.value, response.data.data);
-            break;
-          case 'NOT_FOUND':
-            messageError(
-              t('dictionary.title'),
-              `${t('general.list.error')}\n${t('actions.notFoundById', { item: t('dictionary.title'), id: selectedDictionary.value! })}`
-            );
-            break;
-          default:
-            messageError(
-              t('dictionary.title'),
-              `${t('general.list.error')}\n${response.data?.message}`
-            );
-        }
-      },
-      (error) => {
-        messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
-      }
-    );
-}
-
-const selectedDbms = ref(localStorage.getItem('chat-dbms') || 'Mysql');
-const dbms = ref([
-  { name: 'Mysql', code: 'Mysql' },
-  { name: 'PostgreSQL', code: 'PostgreSQL' },
-  { name: 'MariaDB', code: 'MariaDB' },
-  { name: 'Microsoft SQL Server', code: 'Microsoft' },
-  { name: 'Oracle DB', code: 'Oracle' },
-  { name: 'SQLite', code: 'SQLite' }
+const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
+const dictionaries = ref<Components.Schemas.DictionaryDto[] | null[]>();
+const selectedDictionary = ref<number | null>(null);
+const languages: Ref<Languages[]> = ref([
+  Languages.en,
+  Languages.it,
+  Languages.fr,
+  Languages.es,
+  Languages.ge
 ]);
+const selectedLanguage = ref(localStorage.getItem('chat-language') || Languages.en);
+const dbms: Ref<DbmsOption[]> = ref([
+  { name: DbmsName.Mysql, code: DbmsCode.Mysql },
+  { name: DbmsName.PostgreSQL, code: DbmsCode.PostgreSQL },
+  { name: DbmsName.MariaDB, code: DbmsCode.MariaDB },
+  { name: DbmsName.Microsoft, code: DbmsCode.Microsoft },
+  { name: DbmsName.Oracle, code: DbmsCode.Oracle },
+  { name: DbmsName.SQLite, code: DbmsCode.SQLite }
+]);
+const selectedDbms = ref(localStorage.getItem('chat-dbms') || DbmsCode.Mysql);
+// Variable to control the state of the options form container
+const hide = ref(false);
+// Hide/Show switch for the toggle button
+const checked = ref(false);
 
-const selectedLanguage = ref(localStorage.getItem('chat-language') || 'english');
-const languages = ref(['english', 'italian', 'french', 'spanish', 'german']);
-
-const selectedDictionary = ref<null | number>(null);
-const dictionaries = ref<Components.Schemas.DictionaryDto[]>();
+// Variable to handle details visibility
+const detailsVisible = ref(false);
 const dictionaryPreview: Ref<DictionaryPreview> = ref<DictionaryPreview>({
   databaseName: '',
   databaseDescription: '',
   tables: []
 });
 
+let loading = ref(false);
+const request = ref('');
+
+onMounted(() => {
+  retrieveDictionaries();
+
+  window.addEventListener('token-localstorage-changed', () => {
+    isLogged.value = AuthService.isLogged();
+  });
+
+  loadMessages();
+});
+
+/**
+ * Saves the selected language to localStorage.
+ * @param value - The selected language code to be saved.
+ */
 const onLanguageChange = (value: string) => {
   localStorage.setItem('chat-language', value);
 };
+
+/**
+ * Saves the selected DBMS to localStorage.
+ * @param value - The selected DBMS code to be saved.
+ */
 const onDbmsChange = (value: string) => {
   localStorage.setItem('chat-dbms', value);
 };
+
+/**
+ * Saves the selected dictionary to localStorage.
+ * @param value - The selected dictionary ID to be saved.
+ */
 const onDictionaryChange = (value: number) => {
   localStorage.setItem('chat-dictionary-id', value.toString());
 };
 
-const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
+/**
+ * Returns the selected dictionary name.
+ * @param id - The ID of the dictionary.
+ */
+const getDictionaryName = (id: number | null) => {
+  const dict = dictionaries.value?.find(
+    (dict: Components.Schemas.DictionaryDto | null) => dict?.id === id
+  );
+  return dict ? dict.name + ' (.json)' : t('chat.dictionary.placeholder');
+};
 
+/**
+ * Toggles the visibility of the chat options form.
+ */
+const toggleSelectView = () => {
+  hide.value = !hide.value;
+};
+
+/**
+ * Toggles the visibility of the dictionary preview card.
+ */
+const toggleDetails = () => {
+  if (!detailsVisible.value) {
+    getDictionaryInfo();
+  }
+  detailsVisible.value = !detailsVisible.value;
+};
+
+/**
+ * Adds a new message to the messages array.
+ * @param message - The content of the message.
+ * @param isSent - A flag indicating whether the message has been sent or received by the user.
+ * @param debug - (Optional) The content of the debug.
+ */
+function addMessage(message: string, isSent: boolean, debug?: string) {
+  messages.value.push({
+    message,
+    debug,
+    isSent
+  });
+
+  saveMessages();
+}
+
+/**
+ * Saves all chat messages in the sessionStorage.
+ */
+const saveMessages = () => {
+  sessionStorage.setItem('chat-messages', JSON.stringify(messages.value));
+};
+
+/**
+ * Loads messages from the sessionStorage and updates the chat state accordingly.
+ */
+const loadMessages = () => {
+  const savedMessages = sessionStorage.getItem('chat-messages');
+  if (savedMessages) {
+    messages.value = JSON.parse(savedMessages);
+  } else {
+    messages.value = [];
+  }
+};
+
+/**
+ * Clears all messages from the messages array.
+ */
 const clearMessages = () => {
   messages.value = [];
 };
 
-const request = ref('');
-const { messageError } = messageService();
+/**
+ * Handles the response of a read operation.
+ * @function handleSuccessfulRetrieve
+ * @param response - The response object returned from the read operation.
+ */
+function handleSuccessfulRetrieve(response: any) {
+  dictionaries.value = response.data?.data;
+  let localStorageDictionaryId = localStorage.getItem('chat-dictionary-id');
+  if (
+    localStorageDictionaryId &&
+    response.data?.data.findIndex((d: Components.Schemas.DictionaryDto | null) => d?.id) != -1
+  ) {
+    selectedDictionary.value = parseInt(localStorageDictionaryId);
+    checked.value = !checked.value;
+    toggleSelectView();
+  }
+}
 
+/**
+ * Retrieves a list of dictionaries.
+ * @function retrieveDictionaries
+ */
+function retrieveDictionaries() {
+  dictionaries.value = [];
+  getApiClient()
+    .getAllDictionaries()
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        handleSuccessfulRetrieve(response);
+      } else {
+        messageError(
+          t('dictionary.title'),
+          getStatusMex(onRetrieveMessages, response.data?.status, {
+            message: response.data?.message
+          })
+        );
+      }
+    })
+    .catch((error) => {
+      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+    });
+}
+
+/**
+ * Retrieves detailed information about the selected dictionary.
+ * @function getDictionaryInfo
+ */
+function getDictionaryInfo() {
+  getApiClient()
+    .getDictionaryPreview({
+      id: selectedDictionary.value!
+    })
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        Object.assign(dictionaryPreview.value, response.data?.data);
+      } else {
+        messageError(
+          t('dictionary.title'),
+          getStatusMex(onRetrieveMessages, response.data?.status, {
+            message: response.data?.message,
+            dictionaryId: selectedDictionary.value!
+          })
+        );
+      }
+    })
+    .catch((error) => {
+      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+    });
+}
+
+/**
+ * Prepares the prompt generation request.
+ * @function runRequest
+ */
 function runRequest() {
   // Hide the data dictionary preview (if visible)
   if (detailsVisible.value) {
     toggleDetails();
   }
   addMessage(request.value.trim(), true);
-  console.log(request.value);
   if (isLogged.value) {
     generatePromptWithDebug();
   } else {
@@ -163,171 +258,74 @@ function runRequest() {
   }
 }
 
+/**
+ * Executes the prompt generation request.
+ * @function generatePrompt
+ */
 function generatePrompt() {
   loading.value = true;
-  client
+  getApiClient()
     .generatePrompt({
       dictionaryId: selectedDictionary.value!,
       query: request.value.trim(),
       dbms: selectedDbms.value,
       lang: selectedLanguage.value
     })
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            addMessage(response.data.data!, false);
-            break;
-          case 'BAD_REQUEST':
-            messageError(
-              t('chat.prompt.title'),
-              `${t('actions.generate.error')}\n${t('actions.formatError')}`
-            );
-            break;
-          default:
-            messageError(
-              t('chat.prompt.title'),
-              `${t('actions.generate.error')}\n${response.data?.message}`
-            );
-        }
-        loading.value = false;
-      },
-      (error) => {
-        loading.value = false;
-        messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`);
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        addMessage(response.data.data!, false);
+      } else {
+        messageError(
+          t('chat.prompt.title'),
+          getStatusMex(onGenerateMessages, response.data?.status, {
+            message: response.data?.message
+          })
+        );
       }
-    );
+    })
+    .catch((error) => {
+      messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
+/**
+ * Executes the prompt generation request and loads debug information about the generation process.
+ */
 function generatePromptWithDebug() {
   loading.value = true;
-  client
+  getApiClient()
     .generatePromptWithDebug({
       dictionaryId: selectedDictionary.value!,
       query: request.value.trim(),
       dbms: selectedDbms.value,
       lang: selectedLanguage.value
     })
-    .then(
-      (response) => {
-        switch (response.data?.status) {
-          case 'OK':
-            addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
-            break;
-          case 'BAD_REQUEST':
-            messageError(
-              t('chat.prompt.title'),
-              `${t('actions.generate.error')}\n${t('actions.formatError')}`
-            );
-            break;
-          default:
-            messageError(
-              t('chat.prompt.title'),
-              `${t('actions.generate.error')}\n${response.data?.message}`
-            );
-        }
-        loading.value = false;
-      },
-      (error) => {
-        loading.value = false;
-        messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`);
+    .then((response) => {
+      if (response.data?.status == 'OK') {
+        addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
+      } else {
+        messageError(
+          t('chat.prompt.title'),
+          getStatusMex(onGenerateMessages, response.data?.status, {
+            message: response.data?.message
+          })
+        );
       }
-    );
-}
-
-// function loadDebug() {
-//   loadingDebug.value = true;
-//   client.generatePromptDebug().then(
-//     (response) => {
-//       switch (response.data?.status) {
-//         case 'OK':
-//           debugMessage.value = response.data.data;
-//           loadingDebug.value = false;
-//           break;
-//         case 'NOT_FOUND':
-//           console.log(response.data.message);
-//           break;
-//         default:
-//           messageError(
-//             t('chat.debug.title'),
-//             `${t('actions.generate.error')}\n${response.data?.message}`
-//           );
-//       }
-//     },
-//     (error) => {
-//       messageError(t('chat.debug.title'), `${t('actions.generate.error')}\n${error}`);
-//     }
-//   );
-// }
-
-function addMessage(message: string, isSent: boolean, debug?: string) {
-  if (!messages.value) {
-    messages.value = [];
-  }
-
-  messages.value.push({
-    message,
-    debug,
-    isSent
-  });
-}
-
-function onTabChange(event: TabMenuChangeEvent) {
-  if (event.index != 1) {
-    // todo clean log
-    debugMessage.value = null;
-  } else {
-    // load log
-    //loadDebug();
-  }
-}
-
-let isLogged = ref(AuthService.isLogged());
-const active = ref(0);
-const items = ref([
-  { label: () => t('chat.title'), icon: 'pi pi-comments' },
-  { label: () => t('chat.debug.title'), icon: 'pi pi-receipt' }
-]);
-
-// Switch Hide/Show per il toggle button
-const checked = ref(false);
-
-// Variabile per controllare lo stato del container
-const hide = ref(false);
-
-// Variable to handle details visibility
-const detailsVisible = ref(false);
-
-const toggleSelectView = () => {
-  hide.value = !hide.value;
-};
-
-const toggleDetails = () => {
-  detailsVisible.value = !detailsVisible.value;
-};
-
-// Return selected dictionary name
-const getDictionaryName = (id: number | null) => {
-  const dict = dictionaries.value?.find((dict: Components.Schemas.DictionaryDto) => dict.id === id);
-  return dict ? dict.name + ' (.json)' : t('chat.dictionary.placeholder');
-};
-
-// Download del file di log
-function onClickDownloadFile() {
-  UtilsService.downloadFile('chatsql_log.txt', debugMessage.value);
+    })
+    .catch((error) => {
+      messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 </script>
-<template>
-  <PgTabMenu
-    v-if="isLogged"
-    v-model:activeIndex="active"
-    :model="items"
-    class="tab-chat mb-2"
-    @tab-change="onTabChange"
-  />
 
-  <div v-if="active == 0" id="chat" :class="{ isLogged: isLogged }" class="flex flex-column">
-    <!-- TITLE -->
+<template>
+  <div id="chat" class="flex flex-column">
     <div id="titlebar-container" class="card p-3">
       <div id="chat-title" class="flex flex-row align-items-center">
         <h1 class="m-1 text-xl font-semibold">{{ getDictionaryName(selectedDictionary) }}</h1>
@@ -364,7 +362,7 @@ function onClickDownloadFile() {
                 ? t('chat.dictionary.details.hide_details')
                 : t('chat.dictionary.details.show_details')
             "
-            @click="getDictionaryInfo()"
+            @click="toggleDetails"
           />
         </PgInputGroup>
 
@@ -408,7 +406,6 @@ function onClickDownloadFile() {
       :dictionary-preview="dictionaryPreview"
     ></DictPreview>
 
-    <!-- CHAT MESSAGES -->
     <div v-if="!detailsVisible" id="messages">
       <ChatMessage
         v-for="(msg, index) in messages"
@@ -437,35 +434,14 @@ function onClickDownloadFile() {
       />
     </PgInputGroup>
   </div>
-
-  <div v-if="active == 1" id="debug" class="h-full mt-3">
-    <h1 class="m-1 mb-3 text-xl font-semibold">{{ t('chat.debug.subject') }}</h1>
-    <PgButton
-      v-if="!loadingDebug && debugMessage"
-      icon="pi pi-download"
-      :label="t('chat.debug.file.download')"
-      severity="help"
-      class="mb-3"
-      @click="onClickDownloadFile()"
-    />
-    <ChatMessage v-if="!loadingDebug" :is-sent="false" :message="debugMessage"></ChatMessage>
-  </div>
 </template>
 
 <style scoped>
-.tab-chat * {
-  background-color: transparent;
-}
-
 #chat {
   height: calc(100vh - 5rem - 4rem);
   max-height: 100%;
   position: relative;
   margin-bottom: -2rem;
-}
-
-#chat.isLogged {
-  height: calc(100vh - 5rem - 4rem - 3.5rem);
 }
 
 .hide {

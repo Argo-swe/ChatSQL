@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// External libraries
 import ConfirmDialog from 'primevue/confirmdialog';
 import DynamicDialog from 'primevue/dynamicdialog';
 </script>

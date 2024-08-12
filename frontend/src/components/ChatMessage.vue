@@ -1,25 +1,39 @@
 <script setup lang="ts">
-import { messageService } from '@/services/message.service';
+// External libraries
 import { useDialog } from 'primevue/usedialog';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+// Internal dependencies
+import AuthService from '@/services/auth.service';
+import { messageService } from '@/services/message.service';
+import { type MessageWrapper } from '../types/wrapper';
+
+// Child Components
 import StringDataModal from './StringDataModal.vue';
 
+/**
+ * Props for ChatMessage component.
+ */
+const props = defineProps<MessageWrapper>();
+
 const { t } = useI18n();
-const { messageSuccess, messageError } = messageService();
 const dialog = useDialog();
-
-const props = defineProps<{
-  message: string;
-  isSent: boolean;
-  debug?: string;
-  fullWidth?: boolean;
-}>();
-
-const { message, debug, isSent, fullWidth } = props;
-
+let isLogged = ref(AuthService.isLogged());
+const { messageSuccess, messageError } = messageService();
+const { message, debug, isSent } = props;
 const isCopying = ref(false);
 
+onMounted(() => {
+  window.addEventListener('token-localstorage-changed', () => {
+    isLogged.value = AuthService.isLogged();
+  });
+});
+
+/**
+ * Opens a modal to display the debug message.
+ * @function openDebugMessage
+ */
 const openDebugMessage = () => {
   dialog.open(StringDataModal, {
     data: {
@@ -39,38 +53,32 @@ const openDebugMessage = () => {
   });
 };
 
-const copyToClipboard = (event) => {
-  // Interrompo se c'è già una copia in corso
-  if (isCopying.value) return;
+/**
+ * Copy the message to the clipboard.
+ */
+const copyToClipboard = () => {
   isCopying.value = true;
-  // Risalgo al messaggio più vicino al bottone cliccato
-  const messageContent = event.currentTarget.closest('.message').querySelector('p');
-  if (!messageContent) return;
-  // Estraggo il contenuto dall'elemento ed elimino eventuali spazi all'inizio e alla fine della stringa
-  const text = messageContent.textContent.trim();
   navigator.clipboard
-    .writeText(text)
+    .writeText(message.trim())
     .then(() => {
-      console.log('Text copied to clipboard: ', text);
-      messageSuccess('Copy', 'Text copied to clipboard');
+      messageSuccess(t('general.clipboard.name'), t('general.clipboard.success'));
       setTimeout(() => {
         isCopying.value = false;
       }, 2000);
     })
-    .catch((err) => {
-      console.error('Error when copying to clipboard: ', err);
-      messageError('Copy', 'Error when copying to clipboard');
+    .catch(() => {
+      messageError(t('general.clipboard.name'), t('general.clipboard.error'));
+      isCopying.value = false;
     });
 };
 </script>
 
 <template>
   <div
-    class="message mx-1 my-2"
+    class="message mx-1 my-2 md:w-10"
     :class="{
       sent: isSent,
-      received: !isSent,
-      'md:w-10': !fullWidth
+      received: !isSent
     }"
   >
     <div class="flex gap-3" :class="isSent ? 'flex-row-reverse' : ''">
@@ -87,15 +95,18 @@ const copyToClipboard = (event) => {
             outlined
             severity="contrast"
             :title="t('chat.actions.copy')"
+            :aria-label="t('chat.actions.copy')"
+            :disabled="isCopying"
             @click="copyToClipboard"
           />
           <PgButton
-            v-if="!isSent && debug"
-            icon="pi pi-receipt"
+            v-if="!isSent && debug && isLogged"
+            icon="pi pi-question-circle"
             outlined
             class="m-1"
             severity="contrast"
             :title="t('chat.actions.open_debug')"
+            :aria-label="t('chat.actions.open_debug')"
             @click="openDebugMessage"
           />
         </div>
