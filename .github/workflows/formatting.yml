@@ -62,8 +62,8 @@ jobs:
     - name: Commit changes
       if: ${{ github.event.action != 'closed' }}
       run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'argo.unipd@gmail.com'
+        git config user.name 'Rikicavaz77'
+        git config user.email 'riccardo.cavalli@studenti.unipd.it'
         git add frontend/src backend/app
         git commit -m "Apply code formatting" || true
         git checkout -b ${{ github.head_ref }}
