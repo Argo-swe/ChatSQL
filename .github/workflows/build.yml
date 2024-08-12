@@ -148,7 +148,7 @@ jobs:
         git status
         git add frontend/src backend/app
         git commit -m "Apply code formatting" || true
-        git push origin ${{ github.head_ref }}
+        git push -u origin ${{ github.head_ref }}
 
     # Creazione della directory principale
     - name: Parent Folder
