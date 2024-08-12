@@ -147,9 +147,6 @@ jobs:
         git config --global user.email 'argo.unipd@gmail.com'
         git add frontend/src backend/app
         git commit -m "Apply code formatting" || true
-        git checkout -b ${{ github.head_ref }}
-        git pull origin ${{ github.head_ref }}
-        git push -u origin ${{ github.head_ref }}
 
     # Creazione della directory principale
     - name: Parent Folder
