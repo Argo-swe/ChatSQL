@@ -128,15 +128,6 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm run format
 
-    # Esegue il push dei file formattati
-    #- name: Push changes
-      #if: ${{ github.event.action != 'closed' }}
-      #timeout-minutes: 3
-      #uses: ad-m/github-push-action@master
-      #with:
-        #github_token: ${{ secrets.GITHUB_TOKEN }}
-        #branch: ${{ github.head_ref }}
-
     # Esegue i test di unità nel frontend
     - name: Run Unit Test (frontend)
       if: ${{ github.event.action != 'closed' }}
@@ -166,6 +157,15 @@ jobs:
         git status
         git add ${{ github.workspace }}/frontend/src ${{ github.workspace }}/backend/app
         git commit -m "Apply code formatting" || true
+        git push -u origin 
+
+    # Esegue il push dei file formattati
+    - name: Push changes
+      if: ${{ github.event.action != 'closed' }}
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.head_ref }}
 
     # Creazione della directory principale
     - name: Parent Folder
