@@ -130,7 +130,7 @@ jobs:
     # Esegue i test di unità nel backend
     - name: Run Unit Test (backend)
       run: |
-        pytest
+        docker exec chatsql-backend-1 bash -c 'pytest'
 
     # Creazione della directory principale
     - name: Parent Folder
