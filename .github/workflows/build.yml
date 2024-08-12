@@ -52,7 +52,7 @@ jobs:
       run: |
         touch backend/.env.local
         touch frontend/.env.local
-        docker compose up
+        docker compose up -d 
         docker tag chatsql-backend:latest ghcr.io/argo-swe/chatsql-backend:latest
         docker push ghcr.io/argo-swe/chatsql-backend:latest
 
@@ -64,7 +64,7 @@ jobs:
         docker tag ghcr.io/argo-swe/chatsql-backend:latest chatsql-backend:latest
         touch backend/.env.local
         touch frontend/.env.local
-        docker compose up
+        docker compose up -d
 
     # Configura l'ambiente Node.js     
     - name: Setup Node.js
