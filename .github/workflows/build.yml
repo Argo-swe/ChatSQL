@@ -50,7 +50,7 @@ jobs:
     - name: Add env.local
       run: |
         touch backend/.env.local
-        touch frontend/.evn.local
+        touch frontend/.env.local
     
     # Creazione e caricamento dell'immagine su GHCR
     - name: Build and Push Image
