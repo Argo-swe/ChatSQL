@@ -94,8 +94,8 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm i
 
-    # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
-    - name: Code Linting and Formatting (backend)
+    # Esegue il linting del codice nel backend utilizzando pre-commit
+    - name: Code Linting (backend)
       if: ${{ github.event.action != 'closed' }}
       run: |
         sh setup-pre-commit.sh && pre-commit run --all-files    
@@ -114,13 +114,6 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm run lint
 
-    # Esegue la formattazione del codice nel frontend
-    - name: Code Formatting (frontend)
-      if: ${{ github.event.action != 'closed' }}
-      run: |
-        cd ${{ github.workspace }}/frontend
-        npm run format
-
     # Esegue i test di unità nel frontend
     - name: Run Unit Test (frontend)
       if: ${{ github.event.action != 'closed' }}
@@ -138,15 +131,6 @@ jobs:
     - name: Stop Docker Container
       run: |
         docker compose stop
-
-    # Esegue il push dei file formattati
-    - name: Commit changes
-      if: ${{ github.event.action != 'closed' }}
-      run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'argo.unipd@gmail.com'
-        git add frontend/src backend/app
-        git commit -m "Apply code formatting" || true
 
     # Creazione della directory principale
     - name: Parent Folder
