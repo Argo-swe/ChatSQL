@@ -145,19 +145,11 @@ jobs:
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'argo.unipd@gmail.com'
-        git status
-        git branch
+        git checkout -b ${{ github.head_ref }}
+        git pull origin ${{ github.head_ref }}
         git add frontend/src backend/app
         git commit -m "Apply code formatting" || true
-        git diff
-        ls
-
-    # Esegue il push dei file formattati
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.UPLOAD_TOKEN }}
-        branch: ${{ github.head_ref }}
+        git push -u origin ${{ github.head_ref }}
 
     # Creazione della directory principale
     - name: Parent Folder
