@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Azioni atomiche eseguite in sequenza all'interno del job
-    if: ${{ github.event.pull_request.draft == 'false' }}
+    if: ${{ github.event.pull_request.draft == false }}
     steps:
 
     # Clonazione del repository all'interno dell'ambiente di esecuzione del job
