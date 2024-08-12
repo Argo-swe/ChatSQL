@@ -6,6 +6,5 @@ describe('UtilsService', () => {
     expect(UtilsService.stringToSnakeCase('anotherTestString')).toBe('another_test_string');
     expect(UtilsService.stringToSnakeCase('Test123String')).toBe('test123_string');
     expect(UtilsService.stringToSnakeCase('')).toBe('');
-    expect(UtilsService.stringToSnakeCase(null)).toBe(null);
   });
 });

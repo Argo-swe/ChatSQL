@@ -1,50 +1,38 @@
-<script lang="ts">
+<script setup lang="ts">
 // External libraries
-import { defineComponent, ref, type PropType } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import type { DictionaryPreview } from '@/types/wrapper';
 
-export default defineComponent({
-  name: 'DictPreview',
+/**
+ * Props for DictPreview component.
+ */
+defineProps<{
   /**
-   * Props for DictPreview component.
-   * @prop {Boolean} detailsVisible - Flag for toggle view.
-   * @prop {DictionaryPreview} dictionaryPreview - Object holding details of the data dictionary.
+   * @prop {Boolean} detailsVisible
+   * @description Flag for toggle view.
    */
-  props: {
-    detailsVisible: {
-      type: Boolean,
-      required: true
-    },
-    dictionaryPreview: {
-      type: Object as PropType<DictionaryPreview>,
-      required: true
-    }
-  },
-  setup() {
-    /**
-     * @var {boolean} expanded - Track whether the details are expanded or collapsed.
-     */
-    const { t } = useI18n();
-    const expanded = ref(false);
+  detailsVisible: boolean;
+  /**
+   * @prop {DictionaryPreview} dictionaryPreview
+   * @description Object holding details of the data dictionary.
+   */
+  dictionaryPreview: DictionaryPreview;
+}>();
 
-    /**
-     * Toggles the value of the `expanded` state between true and false.
-     * @function toggleExpansion
-     */
-    const toggleExpansion = () => {
-      expanded.value = !expanded.value;
-    };
+const { t } = useI18n();
+// Track whether the details are expanded or collapsed.
+const expanded = ref(false);
 
-    return {
-      t,
-      expanded,
-      toggleExpansion
-    };
-  }
-});
+/**
+ * Toggles the value of the `expanded` state between true and false.
+ * @function toggleExpansion
+ */
+const toggleExpansion = () => {
+  expanded.value = !expanded.value;
+};
 </script>
 
 <template>

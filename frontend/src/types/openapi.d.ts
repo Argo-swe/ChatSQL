@@ -128,6 +128,30 @@ declare namespace Components {
       password: string;
     }
     /**
+     * PromptDto
+     */
+    export interface PromptDto {
+      /**
+       * Prompt
+       */
+      prompt: string;
+      /**
+       * Debug
+       */
+      debug?: /* Debug */ string | null;
+    }
+    /**
+     * PromptResponseDto
+     */
+    export interface PromptResponseDto {
+      /**
+       * Message
+       */
+      message?: /* Message */ string | null;
+      status: /* ResponseStatusEnum */ ResponseStatusEnum;
+      data: /* PromptDto */ PromptDto | null;
+    }
+    /**
      * ResponseDto
      */
     export interface ResponseDto {
@@ -266,9 +290,34 @@ declare namespace Paths {
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
-  namespace GeneratePromptDebug {
+  namespace GeneratePromptWithDebug {
+    namespace Parameters {
+      /**
+       * Dbms
+       */
+      export type Dbms = string;
+      /**
+       * Dictionaryid
+       */
+      export type DictionaryId = number;
+      /**
+       * Lang
+       */
+      export type Lang = string;
+      /**
+       * Query
+       */
+      export type Query = string;
+    }
+    export interface QueryParameters {
+      dictionaryId: /* Dictionaryid */ Parameters.DictionaryId;
+      query: /* Query */ Parameters.Query;
+      dbms: /* Dbms */ Parameters.Dbms;
+      lang: /* Lang */ Parameters.Lang;
+    }
     namespace Responses {
-      export type $200 = /* StringDataResponseDto */ Components.Schemas.StringDataResponseDto;
+      export type $200 = /* PromptResponseDto */ Components.Schemas.PromptResponseDto;
+      export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
   namespace GetAllDictionaries {
@@ -447,13 +496,13 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.GeneratePrompt.Responses.$200>;
   /**
-   * generatePromptDebug - Generatepromptdebug
+   * generatePromptWithDebug - Generatepromptwithdebug
    */
-  'generatePromptDebug'(
-    parameters?: Parameters<UnknownParamsObject> | null,
+  'generatePromptWithDebug'(
+    parameters?: Parameters<Paths.GeneratePromptWithDebug.QueryParameters> | null,
     data?: any,
     config?: AxiosRequestConfig
-  ): OperationResponse<Paths.GeneratePromptDebug.Responses.$200>;
+  ): OperationResponse<Paths.GeneratePromptWithDebug.Responses.$200>;
   /**
    * login - Login
    */
@@ -565,13 +614,13 @@ export interface PathsDictionary {
   };
   ['/api/prompt/debug']: {
     /**
-     * generatePromptDebug - Generatepromptdebug
+     * generatePromptWithDebug - Generatepromptwithdebug
      */
     'get'(
-      parameters?: Parameters<UnknownParamsObject> | null,
+      parameters?: Parameters<Paths.GeneratePromptWithDebug.QueryParameters> | null,
       data?: any,
       config?: AxiosRequestConfig
-    ): OperationResponse<Paths.GeneratePromptDebug.Responses.$200>;
+    ): OperationResponse<Paths.GeneratePromptWithDebug.Responses.$200>;
   };
   ['/api/login/']: {
     /**
