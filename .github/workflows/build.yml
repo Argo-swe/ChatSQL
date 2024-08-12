@@ -46,6 +46,12 @@ jobs:
         # Token di accesso per autorizzare l'opzione write: packages
         password: ${{ secrets.GHCR_TOKEN }}
 
+    # Creazione file .env.local
+    - name: Add env.local
+      run: |
+        touch backend/.env.local
+        touch frontend/.evn.local
+    
     # Creazione e caricamento dell'immagine su GHCR
     - name: Build and Push Image
       if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit != 'true' }}
@@ -64,7 +70,6 @@ jobs:
     # Avvio del contenitore Docker
     - name: Start Docker Container
       run: |
-        touch backend/.env.local
         docker compose up backend -d
 
     # Configura l'ambiente Node.js     
