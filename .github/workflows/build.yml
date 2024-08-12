@@ -49,6 +49,7 @@ jobs:
 
     # Creazione file .env.local
     - name: Add env.local
+      if: ${{ github.event.action != 'closed' }}
       run: |
         touch backend/.env.local
         touch frontend/.env.local
@@ -70,6 +71,7 @@ jobs:
 
     # Avvio del contenitore Docker
     - name: Start Docker Container
+      if: ${{ github.event.action != 'closed' }}
       run: |
         docker compose up backend -d
 
@@ -148,7 +150,6 @@ jobs:
     # Esegue i test di unità nel backend
     - name: Run Unit Test (backend)
       if: ${{ github.event.action != 'closed' }}
-      continue-on-error: true
       run: |
         docker exec chatsql-backend-1 bash -c 'pytest'
 
