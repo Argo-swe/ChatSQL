@@ -156,7 +156,7 @@ jobs:
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
-        token: ${{ secrets.UPLOAD_TOKEN }}
+        github_token: ${{ secrets.UPLOAD_TOKEN }}
         branch: ${{ github.head_ref }}
 
     # Creazione della directory principale
