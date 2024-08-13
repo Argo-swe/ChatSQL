@@ -27,3 +27,7 @@ class FileRepository(ABC):
     @abstractmethod
     def extract_index_metadata(self, id: int) -> list:
         pass
+
+    @abstractmethod
+    def extract_schema_metadata(self, id: int, tuples: list) -> str:
+        pass

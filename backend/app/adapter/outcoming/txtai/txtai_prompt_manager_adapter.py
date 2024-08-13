@@ -33,45 +33,10 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             log_content = "\n".join(log_content_phase_1) if activate_log else None
             return response, log_content
 
-        # TODO portare va messa nel service come chiamata ad fileadaper
-        schema = self._file_repository.get_json_schema(dictionary_id)
-        dyn_string = (
-            "Suggested prompt:\n"
-            "In table schema the character ':' separates the column name from its type\n"
-            "Foreign keys have the following schema: table name (column name) references table name (column name)\n\n"
+        dyn_string = self._file_repository.extract_schema_metadata(
+            dictionary_id, relevant_tuples
         )
-        dyn_ref_string = "FOREIGN KEYS:\n"
-        for table in relevant_tuples:
-            table_schema = schema["tables"][table["table_pos"]]
-            dyn_key_string = (
-                f'PRIMARY KEY: ({", ".join(table_schema["primary_key"])})\n'
-            )
-            dyn_desc_string = (
-                f'Table description: {table_schema["description"]}\n'
-                "The table contains the following columns:\n"
-            )
-            column_def = [
-                f'{column["name"]}: {column["type"]}'
-                for column in table_schema["columns"]
-            ]
-            dyn_desc_string += "\n".join(
-                f'{column["name"]}: {column["description"]}'
-                for column in table_schema["columns"]
-            )
-            dyn_string += (
-                f'Table schema: {table_schema["name"]} ({", ".join(column_def)})\n'
-            )
-            dyn_string += dyn_key_string
-            dyn_string += dyn_desc_string + "\n"
-            if "foreign_keys" in table_schema:
-                for foreign_key in table_schema["foreign_keys"]:
-                    dyn_ref_string += (
-                        f'FOREIGN KEY {table_schema["name"]} ('
-                        f'{", ".join(foreign_key["foreign_key_column_names"])}) references '
-                        f'{foreign_key["reference_table_name"]} ('
-                        f'{", ".join(foreign_key["reference_column_names"])})\n'
-                    )
-        dyn_string += dyn_ref_string + "\n"
+
         dyn_string += f"User request: {user_request}.\n"
         dyn_string += f"Convert user request to a suitable SQL query for {dbms}.\n"
         dyn_string += f"Answer in {lang}."
