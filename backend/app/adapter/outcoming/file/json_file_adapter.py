@@ -1,5 +1,6 @@
 import os
 import aiofiles
+from models.dictionary_internal_structure.table_dto import TableDto
 from models.dictionary_preview_dto import DictionaryPreviewDto
 from core.port.outcoming.file_repository import FileRepository
 from tools.utils import Utils
@@ -7,7 +8,7 @@ from tools.utils import Utils
 
 class JsonFileAdapter(FileRepository):
 
-    def __init__(self, file_path: str) -> None:
+    def __init__(self, file_path="/opt/chatsql/dictionary_schemas") -> None:
         self._out_file_base_path = file_path
         os.makedirs(self._out_file_base_path, exist_ok=True)
 
@@ -34,7 +35,11 @@ class JsonFileAdapter(FileRepository):
             temp = {"name": table["name"], "description": table["description"]}
             tables.append(temp)
         dictionary_preview["tables"] = tables
-        return DictionaryPreviewDto(dictionary_preview)
+        return DictionaryPreviewDto(
+            database_name=dictionary_preview["database_name"],
+            database_description=dictionary_preview["database_description"],
+            tables=[TableDto(**table) for table in dictionary_preview["tables"]],
+        )
 
     def _generate_schema_file_name(self, id: int) -> str:
         return f"{self._out_file_base_path}/dic_schema_{id}.json"
