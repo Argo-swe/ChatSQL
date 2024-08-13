@@ -1,6 +1,7 @@
 from adapter.outcoming.sql_alchemy.sql_alchemy_dictionary_repository_adapter import (
-    SqlAlchemyDictionaryRepositoryAdapter,
+    SqlAlchemyDictionaryRepositoryAdapter
 )
+from adapter.outcoming.json.filesystem_json_adapter import FilesystemJsonAdapter
 from adapter.outcoming.txtai.txtai_index_manager_adapter import TxtaiIndexManagerAdapter
 from core.service.dictionary_service import DictionaryService
 from models.responses.response_dto import ResponseDto, ResponseStatusEnum
@@ -23,7 +24,8 @@ manager = IndexManager()
 # TODO: ottimizzare gli import (Dep inj o singleton?)
 dictionary_repository = SqlAlchemyDictionaryRepositoryAdapter()
 index_manager = TxtaiIndexManagerAdapter()
-dictionary_service = DictionaryService(dictionary_repository, index_manager)
+json_repository = FilesystemJsonAdapter("/opt/chatsql/dictionary_schemas")
+dictionary_service = DictionaryService(dictionary_repository, index_manager, json_repository)
 
 
 @router.get(

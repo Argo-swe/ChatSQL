@@ -35,7 +35,6 @@ class SchemaMultiExtractor:
         dictionary_preview["database_name"] = schema["database_name"]
         dictionary_preview["database_description"] = schema["database_description"]
         tables = []
-
         for table in schema["tables"]:
             temp = {"name": table["name"], "description": table["description"]}
             tables.append(temp)

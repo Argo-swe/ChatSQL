@@ -4,7 +4,7 @@ from adapter.outcoming.sql_alchemy.sql_alchemy_dictionary_repository_adapter imp
     SqlAlchemyDictionaryRepositoryAdapter,
 )
 from adapter.outcoming.txtai.txtai_index_manager_adapter import TxtaiIndexManagerAdapter
-from adapter.outcoming.txtai.txtai_prompt_manager_agapter import (
+from adapter.outcoming.txtai.txtai_prompt_manager_adapter import (
     TxtaiPromptManagerAdapter,
 )
 from models.responses.string_data_response_dto import StringDataResponseDto

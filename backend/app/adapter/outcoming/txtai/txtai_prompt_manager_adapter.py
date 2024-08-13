@@ -1,5 +1,5 @@
 from adapter.outcoming.txtai.txtai_index_manager_adapter import TxtaiIndexManagerAdapter
-from adapter.outcoming.txtai.txtai_debug_manager_agapter import TxtaiDebugManagerAdapter
+from backend.app.adapter.outcoming.txtai.txtai_debug_manager_adapter import TxtaiDebugManagerAdapter
 from core.port.outcoming.prompt_manager_port import PromptManagerPort
 from tools.schema_multi_extractor import SchemaMultiExtractor
 
