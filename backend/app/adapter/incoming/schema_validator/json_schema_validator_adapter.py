@@ -1,14 +1,14 @@
 from jsonschema import validate
 from pathlib import Path
 from core.port.incoming.schema_validator_use_case import SchemaValidatorUseCase
-from utils import Utils
+from tools.utils import Utils
 
 
 class JsonSchemaValidatorAdapter(SchemaValidatorUseCase):
 
     def __init__(self):
         self._dictionary_schema_file_path = (
-            Path(__file__).parent / "./assets/dictionary_schema.json"
+            Path(__file__).parent / "./dictionary_schema.json"
         )
 
     def validate(self, dictionary) -> bool:
@@ -17,8 +17,6 @@ class JsonSchemaValidatorAdapter(SchemaValidatorUseCase):
 
         try:
             validate(dictionary, schema)
-            print("dictionary is valid")
             return True
-        except Exception as error:
-            print("dictionary is invalid", error)
+        except Exception:
             return False

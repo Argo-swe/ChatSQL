@@ -1,6 +1,6 @@
+from core.port.incoming.schema_validator_use_case import SchemaValidatorUseCase
 from core.port.outcoming.index_manager_port import IndexManagerPort
 from core.port.outcoming.file_repository import FileRepository
-from tools.dictionary_validator import DictionaryValidator
 from core.port.outcoming.dictionary_repository import DictionaryRepository
 from core.port.incoming.dictionary_use_case import DictionaryUseCase
 from models.dictionary_dto import DictionaryDto
@@ -17,10 +17,12 @@ class DictionaryService(DictionaryUseCase):
         dictionary_repository: DictionaryRepository,
         index_manager: IndexManagerPort,
         file_repository: FileRepository,
+        schema_validator: SchemaValidatorUseCase,
     ) -> None:
         self._dictionary_repository = dictionary_repository
         self._index_manager = index_manager
         self._file_repository = file_repository
+        self._schema_validator = schema_validator
 
     def get_dictionary_list(self) -> DictionariesResponseDto:
         dictionaries = self._dictionary_repository.get_all_dictionaries()
@@ -81,7 +83,7 @@ class DictionaryService(DictionaryUseCase):
             )
 
             # validate dictionary schema
-            is_valid = DictionaryValidator.validate(Utils.string_to_json(content))
+            is_valid = self._schema_validator.validate(Utils.string_to_json(content))
 
             if not is_valid:
                 return DictionaryResponseDto(
@@ -140,7 +142,7 @@ class DictionaryService(DictionaryUseCase):
             return found_dic_response
 
         # validate dictionary schema
-        is_valid = DictionaryValidator.validate(Utils.string_to_json(content))
+        is_valid = self._schema_validator.validate(Utils.string_to_json(content))
 
         if not is_valid:
             return DictionaryResponseDto(

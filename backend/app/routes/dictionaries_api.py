@@ -3,6 +3,9 @@ from adapter.outcoming.sql_alchemy.sql_alchemy_dictionary_repository_adapter imp
 )
 from adapter.outcoming.file.json_file_adapter import JsonFileAdapter
 from adapter.outcoming.txtai.txtai_index_manager_adapter import TxtaiIndexManagerAdapter
+from adapter.incoming.schema_validator.json_schema_validator_adapter import (
+    JsonSchemaValidatorAdapter,
+)
 from core.service.dictionary_service import DictionaryService
 from models.responses.response_dto import ResponseDto, ResponseStatusEnum
 from models.responses.dictionaries_response_dto import DictionariesResponseDto
@@ -24,9 +27,10 @@ manager = IndexManager()
 # TODO: ottimizzare gli import (Dep inj o singleton?)
 dictionary_repository = SqlAlchemyDictionaryRepositoryAdapter()
 file_repository = JsonFileAdapter()
+schema_validator = JsonSchemaValidatorAdapter()
 index_manager = TxtaiIndexManagerAdapter(file_repository)
 dictionary_service = DictionaryService(
-    dictionary_repository, index_manager, file_repository
+    dictionary_repository, index_manager, file_repository, schema_validator
 )
 
 

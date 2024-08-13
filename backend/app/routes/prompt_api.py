@@ -8,6 +8,9 @@ from adapter.outcoming.txtai.txtai_prompt_manager_adapter import (
     TxtaiPromptManagerAdapter,
 )
 from adapter.outcoming.file.json_file_adapter import JsonFileAdapter
+from adapter.incoming.schema_validator.json_schema_validator_adapter import (
+    JsonSchemaValidatorAdapter,
+)
 from models.responses.string_data_response_dto import StringDataResponseDto
 from models.responses.prompt_response_dto import PromptResponseDto
 from auth.jwt_bearer import JwtBearer
@@ -22,9 +25,10 @@ router = APIRouter()
 # TODO: ottimizzare gli import (Dep inj o singleton?)
 dictionary_repository = SqlAlchemyDictionaryRepositoryAdapter()
 file_repository = JsonFileAdapter()
+schema_validator = JsonSchemaValidatorAdapter()
 index_manager = TxtaiIndexManagerAdapter(file_repository)
 dictionary_service = DictionaryService(
-    dictionary_repository, index_manager, file_repository
+    dictionary_repository, index_manager, file_repository, schema_validator
 )
 prompt_manager = TxtaiPromptManagerAdapter(index_manager, file_repository)
 prompt_manager_service = PromptManagerService(dictionary_service, prompt_manager)
