@@ -105,7 +105,7 @@ const getStatusMex = <TOptions extends BaseMessageOptions>(
 ) => {
   const getMessage =
     status && statusMessages[status] ? statusMessages[status] : statusMessages['DEFAULT'];
-  const statusMessage = getMessage(options);
+  const statusMessage = typeof getMessage === 'function' ? getMessage(options) : '';
   return statusMessage;
 };
 
