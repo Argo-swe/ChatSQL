@@ -25,7 +25,7 @@ class JsonFileAdapter(FileRepository):
 
     def get_preview(self, id: int) -> DictionaryPreviewDto:
         dictionary_preview = {}
-        schema = Utils.read_json_file_content(self._generate_schema_file_name(id))
+        schema = self.get_json_schema(id)
         if schema is None:
             return DictionaryPreviewDto()
         dictionary_preview["database_name"] = schema["database_name"]
@@ -40,6 +40,23 @@ class JsonFileAdapter(FileRepository):
             database_description=dictionary_preview["database_description"],
             tables=[TableDto(**table) for table in dictionary_preview["tables"]],
         )
+
+    def extract_index_metadata(self, id: int) -> list:
+        documents = []
+        schema = self.get_json_schema(id)
+        for pos, table in enumerate(schema["tables"]):
+            for column in table["columns"]:
+                doc = {
+                    "table_name": table["name"],
+                    "text": table["description"],
+                    "table_pos": pos,
+                    "column_description": column["description"],
+                }
+                documents.append(doc)
+        return documents
+
+    def get_json_schema(self, id: int):
+        return Utils.read_json_file_content(self._generate_schema_file_name(id))
 
     def _generate_schema_file_name(self, id: int) -> str:
         return f"{self._out_file_base_path}/dic_schema_{id}.json"

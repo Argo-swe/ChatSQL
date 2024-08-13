@@ -1,6 +1,6 @@
 from txtai.embeddings import Embeddings
+from core.port.outcoming.file_repository import FileRepository
 from core.port.outcoming.index_manager_port import IndexManagerPort
-from tools.schema_multi_extractor import SchemaMultiExtractor
 import os
 import shutil
 
@@ -11,6 +11,7 @@ os.makedirs(_indexes_out_file_base_path, exist_ok=True)
 class TxtaiIndexManagerAdapter(IndexManagerPort):
     def __init__(
         self,
+        file_repository: FileRepository,
         table_path="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         column_path="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     ):
@@ -25,6 +26,7 @@ class TxtaiIndexManagerAdapter(IndexManagerPort):
                 },
             },
         )
+        self._file_repository = file_repository
         self._indexes_out_file_base_path = _indexes_out_file_base_path
 
     def create_or_load_index(self, dictionary_id: int):
@@ -36,7 +38,9 @@ class TxtaiIndexManagerAdapter(IndexManagerPort):
             return True
 
     def create_index(self, dictionary_id: int, save_index=True):
-        extracted_documents = SchemaMultiExtractor.extract_first_index(dictionary_id)
+        extracted_documents = self._file_repository.extract_index_metadata(
+            dictionary_id
+        )
         documents = [
             (idx, document, None) for idx, document in enumerate(extracted_documents)
         ]

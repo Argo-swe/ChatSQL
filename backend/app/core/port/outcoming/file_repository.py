@@ -19,3 +19,11 @@ class FileRepository(ABC):
     @abstractmethod
     def get_preview(self, id: int) -> DictionaryPreviewDto:
         pass
+
+    @abstractmethod
+    def get_json_schema(self, id: int):
+        pass
+
+    @abstractmethod
+    def extract_index_metadata(self, id: int) -> list:
+        pass

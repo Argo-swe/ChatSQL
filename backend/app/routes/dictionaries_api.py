@@ -23,8 +23,8 @@ manager = IndexManager()
 
 # TODO: ottimizzare gli import (Dep inj o singleton?)
 dictionary_repository = SqlAlchemyDictionaryRepositoryAdapter()
-index_manager = TxtaiIndexManagerAdapter()
-file_repository = JsonFileAdapter("/opt/chatsql/dictionary_schemas")
+file_repository = JsonFileAdapter()
+index_manager = TxtaiIndexManagerAdapter(file_repository)
 dictionary_service = DictionaryService(
     dictionary_repository, index_manager, file_repository
 )

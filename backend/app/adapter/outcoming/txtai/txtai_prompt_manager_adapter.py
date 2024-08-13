@@ -1,12 +1,15 @@
 from adapter.outcoming.txtai.txtai_index_manager_adapter import TxtaiIndexManagerAdapter
 from adapter.outcoming.txtai.txtai_debug_manager_adapter import TxtaiDebugManagerAdapter
+from core.port.outcoming.file_repository import FileRepository
 from core.port.outcoming.prompt_manager_port import PromptManagerPort
-from tools.schema_multi_extractor import SchemaMultiExtractor
 
 
 class TxtaiPromptManagerAdapter(PromptManagerPort):
-    def __init__(self, index_manager: TxtaiIndexManagerAdapter):
+    def __init__(
+        self, index_manager: TxtaiIndexManagerAdapter, file_repository: FileRepository
+    ):
         self._index_manager = index_manager
+        self._file_repository = file_repository
         self._debug_manager = TxtaiDebugManagerAdapter(self._index_manager.embeddings)
 
     def prompt_generator(
@@ -29,7 +32,7 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             )
             log_content = "\n".join(log_content_phase_1) if activate_log else None
             return response, log_content
-        schema = SchemaMultiExtractor.get_json_schema(dictionary_id)
+        schema = self._file_repository.get_json_schema(dictionary_id)
         dyn_string = (
             "Suggested prompt:\n"
             "In table schema the character ':' separates the column name from its type\n"

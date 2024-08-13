@@ -22,11 +22,11 @@ router = APIRouter()
 # TODO: ottimizzare gli import (Dep inj o singleton?)
 dictionary_repository = SqlAlchemyDictionaryRepositoryAdapter()
 file_repository = JsonFileAdapter()
-index_manager = TxtaiIndexManagerAdapter()
+index_manager = TxtaiIndexManagerAdapter(file_repository)
 dictionary_service = DictionaryService(
     dictionary_repository, index_manager, file_repository
 )
-prompt_manager = TxtaiPromptManagerAdapter(index_manager)
+prompt_manager = TxtaiPromptManagerAdapter(index_manager, file_repository)
 prompt_manager_service = PromptManagerService(dictionary_service, prompt_manager)
 
 
