@@ -1,7 +1,7 @@
 from adapter.outcoming.sql_alchemy.sql_alchemy_dictionary_repository_adapter import (
-    SqlAlchemyDictionaryRepositoryAdapter
+    SqlAlchemyDictionaryRepositoryAdapter,
 )
-from adapter.outcoming.json.filesystem_json_adapter import FilesystemJsonAdapter
+from adapter.outcoming.file.json_file_adapter import JsonFileAdapter
 from adapter.outcoming.txtai.txtai_index_manager_adapter import TxtaiIndexManagerAdapter
 from core.service.dictionary_service import DictionaryService
 from models.responses.response_dto import ResponseDto, ResponseStatusEnum
@@ -24,8 +24,10 @@ manager = IndexManager()
 # TODO: ottimizzare gli import (Dep inj o singleton?)
 dictionary_repository = SqlAlchemyDictionaryRepositoryAdapter()
 index_manager = TxtaiIndexManagerAdapter()
-json_repository = FilesystemJsonAdapter("/opt/chatsql/dictionary_schemas")
-dictionary_service = DictionaryService(dictionary_repository, index_manager, json_repository)
+file_repository = JsonFileAdapter("/opt/chatsql/dictionary_schemas")
+dictionary_service = DictionaryService(
+    dictionary_repository, index_manager, file_repository
+)
 
 
 @router.get(
@@ -116,8 +118,3 @@ def update_dictionary_metadata(
 @router.delete("/{id}", tags=[tag], response_model=ResponseDto, name="deleteDictionary")
 def delete_dictionary(id: int) -> ResponseDto:
     return dictionary_service.delete_dictionary(id)
-
-
-def __generate_schema_file_name(id: int) -> str:
-    global out_file_base_path
-    return f"{out_file_base_path}/dic_schema_{id}.json"

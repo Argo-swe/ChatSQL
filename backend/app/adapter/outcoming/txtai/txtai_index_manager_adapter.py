@@ -7,20 +7,20 @@ import shutil
 _indexes_out_file_base_path = "/opt/chatsql/indexes"
 os.makedirs(_indexes_out_file_base_path, exist_ok=True)
 
-# TODO: da definire i parametri di init per renderlo dinamico in creazione -> path
-
 
 class TxtaiIndexManagerAdapter(IndexManagerPort):
-    def __init__(self):
+    def __init__(
+        self,
+        table_path="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        column_path="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    ):
         # Modelli per la lingua inglese
         self.embeddings = Embeddings(
             content=True,
             indexes={
-                "table_description": {
-                    "path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-                },
+                "table_description": {"path": table_path},
                 "column_description": {
-                    "path": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+                    "path": column_path,
                     "columns": {"text": "column_description"},
                 },
             },

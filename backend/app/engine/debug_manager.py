@@ -56,7 +56,7 @@ class DebugManager:
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         return f"[{timestamp}] [{system}] [{level}]"
 
-    def log_phase_2(self, relevant_tuples, tuples):
+    def semantic_search_log_custom_algorithm(self, relevant_tuples, tuples):
         log_content = []
         log_content.append(f"{self.get_debug_header()} - Phase 2 - second extraction\n")
         log_content.append("List of pertinent tables:\n")

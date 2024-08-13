@@ -44,7 +44,11 @@ class PromptManager:
             else:
                 break
         if activate_log:
-            log_content.extend(self.debug_manager.log_phase_2(relevant_tuples, tuples))
+            log_content.extend(
+                self.debug_manager.semantic_search_log_custom_algorithm(
+                    relevant_tuples, tuples
+                )
+            )
         return relevant_tuples, log_content
 
     def prompt_generator(

@@ -5,26 +5,28 @@ class DictionaryError:
 
     @staticmethod
     def format_error() -> str:
-        return f"Dictionary schema is bad formatted."
+        return "Dictionary schema is bad formatted."
 
     @staticmethod
     def missing_dictionary_file() -> str:
-        return f"Dictionary file is mandatory."
+        return "Dictionary file is mandatory."
 
     @staticmethod
     def missing_dictionary_metadata() -> str:
-        return f"Dictionary name and description are mandatory."
-    
+        return "Dictionary name and description are mandatory."
+
     @staticmethod
     def dictionary_not_found(id: str) -> str:
         return f"Dictionary with id {id} not found."
 
+
 class LoginError:
     @staticmethod
-    def wrong_password() -> str:
-        return f"Wrong password."
+    def wrong_pssword() -> str:
+        return "Wrong password."
+
 
 class PromptError:
     @staticmethod
     def missing_query() -> str:
-        return f"Query cannot be empty."
+        return "Query cannot be empty."

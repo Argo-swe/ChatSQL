@@ -1,10 +1,6 @@
-import os
-import aiofiles
 from core.port.outcoming.index_manager_port import IndexManagerPort
-from core.port.outcoming.json_repository import JsonRepository
+from core.port.outcoming.file_repository import FileRepository
 from tools.dictionary_validator import DictionaryValidator
-from models.dictionary_internal_structure.table_dto import TableDto
-from models.dictionary_preview_dto import DictionaryPreviewDto
 from core.port.outcoming.dictionary_repository import DictionaryRepository
 from core.port.incoming.dictionary_use_case import DictionaryUseCase
 from models.dictionary_dto import DictionaryDto
@@ -20,11 +16,11 @@ class DictionaryService(DictionaryUseCase):
         self,
         dictionary_repository: DictionaryRepository,
         index_manager: IndexManagerPort,
-        json_repository: JsonRepository
+        file_repository: FileRepository,
     ) -> None:
         self._dictionary_repository = dictionary_repository
         self._index_manager = index_manager
-        self._json_repository = json_repository
+        self._file_repository = file_repository
 
     def get_dictionary_list(self) -> DictionariesResponseDto:
         dictionaries = self._dictionary_repository.get_all_dictionaries()
@@ -47,7 +43,7 @@ class DictionaryService(DictionaryUseCase):
         if found_dic_response.status is not ResponseStatusEnum.OK:
             return None
 
-        return self._json_repository.load(id)
+        return self._file_repository.load(id)
 
     def get_dictionary_preview(self, id: int) -> DictionaryResponseDto:
         found_dic_response = self.get_dictionary_by_id(id)
@@ -55,7 +51,7 @@ class DictionaryService(DictionaryUseCase):
         if found_dic_response.status is not ResponseStatusEnum.OK:
             return found_dic_response
 
-        dictionary_preview_dto = self._json_repository.get_preview(id)
+        dictionary_preview_dto = self._file_repository.get_preview(id)
 
         return DictionaryResponseDto(
             data=dictionary_preview_dto, status=ResponseStatusEnum.OK
@@ -94,7 +90,7 @@ class DictionaryService(DictionaryUseCase):
                     status=ResponseStatusEnum.BAD_REQUEST,
                 )
 
-            self._json_repository.save(new_dic.id, content) # type: ignore
+            self._file_repository.save(new_dic.id, content)  # type: ignore
 
             self._index_manager.create_index(new_dic.id)  # type: ignore
 
@@ -153,7 +149,7 @@ class DictionaryService(DictionaryUseCase):
                 status=ResponseStatusEnum.BAD_REQUEST,
             )
 
-        self._json_repository.save(id, content)
+        self._file_repository.save(id, content)
 
         self._index_manager.create_index(id)
 
@@ -166,7 +162,7 @@ class DictionaryService(DictionaryUseCase):
             return found_dic_response
 
         self._dictionary_repository.delete_dictionary(id)
-        self._json_repository.delete(id)
+        self._file_repository.delete(id)
         self._index_manager.delete_index(id)
 
         return ResponseDto(status=ResponseStatusEnum.OK)

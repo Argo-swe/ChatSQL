@@ -1,5 +1,5 @@
 from adapter.outcoming.txtai.txtai_index_manager_adapter import TxtaiIndexManagerAdapter
-from backend.app.adapter.outcoming.txtai.txtai_debug_manager_adapter import TxtaiDebugManagerAdapter
+from adapter.outcoming.txtai.txtai_debug_manager_adapter import TxtaiDebugManagerAdapter
 from core.port.outcoming.prompt_manager_port import PromptManagerPort
 from tools.schema_multi_extractor import SchemaMultiExtractor
 
@@ -30,7 +30,6 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             log_content = "\n".join(log_content_phase_1) if activate_log else None
             return response, log_content
         schema = SchemaMultiExtractor.get_json_schema(dictionary_id)
-        # TODO check schema is not None
         dyn_string = (
             "Suggested prompt:\n"
             "In table schema the character ':' separates the column name from its type\n"
@@ -114,5 +113,9 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             else:
                 break
         if activate_log:
-            log_content.extend(self._debug_manager.log_phase_2(relevant_tuples, tuples))
+            log_content.extend(
+                self._debug_manager.semantic_search_log_custom_algorithm(
+                    relevant_tuples, tuples
+                )
+            )
         return relevant_tuples, log_content
