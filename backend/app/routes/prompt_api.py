@@ -4,15 +4,15 @@ from adapter.outcoming.sql_alchemy.sql_alchemy_dictionary_repository_adapter imp
     SqlAlchemyDictionaryRepositoryAdapter,
 )
 from adapter.outcoming.txtai.txtai_index_manager_adapter import TxtaiIndexManagerAdapter
-from adapter.outcoming.txtai.txtai_prompt_manager_agapter import (
+from adapter.outcoming.txtai.txtai_prompt_manager_adapter import (
     TxtaiPromptManagerAdapter,
 )
+from adapter.outcoming.file.json_file_adapter import JsonFileAdapter
 from models.responses.string_data_response_dto import StringDataResponseDto
 from models.responses.prompt_response_dto import PromptResponseDto
 from auth.jwt_bearer import JwtBearer
 from core.service.prompt_manager_service import PromptManagerService
 from core.service.dictionary_service import DictionaryService
-
 
 from fastapi import APIRouter, Depends, Query
 
@@ -21,9 +21,12 @@ router = APIRouter()
 
 # TODO: ottimizzare gli import (Dep inj o singleton?)
 dictionary_repository = SqlAlchemyDictionaryRepositoryAdapter()
-index_manager = TxtaiIndexManagerAdapter()
-dictionary_service = DictionaryService(dictionary_repository, index_manager)
-prompt_manager = TxtaiPromptManagerAdapter(index_manager)
+file_repository = JsonFileAdapter()
+index_manager = TxtaiIndexManagerAdapter(file_repository)
+dictionary_service = DictionaryService(
+    dictionary_repository, index_manager, file_repository
+)
+prompt_manager = TxtaiPromptManagerAdapter(index_manager, file_repository)
 prompt_manager_service = PromptManagerService(dictionary_service, prompt_manager)
 
 

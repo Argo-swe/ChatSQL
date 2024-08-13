@@ -51,8 +51,7 @@ class TxtaiDebugManagerAdapter(DebugManagerPort):
             log_content.append("\n")
         return log_content
 
-    # TODO: dare nome più appropriato
-    def log_phase_2(self, relevant_tuples, tuples):
+    def semantic_search_log_custom_algorithm(self, relevant_tuples, tuples):
         log_content = []
         log_content.append(
             f"{self.__get_debug_header()} - Phase 2 - second extraction\n"

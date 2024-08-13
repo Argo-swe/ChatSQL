@@ -1,16 +1,12 @@
-import os
-import aiofiles
 from core.port.outcoming.index_manager_port import IndexManagerPort
+from core.port.outcoming.file_repository import FileRepository
 from tools.dictionary_validator import DictionaryValidator
-from models.dictionary_internal_structure.table_dto import TableDto
-from models.dictionary_preview_dto import DictionaryPreviewDto
 from core.port.outcoming.dictionary_repository import DictionaryRepository
 from core.port.incoming.dictionary_use_case import DictionaryUseCase
 from models.dictionary_dto import DictionaryDto
 from models.responses.response_dto import ResponseDto, ResponseStatusEnum
 from models.responses.dictionary_response_dto import DictionaryResponseDto
 from models.responses.dictionaries_response_dto import DictionariesResponseDto
-from tools.schema_multi_extractor import SchemaMultiExtractor
 from tools.utils import Utils
 
 
@@ -20,11 +16,11 @@ class DictionaryService(DictionaryUseCase):
         self,
         dictionary_repository: DictionaryRepository,
         index_manager: IndexManagerPort,
+        file_repository: FileRepository,
     ) -> None:
         self._dictionary_repository = dictionary_repository
         self._index_manager = index_manager
-        self._out_file_base_path = "/opt/chatsql/dictionary_schemas"
-        os.makedirs(self._out_file_base_path, exist_ok=True)
+        self._file_repository = file_repository
 
     def get_dictionary_list(self) -> DictionariesResponseDto:
         dictionaries = self._dictionary_repository.get_all_dictionaries()
@@ -47,7 +43,7 @@ class DictionaryService(DictionaryUseCase):
         if found_dic_response.status is not ResponseStatusEnum.OK:
             return None
 
-        return self.__generate_schema_file_name(id)
+        return self._file_repository.load(id)
 
     def get_dictionary_preview(self, id: int) -> DictionaryResponseDto:
         found_dic_response = self.get_dictionary_by_id(id)
@@ -55,14 +51,7 @@ class DictionaryService(DictionaryUseCase):
         if found_dic_response.status is not ResponseStatusEnum.OK:
             return found_dic_response
 
-        # FIXME: ragionare se ha senso spostare il metodo "extract_preview"
-        dictionary_sub_schema = SchemaMultiExtractor.extract_preview(id)
-
-        dictionary_preview_dto = DictionaryPreviewDto(
-            database_name=dictionary_sub_schema["database_name"],
-            database_description=dictionary_sub_schema["database_description"],
-            tables=[TableDto(**table) for table in dictionary_sub_schema["tables"]],
-        )
+        dictionary_preview_dto = self._file_repository.get_preview(id)
 
         return DictionaryResponseDto(
             data=dictionary_preview_dto, status=ResponseStatusEnum.OK
@@ -101,12 +90,8 @@ class DictionaryService(DictionaryUseCase):
                     status=ResponseStatusEnum.BAD_REQUEST,
                 )
 
-            async with aiofiles.open(
-                self.__generate_schema_file_name(new_dic.id), "wb"  # type: ignore
-            ) as out_file:
-                await out_file.write(content)
+            self._file_repository.save(new_dic.id, content)  # type: ignore
 
-            # create txtai index
             self._index_manager.create_index(new_dic.id)  # type: ignore
 
             return DictionaryResponseDto(data=new_dic, status=ResponseStatusEnum.OK)
@@ -164,12 +149,8 @@ class DictionaryService(DictionaryUseCase):
                 status=ResponseStatusEnum.BAD_REQUEST,
             )
 
-        async with aiofiles.open(
-            self.__generate_schema_file_name(id), "wb"
-        ) as out_file:
-            await out_file.write(content)
+        self._file_repository.save(id, content)
 
-        # update txtai index
         self._index_manager.create_index(id)
 
         return found_dic_response
@@ -181,14 +162,7 @@ class DictionaryService(DictionaryUseCase):
             return found_dic_response
 
         self._dictionary_repository.delete_dictionary(id)
-
-        if os.path.exists(self.__generate_schema_file_name(id)):
-            os.remove(self.__generate_schema_file_name(id))
-
-        # delete txtai index
+        self._file_repository.delete(id)
         self._index_manager.delete_index(id)
 
         return ResponseDto(status=ResponseStatusEnum.OK)
-
-    def __generate_schema_file_name(self, id: int) -> str:
-        return f"{self._out_file_base_path}/dic_schema_{id}.json"

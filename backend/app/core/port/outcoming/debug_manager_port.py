@@ -8,5 +8,5 @@ class DebugManagerPort(ABC):
         pass
 
     @abstractmethod
-    def log_phase_2(self, relevant_tuples, tuples):
+    def semantic_search_log_custom_algorithm(self, relevant_tuples, tuples):
         pass
