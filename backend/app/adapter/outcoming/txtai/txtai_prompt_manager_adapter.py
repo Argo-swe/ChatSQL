@@ -32,6 +32,8 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             )
             log_content = "\n".join(log_content_phase_1) if activate_log else None
             return response, log_content
+
+        # TODO portare va messa nel service come chiamata ad fileadaper
         schema = self._file_repository.get_json_schema(dictionary_id)
         dyn_string = (
             "Suggested prompt:\n"

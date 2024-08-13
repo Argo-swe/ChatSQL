@@ -2,9 +2,6 @@ from jsonschema import validate
 from pathlib import Path
 from .utils import Utils
 
-# FIXME: ragionare se ha senso spostare dictionary_schema_json,
-# o magari organizzare la cartella tools in modo diverso
-
 
 class DictionaryValidator:
     __dictionary_schema_file_path = (
