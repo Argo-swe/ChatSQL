@@ -13,8 +13,8 @@ const { t } = useI18n();
 const client = getApiClient();
 const { layoutState } = useLayout();
 const { messageSuccess, messageError } = messageService();
-const username = ref(null);
-const password = ref(null);
+const username = ref<string | null>(null);
+const password = ref<string | null>(null);
 
 // Gain access to functions and maps to view status messages
 const { onLoginMessages, getStatusMex } = useMessages();

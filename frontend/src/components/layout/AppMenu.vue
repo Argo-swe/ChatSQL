@@ -34,7 +34,7 @@ const TECHNICIAN_MENU: Menu = [
   }
 ];
 
-let model = ref<Menu>(AuthService.isLogged() ? TECHNICIAN_MENU : USER_MENU);
+let model = ref<any>(AuthService.isLogged() ? TECHNICIAN_MENU : USER_MENU);
 
 onMounted(() => {
   /**
