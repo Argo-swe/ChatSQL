@@ -38,8 +38,8 @@ const clearMessages = () => {
 </script>
 
 <template>
-  <PgButton
-    :label="t('chat.history.clean')"
+  <Button
+    label="ciao"
     icon="pi pi-eraser"
     class="m-2"
     :disabled="messages.length <= 0 || loading"
