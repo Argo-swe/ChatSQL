@@ -38,7 +38,7 @@ const clearMessages = () => {
 </script>
 
 <template>
-  <Button
+  <PgButton
     :label="t('chat.history.clean')"
     icon="pi pi-eraser"
     class="m-2"
