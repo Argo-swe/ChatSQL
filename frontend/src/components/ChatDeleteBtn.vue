@@ -39,7 +39,7 @@ const clearMessages = () => {
 
 <template>
   <Button
-    label="ciao"
+    :label="t('chat.history.clean')"
     icon="pi pi-eraser"
     class="m-2"
     :disabled="messages.length <= 0 || loading"
