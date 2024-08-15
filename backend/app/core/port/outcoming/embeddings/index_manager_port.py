@@ -4,6 +4,10 @@ from abc import ABC, abstractmethod
 class IndexManagerPort(ABC):
 
     @abstractmethod
+    def get_embeddings(self):
+        pass
+
+    @abstractmethod
     def create_or_load_index(self, dictionary_id: int):
         pass
 

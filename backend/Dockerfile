@@ -20,6 +20,7 @@ ENV LANG=C.UTF-8
 # Set default working directory
 WORKDIR /usr/src/
 
+COPY ./config.json /opt/chatsql/config.json
 COPY ./requirements.txt requirements.txt
 COPY ./entrypoint-backend.sh ./entrypoint-backend.sh
 RUN ["chmod", "+x", "./entrypoint-backend.sh"]

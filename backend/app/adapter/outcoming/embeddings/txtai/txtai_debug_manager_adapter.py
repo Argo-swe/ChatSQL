@@ -1,11 +1,11 @@
 import time
-from core.port.outcoming.debug_manager_port import DebugManagerPort
-from txtai.embeddings import Embeddings
+from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
+from core.port.outcoming.embeddings.debug_manager_port import DebugManagerPort
 
 
 class TxtaiDebugManagerAdapter(DebugManagerPort):
-    def __init__(self, embeddings: Embeddings):
-        self.embeddings = embeddings
+    def __init__(self, index_manager: IndexManagerPort):
+        self._index_manager = index_manager
 
     def semantic_search_log(self, user_request, tuples):
         log_content = []
@@ -28,7 +28,7 @@ class TxtaiDebugManagerAdapter(DebugManagerPort):
             log_content.append(
                 "Ranking of the most relevant terms in the description:\n"
             )
-            token_importance = self.embeddings.explain(
+            token_importance = self._index_manager.get_embeddings().explain(
                 user_request, [tuple["text"]], limit=1
             )[0]
             for token, score in sorted(
@@ -41,7 +41,7 @@ class TxtaiDebugManagerAdapter(DebugManagerPort):
             log_content.append(
                 "Ranking of the most relevant terms in the description:\n"
             )
-            token_importance = self.embeddings.explain(
+            token_importance = self._index_manager.get_embeddings().explain(
                 user_request, [tuple["column_description"]], limit=1
             )[0]
             for token, score in sorted(

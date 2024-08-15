@@ -1,4 +1,4 @@
-from core.port.outcoming.prompt_manager_port import PromptManagerPort
+from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
 from core.service.dictionary_service import DictionaryService
 from models.prompt_dto import PromptDto
 from models.responses.prompt_response_dto import PromptResponseDto

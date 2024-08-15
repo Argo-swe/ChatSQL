@@ -15,6 +15,7 @@ services:
       - backend/.env.local
     volumes:
       - ./backend/app:/usr/src/app
+      - ./backend/config.json:/opt/chatsql/config.json
       - ./backend/requirements.txt:/usr/src/requirements.txt
       - backend-db-volume:/opt/chatsql
     healthcheck:

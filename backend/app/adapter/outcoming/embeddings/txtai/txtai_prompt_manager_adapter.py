@@ -1,16 +1,20 @@
-from adapter.outcoming.txtai.txtai_index_manager_adapter import TxtaiIndexManagerAdapter
-from adapter.outcoming.txtai.txtai_debug_manager_adapter import TxtaiDebugManagerAdapter
+from adapter.outcoming.embeddings.txtai.txtai_index_manager_adapter import (
+    TxtaiIndexManagerAdapter,
+)
+from adapter.outcoming.embeddings.txtai.txtai_debug_manager_adapter import (
+    TxtaiDebugManagerAdapter,
+)
+from core.port.outcoming.embeddings.debug_manager_port import DebugManagerPort
 from core.port.outcoming.file_repository import FileRepository
-from core.port.outcoming.prompt_manager_port import PromptManagerPort
+from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
 
 
 class TxtaiPromptManagerAdapter(PromptManagerPort):
     def __init__(
         self, index_manager: TxtaiIndexManagerAdapter, file_repository: FileRepository
     ):
-        self._index_manager = index_manager
+        super().__init__(index_manager)
         self._file_repository = file_repository
-        self._debug_manager = TxtaiDebugManagerAdapter(self._index_manager.embeddings)
 
     def prompt_generator(
         self,
@@ -60,13 +64,19 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             ORDER BY max_score DESC
             LIMIT {query_limit}
         """
-        tuples = self._index_manager.embeddings.search(
+        tuples = self._index_manager.get_embeddings().search(
             sql_query, limit=query_limit * 10, parameters={"x": user_request}
         )
         log_content = None
         if activate_log:
             log_content = self._debug_manager.semantic_search_log(user_request, tuples)
         return tuples, log_content
+
+    def get_index_manager(self) -> TxtaiIndexManagerAdapter:
+        return self._index_manager
+
+    def _create_debug_manager(self) -> DebugManagerPort:
+        return TxtaiDebugManagerAdapter(self._index_manager)
 
     def __get_relevant_tuples(self, tuples, activate_log):
         relevant_tuples = []

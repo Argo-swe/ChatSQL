@@ -1,5 +1,5 @@
 from core.port.incoming.schema_validator_use_case import SchemaValidatorUseCase
-from core.port.outcoming.index_manager_port import IndexManagerPort
+from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 from core.port.outcoming.file_repository import FileRepository
 from core.port.outcoming.dictionary_repository import DictionaryRepository
 from core.port.incoming.dictionary_use_case import DictionaryUseCase
