@@ -3,7 +3,7 @@ import AppLogo from '../../src/components/AppLogo.vue'
 describe('AppLogo', () => {
   it('renders correctly', () => {
     cy.mount(AppLogo, {
-        propsData: {
+        props: {
             path: 'icons/argo_trasparente.svg'
         }
     })
