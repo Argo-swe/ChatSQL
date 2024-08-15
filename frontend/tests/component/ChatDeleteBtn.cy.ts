@@ -1,5 +1,5 @@
-import { createI18n } from 'vue-i18n';
 import Button from 'primevue/button';
+import { createI18n } from 'vue-i18n';
 import ChatDeleteBtn from '../../src/components/ChatDeleteBtn.vue';
 
 const i18n = createI18n({
@@ -7,7 +7,7 @@ const i18n = createI18n({
   locale: 'en',
   fallbackLocale: 'en',
   globalInjection: true,
-  message: "Mock translation"
+  message: 'Mock translation'
 });
 
 function mountChatDeleteBtn(props?, emits?) {
@@ -15,7 +15,7 @@ function mountChatDeleteBtn(props?, emits?) {
     global: {
       plugins: [i18n],
       mocks: {
-        t: (key) => key,
+        t: (key) => key
       },
       components: {
         PgButton: Button
@@ -28,25 +28,21 @@ function mountChatDeleteBtn(props?, emits?) {
 
 describe('ChatDeleteBtn Component', () => {
   it('should be disabled when there are no messages', () => {
-    mountChatDeleteBtn(
-      {
-        messages: [],
-        loading: false
-      }
-    );
+    mountChatDeleteBtn({
+      messages: [],
+      loading: false
+    });
     cy.get('Button').should('be.disabled');
   });
 
   it('should be disabled when loading is true', () => {
-    mountChatDeleteBtn(
-      {
-        messages: [{ message: 'Chat Message', isSent: false }],
-        loading: true
-      }
-    );
+    mountChatDeleteBtn({
+      messages: [{ message: 'Chat Message', isSent: false }],
+      loading: true
+    });
     cy.get('Button').should('be.disabled');
   });
-  
+
   it('should emit clear event on click', () => {
     const clearMessagesSpy = cy.spy().as('clearMessagesSpy');
 
@@ -60,9 +56,7 @@ describe('ChatDeleteBtn Component', () => {
       }
     );
 
-    cy.get('Button')
-      .should('exist')
-      .click();
+    cy.get('Button').should('exist').click();
 
     cy.get('@clearMessagesSpy').should('have.been.called');
   });
