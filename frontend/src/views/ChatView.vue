@@ -120,13 +120,10 @@ const toggleSelectView = () => {
 };
 
 /**
- * Toggles the visibility of the dictionary preview card.
+ * Hides the dictionary preview card.
  */
-const toggleDetails = () => {
-  if (!detailsVisible.value) {
-    getDictionaryInfo();
-  }
-  detailsVisible.value = !detailsVisible.value;
+const hideDetails = () => {
+  detailsVisible.value = false;
 };
 
 /**
@@ -226,6 +223,7 @@ function getDictionaryInfo() {
     .then((response) => {
       if (response.data?.status == 'OK') {
         Object.assign(dictionaryPreview.value, response.data?.data);
+        detailsVisible.value = true;
       } else {
         messageError(
           t('dictionary.title'),
@@ -242,32 +240,46 @@ function getDictionaryInfo() {
 }
 
 /**
+ * Manage the prompt generation request when the enter key is pressed.
+ * @function handleEnterKeyRequest
+ */
+function handleEnterKeyRequest(event: any) {
+  event.preventDefault();
+  if (!loading.value && selectedDictionary.value && request.value) {
+    runRequest();
+  }
+}
+
+/**
  * Prepares the prompt generation request.
  * @function runRequest
  */
 function runRequest() {
   // Hide the data dictionary preview (if visible)
   if (detailsVisible.value) {
-    toggleDetails();
+    hideDetails();
   }
-  addMessage(request.value.trim(), true);
+  const query = request.value.trim();
+  request.value = '';
+  addMessage(query, true);
   if (isLogged.value) {
-    generatePromptWithDebug();
+    generatePromptWithDebug(query);
   } else {
-    generatePrompt();
+    generatePrompt(query);
   }
 }
 
 /**
  * Executes the prompt generation request.
  * @function generatePrompt
+ * @param query - The trimmed user request.
  */
-function generatePrompt() {
+function generatePrompt(query: string) {
   loading.value = true;
   getApiClient()
     .generatePrompt({
       dictionaryId: selectedDictionary.value!,
-      query: request.value.trim(),
+      query: query,
       dbms: selectedDbms.value,
       lang: selectedLanguage.value
     })
@@ -293,13 +305,15 @@ function generatePrompt() {
 
 /**
  * Executes the prompt generation request and loads debug information about the generation process.
+ * @function generatePromptWithDebug
+ * @param query - The trimmed user request.
  */
-function generatePromptWithDebug() {
+function generatePromptWithDebug(query: string) {
   loading.value = true;
   getApiClient()
     .generatePromptWithDebug({
       dictionaryId: selectedDictionary.value!,
-      query: request.value.trim(),
+      query: query,
       dbms: selectedDbms.value,
       lang: selectedLanguage.value
     })
@@ -355,14 +369,10 @@ function generatePromptWithDebug() {
           />
           <PgButton
             severity="info"
-            :icon="detailsVisible ? 'pi pi-times' : 'pi pi-info'"
+            icon="pi pi-info"
             class="h-fit m-2 ml-0"
-            :aria-label="
-              detailsVisible
-                ? t('chat.dictionary.details.hide_details')
-                : t('chat.dictionary.details.show_details')
-            "
-            @click="toggleDetails"
+            aria-label="t('chat.dictionary.details.show_details')"
+            @click="getDictionaryInfo"
           />
         </PgInputGroup>
 
@@ -404,6 +414,7 @@ function generatePromptWithDebug() {
     <DictPreview
       :details-visible="detailsVisible"
       :dictionary-preview="dictionaryPreview"
+      @hide-details="hideDetails"
     ></DictPreview>
 
     <div v-if="!detailsVisible" id="messages">
@@ -424,6 +435,7 @@ function generatePromptWithDebug() {
         auto-resize
         class="w-full"
         :aria-label="t('chat.prompt.placeholder')"
+        @keydown.enter="handleEnterKeyRequest"
       />
       <PgButton
         :icon="loading ? 'pi pi-spin pi-spinner' : 'pi pi-send'"
