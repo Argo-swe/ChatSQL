@@ -373,8 +373,8 @@ function generatePromptWithDebug(query: string) {
             icon="pi pi-info"
             :disabled="!selectedDictionary"
             class="h-fit m-2 ml-0"
-            title="t('chat.dictionary.details.show_details')"
-            aria-label="t('chat.dictionary.details.show_details')"
+            :title="t('chat.dictionary.details.show_details')"
+            :aria-label="t('chat.dictionary.details.show_details')"
             @click="getDictionaryInfo"
           />
         </PgInputGroup>
