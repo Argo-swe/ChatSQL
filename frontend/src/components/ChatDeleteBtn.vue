@@ -42,6 +42,7 @@ const clearMessages = () => {
     :label="t('chat.history.clean')"
     icon="pi pi-eraser"
     class="m-2"
+    data-testid="clean-chat-button"
     :disabled="messages.length <= 0 || loading"
     severity="danger"
     icon-pos="right"

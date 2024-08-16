@@ -27,6 +27,9 @@
       "copy": "Copy to clipboard",
       "open_debug": "Open debug details"
     },
+    "dbms": {
+      "placeholder": "Choose a DBMS"
+    },
     "debug": {
       "file": {
         "download": "Download file (.txt)"
@@ -35,17 +38,17 @@
       "title": "Debug"
     },
     "dictionary": {
-      "placeholder": "Choose a dictionary",
       "details": {
-        "show_details": "show dictionary details",
-        "hide_details": "hide dictionary details",
+        "hide_details": "Hide dictionary details",
+        "show_details": "Show dictionary details",
         "tables": {
           "title": "Tables"
         }
-      }
+      },
+      "placeholder": "Choose a dictionary"
     },
-    "dbms": {
-      "placeholder": "Choose a DBMS"
+    "history": {
+      "clean": "Clean chat history"
     },
     "lang": {
       "placeholder": "Choose a language"
@@ -55,19 +58,16 @@
       "placeholder": "Enter a natural language request",
       "title": "Prompt"
     },
-    "history": {
-      "clean": "Clean chat history"
-    },
     "title": "Chat"
   },
   "dictionary": {
     "create": "Create data dictionary",
     "delete": "Delete data dictionary",
     "file": {
+      "clear": "Clear the selected file",
       "download": "Download data dictionary file",
       "title": "Data dictionary file",
-      "update": "Update data dictionary file",
-      "clear": "Clear the selected file"
+      "update": "Update data dictionary file"
     },
     "title": "Data dictionary | Data dictionaries",
     "update": "Update data dictionary"
@@ -80,6 +80,12 @@
     "title": "ARGO Group"
   },
   "general": {
+    "clipboard": {
+      "action": "Copy to clipboard",
+      "error": "Error when copying to clipboard",
+      "name": "Copy",
+      "success": "Text copied to clipboard"
+    },
     "confirm": {
       "proceed": "Are you sure you want to proceed?"
     },
@@ -94,15 +100,9 @@
       "loading": "Loading data! Please wait..."
     },
     "menu": {
-      "openMainNavMenu": "Open main navigation menu",
       "closeMainNavMenu": "Close main navigation menu",
+      "openMainNavMenu": "Open main navigation menu",
       "technicianFunctionalities": "Technician functionalities"
-    },
-    "clipboard": {
-      "name": "Copy",
-      "action": "Copy to clipboard",
-      "success": "Text copied to clipboard",
-      "error": "Error when copying to clipboard"
     }
   },
   "locale": {
@@ -110,10 +110,13 @@
     "it": "italian"
   },
   "login": {
-    "success": "You are logged in as '{name}'",
     "badCredential": "Wrong credential",
     "subject": "Login to the technician area",
+    "success": "You are logged in as '{name}'",
     "title": "Login"
+  },
+  "primevue": {
+    "emptymessage": "No available options"
   },
   "settings": {
     "darkMode": "Dark mode",
