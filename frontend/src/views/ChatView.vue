@@ -350,14 +350,21 @@ function generatePromptWithDebug() {
             option-label="name"
             option-value="id"
             :placeholder="t('chat.dictionary.placeholder')"
+            :empty-message="t('primevue.emptymessage')"
             class="h-fit m-2 mr-0"
             @update:model-value="onDictionaryChange"
           />
           <PgButton
             severity="info"
             :icon="detailsVisible ? 'pi pi-times' : 'pi pi-info'"
+            :disabled="!selectedDictionary"
             class="h-fit m-2 ml-0"
             :aria-label="
+              detailsVisible
+                ? t('chat.dictionary.details.hide_details')
+                : t('chat.dictionary.details.show_details')
+            "
+            :title="
               detailsVisible
                 ? t('chat.dictionary.details.hide_details')
                 : t('chat.dictionary.details.show_details')
