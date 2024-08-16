@@ -35,7 +35,7 @@ function onClickDownloadFile() {
           icon="pi pi-download"
           class="mx-1"
           raised
-          severity="danger"
+          severity="info"
           :title="t('chat.debug.file.download')"
           :aria-label="t('chat.debug.file.download')"
           @click="onClickDownloadFile"
