@@ -30,9 +30,8 @@ COPY ./requirements.txt requirements.txt
 COPY ./entrypoint-backend.sh ./entrypoint-backend.sh
 
 # Make entrypoint script executable
-RUN chmod +x ./entrypoint-backend.sh
-
-RUN apt-get update && \
+RUN chmod +x ./entrypoint-backend.sh && \
+    apt-get update && \
     apt-get -y --no-install-recommends install \
         curl \
         g++ \
@@ -51,7 +50,9 @@ RUN apt-get update && \
     python -m pip install --no-cache-dir -U pip wheel setuptools && \
     python -m pip install --no-cache-dir --upgrade -r requirements.txt && \
     if [ -z "${GPU}" ] && { [ -z "${TARGETARCH}" ] || [ "${TARGETARCH}" = "amd64" ]; }; then \
-        pip install --no-cache-dir torch==2.3.0+cpu torchvision==0.18.0+cpu -f https://download.pytorch.org/whl/torch_stable.html; \
+        pip install --no-cache-dir torch==2.3.0+cpu \
+            torchvision==0.18.0+cpu \
+            -f https://download.pytorch.org/whl/torch_stable.html; \
     fi && \
     python -m pip install --no-cache-dir txtai${COMPONENTS} && \
     python -c "import sys, importlib.util as util; 1 if util.find_spec('nltk') else sys.exit(); import nltk; nltk.download('punkt')" && \
