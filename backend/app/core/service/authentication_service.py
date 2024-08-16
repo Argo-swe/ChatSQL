@@ -1,4 +1,4 @@
-from auth.jwt_handler import JwtHandler
+from routes.auth.jwt_handler import JwtHandler
 from core.port.outcoming.authentication_repository import AuthenticationRepository
 from models.responses.auth_response_dto import AuthResponseDto
 from core.port.incoming.authentication_use_case import AuthenticationUseCase

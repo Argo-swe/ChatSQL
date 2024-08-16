@@ -1,5 +1,4 @@
 import os
-import aiofiles
 from models.dictionary_internal_structure.table_dto import TableDto
 from models.dictionary_preview_dto import DictionaryPreviewDto
 from core.port.outcoming.file_repository import FileRepository
@@ -12,9 +11,9 @@ class JsonFileAdapter(FileRepository):
         self._out_file_base_path = file_path
         os.makedirs(self._out_file_base_path, exist_ok=True)
 
-    async def save(self, id: int, file):
-        async with aiofiles.open(self._generate_schema_file_name(id), "wb") as out_file:
-            await out_file.write(file)
+    def save(self, id: int, file):
+        with open(self._generate_schema_file_name(id), "wb") as out_file:
+            out_file.write(file)
 
     def load(self, id: int) -> str:
         return self._generate_schema_file_name(id)

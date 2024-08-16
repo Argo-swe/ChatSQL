@@ -6,7 +6,7 @@ from models.responses.dictionaries_response_dto import DictionariesResponseDto
 from models.responses.dictionary_response_dto import DictionaryResponseDto
 from models.dictionary_dto import DictionaryDto
 
-from auth.jwt_bearer import JwtBearer
+from routes.auth.jwt_bearer import JwtBearer
 from fastapi import APIRouter, File, UploadFile, Depends
 from fastapi.responses import FileResponse
 

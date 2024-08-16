@@ -3,16 +3,11 @@ from configuration import Configuration
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_utils.openapi import simplify_operation_ids
-from filters.log_filter import EndpointFilter
+from tools.log_filter import EndpointFilter
 
 from routes.dictionaries_api import dictionaries_router
 from routes.prompt_api import prompt_router
 from routes.login_api import login_router
-
-from database import models
-from database.base import engine
-
-models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 

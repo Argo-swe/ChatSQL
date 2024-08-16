@@ -2,7 +2,7 @@ from typing import Annotated
 from configuration import Configuration
 from models.responses.string_data_response_dto import StringDataResponseDto
 from models.responses.prompt_response_dto import PromptResponseDto
-from auth.jwt_bearer import JwtBearer
+from routes.auth.jwt_bearer import JwtBearer
 from core.service.prompt_manager_service import PromptManagerService
 
 from fastapi import APIRouter, Depends, Query

@@ -28,14 +28,15 @@ class Configuration:
                 with open("/opt/chatsql/config.json", "r") as file:
                     config = json.load(file)
             except FileNotFoundError:
-                print("Il file non è stato trovato.")
+                print("File not found")
             except json.JSONDecodeError:
-                print("Errore di decodifica JSON.")
+                print("Error while decoding JSON file")
 
             self._config = config
             self._db_manager_factory = DbManagerFactory.create(self._config)
-
             self._embeddings_factory = EmbeddingsManagerFactory.create(self._config)
+            self._file_repository = FileFactory.create(self._config)
+            self._schema_validator = SchemaValidatorFactory.create(self._config)
 
             self._dictionary_repository = (
                 self._db_manager_factory.create_dictionary_repository()
@@ -43,9 +44,6 @@ class Configuration:
             self._authentication_repository = (
                 self._db_manager_factory.create_authentication_repository()
             )
-
-            self._file_repository = FileFactory.create(self._config)
-            self._schema_validator = SchemaValidatorFactory.create(self._config)
 
             self._prompt_manager = self._embeddings_factory.create_prompt_manager(
                 self._file_repository
