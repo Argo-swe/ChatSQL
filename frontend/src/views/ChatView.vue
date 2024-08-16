@@ -364,13 +364,16 @@ function generatePromptWithDebug(query: string) {
             option-label="name"
             option-value="id"
             :placeholder="t('chat.dictionary.placeholder')"
+            :empty-message="t('primevue.emptymessage')"
             class="h-fit m-2 mr-0"
             @update:model-value="onDictionaryChange"
           />
           <PgButton
             severity="info"
             icon="pi pi-info"
+            :disabled="!selectedDictionary"
             class="h-fit m-2 ml-0"
+            title="t('chat.dictionary.details.show_details')"
             aria-label="t('chat.dictionary.details.show_details')"
             @click="getDictionaryInfo"
           />
