@@ -22,6 +22,11 @@ defineProps<{
   dictionaryPreview: DictionaryPreview;
 }>();
 
+/**
+ * Emits for DictPreview component.
+ */
+const emit = defineEmits(['hide-details']);
+
 const { t } = useI18n();
 // Track whether the details are expanded or collapsed.
 const expanded = ref(false);
@@ -32,6 +37,14 @@ const expanded = ref(false);
  */
 const toggleExpansion = () => {
   expanded.value = !expanded.value;
+};
+
+/**
+ * Emits an event to the parent component to hide dictionary details.
+ * @function hideDetails
+ */
+const hideDetails = () => {
+  emit('hide-details');
 };
 </script>
 
@@ -53,12 +66,20 @@ const toggleExpansion = () => {
           </li>
         </ul>
       </PgScrollPanel>
-      <PgButton
-        :icon="expanded ? 'pi pi-window-minimize' : 'pi pi-expand'"
-        class="expand-btn"
-        :aria-label="expanded ? t('text.shrink_view') : t('text.expand_view')"
-        @click="toggleExpansion"
-      />
+      <div class="dictionary-preview-action-area">
+        <PgButton
+          :icon="expanded ? 'pi pi-window-minimize' : 'pi pi-expand'"
+          class="m-1"
+          :aria-label="expanded ? t('text.shrink_view') : t('text.expand_view')"
+          @click="toggleExpansion"
+        />
+        <PgButton
+          icon="pi pi-times"
+          class="m-1"
+          aria-label="t('chat.dictionary.details.hide_details')"
+          @click="hideDetails"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -79,7 +100,7 @@ const toggleExpansion = () => {
   position: relative;
 }
 
-#dictionary-details .expand-btn {
+.dictionary-preview-action-area {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;

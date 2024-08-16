@@ -34,6 +34,7 @@ function onClickDownloadFile() {
         <PgButton
           icon="pi pi-download"
           class="mx-1"
+          data-testid="debug-message-download"
           raised
           severity="info"
           :title="t('chat.debug.file.download')"
@@ -41,7 +42,7 @@ function onClickDownloadFile() {
           @click="onClickDownloadFile"
         />
       </div>
-      <p>{{ message }}</p>
+      <p data-testid="debug-message">{{ message }}</p>
     </div>
   </div>
 </template>
