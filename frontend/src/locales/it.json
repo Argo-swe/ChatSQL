@@ -27,6 +27,9 @@
       "copy": "Copia negli appunti",
       "open_debug": "Apri dettaglio debug"
     },
+    "dbms": {
+      "placeholder": "Scegli un DBMS"
+    },
     "debug": {
       "file": {
         "download": "Scarica file (.txt)"
@@ -35,17 +38,17 @@
       "title": "Debug"
     },
     "dictionary": {
-      "placeholder": "Scegli un dizionario",
       "details": {
-        "show_details": "mostra i dettagli del dizionario",
-        "hide_details": "nascondi i dettagli del dizionario",
+        "hide_details": "Nascondi i dettagli del dizionario",
+        "show_details": "Mostra i dettagli del dizionario",
         "tables": {
           "title": "Tabelle"
         }
-      }
+      },
+      "placeholder": "Scegli un dizionario"
     },
-    "dbms": {
-      "placeholder": "Scegli un DBMS"
+    "history": {
+      "clean": "Elimina cronologia della chat"
     },
     "lang": {
       "placeholder": "Scegli una lingua"
@@ -55,19 +58,16 @@
       "placeholder": "Inserisci una richiesta in linguaggio naturale",
       "title": "Prompt"
     },
-    "history": {
-      "clean": "Elimina cronologia della chat"
-    },
     "title": "Chat"
   },
   "dictionary": {
     "create": "Crea dizionario dati",
     "delete": "Elimina dizionario dati",
     "file": {
+      "clear": "Annulla la selezione del file",
       "download": "Scarica file dizionario dati",
       "title": "File dizionario dati",
-      "update": "Aggiorna file dizionario dati",
-      "clear": "Annulla la selezione del file"
+      "update": "Aggiorna file dizionario dati"
     },
     "title": "Dizionario dati | Dizionari dati",
     "update": "Aggiorna dizionario dati"
@@ -80,6 +80,12 @@
     "title": "Gruppo ARGO"
   },
   "general": {
+    "clipboard": {
+      "action": "Copia negli appunti",
+      "error": "Errore durante la copia",
+      "name": "Copia",
+      "success": "Testo copiato negli appunti"
+    },
     "confirm": {
       "proceed": "Sei sicuro di vole proseguire?"
     },
@@ -94,15 +100,9 @@
       "loading": "Caricamento dati! Attendere..."
     },
     "menu": {
-      "openMainNavMenu": "Apri il menu di navigazione principale",
       "closeMainNavMenu": "Chiudi il menu di navigazione principale",
+      "openMainNavMenu": "Apri il menu di navigazione principale",
       "technicianFunctionalities": "Funzionalità del tecnico"
-    },
-    "clipboard": {
-      "name": "Copia",
-      "action": "Copia negli appunti",
-      "success": "Testo copiato negli appunti",
-      "error": "Errore durante la copia"
     }
   },
   "locale": {
@@ -110,10 +110,13 @@
     "it": "italiano"
   },
   "login": {
-    "success": "Hai effettuato l'accesso come '{name}'",
     "badCredential": "Credenziali errate",
     "subject": "Accedi all'area del tecnico",
+    "success": "Hai effettuato l'accesso come '{name}'",
     "title": "Accedi"
+  },
+  "primevue": {
+    "emptymessage": "Nessuna opzione disponibile"
   },
   "settings": {
     "darkMode": "Modalità scuro",
