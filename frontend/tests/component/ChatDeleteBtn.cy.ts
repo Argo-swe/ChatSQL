@@ -32,7 +32,7 @@ describe('ChatDeleteBtn Component', () => {
       messages: [],
       loading: false
     });
-    cy.get('Button').should('be.disabled');
+    cy.get('Button[data-testid="clean-chat-button"]').should('be.disabled');
   });
 
   it('should be disabled when loading is true', () => {
@@ -40,7 +40,7 @@ describe('ChatDeleteBtn Component', () => {
       messages: [{ message: 'Chat Message', isSent: false }],
       loading: true
     });
-    cy.get('Button').should('be.disabled');
+    cy.get('Button[data-testid="clean-chat-button"]').should('be.disabled');
   });
 
   it('should emit clear event on click', () => {
@@ -56,7 +56,7 @@ describe('ChatDeleteBtn Component', () => {
       }
     );
 
-    cy.get('Button').should('exist').click();
+    cy.get('Button[data-testid="clean-chat-button"]').should('exist').click();
 
     cy.get('@clearMessagesSpy').should('have.been.called');
   });
