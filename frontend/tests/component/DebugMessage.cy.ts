@@ -11,7 +11,7 @@ const i18n = createI18n({
   message: 'Mock translation'
 });
 
-function mountDebugMessage(props?, emits?) {
+function mountDebugMessage(props?) {
   return cy.mount(DebugMessage, {
     global: {
       plugins: [i18n],
@@ -22,8 +22,7 @@ function mountDebugMessage(props?, emits?) {
         PgButton: Button
       }
     },
-    props,
-    emits
+    props
   });
 }
 

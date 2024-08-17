@@ -54,12 +54,13 @@ const hideDetails = () => {
     id="dictionary-details"
     :class="{ expanded: expanded }"
     class="w-full h-full"
+    data-testid="dictionary-preview-container"
   >
     <div class="card h-full dict-preview">
       <PgScrollPanel class="h-full">
-        <h2>{{ dictionaryPreview.databaseName }}</h2>
-        <p>{{ dictionaryPreview.databaseDescription }}</p>
-        <ul>
+        <h2 data-testid="database-name">{{ dictionaryPreview.databaseName }}</h2>
+        <p data-testid="database-description">{{ dictionaryPreview.databaseDescription }}</p>
+        <ul data-testid="database-tables">
           <li v-for="(table, index) in dictionaryPreview.tables" :key="index" class="my-3">
             <strong>{{ table.name }}</strong
             >: {{ table.description }}
@@ -71,12 +72,14 @@ const hideDetails = () => {
           :icon="expanded ? 'pi pi-window-minimize' : 'pi pi-expand'"
           class="m-1"
           :aria-label="expanded ? t('text.shrink_view') : t('text.expand_view')"
+          data-testid="dictionary-preview-expand-button"
           @click="toggleExpansion"
         />
         <PgButton
           icon="pi pi-times"
           class="m-1"
           aria-label="t('chat.dictionary.details.hide_details')"
+          data-testid="dictionary-preview-hide-button"
           @click="hideDetails"
         />
       </div>

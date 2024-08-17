@@ -10,7 +10,7 @@ const i18n = createI18n({
   message: 'Mock translation'
 });
 
-function mountChatDeleteBtn(props?, emits?) {
+function mountChatDeleteBtn(props?) {
   return cy.mount(ChatDeleteBtn, {
     global: {
       plugins: [i18n],
@@ -21,8 +21,7 @@ function mountChatDeleteBtn(props?, emits?) {
         PgButton: Button
       }
     },
-    props,
-    emits
+    props
   });
 }
 
@@ -44,20 +43,12 @@ describe('ChatDeleteBtn Component', () => {
   });
 
   it('should emit clear event on click', () => {
-    const clearMessagesSpy = cy.spy().as('clearMessagesSpy');
-
-    mountChatDeleteBtn(
-      {
-        messages: [{ message: 'Chat Message', isSent: false }],
-        loading: false
-      },
-      {
-        'clear-messages': clearMessagesSpy
-      }
-    );
-
+    mountChatDeleteBtn({
+      messages: [{ message: 'Chat Message', isSent: false }],
+      loading: false,
+      onClearMessages: cy.spy().as('clearMessagesSpy')
+    });
     cy.get('Button[data-testid="clean-chat-button"]').should('exist').click();
-
     cy.get('@clearMessagesSpy').should('have.been.called');
   });
 });
