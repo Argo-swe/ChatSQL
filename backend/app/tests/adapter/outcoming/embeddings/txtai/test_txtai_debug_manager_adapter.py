@@ -1,5 +1,5 @@
 import pytest
-from app.adapter.outcoming.embeddings.txtai.txtai_debug_manager_adapter import TxtaiDebugManagerAdapter
+from adapter.outcoming.embeddings.txtai.txtai_debug_manager_adapter import TxtaiDebugManagerAdapter
 from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 
 @pytest.fixture
