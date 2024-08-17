@@ -1,0 +1,236 @@
+{
+  "database_name": "Cinema",
+  "database_description": "The cinema database is designed to manage and track movie screenings, ticket sales, and customer information.",
+  "tables": [
+    {
+      "name": "customers",
+      "description": "Table containing personal details of customers who purchase tickets.",
+      "table_synonyms": [
+        "clients",
+        "members",
+        "audience"
+      ],
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "integer",
+          "description": "The unique identifier for a customer.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "description": "The unique login name for a customer.",
+          "column_synonyms": [
+            "nickname",
+            "alias"
+          ]
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "description": "The customer's email address.",
+          "column_synonyms": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The customer's first name.",
+          "column_synonyms": null
+        },
+        {
+          "name": "surname",
+          "type": "string",
+          "description": "The customer's surname.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "customer_id"
+      ]
+    },
+    {
+      "name": "movies",
+      "description": "Table containing information about movies available for screening.",
+      "table_synonyms": [
+        "films",
+        "features"
+      ],
+      "columns": [
+        {
+          "name": "movie_id",
+          "type": "integer",
+          "description": "The unique identifier for a movie.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "The title of the movie.",
+          "column_synonyms": [
+            "name",
+            "headline"
+          ]
+        },
+        {
+          "name": "genre",
+          "type": "string",
+          "description": "The genre of the movie.",
+          "column_synonyms": [
+            "category",
+            "type"
+          ]
+        },
+        {
+          "name": "duration",
+          "type": "integer",
+          "description": "The duration of the movie in minutes.",
+          "column_synonyms": [
+            "length",
+            "running_time"
+          ]
+        }
+      ],
+      "primary_key": [
+        "movie_id"
+      ]
+    },
+    {
+      "name": "screenings",
+      "description": "Table containing information on movie screenings, including date, time, and auditorium.",
+      "table_synonyms": [
+        "showings",
+        "sessions",
+        "projections"
+      ],
+      "columns": [
+        {
+          "name": "screening_id",
+          "type": "integer",
+          "description": "The unique identifier for a screening.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "movie_id",
+          "type": "integer",
+          "description": "Foreign key referencing the movie being screened.",
+          "column_synonyms": null
+        },
+        {
+          "name": "auditorium",
+          "type": "string",
+          "description": "The auditorium where the movie is being screened.",
+          "column_synonyms": [
+            "theater",
+            "hall"
+          ]
+        },
+        {
+          "name": "screening_date",
+          "type": "date",
+          "description": "Date of the screening.",
+          "column_synonyms": null
+        },
+        {
+          "name": "screening_time",
+          "type": "time",
+          "description": "Time of the screening.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "screening_id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "movie_id"
+          ],
+          "reference_table_name": "movies",
+          "reference_column_names": [
+            "movie_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tickets",
+      "description": "Table containing information about ticket purchases.",
+      "table_synonyms": [
+        "sales",
+        "reservations",
+        "bookings"
+      ],
+      "columns": [
+        {
+          "name": "ticket_id",
+          "type": "integer",
+          "description": "The unique identifier for a ticket.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "customer_id",
+          "type": "integer",
+          "description": "Foreign key referencing the customer who purchased the ticket.",
+          "column_synonyms": null
+        },
+        {
+          "name": "screening_id",
+          "type": "integer",
+          "description": "Foreign key referencing the screening for which the ticket is valid.",
+          "column_synonyms": null
+        },
+        {
+          "name": "purchase_date",
+          "type": "date",
+          "description": "Date when the ticket was purchased.",
+          "column_synonyms": null
+        },
+        {
+          "name": "price",
+          "type": "numeric(10,2)",
+          "description": "The price of the ticket.",
+          "column_synonyms": [
+            "cost",
+            "value"
+          ]
+        }
+      ],
+      "primary_key": [
+        "ticket_id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "customer_id"
+          ],
+          "reference_table_name": "customers",
+          "reference_column_names": [
+            "customer_id"
+          ]
+        },
+        {
+          "foreign_key_column_names": [
+            "screening_id"
+          ],
+          "reference_table_name": "screenings",
+          "reference_column_names": [
+            "screening_id"
+          ]
+        }
+      ]
+    }
+  ]
+}

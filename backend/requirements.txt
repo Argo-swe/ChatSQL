@@ -1,4 +1,3 @@
-aiofiles
 fastapi[standard]
 fastapi_camelcase
 fastapi_utils[all]
