@@ -20,4 +20,4 @@ repos:
         additional_dependencies:
           - pep8-naming==0.13.0
         files: ^backend/
-        exclude: ^backend/app/tests/
+        exclude: ^backend/.*tests/
