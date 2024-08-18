@@ -11,7 +11,7 @@ const i18n = createI18n({
   message: 'Mock translation'
 });
 
-function mountStringDataModal(mockDialogRef, props?, emits?) {
+function mountStringDataModal(mockDialogRef, props?) {
   return cy.mount(StringDataModal, {
     global: {
       plugins: [i18n],
@@ -25,8 +25,7 @@ function mountStringDataModal(mockDialogRef, props?, emits?) {
         DebugMessage
       }
     },
-    props,
-    emits
+    props
   });
 }
 
