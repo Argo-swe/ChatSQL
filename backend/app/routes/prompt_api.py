@@ -1,116 +1,57 @@
 from typing import Annotated
-from models.responses.response_dto import ResponseStatusEnum
+from configuration import Configuration
 from models.responses.string_data_response_dto import StringDataResponseDto
 from models.responses.prompt_response_dto import PromptResponseDto
-from models.prompt_dto import PromptDto
-from auth.jwt_bearer import JwtBearer
+from routes.auth.jwt_bearer import JwtBearer
+from core.service.prompt_manager_service import PromptManagerService
 
 from fastapi import APIRouter, Depends, Query
-from engine.prompt_manager import PromptManager
-
-from sqlalchemy.orm import Session
-from database import crud
-from database.base import SessionLocal
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+def create_prompt_router(config: Configuration):
+    tag = "prompt"
+    router = APIRouter()
 
+    def get_prompt_manager_service() -> PromptManagerService:
+        return config.get_prompt_manager_service()
 
-tag = "prompt"
-router = APIRouter()
-
-manager = PromptManager()
-
-
-@router.get(
-    "/", tags=[tag], response_model=StringDataResponseDto, name="generatePrompt"
-)
-def generate_prompt(
-    dictionary_id: Annotated[int, Query(alias="dictionaryId")],
-    query: str,
-    dbms: str,
-    lang: str,
-    db: Session = Depends(get_db),
-) -> StringDataResponseDto:
-
-    found_dic = crud.get_dictionary_by_id(db, dictionary_id)
-
-    if found_dic is None:
-        return StringDataResponseDto(
-            message=f"Dictionary with id {id} not found",
-            status=ResponseStatusEnum.NOT_FOUND,
-        )
-
-    if query is None or query == "":
-        return StringDataResponseDto(
-            message="Query cannot be empty", status=ResponseStatusEnum.BAD_REQUEST
-        )
-
-    prompt, log_content = manager.prompt_generator(
-        found_dic.id, query, lang, dbms, activate_log=False
+    @router.get(
+        "/", tags=[tag], response_model=StringDataResponseDto, name="generatePrompt"
     )
+    def generate_prompt(
+        dictionary_id: Annotated[int, Query(alias="dictionaryId")],
+        query: str,
+        dbms: str,
+        lang: str,
+        prompt_manager_service: PromptManagerService = Depends(
+            get_prompt_manager_service
+        ),
+    ) -> StringDataResponseDto:
 
-    print(prompt)
+        return prompt_manager_service.generate_prompt(dictionary_id, query, lang, dbms)
 
-    return StringDataResponseDto(data=prompt, status=ResponseStatusEnum.OK)
-
-
-@router.get(
-    "/debug",
-    tags=[tag],
-    response_model=PromptResponseDto,
-    dependencies=[Depends(JwtBearer())],
-    name="generatePromptWithDebug",
-)
-def generate_prompt_with_debug(
-    dictionary_id: Annotated[int, Query(alias="dictionaryId")],
-    query: str,
-    dbms: str,
-    lang: str,
-    db: Session = Depends(get_db),
-) -> PromptResponseDto:
-
-    found_dic = crud.get_dictionary_by_id(db, dictionary_id)
-
-    if found_dic is None:
-        return PromptResponseDto(
-            message=f"Dictionary with id {id} not found",
-            status=ResponseStatusEnum.NOT_FOUND,
-        )
-
-    if query is None or query == "":
-        return PromptResponseDto(
-            message="Query cannot be empty", status=ResponseStatusEnum.BAD_REQUEST
-        )
-
-    prompt, log_content = manager.prompt_generator(
-        found_dic.id, query, lang, dbms, activate_log=True
+    @router.get(
+        "/debug",
+        tags=[tag],
+        response_model=PromptResponseDto,
+        dependencies=[Depends(JwtBearer())],
+        name="generatePromptWithDebug",
     )
+    def generate_prompt_with_debug(
+        dictionary_id: Annotated[int, Query(alias="dictionaryId")],
+        query: str,
+        dbms: str,
+        lang: str,
+        prompt_manager_service: PromptManagerService = Depends(
+            get_prompt_manager_service
+        ),
+    ) -> PromptResponseDto:
 
-    print(prompt)
+        return prompt_manager_service.generate_prompt_with_debug(
+            dictionary_id, query, lang, dbms
+        )
 
-    prompt_dto = PromptDto(prompt=prompt, debug=log_content)
-
-    return PromptResponseDto(data=prompt_dto, status=ResponseStatusEnum.OK)
+    return router
 
 
-# @router.get(
-#     "/debug/only",
-#     tags=[tag],
-#     response_model=StringDataResponseDto,
-#     name="generatePromptDebug",
-# )
-# def generate_prompt_debug() -> StringDataResponseDto:
-
-#     try:
-#         with open("/opt/chatsql/logs/chatsql_log.txt", "r") as file:
-#             return StringDataResponseDto(data=file.read(), status=ResponseStatusEnum.OK)
-#     except FileNotFoundError:
-#         return StringDataResponseDto(
-#             message="Log file not found", status=ResponseStatusEnum.NOT_FOUND
-#         )
+prompt_router = create_prompt_router

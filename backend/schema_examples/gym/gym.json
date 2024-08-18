@@ -1,0 +1,904 @@
+{
+  "database_name": "Gym",
+  "database_description": "The gym database is designed to manage and track gyms, customers, instructors, pricing, fitness areas, schedules, exercises, muscle groups, courses, and memberships.",
+  "tables": [
+    {
+      "name": "Palestra",
+      "description": "Table containing information about gyms.",
+      "table_synonyms": [
+        "gym",
+        "fitness_center"
+      ],
+      "columns": [
+        {
+          "name": "Citta",
+          "type": "varchar(50)",
+          "description": "The city where the gym is located.",
+          "column_synonyms": [
+            "city",
+            "town"
+          ]
+        },
+        {
+          "name": "Indirizzo",
+          "type": "varchar(50)",
+          "description": "The address of the gym.",
+          "column_synonyms": [
+            "address",
+            "location"
+          ]
+        },
+        {
+          "name": "AperturaFeriali",
+          "type": "time",
+          "description": "Opening time on weekdays.",
+          "column_synonyms": [
+            "weekday_opening"
+          ]
+        },
+        {
+          "name": "ChiusuraFeriali",
+          "type": "time",
+          "description": "Closing time on weekdays.",
+          "column_synonyms": [
+            "weekday_closing"
+          ]
+        },
+        {
+          "name": "AperturaFestivi",
+          "type": "time",
+          "description": "Opening time on holidays.",
+          "column_synonyms": [
+            "holiday_opening"
+          ]
+        },
+        {
+          "name": "ChiusuraFestivi",
+          "type": "time",
+          "description": "Closing time on holidays.",
+          "column_synonyms": [
+            "holiday_closing"
+          ]
+        }
+      ],
+      "primary_key": [
+        "Citta",
+        "Indirizzo"
+      ]
+    },
+    {
+      "name": "Cliente",
+      "description": "Table containing personal details of gym customers.",
+      "table_synonyms": [
+        "client",
+        "member"
+      ],
+      "columns": [
+        {
+          "name": "Cf",
+          "type": "varchar(16)",
+          "description": "The unique identifier for a customer.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "Nome",
+          "type": "varchar(20)",
+          "description": "The customer's first name.",
+          "column_synonyms": [
+            "first_name",
+            "name"
+          ]
+        },
+        {
+          "name": "Cognome",
+          "type": "varchar(20)",
+          "description": "The customer's last name.",
+          "column_synonyms": [
+            "last_name",
+            "surname"
+          ]
+        },
+        {
+          "name": "Mail",
+          "type": "varchar(50)",
+          "description": "The customer's email address.",
+          "column_synonyms": [
+            "email",
+            "e-mail"
+          ]
+        },
+        {
+          "name": "DataNascita",
+          "type": "date",
+          "description": "The customer's date of birth.",
+          "column_synonyms": [
+            "birth_date",
+            "dob"
+          ]
+        },
+        {
+          "name": "Sesso",
+          "type": "genere",
+          "description": "The customer's gender.",
+          "column_synonyms": [
+            "gender",
+            "sex"
+          ]
+        }
+      ],
+      "primary_key": [
+        "Cf"
+      ]
+    },
+    {
+      "name": "Istruttore",
+      "description": "Table containing personal details of gym instructors.",
+      "table_synonyms": [
+        "trainer",
+        "coach"
+      ],
+      "columns": [
+        {
+          "name": "Cf",
+          "type": "varchar(16)",
+          "description": "The unique identifier for an instructor.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "Nome",
+          "type": "varchar(20)",
+          "description": "The instructor's first name.",
+          "column_synonyms": [
+            "first_name",
+            "name"
+          ]
+        },
+        {
+          "name": "Cognome",
+          "type": "varchar(20)",
+          "description": "The instructor's last name.",
+          "column_synonyms": [
+            "last_name",
+            "surname"
+          ]
+        },
+        {
+          "name": "DataNascita",
+          "type": "date",
+          "description": "The instructor's date of birth.",
+          "column_synonyms": [
+            "birth_date",
+            "dob"
+          ]
+        },
+        {
+          "name": "Sesso",
+          "type": "genere",
+          "description": "The instructor's gender.",
+          "column_synonyms": [
+            "gender",
+            "sex"
+          ]
+        },
+        {
+          "name": "CittaPalestra",
+          "type": "varchar(50)",
+          "description": "The city of the gym where the instructor works.",
+          "column_synonyms": [
+            "gym_city"
+          ]
+        },
+        {
+          "name": "IndirizzoPalestra",
+          "type": "varchar(50)",
+          "description": "The address of the gym where the instructor works.",
+          "column_synonyms": [
+            "gym_address"
+          ]
+        }
+      ],
+      "primary_key": [
+        "Cf"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "CittaPalestra",
+            "IndirizzoPalestra"
+          ],
+          "reference_table_name": "Palestra",
+          "reference_column_names": [
+            "Citta",
+            "Indirizzo"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        }
+      ]
+    },
+    {
+      "name": "ListinoPrezzi",
+      "description": "Table containing the pricing list for the gym services.",
+      "table_synonyms": [
+        "pricing_list",
+        "price_list"
+      ],
+      "columns": [
+        {
+          "name": "Id",
+          "type": "serial",
+          "description": "The unique identifier for a pricing list entry.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "PrezzoAreaFitnessMensile",
+          "type": "real",
+          "description": "The monthly price for the fitness area.",
+          "column_synonyms": [
+            "monthly_fitness_price"
+          ]
+        },
+        {
+          "name": "PrezzoIscrizione",
+          "type": "real",
+          "description": "The subscription price.",
+          "column_synonyms": [
+            "registration_fee"
+          ]
+        }
+      ],
+      "primary_key": [
+        "Id"
+      ]
+    },
+    {
+      "name": "Areafitness",
+      "description": "Table containing information about fitness area subscriptions.",
+      "table_synonyms": [
+        "fitness_area",
+        "fitness_zone"
+      ],
+      "columns": [
+        {
+          "name": "Id",
+          "type": "serial",
+          "description": "The unique identifier for a fitness area subscription.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "DataInizio",
+          "type": "date",
+          "description": "The start date of the subscription.",
+          "column_synonyms": [
+            "start_date",
+            "begin_date"
+          ]
+        },
+        {
+          "name": "DataFine",
+          "type": "date",
+          "description": "The end date of the subscription.",
+          "column_synonyms": [
+            "end_date",
+            "finish_date"
+          ]
+        },
+        {
+          "name": "Listino",
+          "type": "integer",
+          "description": "Foreign key referencing the pricing list entry.",
+          "column_synonyms": null
+        },
+        {
+          "name": "Prezzo",
+          "type": "real",
+          "description": "The price of the subscription.",
+          "column_synonyms": [
+            "price",
+            "cost"
+          ]
+        },
+        {
+          "name": "Cliente",
+          "type": "varchar(16)",
+          "description": "Foreign key referencing the customer who has the subscription.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "Id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "Cliente"
+          ],
+          "reference_table_name": "Cliente",
+          "reference_column_names": [
+            "Cf"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        },
+        {
+          "foreign_key_column_names": [
+            "Listino"
+          ],
+          "reference_table_name": "ListinoPrezzi",
+          "reference_column_names": [
+            "Id"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_type": "check",
+          "expression": "DataInizio < DataFine"
+        }
+      ]
+    },
+    {
+      "name": "Scheda",
+      "description": "Table containing information about fitness programs assigned to customers.",
+      "table_synonyms": [
+        "fitness_plan",
+        "workout_schedule"
+      ],
+      "columns": [
+        {
+          "name": "Id",
+          "type": "serial",
+          "description": "The unique identifier for a fitness program.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "Areafitness",
+          "type": "integer",
+          "description": "Foreign key referencing the fitness area subscription.",
+          "column_synonyms": null
+        },
+        {
+          "name": "DataInizio",
+          "type": "date",
+          "description": "The start date of the fitness program.",
+          "column_synonyms": [
+            "start_date",
+            "begin_date"
+          ]
+        },
+        {
+          "name": "DataFine",
+          "type": "date",
+          "description": "The end date of the fitness program.",
+          "column_synonyms": [
+            "end_date",
+            "finish_date"
+          ]
+        },
+        {
+          "name": "Istruttore",
+          "type": "varchar(16)",
+          "description": "Foreign key referencing the instructor who created the fitness program.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "Id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "Areafitness"
+          ],
+          "reference_table_name": "Areafitness",
+          "reference_column_names": [
+            "Id"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        },
+        {
+          "foreign_key_column_names": [
+            "Istruttore"
+          ],
+          "reference_table_name": "Istruttore",
+          "reference_column_names": [
+            "Cf"
+          ],
+          "on_update": "cascade"
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_type": "check",
+          "expression": "DataInizio < DataFine"
+        }
+      ]
+    },
+    {
+      "name": "Esercizio",
+      "description": "Table containing information about exercises.",
+      "table_synonyms": [
+        "exercise",
+        "workout"
+      ],
+      "columns": [
+        {
+          "name": "Nome",
+          "type": "varchar(50)",
+          "description": "The unique name of the exercise.",
+          "column_synonyms": [
+            "name"
+          ]
+        },
+        {
+          "name": "Descrizione",
+          "type": "varchar(200)",
+          "description": "A brief description of the exercise.",
+          "column_synonyms": [
+            "description",
+            "details"
+          ]
+        }
+      ],
+      "primary_key": [
+        "Nome"
+      ]
+    },
+    {
+      "name": "GruppoMuscolare",
+      "description": "Table containing information about muscle groups.",
+      "table_synonyms": [
+        "muscle_group",
+        "muscle"
+      ],
+      "columns": [
+        {
+          "name": "Nome",
+          "type": "varchar(20)",
+          "description": "The unique name of the muscle group.",
+          "column_synonyms": [
+            "name"
+          ]
+        },
+        {
+          "name": "Categoria",
+          "type": "varchar(20)",
+          "description": "The category of the muscle group.",
+          "column_synonyms": [
+            "category"
+          ]
+        }
+      ],
+      "primary_key": [
+        "Nome"
+      ]
+    },
+    {
+      "name": "Corso",
+      "description": "Table containing information about courses offered by the gym.",
+      "table_synonyms": [
+        "course",
+        "class"
+      ],
+      "columns": [
+        {
+          "name": "Nome",
+          "type": "varchar(50)",
+          "description": "The name of the course.",
+          "column_synonyms": [
+            "name"
+          ]
+        },
+        {
+          "name": "Edizione",
+          "type": "int",
+          "description": "The edition of the course.",
+          "column_synonyms": [
+            "edition"
+          ]
+        },
+        {
+          "name": "CittaPalestra",
+          "type": "varchar(50)",
+          "description": "The city of the gym where the course is held.",
+          "column_synonyms": [
+            "gym_city"
+          ]
+        },
+        {
+          "name": "IndirizzoPalestra",
+          "type": "varchar(50)",
+          "description": "The address of the gym where the course is held.",
+          "column_synonyms": [
+            "gym_address"
+          ]
+        },
+        {
+          "name": "Descrizione",
+          "type": "varchar(150)",
+          "description": "A brief description of the course.",
+          "column_synonyms": [
+            "description",
+            "details"
+          ]
+        },
+        {
+          "name": "Orario",
+          "type": "varchar(50)",
+          "description": "The schedule of the course.",
+          "column_synonyms": [
+            "schedule",
+            "timing"
+          ]
+        },
+        {
+          "name": "Istruttore",
+          "type": "varchar(16)",
+          "description": "Foreign key referencing the instructor of the course.",
+          "column_synonyms": null
+        },
+        {
+          "name": "DataInizio",
+          "type": "date",
+          "description": "The start date of the course.",
+          "column_synonyms": [
+            "start_date",
+            "begin_date"
+          ]
+        },
+        {
+          "name": "DataFine",
+          "type": "date",
+          "description": "The end date of the course.",
+          "column_synonyms": [
+            "end_date",
+            "finish_date"
+          ]
+        },
+        {
+          "name": "Prezzo",
+          "type": "real",
+          "description": "The price of the course.",
+          "column_synonyms": [
+            "price",
+            "cost"
+          ]
+        },
+        {
+          "name": "NumeroMaxPartecipanti",
+          "type": "int",
+          "description": "The maximum number of participants allowed in the course.",
+          "column_synonyms": [
+            "max_participants",
+            "capacity"
+          ]
+        }
+      ],
+      "primary_key": [
+        "Nome",
+        "Edizione",
+        "CittaPalestra",
+        "IndirizzoPalestra"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "Istruttore"
+          ],
+          "reference_table_name": "Istruttore",
+          "reference_column_names": [
+            "Cf"
+          ],
+          "on_update": "cascade"
+        },
+        {
+          "foreign_key_column_names": [
+            "CittaPalestra",
+            "IndirizzoPalestra"
+          ],
+          "reference_table_name": "Palestra",
+          "reference_column_names": [
+            "Citta",
+            "Indirizzo"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_type": "check",
+          "expression": "DataInizio < DataFine"
+        }
+      ]
+    },
+    {
+      "name": "Cliente_Corso",
+      "description": "Table containing information about customers enrolled in courses.",
+      "table_synonyms": [
+        "course_enrollment",
+        "course_registration"
+      ],
+      "columns": [
+        {
+          "name": "Cliente",
+          "type": "varchar(16)",
+          "description": "Foreign key referencing the customer enrolled in the course.",
+          "column_synonyms": null
+        },
+        {
+          "name": "NomeCorso",
+          "type": "varchar(50)",
+          "description": "The name of the course.",
+          "column_synonyms": [
+            "course_name"
+          ]
+        },
+        {
+          "name": "EdizioneCorso",
+          "type": "int",
+          "description": "The edition of the course.",
+          "column_synonyms": [
+            "course_edition"
+          ]
+        },
+        {
+          "name": "CittaPalestraCorso",
+          "type": "varchar(50)",
+          "description": "The city of the gym where the course is held.",
+          "column_synonyms": [
+            "gym_city"
+          ]
+        },
+        {
+          "name": "IndirizzoPalestraCorso",
+          "type": "varchar(50)",
+          "description": "The address of the gym where the course is held.",
+          "column_synonyms": [
+            "gym_address"
+          ]
+        }
+      ],
+      "primary_key": [
+        "Cliente",
+        "NomeCorso",
+        "EdizioneCorso",
+        "CittaPalestraCorso",
+        "IndirizzoPalestraCorso"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "Cliente"
+          ],
+          "reference_table_name": "Cliente",
+          "reference_column_names": [
+            "Cf"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        },
+        {
+          "foreign_key_column_names": [
+            "NomeCorso",
+            "EdizioneCorso",
+            "CittaPalestraCorso",
+            "IndirizzoPalestraCorso"
+          ],
+          "reference_table_name": "Corso",
+          "reference_column_names": [
+            "Nome",
+            "Edizione",
+            "CittaPalestra",
+            "IndirizzoPalestra"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        }
+      ]
+    },
+    {
+      "name": "Esercizio_Scheda",
+      "description": "Table containing information about exercises included in fitness programs.",
+      "table_synonyms": [
+        "exercise_schedule",
+        "workout_plan"
+      ],
+      "columns": [
+        {
+          "name": "Esercizio",
+          "type": "varchar(50)",
+          "description": "Foreign key referencing the exercise included in the fitness program.",
+          "column_synonyms": null
+        },
+        {
+          "name": "Scheda",
+          "type": "int",
+          "description": "Foreign key referencing the fitness program that includes the exercise.",
+          "column_synonyms": null
+        },
+        {
+          "name": "SerieRipetizioni",
+          "type": "varchar(20)",
+          "description": "The series and repetitions for the exercise.",
+          "column_synonyms": [
+            "sets_reps",
+            "series_reps"
+          ]
+        },
+        {
+          "name": "TempoRecupero",
+          "type": "time",
+          "description": "The recovery time between sets.",
+          "column_synonyms": [
+            "rest_time",
+            "recovery_time"
+          ]
+        }
+      ],
+      "primary_key": [
+        "Scheda",
+        "Esercizio"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "Scheda"
+          ],
+          "reference_table_name": "Scheda",
+          "reference_column_names": [
+            "Id"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        },
+        {
+          "foreign_key_column_names": [
+            "Esercizio"
+          ],
+          "reference_table_name": "Esercizio",
+          "reference_column_names": [
+            "Nome"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        }
+      ]
+    },
+    {
+      "name": "Iscrizione",
+      "description": "Table containing information about gym subscriptions.",
+      "table_synonyms": [
+        "subscription",
+        "membership"
+      ],
+      "columns": [
+        {
+          "name": "Id",
+          "type": "serial",
+          "description": "The unique identifier for the subscription.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "Scadenza",
+          "type": "date",
+          "description": "The expiration date of the subscription.",
+          "column_synonyms": [
+            "expiration_date",
+            "expiry_date"
+          ]
+        },
+        {
+          "name": "Listino",
+          "type": "integer",
+          "description": "Foreign key referencing the price list for the subscription.",
+          "column_synonyms": null
+        },
+        {
+          "name": "Cliente",
+          "type": "varchar(16)",
+          "description": "Foreign key referencing the customer holding the subscription.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "Id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "Cliente"
+          ],
+          "reference_table_name": "Cliente",
+          "reference_column_names": [
+            "Cf"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        },
+        {
+          "foreign_key_column_names": [
+            "Listino"
+          ],
+          "reference_table_name": "ListinoPrezzi",
+          "reference_column_names": [
+            "Id"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        }
+      ]
+    },
+    {
+      "name": "Esercizio_gruppomuscolare",
+      "description": "Table containing the relationship between exercises and muscle groups.",
+      "table_synonyms": [
+        "exercise_muscle_group",
+        "workout_muscle"
+      ],
+      "columns": [
+        {
+          "name": "GruppoMuscolare",
+          "type": "varchar(20)",
+          "description": "Foreign key referencing the muscle group.",
+          "column_synonyms": null
+        },
+        {
+          "name": "Esercizio",
+          "type": "varchar(50)",
+          "description": "Foreign key referencing the exercise.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "Esercizio",
+        "GruppoMuscolare"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "Esercizio"
+          ],
+          "reference_table_name": "Esercizio",
+          "reference_column_names": [
+            "Nome"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        },
+        {
+          "foreign_key_column_names": [
+            "GruppoMuscolare"
+          ],
+          "reference_table_name": "GruppoMuscolare",
+          "reference_column_names": [
+            "Nome"
+          ],
+          "on_update": "cascade",
+          "on_delete": "cascade"
+        }
+      ]
+    }
+  ]
+}

@@ -25,7 +25,7 @@ class Utils:
         """
         content = Utils.read_file_content(file_path)
         # print(content)
-        if Utils.is_json(content):
+        if content is not None and Utils.is_json(content):
             # print("is json")
             return json.loads(content)
         else:
