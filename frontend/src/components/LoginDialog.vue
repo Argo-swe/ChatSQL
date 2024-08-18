@@ -10,7 +10,6 @@ import { getApiClient } from '@/services/api-client.service';
 import { messageService } from '@/services/message.service';
 
 const { t } = useI18n();
-const client = getApiClient();
 const { layoutState } = useLayout();
 const { messageSuccess, messageError } = messageService();
 const username = ref<string | null>(null);
@@ -50,38 +49,46 @@ const handleSuccessfulLogin = (accessToken: string) => {
  * @function submitForm
  */
 async function submitForm() {
-  client
-    .login(undefined, { username: username.value ?? '', password: password.value ?? '' })
-    .then((response) => {
-      if (response.data.status === 'OK') {
-        const accessToken = response.data.data?.access_token || '';
-        messageSuccess(
-          t('login.title'),
-          getStatusMex(onLoginMessages, response.data.status, {
-            message: response.data.message,
-            username: username.value
-          })
-        );
-        handleSuccessfulLogin(accessToken);
-      } else {
-        messageError(
-          t('login.title'),
-          getStatusMex(onLoginMessages, response.data.status, {
-            message: response.data.message,
-            username: username.value
-          })
-        );
-      }
-    })
-    .catch((error) => {
-      messageError(t('login.title'), `${t('text.genericError')}:\n${error.message}`);
+  try {
+    const client = await getApiClient();
+    const response = await client.login(undefined, {
+      username: username.value ?? '',
+      password: password.value ?? ''
     });
+
+    if (response.data.status === 'OK') {
+      const accessToken = response.data.data?.access_token || '';
+      messageSuccess(
+        t('login.title'),
+        getStatusMex(onLoginMessages, response.data.status, {
+          message: response.data.message,
+          username: username.value
+        })
+      );
+      handleSuccessfulLogin(accessToken);
+    } else {
+      messageError(
+        t('login.title'),
+        getStatusMex(onLoginMessages, response.data.status, {
+          message: response.data.message,
+          username: username.value
+        })
+      );
+    }
+  } catch (error) {
+    messageError(t('login.title'), `${t('text.genericError')}:\n${error}`);
+  }
 }
 </script>
 
 <template>
   <div class="card flex justify-center">
-    <PgDialog v-model:visible="layoutState.loginDialogVisible.value" modal header="Login">
+    <PgDialog
+      v-model:visible="layoutState.loginDialogVisible"
+      data-testid="login-dialog"
+      modal
+      header="Login"
+    >
       <template #header>
         <h2>{{ t('login.title') }}</h2>
       </template>

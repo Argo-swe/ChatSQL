@@ -192,23 +192,25 @@ function handleSuccessfulRetrieve(response: any) {
  */
 function retrieveDictionaries() {
   dictionaries.value = [];
-  getApiClient()
-    .getAllDictionaries()
-    .then((response) => {
-      if (response.data?.status == 'OK') {
-        handleSuccessfulRetrieve(response);
-      } else {
-        messageError(
-          t('dictionary.title'),
-          getStatusMex(onRetrieveMessages, response.data?.status, {
-            message: response.data?.message
-          })
-        );
-      }
-    })
-    .catch((error) => {
-      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
-    });
+  getApiClient().then((client) => {
+    client
+      .getAllDictionaries()
+      .then((response) => {
+        if (response.data?.status == 'OK') {
+          handleSuccessfulRetrieve(response);
+        } else {
+          messageError(
+            t('dictionary.title'),
+            getStatusMex(onRetrieveMessages, response.data?.status, {
+              message: response.data?.message
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+      });
+  });
 }
 
 /**
@@ -216,27 +218,29 @@ function retrieveDictionaries() {
  * @function getDictionaryInfo
  */
 function getDictionaryInfo() {
-  getApiClient()
-    .getDictionaryPreview({
-      id: selectedDictionary.value!
-    })
-    .then((response) => {
-      if (response.data?.status == 'OK') {
-        Object.assign(dictionaryPreview.value, response.data?.data);
-        detailsVisible.value = true;
-      } else {
-        messageError(
-          t('dictionary.title'),
-          getStatusMex(onRetrieveMessages, response.data?.status, {
-            message: response.data?.message,
-            dictionaryId: selectedDictionary.value!
-          })
-        );
-      }
-    })
-    .catch((error) => {
-      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
-    });
+  getApiClient().then((client) => {
+    client
+      .getDictionaryPreview({
+        id: selectedDictionary.value!
+      })
+      .then((response) => {
+        if (response.data?.status == 'OK') {
+          Object.assign(dictionaryPreview.value, response.data?.data);
+          detailsVisible.value = true;
+        } else {
+          messageError(
+            t('dictionary.title'),
+            getStatusMex(onRetrieveMessages, response.data?.status, {
+              message: response.data?.message,
+              dictionaryId: selectedDictionary.value!
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+      });
+  });
 }
 
 /**
@@ -276,31 +280,33 @@ function runRequest() {
  */
 function generatePrompt(query: string) {
   loading.value = true;
-  getApiClient()
-    .generatePrompt({
-      dictionaryId: selectedDictionary.value!,
-      query: query,
-      dbms: selectedDbms.value,
-      lang: selectedLanguage.value
-    })
-    .then((response) => {
-      if (response.data?.status == 'OK') {
-        addMessage(response.data.data!, false);
-      } else {
-        messageError(
-          t('chat.prompt.title'),
-          getStatusMex(onGenerateMessages, response.data?.status, {
-            message: response.data?.message
-          })
-        );
-      }
-    })
-    .catch((error) => {
-      messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+  getApiClient().then((client) => {
+    client
+      .generatePrompt({
+        dictionaryId: selectedDictionary.value!,
+        query: query,
+        dbms: selectedDbms.value,
+        lang: selectedLanguage.value
+      })
+      .then((response) => {
+        if (response.data?.status == 'OK') {
+          addMessage(response.data.data!, false);
+        } else {
+          messageError(
+            t('chat.prompt.title'),
+            getStatusMex(onGenerateMessages, response.data?.status, {
+              message: response.data?.message
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  });
 }
 
 /**
@@ -310,31 +316,33 @@ function generatePrompt(query: string) {
  */
 function generatePromptWithDebug(query: string) {
   loading.value = true;
-  getApiClient()
-    .generatePromptWithDebug({
-      dictionaryId: selectedDictionary.value!,
-      query: query,
-      dbms: selectedDbms.value,
-      lang: selectedLanguage.value
-    })
-    .then((response) => {
-      if (response.data?.status == 'OK') {
-        addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
-      } else {
-        messageError(
-          t('chat.prompt.title'),
-          getStatusMex(onGenerateMessages, response.data?.status, {
-            message: response.data?.message
-          })
-        );
-      }
-    })
-    .catch((error) => {
-      messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+  getApiClient().then((client) => {
+    client
+      .generatePromptWithDebug({
+        dictionaryId: selectedDictionary.value!,
+        query: query,
+        dbms: selectedDbms.value,
+        lang: selectedLanguage.value
+      })
+      .then((response) => {
+        if (response.data?.status == 'OK') {
+          addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
+        } else {
+          messageError(
+            t('chat.prompt.title'),
+            getStatusMex(onGenerateMessages, response.data?.status, {
+              message: response.data?.message
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  });
 }
 </script>
 
