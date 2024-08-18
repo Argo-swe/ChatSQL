@@ -1,5 +1,6 @@
 import { createI18n } from 'vue-i18n';
 import AppFooter from '../../src/components/layout/AppFooter.vue';
+import AppLogo from '../../src/components/AppLogo.vue';
 
 const i18n = createI18n({
     legacy: false,
@@ -21,9 +22,9 @@ function mountAppFooter(props?) {
     });
 }
 
-it('should emit clear event on click', () => {
-
-    mountAppFooter(
-    );
-
+describe('AppFooter Component', () => {
+    it('should display correctly', () => {
+        mountAppFooter();
+        cy.get('.layout-footer').should('be.visible');
+    });
 });
