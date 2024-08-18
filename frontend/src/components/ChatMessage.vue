@@ -80,11 +80,16 @@ const copyToClipboard = () => {
       sent: isSent,
       received: !isSent
     }"
+    data-testid="chat-message-container"
   >
     <div class="flex gap-3" :class="isSent ? 'flex-row-reverse' : ''">
       <div class="flex-shrink-0">
-        <PgAvatar v-if="isSent" icon="pi pi-user" size="large" shape="circle" />
-        <PgAvatar v-else icon="pi pi-database" class="" size="large" shape="circle" />
+        <PgAvatar
+          :icon="isSent ? 'pi pi-user' : 'pi pi-database'"
+          data-testid="message-avatar"
+          size="large"
+          shape="circle"
+        />
       </div>
       <div class="w-full border-round-lg messageBox">
         <div class="message-action-area">
@@ -97,6 +102,7 @@ const copyToClipboard = () => {
             :title="t('chat.actions.copy')"
             :aria-label="t('chat.actions.copy')"
             :disabled="isCopying"
+            data-testid="copy-button"
             @click="copyToClipboard"
           />
           <PgButton
@@ -107,10 +113,11 @@ const copyToClipboard = () => {
             severity="contrast"
             :title="t('chat.actions.open_debug')"
             :aria-label="t('chat.actions.open_debug')"
+            data-testid="debug-button"
             @click="openDebugMessage"
           />
         </div>
-        <p>{{ message }}</p>
+        <p data-testid="chat-message">{{ message }}</p>
       </div>
     </div>
   </div>
