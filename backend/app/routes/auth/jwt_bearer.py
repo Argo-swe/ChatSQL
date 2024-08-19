@@ -1,6 +1,7 @@
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer
 from routes.auth.jwt_handler import JwtHandler
+from tools.exceptions import LoginError
 
 
 class JwtBearer(HTTPBearer):
@@ -11,12 +12,14 @@ class JwtBearer(HTTPBearer):
         credentials = await super(JwtBearer, self).__call__(request)
         if credentials:
             if credentials.scheme != "Bearer":
-                raise HTTPException(403, detail="Invalid authentication scheme.")
+                raise HTTPException(
+                    403, detail=LoginError.invalid_authentication_scheme()
+                )
             if not self._verify_jwt(credentials.credentials):
-                raise HTTPException(403, detail="Invalid or expired token.")
+                raise HTTPException(403, detail=LoginError.invalid_expired_token())
             return credentials.credentials
         else:
-            raise HTTPException(403, detail="Invalid authorization code.")
+            raise HTTPException(403, detail=LoginError.invalid_authorization_code())
 
     def _verify_jwt(self, token: str) -> bool:
         payload = JwtHandler.decode(token)

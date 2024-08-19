@@ -9,6 +9,7 @@ from models.dictionary_dto import DictionaryDto
 from routes.auth.jwt_bearer import JwtBearer
 from fastapi import APIRouter, File, UploadFile, Depends
 from fastapi.responses import FileResponse
+from tools.exceptions import DictionaryError
 
 
 def create_dictionary_router(config: Configuration):
@@ -47,7 +48,7 @@ def create_dictionary_router(config: Configuration):
             return FileResponse(response)
 
         return ResponseDto(
-            message=f"Dictionary with id {id} not found",
+            message=DictionaryError.dictionary_not_found(id),
             status=ResponseStatusEnum.NOT_FOUND,
         )
 
