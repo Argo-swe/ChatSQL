@@ -1,6 +1,5 @@
 import { createI18n } from 'vue-i18n';
-import AppFooter from '../../src/components/layout/AppFooter.vue';
-import AppLogo from '../../src/components/AppLogo.vue';
+import AppFooter from '../../../src/components/layout/AppFooter.vue';
 
 const i18n = createI18n({
     legacy: false,
