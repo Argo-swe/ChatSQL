@@ -3,14 +3,17 @@ import os
 
 
 class Utils:
-    """
-    A class used for general utility methods
-    """
+    """A class used for general utility methods."""
 
     @staticmethod
     def read_file_content(file_path):
-        """
-        Read file content form path
+        """Reads the content of a file given its path.
+
+        Args:
+            file_path (str): The path to the file.
+
+        Returns:
+            str: The content of the file if the file is found, None otherwise.
         """
         try:
             with open(file_path, "r") as file:
@@ -20,32 +23,46 @@ class Utils:
 
     @staticmethod
     def read_json_file_content(file_path):
-        """
-        Read JSON file content form path
+        """Reads and parses the content of a JSON file given its path.
+
+        Args:
+            file_path (str): The path to the JSON file.
+
+        Returns:
+            dict or list: The parsed JSON content.
+            None: If the file content is not valid JSON or the file is not found.
         """
         content = Utils.read_file_content(file_path)
-        # print(content)
         if content is not None and Utils.is_json(content):
-            # print("is json")
             return json.loads(content)
         else:
             return
 
     @staticmethod
     def string_to_json(json_string):
-        """
-        Convert a JSON string to a JSON object
+        """Convert a JSON string to a JSON object.
+
+        Args:
+            json_string (str): A string containing JSON data.
+
+        Returns:
+            dict or list: The parsed JSON string.
+            None: If the string is not valid JSON.
         """
         if Utils.is_json(json_string):
-            # print("is json", json_string)
             return json.loads(json_string)
         else:
             return
 
     @staticmethod
     def is_json(string):
-        """
-        Validate if JSON string represents a valid JSON
+        """Validate if JSON string represents a valid JSON.
+
+        Args:
+            string (str): The string to validate.
+
+        Returns:
+            bool: True if the string is valid JSON, False otherwise.
         """
         try:
             json.loads(string)
@@ -55,6 +72,16 @@ class Utils:
 
     @staticmethod
     def get_file(path, mode):
+        """Opens a file, creating directories if necessary.
+
+        Args:
+            path (str): The path to the file.
+            mode (str): The mode in which to open the file (e.g., 'r', 'w').
+
+        Returns:
+            file object: The opened file object.
+            bool: False if an exception occurs while opening the file.
+        """
         try:
             directory = os.path.dirname(path)
             os.makedirs(directory, exist_ok=True)
@@ -65,6 +92,15 @@ class Utils:
 
     @staticmethod
     def read_file(path):
+        """Reads the content of a file.
+
+        Args:
+            path (str): The path to the file.
+
+        Returns:
+            str: The content of the file as a string.
+            bool: False if an exception occurs while reading the file.
+        """
         try:
             with open(path, "r") as file:
                 return file.read()
