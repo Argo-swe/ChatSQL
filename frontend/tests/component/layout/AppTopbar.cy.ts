@@ -1,5 +1,6 @@
 import { createI18n } from 'vue-i18n';
 import AppTopbar from '../../../src/components/layout/AppTopbar.vue';
+import ConfirmationService from 'primevue/confirmationservice';
 
 const i18n = createI18n({
     legacy: false,
@@ -13,7 +14,7 @@ const i18n = createI18n({
 function mountAppTopbar(props?) {
     return cy.mount(AppTopbar, {
         global: {
-            plugins: [i18n],
+            plugins: [i18n, ConfirmationService],
             mocks: {
                 t: (key) => key
             },
