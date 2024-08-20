@@ -22,7 +22,7 @@ const { t } = useI18n();
     :aria-label="t('general.menu.closeMainNavMenu')"
     @click="onMenuToggle()"
   />
-  <div class="flex flex-column justify-content-between flex-wrap h-full">
+  <div class="flex flex-column justify-content-between flex-wrap h-full" data-test-id="menu-sidebar">
     <div class="flex m-2">
       <app-menu></app-menu>
     </div>

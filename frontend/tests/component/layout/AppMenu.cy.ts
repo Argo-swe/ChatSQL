@@ -14,10 +14,10 @@ const i18n = createI18n({
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-      { path: '/', component: { template: '<div>Home</div>' } },
-      { path: '/test', component: { template: '<div>Test</div>' } }
+        { path: '/', component: { template: '<div>Home</div>' } },
+        { path: '/test', component: { template: '<div>Test</div>' } }
     ]
-  });
+});
 
 function mountAppMenu(props?) {
     return cy.mount(AppMenu, {
