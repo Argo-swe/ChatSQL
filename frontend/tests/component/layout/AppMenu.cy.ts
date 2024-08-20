@@ -31,7 +31,7 @@ function mountAppMenu(props?) {
     });
 }
 
-describe('AppMenuItem', () => {
+describe('AppMenu Component', () => {
     it('should display correctly', () => {
         mountAppMenu();
 

@@ -24,7 +24,7 @@ function mountAppMenuItem(props?) {
   });
 }
 
-describe('AppMenuItem', () => {
+describe('AppMenuItem component', () => {
   it('should render correctly', () => {
     mountAppMenuItem();
 
