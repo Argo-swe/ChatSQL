@@ -8,6 +8,7 @@ import tempfile
 # Mock os.makedirs to do nothing
 os.makedirs = lambda *args, **kwargs: None
 
+
 @pytest.fixture(scope="module")
 def temp_dir():
     # Create a temporary directory for the test session
@@ -15,6 +16,7 @@ def temp_dir():
     yield temp_dir
     # Clean up the directory after the test
     shutil.rmtree(temp_dir)
+
 
 # The base path for indexes is redirected to the temporary directory for testing
 _indexes_out_file_base_path = temp_dir
@@ -31,10 +33,12 @@ from adapter.outcoming.embeddings.txtai.txtai_embeddings_manager_factory import 
 )
 from core.port.outcoming.file_repository import FileRepository
 
+
 @pytest.fixture
 def mock_file_repository(mocker):
     # Create a mock for the FileRepository interface to avoid actual file operations during testing
     return mocker.MagicMock(spec=FileRepository)
+
 
 @pytest.fixture
 def valid_config():
@@ -42,9 +46,10 @@ def valid_config():
     return {
         "txtai": {
             "embeddings_table_path": "some_table_path",
-            "embeddings_columns_path": "some_columns_path"
+            "embeddings_columns_path": "some_columns_path",
         }
     }
+
 
 @pytest.fixture
 def invalid_config_missing_keys():
@@ -56,13 +61,14 @@ def invalid_config_missing_keys():
         }
     }
 
+
 @pytest.fixture
 def invalid_config_no_txtai_key():
     # Provide an invalid configuration dictionary missing the main "txtai" key to test error handling
     return {
         "some_other_key": {
             "embeddings_table_path": "some_table_path",
-            "embeddings_columns_path": "some_columns_path"
+            "embeddings_columns_path": "some_columns_path",
         }
     }
 
@@ -80,14 +86,17 @@ def test_create_index_manager_success(valid_config, mock_file_repository):
     index_manager = factory.create_index_manager(mock_file_repository)
 
     # Assert that the returned object is an instance of TxtaiIndexManagerAdapter
-    assert isinstance(index_manager, TxtaiIndexManagerAdapter), \
-        "Expected a TxtaiIndexManagerAdapter instance."
+    assert isinstance(
+        index_manager, TxtaiIndexManagerAdapter
+    ), "Expected a TxtaiIndexManagerAdapter instance."
 
 
 """Test for create_index_manager with missing configuration keys"""
 
 
-def test_create_index_manager_missing_keys(invalid_config_missing_keys, mock_file_repository):
+def test_create_index_manager_missing_keys(
+    invalid_config_missing_keys, mock_file_repository
+):
     # Initialize the factory with an invalid configuration that is missing required keys
     factory = TxtaiEmbeddingsManagerFactory(invalid_config_missing_keys)
 
@@ -96,7 +105,10 @@ def test_create_index_manager_missing_keys(invalid_config_missing_keys, mock_fil
         factory.create_index_manager(mock_file_repository)
 
     # Assert that the error message mentions the missing keys
-    assert "Key 'embeddings_table_path' or 'embeddings_columns_path' not found in dictionary" in str(exc_info.value)
+    assert (
+        "Key 'embeddings_table_path' or 'embeddings_columns_path' not found in dictionary"
+        in str(exc_info.value)
+    )
 
 
 """Test for factory initialization with missing 'txtai' key"""
@@ -125,11 +137,14 @@ def test_create_prompt_manager_with_dependencies(valid_config, mock_file_reposit
     index_manager = factory.create_index_manager(mock_file_repository)
 
     # Call the create_prompt_manager_with_dependencies method to create a prompt manager
-    prompt_manager = factory.create_prompt_manager_with_dependencies(index_manager, mock_file_repository)
+    prompt_manager = factory.create_prompt_manager_with_dependencies(
+        index_manager, mock_file_repository
+    )
 
     # Assert that the returned object is an instance of TxtaiPromptManagerAdapter
-    assert isinstance(prompt_manager, TxtaiPromptManagerAdapter), \
-        "Expected a TxtaiPromptManagerAdapter instance."
+    assert isinstance(
+        prompt_manager, TxtaiPromptManagerAdapter
+    ), "Expected a TxtaiPromptManagerAdapter instance."
 
 
 """TESTING CREATE_PROMPT_MANAGER"""
@@ -146,5 +161,6 @@ def test_create_prompt_manager(valid_config, mock_file_repository):
     prompt_manager = factory.create_prompt_manager(mock_file_repository)
 
     # Assert that the returned object is an instance of TxtaiPromptManagerAdapter
-    assert isinstance(prompt_manager, TxtaiPromptManagerAdapter), \
-        "Expected a TxtaiPromptManagerAdapter instance."
+    assert isinstance(
+        prompt_manager, TxtaiPromptManagerAdapter
+    ), "Expected a TxtaiPromptManagerAdapter instance."

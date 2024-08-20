@@ -1,5 +1,6 @@
 from fastapi_camelcase import CamelModel, ConfigDict
 
+
 class TableDto(CamelModel):
     name: str
     description: str
