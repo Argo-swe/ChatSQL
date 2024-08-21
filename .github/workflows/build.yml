@@ -122,10 +122,10 @@ jobs:
         npm run test:all
 
     # Esegue i test di unità nel backend
-    #- name: Run Unit Test (backend)
-      #if: ${{ github.event.action != 'closed' }}
-      #run: |
-        #docker exec chatsql-backend-1 bash -c 'pytest'
+    - name: Run Unit Test (backend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        docker exec chatsql-backend-1 bash -c 'pytest'
 
     # Arresto dell'esecuzione del contenitore Docker
     - name: Stop Docker Container
