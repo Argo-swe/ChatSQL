@@ -42,6 +42,7 @@ class EmbeddingsAbstractFactory(ABC):
         """
         pass
 
+    @abstractmethod
     def create_prompt_manager(
         self, file_repository: FileRepository
     ) -> PromptManagerPort:
@@ -53,7 +54,4 @@ class EmbeddingsAbstractFactory(ABC):
         Returns:
             PromptManagerPort: An instance of a prompt manager.
         """
-        index_manager = self.create_index_manager(file_repository)
-        return self.create_prompt_manager_with_dependencies(
-            index_manager, file_repository
-        )
+        pass
