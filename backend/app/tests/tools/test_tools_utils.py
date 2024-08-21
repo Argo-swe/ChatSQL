@@ -31,7 +31,7 @@ def test_read_json_file_content_wrong_content():
     assert content is None
 
 
-def test_stirng_to_json_ok():
+def test_string_to_json_ok():
     json = '{ "prop": 1 }'
     json_str = Utils.string_to_json(json)
     print(json_str)
@@ -39,7 +39,7 @@ def test_stirng_to_json_ok():
     assert json_str.get("prop") == 1
 
 
-def test_stirng_to_json_wrong():
+def test_string_to_json_wrong():
     json = "invalid json\n"
     json_str = Utils.string_to_json(json)
     assert json_str is None
