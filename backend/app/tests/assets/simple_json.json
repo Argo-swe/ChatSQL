@@ -1,0 +1,14 @@
+{
+    "test": {
+        "array": [
+            {
+                "id": 1,
+                "property": "test"
+            },
+            {
+                "id": 2,
+                "property": "test2"
+            }
+        ]
+    }
+}

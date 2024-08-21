@@ -1,5 +1,4 @@
 import json
-import os
 
 
 class Utils:
@@ -24,12 +23,10 @@ class Utils:
         Read JSON file content form path
         """
         content = Utils.read_file_content(file_path)
-        # print(content)
         if content is not None and Utils.is_json(content):
-            # print("is json")
             return json.loads(content)
         else:
-            return
+            return None
 
     @staticmethod
     def string_to_json(json_string):
@@ -37,10 +34,9 @@ class Utils:
         Convert a JSON string to a JSON object
         """
         if Utils.is_json(json_string):
-            # print("is json", json_string)
             return json.loads(json_string)
         else:
-            return
+            return None
 
     @staticmethod
     def is_json(string):
@@ -52,21 +48,3 @@ class Utils:
         except ValueError:
             return False
         return True
-
-    @staticmethod
-    def get_file(path, mode):
-        try:
-            directory = os.path.dirname(path)
-            os.makedirs(directory, exist_ok=True)
-            file = open(path, mode)
-            return file
-        except Exception:
-            return False
-
-    @staticmethod
-    def read_file(path):
-        try:
-            with open(path, "r") as file:
-                return file.read()
-        except Exception:
-            return False
