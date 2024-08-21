@@ -15,7 +15,7 @@ from core.service.prompt_manager_service import PromptManagerService
 class Configuration:
     _instance = None
 
-    # signleton implementation
+    # singleton implementation
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super(Configuration, cls).__new__(cls)
