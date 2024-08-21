@@ -6,18 +6,19 @@ import { useI18n } from 'vue-i18n';
 // Internal dependencies
 import { useLayout } from '@/composables/layout';
 import { useMessages } from '@/composables/status-messages';
-import { getApiClient } from '@/services/api-client.service';
-import { messageService } from '@/services/message.service';
+import ApiClientManager from '@/services/api-client.service';
+import MessageService from '@/services/message.service';
 
 const { t } = useI18n();
 const { layoutState } = useLayout();
-const { messageSuccess, messageError } = messageService();
+const messageService = MessageService.getInstance();
 const username = ref<string | null>(null);
 const password = ref<string | null>(null);
 
 // Gain access to functions and maps to view status messages
 const { onLoginMessages, getStatusMex } = useMessages();
 
+// Resets the form fields
 function resetForm() {
   username.value = null;
   password.value = null;
@@ -50,7 +51,7 @@ const handleSuccessfulLogin = (accessToken: string) => {
  */
 async function submitForm() {
   try {
-    const client = await getApiClient();
+    const client = await ApiClientManager.getApiClient();
     const response = await client.login(undefined, {
       username: username.value ?? '',
       password: password.value ?? ''
@@ -58,16 +59,15 @@ async function submitForm() {
 
     if (response.data.status === 'OK') {
       const accessToken = response.data.data?.access_token || '';
-      messageSuccess(
+      messageService.messageSuccess(
         t('login.title'),
         getStatusMex(onLoginMessages, response.data.status, {
-          message: response.data.message,
           username: username.value
         })
       );
       handleSuccessfulLogin(accessToken);
     } else {
-      messageError(
+      messageService.messageError(
         t('login.title'),
         getStatusMex(onLoginMessages, response.data.status, {
           message: response.data.message,
@@ -76,7 +76,7 @@ async function submitForm() {
       );
     }
   } catch (error) {
-    messageError(t('login.title'), `${t('text.genericError')}:\n${error}`);
+    messageService.messageError(t('login.title'), `${t('text.genericError')}:\n${error}`);
   }
 }
 </script>
@@ -96,20 +96,36 @@ async function submitForm() {
         <span class="p-text-secondary block mb-5">{{ t('login.subject') }}</span>
         <div class="flex align-items-center gap-3 mb-3">
           <label for="username" class="font-semibold w-6rem">{{ t('text.Username') }}</label>
-          <PgInputText id="username" v-model="username" class="flex-auto" />
+          <PgInputText
+            id="username"
+            v-model="username"
+            class="flex-auto"
+            data-testid="input-username"
+          />
         </div>
         <div class="flex align-items-center gap-3 mb-5">
           <label for="password" class="font-semibold w-6rem">{{ t('text.Password') }}</label>
-          <PgPassword v-model="password" input-id="password" :feedback="false"></PgPassword>
+          <PgPassword
+            v-model="password"
+            input-id="password"
+            :feedback="false"
+            toggle-mask
+            data-testid="input-password"
+          />
         </div>
         <div class="flex justify-content-end gap-2">
           <PgButton
             type="button"
             :label="t('text.Cancel')"
             severity="secondary"
+            data-testid="close-dialog-button"
             @click="layoutState.loginDialogVisible.value = false"
           ></PgButton>
-          <PgButton :label="t('text.Login')" @click="submitForm"></PgButton>
+          <PgButton
+            :label="t('text.Login')"
+            data-testid="login-submit-button"
+            @click="submitForm"
+          ></PgButton>
         </div>
       </form>
     </PgDialog>

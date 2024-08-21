@@ -5,9 +5,9 @@ import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import { useMessages } from '@/composables/status-messages';
-import { getApiClient } from '@/services/api-client.service';
+import ApiClientManager from '@/services/api-client.service';
 import AuthService from '@/services/auth.service';
-import { messageService } from '@/services/message.service';
+import MessageService from '@/services/message.service';
 import type { Components } from '@/types/openapi';
 import {
   DbmsCode,
@@ -24,7 +24,7 @@ import ChatMessage from '@/components/ChatMessage.vue';
 import DictPreview from '@/components/DictPreview.vue';
 
 const { t } = useI18n();
-const { messageError } = messageService();
+const messageService = MessageService.getInstance();
 let isLogged = ref(AuthService.isLogged());
 
 // Gain access to functions and maps to view status messages
@@ -192,14 +192,14 @@ function handleSuccessfulRetrieve(response: any) {
  */
 function retrieveDictionaries() {
   dictionaries.value = [];
-  getApiClient().then((client) => {
+  ApiClientManager.getApiClient().then((client) => {
     client
       .getAllDictionaries()
       .then((response) => {
         if (response.data?.status == 'OK') {
           handleSuccessfulRetrieve(response);
         } else {
-          messageError(
+          messageService.messageError(
             t('dictionary.title'),
             getStatusMex(onRetrieveMessages, response.data?.status, {
               message: response.data?.message
@@ -208,7 +208,10 @@ function retrieveDictionaries() {
         }
       })
       .catch((error) => {
-        messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+        messageService.messageError(
+          t('dictionary.title'),
+          `${t('general.list.error')}\n${error.message}`
+        );
       });
   });
 }
@@ -218,7 +221,7 @@ function retrieveDictionaries() {
  * @function getDictionaryInfo
  */
 function getDictionaryInfo() {
-  getApiClient().then((client) => {
+  ApiClientManager.getApiClient().then((client) => {
     client
       .getDictionaryPreview({
         id: selectedDictionary.value!
@@ -228,7 +231,7 @@ function getDictionaryInfo() {
           Object.assign(dictionaryPreview.value, response.data?.data);
           detailsVisible.value = true;
         } else {
-          messageError(
+          messageService.messageError(
             t('dictionary.title'),
             getStatusMex(onRetrieveMessages, response.data?.status, {
               message: response.data?.message,
@@ -238,7 +241,10 @@ function getDictionaryInfo() {
         }
       })
       .catch((error) => {
-        messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+        messageService.messageError(
+          t('dictionary.title'),
+          `${t('general.list.error')}\n${error.message}`
+        );
       });
   });
 }
@@ -280,7 +286,7 @@ function runRequest() {
  */
 function generatePrompt(query: string) {
   loading.value = true;
-  getApiClient().then((client) => {
+  ApiClientManager.getApiClient().then((client) => {
     client
       .generatePrompt({
         dictionaryId: selectedDictionary.value!,
@@ -292,7 +298,7 @@ function generatePrompt(query: string) {
         if (response.data?.status == 'OK') {
           addMessage(response.data.data!, false);
         } else {
-          messageError(
+          messageService.messageError(
             t('chat.prompt.title'),
             getStatusMex(onGenerateMessages, response.data?.status, {
               message: response.data?.message
@@ -301,7 +307,10 @@ function generatePrompt(query: string) {
         }
       })
       .catch((error) => {
-        messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
+        messageService.messageError(
+          t('chat.prompt.title'),
+          `${t('actions.generate.error')}\n${error.message}`
+        );
       })
       .finally(() => {
         loading.value = false;
@@ -316,7 +325,7 @@ function generatePrompt(query: string) {
  */
 function generatePromptWithDebug(query: string) {
   loading.value = true;
-  getApiClient().then((client) => {
+  ApiClientManager.getApiClient().then((client) => {
     client
       .generatePromptWithDebug({
         dictionaryId: selectedDictionary.value!,
@@ -328,7 +337,7 @@ function generatePromptWithDebug(query: string) {
         if (response.data?.status == 'OK') {
           addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
         } else {
-          messageError(
+          messageService.messageError(
             t('chat.prompt.title'),
             getStatusMex(onGenerateMessages, response.data?.status, {
               message: response.data?.message
@@ -337,7 +346,10 @@ function generatePromptWithDebug(query: string) {
         }
       })
       .catch((error) => {
-        messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error.message}`);
+        messageService.messageError(
+          t('chat.prompt.title'),
+          `${t('actions.generate.error')}\n${error.message}`
+        );
       })
       .finally(() => {
         loading.value = false;
