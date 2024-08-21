@@ -5,12 +5,12 @@ from models.dictionary_preview_dto import DictionaryPreviewDto
 class FileRepository(ABC):
 
     @abstractmethod
-    def save(self, id: int, file):
+    def save(self, id: int, file: str):
         """Save a file associated with a specific ID.
 
         Args:
             id (int): The unique identifier for the file.
-            file (Any): The file content to be saved.
+            file (str): The file content to be saved.
 
         Returns:
             None

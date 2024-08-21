@@ -11,7 +11,7 @@ class JsonFileAdapter(FileRepository):
         self._out_file_base_path = file_path
         os.makedirs(self._out_file_base_path, exist_ok=True)
 
-    def save(self, id: int, file):
+    def save(self, id: int, file: str):
         with open(self._generate_schema_file_name(id), "wb") as out_file:
             out_file.write(file)
 

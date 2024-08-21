@@ -19,8 +19,8 @@ class Dictionaries(Base):
     description = Column(String)
 
 
-# creazione dati di default
 def insert_data_admins(target, connection, **kw):
+    """Create default admin user"""
     connection.execute(
         target.insert(), {"id": 1, "username": "admin", "password": "admin"}
     )
