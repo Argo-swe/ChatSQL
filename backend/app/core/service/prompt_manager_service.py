@@ -6,6 +6,7 @@ from models.responses.prompt_response_dto import PromptResponseDto
 from models.responses.string_data_response_dto import StringDataResponseDto
 from core.port.incoming.prompt_use_case import PromptUseCase
 from models.responses.response_dto import ResponseDto, ResponseStatusEnum
+from tools.exceptions import PromptError
 
 
 class PromptManagerService(PromptUseCase):
@@ -47,7 +48,8 @@ class PromptManagerService(PromptUseCase):
 
         if query is None or query == "":
             return StringDataResponseDto(
-                message="Query cannot be empty", status=ResponseStatusEnum.BAD_REQUEST
+                message=PromptError.missing_query(),
+                status=ResponseStatusEnum.BAD_REQUEST,
             )
 
         prompt, _ = self.__generate_prompt(dictionary_id, query, language, dbms, False)
@@ -79,7 +81,8 @@ class PromptManagerService(PromptUseCase):
 
         if query is None or query == "":
             return ResponseDto(
-                message="Query cannot be empty", status=ResponseStatusEnum.BAD_REQUEST
+                message=PromptError.missing_query(),
+                status=ResponseStatusEnum.BAD_REQUEST,
             )
 
         prompt, log_content = self.__generate_prompt(

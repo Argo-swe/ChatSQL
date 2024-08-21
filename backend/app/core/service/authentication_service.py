@@ -3,6 +3,7 @@ from core.port.outcoming.authentication_repository import AuthenticationReposito
 from models.responses.auth_response_dto import AuthResponseDto
 from core.port.incoming.authentication_use_case import AuthenticationUseCase
 from models.responses.response_dto import ResponseStatusEnum
+from tools.exceptions import LoginError
 
 
 class AuthenticationService(AuthenticationUseCase):
@@ -36,7 +37,7 @@ class AuthenticationService(AuthenticationUseCase):
             return AuthResponseDto(
                 data=None,
                 status=ResponseStatusEnum.BAD_CREDENTIAL,
-                message="Wrong password",
+                message=LoginError.wrong_password(),
             )
         token = JwtHandler.sign(user.id)
         return AuthResponseDto(data=token, status=ResponseStatusEnum.OK)

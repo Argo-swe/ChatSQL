@@ -9,6 +9,7 @@ from models.responses.response_dto import ResponseDto, ResponseStatusEnum
 from models.responses.dictionary_response_dto import DictionaryResponseDto
 from models.responses.dictionaries_response_dto import DictionariesResponseDto
 from tools.utils import Utils
+from tools.exceptions import DictionaryError
 
 
 class DictionaryService(DictionaryUseCase):
@@ -58,7 +59,7 @@ class DictionaryService(DictionaryUseCase):
             return DictionaryResponseDto(data=found_dic, status=ResponseStatusEnum.OK)
 
         return ResponseDto(
-            message=f"Dictionary with id {id} not found",
+            message=DictionaryError.dictionary_not_found(id),
             status=ResponseStatusEnum.NOT_FOUND,
         )
 
@@ -122,7 +123,7 @@ class DictionaryService(DictionaryUseCase):
             if found_dic:
                 return DictionaryResponseDto(
                     data=None,
-                    message=f"Dictionary with name '{dictionary.name}' already exists",
+                    message=DictionaryError.dictionary_already_exists(dictionary.name),
                     status=ResponseStatusEnum.CONFLICT,
                 )
 
@@ -136,7 +137,7 @@ class DictionaryService(DictionaryUseCase):
             if not is_valid:
                 return DictionaryResponseDto(
                     data=None,
-                    message="Dictionary schema is badly formatted",
+                    message=DictionaryError.format_error(),
                     status=ResponseStatusEnum.BAD_REQUEST,
                 )
 
@@ -149,13 +150,13 @@ class DictionaryService(DictionaryUseCase):
         if not content:
             return DictionaryResponseDto(
                 data=None,
-                message="Dictionary file is mandatory",
+                message=DictionaryError.missing_dictionary_file(),
                 status=ResponseStatusEnum.BAD_REQUEST,
             )
 
         return DictionaryResponseDto(
             data=None,
-            message="Dictionary name and description are mandatory",
+            message=DictionaryError.missing_dictionary_metadata(),
             status=ResponseStatusEnum.BAD_REQUEST,
         )
 
@@ -182,7 +183,7 @@ class DictionaryService(DictionaryUseCase):
         if dic_with_name is not None and dic_with_name.id != id:
             return DictionaryResponseDto(
                 data=None,
-                message=f"Dictionary with name '{dictionary.name}' already exists",
+                message=DictionaryError.dictionary_already_exists(dictionary.name),
                 status=ResponseStatusEnum.CONFLICT,
             )
 
@@ -215,7 +216,7 @@ class DictionaryService(DictionaryUseCase):
         if not is_valid:
             return DictionaryResponseDto(
                 data=None,
-                message="Dictionary schema is badly formatted",
+                message=DictionaryError.format_error(),
                 status=ResponseStatusEnum.BAD_REQUEST,
             )
 

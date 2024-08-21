@@ -65,6 +65,18 @@ class LoginError:
         """
         return "Wrong password."
 
+    @staticmethod
+    def invalid_authentication_scheme() -> str:
+        return "Invalid authentication scheme."
+
+    @staticmethod
+    def invalid_authorization_code() -> str:
+        return "Invalid authorization code."
+
+    @staticmethod
+    def invalid_expired_token() -> str:
+        return "Invalid or expired token."
+
 
 class PromptError:
     """A collection of methods for providing error messages related to prompt generation."""
