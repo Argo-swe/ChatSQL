@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import AuthService from '@/services/auth.service';
-import { messageService } from '@/services/message.service';
+import MessageService from '@/services/message.service';
 import { type MessageWrapper } from '../types/wrapper';
 
 // Child Components
@@ -20,7 +20,7 @@ const props = defineProps<MessageWrapper>();
 const { t } = useI18n();
 const dialog = useDialog();
 let isLogged = ref(AuthService.isLogged());
-const { messageSuccess, messageError } = messageService();
+const messageService = MessageService.getInstance();
 const { message, debug, isSent } = props;
 const isCopying = ref(false);
 
@@ -61,13 +61,13 @@ const copyToClipboard = () => {
   navigator.clipboard
     .writeText(message.trim())
     .then(() => {
-      messageSuccess(t('general.clipboard.name'), t('general.clipboard.success'));
+      messageService.messageSuccess(t('general.clipboard.name'), t('general.clipboard.success'));
       setTimeout(() => {
         isCopying.value = false;
       }, 2000);
     })
     .catch(() => {
-      messageError(t('general.clipboard.name'), t('general.clipboard.error'));
+      messageService.messageError(t('general.clipboard.name'), t('general.clipboard.error'));
       isCopying.value = false;
     });
 };

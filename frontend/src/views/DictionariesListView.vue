@@ -7,8 +7,8 @@ import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import { useMessages } from '@/composables/status-messages';
-import { getApiClient } from '@/services/api-client.service';
-import { messageService } from '@/services/message.service';
+import ApiClientManager from '@/services/api-client.service';
+import MessageService from '@/services/message.service';
 import UtilsService from '@/services/utils.service';
 import type { Components } from '@/types/openapi';
 
@@ -18,8 +18,8 @@ import CreateUpdateDictionaryModal from '@/components/CreateUpdateDictionaryModa
 const { t } = useI18n();
 const dialog = useDialog();
 const confirm = useConfirm();
-let client = getApiClient();
-const { messageSuccess, messageError } = messageService();
+let client = ApiClientManager.getApiClient();
+const messageService = MessageService.getInstance();
 
 // Gain access to functions and maps to view status messages
 const { getMessages, getStatusMex } = useMessages();
@@ -47,10 +47,10 @@ onMounted(() => {
  * Retrieves a list of dictionaries and updates the component state accordingly.
  * @function retrieveDictionaries
  */
-function retrieveDictionaries() {
+async function retrieveDictionaries() {
   loading.value = true;
   dictionaries.value = [];
-  client
+  (await client)
     .getAllDictionaries()
     .then((response) => {
       if (response.data?.status == 'OK') {
@@ -60,7 +60,10 @@ function retrieveDictionaries() {
       }
     })
     .catch((error) => {
-      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+      messageService.messageError(
+        t('dictionary.title'),
+        `${t('general.list.error')}\n${error.message}`
+      );
     })
     .finally(() => {
       loading.value = false;
@@ -136,8 +139,8 @@ function onClickUpdateFile(dictionary: Components.Schemas.DictionaryDto) {
  * @function onClickDownloadFile
  * @param dictionary - The dictionary object containing metadata needed to fetch and download the file.
  */
-function onClickDownloadFile(dictionary: Components.Schemas.DictionaryDto) {
-  client
+async function onClickDownloadFile(dictionary: Components.Schemas.DictionaryDto) {
+  (await client)
     .getDictionaryFile(dictionary.id, undefined, {
       responseType: 'blob'
     })
@@ -148,7 +151,10 @@ function onClickDownloadFile(dictionary: Components.Schemas.DictionaryDto) {
       );
     })
     .catch((error) => {
-      messageError(t('dictionary.title'), `${t('general.list.error')}\n${error.message}`);
+      messageService.messageError(
+        t('dictionary.title'),
+        `${t('general.list.error')}\n${error.message}`
+      );
     });
 }
 
@@ -165,15 +171,15 @@ function onClickDelete(dictionaryId: number) {
     acceptLabel: t('text.Yes'),
     acceptClass: 'p-button-success',
     rejectLabel: t('text.No'),
-    accept: () => {
-      client
+    accept: async () => {
+      (await client)
         .deleteDictionary(dictionaryId)
         .then((response) => {
           if (response.data?.status == 'OK') {
             retrieveDictionaries();
-            messageSuccess(t('dictionary.title'), t('actions.delete.success'));
+            messageService.messageSuccess(t('dictionary.title'), t('actions.delete.success'));
           } else {
-            messageError(
+            messageService.messageError(
               t('dictionary.title'),
               getStatusMex(onDeleteMessages, response.data?.status, {
                 message: response.data?.message,
@@ -183,7 +189,10 @@ function onClickDelete(dictionaryId: number) {
           }
         })
         .catch((error) => {
-          messageError(t('dictionary.title'), `${t('actions.delete.error')}\n${error.message}`);
+          messageService.messageError(
+            t('dictionary.title'),
+            `${t('actions.delete.error')}\n${error.message}`
+          );
         });
     }
   });
