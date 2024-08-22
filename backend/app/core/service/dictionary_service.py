@@ -1,3 +1,4 @@
+from typing import Optional, Union
 from core.port.incoming.schema_validator_use_case import SchemaValidatorUseCase
 from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 from core.port.outcoming.file_repository import FileRepository
@@ -12,7 +13,6 @@ from tools.exceptions import DictionaryError
 
 
 class DictionaryService(DictionaryUseCase):
-
     def __init__(
         self,
         dictionary_repository: DictionaryRepository,
@@ -20,16 +20,39 @@ class DictionaryService(DictionaryUseCase):
         file_repository: FileRepository,
         schema_validator: SchemaValidatorUseCase,
     ) -> None:
+        """Initialize the DictionaryService with necessary repositories and validators.
+
+        Args:
+            dictionary_repository (DictionaryRepository): Repository for accessing and managing dictionary data.
+            index_manager (IndexManagerPort): Manager for indexing and retrieving index data.
+            file_repository (FileRepository): Repository for file operations.
+            schema_validator (SchemaValidatorUseCase): Validator for dictionary schema validation.
+        """
         self._dictionary_repository = dictionary_repository
         self._index_manager = index_manager
         self._file_repository = file_repository
         self._schema_validator = schema_validator
 
     def get_dictionary_list(self) -> DictionariesResponseDto:
+        """Retrieve the list of all dictionaries.
+
+        Returns:
+            DictionariesResponseDto: A response DTO containing the list of dictionaries and status.
+        """
         dictionaries = self._dictionary_repository.get_all_dictionaries()
         return DictionariesResponseDto(data=dictionaries, status=ResponseStatusEnum.OK)
 
-    def get_dictionary_by_id(self, id: int) -> DictionaryResponseDto | ResponseDto:
+    def get_dictionary_by_id(
+        self, id: int
+    ) -> Union[DictionaryResponseDto, ResponseDto]:
+        """Retrieve a dictionary by its ID.
+
+        Args:
+            id (int): The ID of the dictionary to retrieve.
+
+        Returns:
+            Union[DictionaryResponseDto, ResponseDto]: A response DTO with the dictionary data or an error message.
+        """
         found_dic = self._dictionary_repository.get_dictionary_by_id(id)
 
         if found_dic is not None:
@@ -40,7 +63,15 @@ class DictionaryService(DictionaryUseCase):
             status=ResponseStatusEnum.NOT_FOUND,
         )
 
-    def get_dictionary_file(self, id: int) -> str | None:
+    def get_dictionary_file(self, id: int) -> Optional[str]:
+        """Retrieve the file content of a dictionary by its ID.
+
+        Args:
+            id (int): The ID of the dictionary.
+
+        Returns:
+            Optional[str]: The content of the dictionary file or None if the dictionary is not found or an error occurred.
+        """
         found_dic_response = self.get_dictionary_by_id(id)
 
         if found_dic_response.status is not ResponseStatusEnum.OK:
@@ -49,6 +80,14 @@ class DictionaryService(DictionaryUseCase):
         return self._file_repository.load(id)
 
     def get_dictionary_preview(self, id: int) -> DictionaryResponseDto:
+        """Retrieve a preview of a dictionary by its ID.
+
+        Args:
+            id (int): The ID of the dictionary.
+
+        Returns:
+            DictionaryResponseDto: A response DTO with the dictionary preview data or an error message.
+        """
         found_dic_response = self.get_dictionary_by_id(id)
 
         if found_dic_response.status is not ResponseStatusEnum.OK:
@@ -61,8 +100,17 @@ class DictionaryService(DictionaryUseCase):
         )
 
     async def create_dictionary(
-        self, dictionary: DictionaryDto, content
+        self, dictionary: DictionaryDto, content: str
     ) -> DictionaryResponseDto:
+        """Create a new dictionary and save its file content.
+
+        Args:
+            dictionary (DictionaryDto): The dictionary data to create.
+            content (str): The content of the dictionary file.
+
+        Returns:
+            DictionaryResponseDto: A response DTO with the created dictionary data or an error message.
+        """
         if (
             dictionary.name is not None
             and dictionary.description is not None
@@ -83,7 +131,7 @@ class DictionaryService(DictionaryUseCase):
                 dictionary.name, dictionary.description
             )
 
-            # validate dictionary schema
+            # Validate dictionary schema
             is_valid = self._schema_validator.validate(Utils.string_to_json(content))
 
             if not is_valid:
@@ -93,9 +141,9 @@ class DictionaryService(DictionaryUseCase):
                     status=ResponseStatusEnum.BAD_REQUEST,
                 )
 
-            self._file_repository.save(new_dic.id, content)  # type: ignore
+            self._file_repository.save(new_dic.id, content)
 
-            self._index_manager.create_index(new_dic.id)  # type: ignore
+            self._index_manager.create_index(new_dic.id)
 
             return DictionaryResponseDto(data=new_dic, status=ResponseStatusEnum.OK)
 
@@ -115,6 +163,15 @@ class DictionaryService(DictionaryUseCase):
     def update_dictionary_metadata(
         self, id: int, dictionary: DictionaryDto
     ) -> DictionaryResponseDto:
+        """Update the metadata of an existing dictionary.
+
+        Args:
+            id (int): The ID of the dictionary to update.
+            dictionary (DictionaryDto): The updated dictionary data.
+
+        Returns:
+            DictionaryResponseDto: A response DTO with the updated dictionary data or an error message.
+        """
         found_dic_response = self.get_dictionary_by_id(id)
 
         if found_dic_response.status is not ResponseStatusEnum.OK:
@@ -136,13 +193,24 @@ class DictionaryService(DictionaryUseCase):
 
         return DictionaryResponseDto(data=new_dic, status=ResponseStatusEnum.OK)
 
-    async def update_dictionary_file(self, id: int, content) -> DictionaryResponseDto:
+    async def update_dictionary_file(
+        self, id: int, content: str
+    ) -> DictionaryResponseDto:
+        """Update the file content of an existing dictionary.
+
+        Args:
+            id (int): The ID of the dictionary to update.
+            content (str): The new content of the dictionary file.
+
+        Returns:
+            DictionaryResponseDto: A response DTO with the updated dictionary data or an error message.
+        """
         found_dic_response = self.get_dictionary_by_id(id)
 
         if found_dic_response.status is not ResponseStatusEnum.OK:
             return found_dic_response
 
-        # validate dictionary schema
+        # Validate dictionary schema
         is_valid = self._schema_validator.validate(Utils.string_to_json(content))
 
         if not is_valid:
@@ -159,6 +227,14 @@ class DictionaryService(DictionaryUseCase):
         return found_dic_response
 
     def delete_dictionary(self, id: int) -> ResponseDto:
+        """Delete a dictionary and its associated file and index.
+
+        Args:
+            id (int): The ID of the dictionary to delete.
+
+        Returns:
+            ResponseDto: A response DTO indicating the result of the deletion operation.
+        """
         found_dic_response = self.get_dictionary_by_id(id)
 
         if found_dic_response.status is not ResponseStatusEnum.OK:

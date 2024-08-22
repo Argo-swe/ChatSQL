@@ -1,3 +1,4 @@
+from typing import Optional, Tuple
 from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
 from core.service.dictionary_service import DictionaryService
 from models.prompt_dto import PromptDto
@@ -13,12 +14,31 @@ class PromptManagerService(PromptUseCase):
     def __init__(
         self, dictionary_service: DictionaryService, prompt_manager: PromptManagerPort
     ) -> None:
+        """Initialize the PromptManagerService with dictionary and prompt managers.
+
+        Args:
+            dictionary_service (DictionaryService): Service for managing dictionaries.
+            prompt_manager (PromptManagerPort): Manager for generating prompts.
+        """
         self._dictionary_service = dictionary_service
         self._prompt_manager = prompt_manager
 
     def generate_prompt(
         self, dictionary_id: int, query: str, dbms: str, language: str
     ) -> StringDataResponseDto:
+        """Generate a prompt based on the provided query and dictionary ID.
+
+        Args:
+            dictionary_id (int): The ID of the dictionary to use.
+            query (str): The query to include in the prompt.
+            dbms (str): The database management system to consider.
+            language (str): The language for the prompt.
+
+        Returns:
+            StringDataResponseDto: A response DTO containing the generated prompt or an error message.
+                - If the dictionary is not found or the query is empty, returns an error message.
+                - Otherwise, returns the generated prompt.
+        """
         found_dic_response = self._dictionary_service.get_dictionary_by_id(
             dictionary_id
         )
@@ -39,6 +59,19 @@ class PromptManagerService(PromptUseCase):
     def generate_prompt_with_debug(
         self, dictionary_id: int, query: str, dbms: str, language: str
     ) -> PromptResponseDto:
+        """Generate a prompt with debug information.
+
+        Args:
+            dictionary_id (int): The ID of the dictionary to use.
+            query (str): The query to include in the prompt.
+            dbms (str): The database management system to consider.
+            language (str): The language for the prompt.
+
+        Returns:
+            PromptResponseDto: A response DTO containing the generated prompt and debug information or an error message.
+                - If the dictionary is not found or the query is empty, returns an error message.
+                - Otherwise, returns the generated prompt along with debug information.
+        """
         found_dic_response = self._dictionary_service.get_dictionary_by_id(
             dictionary_id
         )
@@ -61,7 +94,19 @@ class PromptManagerService(PromptUseCase):
 
     def __generate_prompt(
         self, dictionary_id: int, query: str, dbms: str, language: str, log: bool
-    ) -> tuple[str, str | None]:
+    ) -> Tuple[str, Optional[str]]:
+        """Internal method to generate a prompt using the prompt manager.
+
+        Args:
+            dictionary_id (int): The ID of the dictionary to use.
+            query (str): The query to include in the prompt.
+            dbms (str): The database management system to consider.
+            language (str): The language for the prompt.
+            log (bool): Whether to include debug information.
+
+        Returns:
+            Tuple[str, Optional[str]]: A tuple containing the generated prompt and optional debug information.
+        """
         prompt, log_content = self._prompt_manager.prompt_generator(
             dictionary_id, query, language, dbms, activate_log=log
         )  # type: ignore

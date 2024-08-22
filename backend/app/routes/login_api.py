@@ -12,13 +12,27 @@ def create_login_router(config: Configuration):
     def get_authentication_service() -> AuthenticationService:
         return config.get_authentication_service()
 
-    @router.post("/", tags=[tag], response_model=AuthResponseDto, name="login")
+    @router.post(
+        "/",
+        tags=[tag],
+        response_model=AuthResponseDto,
+        name="login",
+        summary="User login",
+    )
     def login(
         data: LoginDto,
         authentication_service: AuthenticationService = Depends(
             get_authentication_service
         ),
     ):
+        """
+        Authenticate a user with the provided credentials.
+
+        - **username**: The username of the user.
+        - **password**: The password of the user.
+
+        Returns an authentication token if the login is successful.
+        """
         return authentication_service.login(data.username, data.password)
 
     return router

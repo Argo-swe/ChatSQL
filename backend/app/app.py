@@ -9,7 +9,13 @@ from routes.dictionaries_api import dictionaries_router
 from routes.prompt_api import prompt_router
 from routes.login_api import login_router
 
-app = FastAPI()
+tags_metadata = [
+    {"name": "dictionary", "description": "Operations with dictionaries"},
+    {"name": "prompt", "description": "Operations to generate prompt"},
+    {"name": "login", "description": "Operations to authenticate user"},
+]
+
+app = FastAPI(openapi_tags=tags_metadata)
 
 configuration = Configuration()
 
@@ -32,13 +38,23 @@ excluded_endpoints = ["/healthcheck", "/openapi.json"]
 logging.getLogger("uvicorn.access").addFilter(EndpointFilter(excluded_endpoints))
 
 
-@app.get("/")
+@app.get("/", summary="Root endpoint")
 async def main():
+    """
+    Return a simple greeting message.
+
+    This endpoint can be used to verify that the API is reachable.
+    """
     return {"message": "Hello World"}
 
 
-@app.get("/healthcheck")
+@app.get("/healthcheck", summary="Health check endpoint")
 async def healthcheck():
+    """
+    Check the health status of the API.
+
+    Returns a status message indicating whether the API is running.
+    """
     return {"status": "running"}
 
 

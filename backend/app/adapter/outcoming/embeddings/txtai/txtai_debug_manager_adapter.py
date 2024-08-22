@@ -1,4 +1,5 @@
 import time
+from typing import List
 from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 from core.port.outcoming.embeddings.debug_manager_port import DebugManagerPort
 
@@ -7,7 +8,7 @@ class TxtaiDebugManagerAdapter(DebugManagerPort):
     def __init__(self, index_manager: IndexManagerPort):
         self._index_manager = index_manager
 
-    def semantic_search_log(self, user_request, tuples):
+    def semantic_search_log(self, user_request, tuples) -> List[str]:
         log_content = []
         log_content.append(
             f"{self.__get_debug_header()} - Details of the prompt generation process.\n"
@@ -51,7 +52,9 @@ class TxtaiDebugManagerAdapter(DebugManagerPort):
             log_content.append("\n")
         return log_content
 
-    def semantic_search_log_custom_algorithm(self, relevant_tuples, tuples):
+    def semantic_search_log_custom_algorithm(
+        self, relevant_tuples, tuples
+    ) -> List[str]:
         log_content = []
         log_content.append(
             f"{self.__get_debug_header()} - Phase 2 - second extraction\n"
