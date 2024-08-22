@@ -11,7 +11,7 @@ class DictionaryError:
         Returns:
             str: An appropriate error message.
         """
-        return f"Dictionary with name '{name}' already exists."
+        return f"Dictionary with name '{name}' already exists"
 
     @staticmethod
     def format_error() -> str:
@@ -20,7 +20,7 @@ class DictionaryError:
         Returns:
             str: An appropriate error message.
         """
-        return "Dictionary schema is bad formatted."
+        return "Dictionary schema is bad formatted"
 
     @staticmethod
     def missing_dictionary_file() -> str:
@@ -29,7 +29,7 @@ class DictionaryError:
         Returns:
             str: An appropriate error message.
         """
-        return "Dictionary file is mandatory."
+        return "Dictionary file is mandatory"
 
     @staticmethod
     def missing_dictionary_metadata() -> str:
@@ -38,7 +38,7 @@ class DictionaryError:
         Returns:
             str: An appropriate error message.
         """
-        return "Dictionary name and description are mandatory."
+        return "Dictionary name and description are mandatory"
 
     @staticmethod
     def dictionary_not_found(id: str) -> str:
@@ -50,32 +50,32 @@ class DictionaryError:
         Returns:
             str: An appropriate error message.
         """
-        return f"Dictionary with id {id} not found."
+        return f"Dictionary with id {id} not found"
 
 
 class LoginError:
     """A collection of methods for generating error messages related to login operations."""
 
     @staticmethod
-    def wrong_pssword() -> str:
+    def wrong_password() -> str:
         """Generates an error message indicating that the provided password is incorrect.
 
         Returns:
             str: An appropriate error message.
         """
-        return "Wrong password."
+        return "Wrong password"
 
     @staticmethod
     def invalid_authentication_scheme() -> str:
-        return "Invalid authentication scheme."
+        return "Invalid authentication scheme"
 
     @staticmethod
     def invalid_authorization_code() -> str:
-        return "Invalid authorization code."
+        return "Invalid authorization code"
 
     @staticmethod
     def invalid_expired_token() -> str:
-        return "Invalid or expired token."
+        return "Invalid or expired token"
 
 
 class PromptError:
@@ -88,4 +88,4 @@ class PromptError:
         Returns:
             str: An appropriate error message.
         """
-        return "Query cannot be empty."
+        return "Query cannot be empty"

@@ -1,4 +1,5 @@
 import os
+from typing import Union
 from models.dictionary_internal_structure.table_dto import TableDto
 from models.dictionary_preview_dto import DictionaryPreviewDto
 from core.port.outcoming.file_repository import FileRepository
@@ -22,11 +23,11 @@ class JsonFileAdapter(FileRepository):
         if os.path.exists(self._generate_schema_file_name(id)):
             os.remove(self._generate_schema_file_name(id))
 
-    def get_preview(self, id: int) -> DictionaryPreviewDto:
+    def get_preview(self, id: int) -> Union[DictionaryPreviewDto, None]:
         dictionary_preview = {}
         schema = self.get_json_schema(id)
         if schema is None:
-            return DictionaryPreviewDto()
+            return None
         dictionary_preview["database_name"] = schema["database_name"]
         dictionary_preview["database_description"] = schema["database_description"]
         tables = []

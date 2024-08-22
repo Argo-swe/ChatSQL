@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Union
 from models.dictionary_preview_dto import DictionaryPreviewDto
 
 
@@ -42,7 +43,7 @@ class FileRepository(ABC):
         pass
 
     @abstractmethod
-    def get_preview(self, id: int) -> DictionaryPreviewDto:
+    def get_preview(self, id: int) -> Union[DictionaryPreviewDto, None]:
         """Retrieve a preview of the dictionary associated with a specific ID.
 
         Args:
