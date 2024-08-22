@@ -124,7 +124,11 @@ const itemClick = (event: Event, item: any) => {
     :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }"
     data-testid="menu-item"
   >
-    <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">
+    <div
+      v-if="root && item.visible !== false"
+      class="layout-menuitem-root-text"
+      data-testid="menu-item-root-text"
+    >
       {{ item.label }}
     </div>
     <!-- External link or clickable item to open a sub-menu -->
@@ -134,10 +138,11 @@ const itemClick = (event: Event, item: any) => {
       :class="item.class"
       :target="item.target"
       tabindex="0"
+      data-testid="menu-item-link"
       @click="itemClick($event, item)"
     >
       <i :class="item.icon" class="layout-menuitem-icon"></i>
-      <span class="layout-menuitem-text">{{ item.label }}</span>
+      <span class="layout-menuitem-text" data-testid="menu-item-text">{{ item.label }}</span>
       <i v-if="item.items" class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
     </a>
     <!-- Internal navigation link (managed by Vue Router) -->
@@ -146,15 +151,16 @@ const itemClick = (event: Event, item: any) => {
       :class="[item.class, { 'active-route': checkActiveRoute(item) }]"
       tabindex="0"
       :to="item.to"
+      data-testid="menu-item-link"
       @click="itemClick($event, item)"
     >
       <i :class="item.icon" class="layout-menuitem-icon"></i>
-      <span class="layout-menuitem-text">{{ item.label }}</span>
+      <span class="layout-menuitem-text" data-testid="menu-item-text">{{ item.label }}</span>
       <i v-if="item.items" class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
     </router-link>
     <!-- Sub menu with transition -->
     <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
-      <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
+      <ul v-show="root ? true : isActiveMenu" class="layout-submenu" data-testid="nav-submenu">
         <app-menu-item
           v-for="(child, i) in item.items"
           :key="child"
