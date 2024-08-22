@@ -7,12 +7,12 @@ import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import { useMessages } from '@/composables/status-messages';
-import { getApiClient } from '@/services/api-client.service';
-import { messageService } from '@/services/message.service';
+import ApiClientManager from '@/services/api-client.service';
+import MessageService from '@/services/message.service';
 
 const { t } = useI18n();
-const client = getApiClient();
-const { messageSuccess, messageError } = messageService();
+const client = ApiClientManager.getApiClient();
+const messageService = MessageService.getInstance();
 const dialogRef = inject<Ref<DynamicDialogInstance>>('dialogRef');
 
 // Gain access to functions and maps to view status messages
@@ -99,9 +99,9 @@ function isFormValid(): boolean {
  * @description This function handles the process of uploading a new dictionary,
  * including its metadata and optional file.
  */
-function createDictionary() {
+async function createDictionary() {
   loading.value = true;
-  client
+  (await client)
     .createDictionary(
       {
         name: dictionaryName.value,
@@ -118,10 +118,10 @@ function createDictionary() {
     )
     .then((response) => {
       if (response.data?.status == 'OK') {
-        messageSuccess(t('dictionary.title'), t('actions.create.success'));
+        messageService.messageSuccess(t('dictionary.title'), t('actions.create.success'));
         closeDialog(true);
       } else {
-        messageError(
+        messageService.messageError(
           t('dictionary.title'),
           getStatusMex(onCreateMessages, response.data?.status, {
             message: response.data?.message,
@@ -131,7 +131,10 @@ function createDictionary() {
       }
     })
     .catch((error) => {
-      messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error.message}`);
+      messageService.messageError(
+        t('dictionary.title'),
+        `${t('actions.create.error')}\n${error.message}`
+      );
     })
     .finally(() => {
       loading.value = false;
@@ -146,10 +149,10 @@ function createDictionary() {
  */
 function handleUpdateResponse(messageHeader: string, response: any) {
   if (response.data?.status == 'OK') {
-    messageSuccess(t(messageHeader), t('actions.update.success'));
+    messageService.messageSuccess(t(messageHeader), t('actions.update.success'));
     closeDialog(true);
   } else {
-    messageError(
+    messageService.messageError(
       t(messageHeader),
       getStatusMex(onUpdateMessages, response.data?.status, {
         message: response.data?.message,
@@ -165,9 +168,9 @@ function handleUpdateResponse(messageHeader: string, response: any) {
  * @function updateDictionaryMetadata
  * @description This function updates the dictionary's name and description without changing its file.
  */
-function updateDictionaryMetadata() {
+async function updateDictionaryMetadata() {
   loading.value = true;
-  client
+  (await client)
     .updateDictionaryMetadata(dictionaryId.value, {
       id: dictionaryId.value,
       name: dictionaryName.value,
@@ -177,7 +180,10 @@ function updateDictionaryMetadata() {
       handleUpdateResponse('dictionary.title', response);
     })
     .catch((error) => {
-      messageError(t('dictionary.title'), `${t('actions.update.error')}\n${error.message}`);
+      messageService.messageError(
+        t('dictionary.title'),
+        `${t('actions.update.error')}\n${error.message}`
+      );
     })
     .finally(() => {
       loading.value = false;
@@ -189,9 +195,9 @@ function updateDictionaryMetadata() {
  * @function updateDictionaryFile
  * @description This function updates only the file, without changing the metadata.
  */
-function updateDictionaryFile() {
+async function updateDictionaryFile() {
   loading.value = true;
-  client
+  (await client)
     .updateDictionaryFile(
       dictionaryId.value,
       {
@@ -207,7 +213,10 @@ function updateDictionaryFile() {
       handleUpdateResponse('dictionary.file.title', response);
     })
     .catch((error) => {
-      messageError(t('dictionary.file.title'), `${t('actions.update.error')}\n${error.message}`);
+      messageService.messageError(
+        t('dictionary.file.title'),
+        `${t('actions.update.error')}\n${error.message}`
+      );
     })
     .finally(() => {
       loading.value = false;
