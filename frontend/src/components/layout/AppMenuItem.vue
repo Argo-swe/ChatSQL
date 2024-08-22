@@ -44,10 +44,11 @@ const route = useRoute();
 const { layoutConfig, layoutState, setActiveMenuItem, onMenuToggle } = useLayout();
 const isActiveMenu = ref(false);
 const itemKey = ref<string | null>(null);
-const { parentItemKey, index } = props;
 
 onBeforeMount(() => {
-  itemKey.value = parentItemKey ? parentItemKey + '-' + index : String(index);
+  itemKey.value = props.parentItemKey
+    ? props.parentItemKey + '-' + props.index
+    : String(props.index);
 
   const activeItem = layoutConfig.activeMenuItem.value as string | null;
 
@@ -91,7 +92,7 @@ const updateActiveMenuItem = (item: any) => {
   let foundItemKey;
 
   if (item.items) {
-    foundItemKey = isActiveMenu.value ? parentItemKey : itemKey;
+    foundItemKey = isActiveMenu.value ? props.parentItemKey : itemKey;
   } else {
     foundItemKey = itemKey.value;
   }
