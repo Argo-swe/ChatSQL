@@ -11,7 +11,6 @@ class PromptManagerPort(ABC):
 
         Args:
             index_manager (IndexManagerPort): The index manager used to manage indexing operations.
-
         """
         self._index_manager = index_manager
         self._debug_manager = self._create_debug_manager()
