@@ -28,8 +28,7 @@ def service(mock_dependencies, monkeypatch):
 
 def test_login_user_not_found(service, mock_dependencies):
     service_instance, _ = service
-    mock_dependencies = service_instance._authentication_repository
-    mock_dependencies.get_user_by_username.return_value = None
+    service_instance._authentication_repository.get_user_by_username.return_value = None
 
     response = service_instance.login(
         username="nonexistent_user", password="password123"
@@ -37,14 +36,17 @@ def test_login_user_not_found(service, mock_dependencies):
 
     assert response.status == ResponseStatusEnum.NOT_FOUND
     assert response.data is None
-    mock_dependencies.get_user_by_username.assert_called_once_with("nonexistent_user")
+    mock_dependencies[
+        "authentication_repository"
+    ].get_user_by_username.assert_called_once_with("nonexistent_user")
 
 
 def test_login_wrong_password(service, mock_dependencies):
     service_instance, _ = service
-    mock_dependencies = service_instance._authentication_repository
     mock_user = AdminDto(id=1, username="existing_user", password="correct_password")
-    mock_dependencies.get_user_by_username.return_value = mock_user
+    mock_dependencies["authentication_repository"].get_user_by_username.return_value = (
+        mock_user
+    )
 
     response = service_instance.login(
         username="existing_user", password="wrong_password"
@@ -53,14 +55,17 @@ def test_login_wrong_password(service, mock_dependencies):
     assert response.status == ResponseStatusEnum.BAD_CREDENTIAL
     assert response.data is None
     assert response.message == LoginError.wrong_password()
-    mock_dependencies.get_user_by_username.assert_called_once_with("existing_user")
+    mock_dependencies[
+        "authentication_repository"
+    ].get_user_by_username.assert_called_once_with("existing_user")
 
 
 def test_login_success(service, mock_dependencies):
     service_instance, mock_sign = service
-    mock_dependencies = service_instance._authentication_repository
     mock_user = AdminDto(id=1, username="existing_user", password="correct_password")
-    mock_dependencies.get_user_by_username.return_value = mock_user
+    mock_dependencies["authentication_repository"].get_user_by_username.return_value = (
+        mock_user
+    )
 
     mock_sign.return_value = {"token": "fake_jwt_token"}
 
@@ -68,5 +73,7 @@ def test_login_success(service, mock_dependencies):
 
     assert response.status == ResponseStatusEnum.OK
     assert response.data == {"token": "fake_jwt_token"}
-    mock_dependencies.get_user_by_username.assert_called_once_with("existing_user")
+    mock_dependencies[
+        "authentication_repository"
+    ].get_user_by_username.assert_called_once_with("existing_user")
     mock_sign.assert_called_once_with(1)
