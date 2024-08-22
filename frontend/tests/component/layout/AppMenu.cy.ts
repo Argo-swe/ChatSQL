@@ -1,6 +1,8 @@
 import { createI18n } from 'vue-i18n';
 import { createRouter, createWebHistory } from 'vue-router';
 import AppMenu from '../../../src/components/layout/AppMenu.vue';
+import AppMenuItem from '../../../src/components/layout/AppMenuItem.vue';
+import AuthService from '../../../src/services/auth.service';
 
 const i18n = createI18n({
   legacy: false,
@@ -24,6 +26,9 @@ function mountAppMenu(props?) {
       plugins: [i18n, router],
       mocks: {
         t: (key) => key
+      },
+      components: {
+        AppMenuItem
       }
     },
     props
@@ -31,10 +36,21 @@ function mountAppMenu(props?) {
 }
 
 describe('AppMenu Component', () => {
-  it('should display correctly', () => {
+  it('should display user menu correctly', () => {
+    cy.stub(AuthService, 'isLogged').returns(false);
     mountAppMenu();
+    cy.get('[data-testid="main-nav-menu"]').should('be.visible');
+    cy.get('[data-testid="main-nav-menu"]').children().should('have.length.greaterThan', 0);
+    cy.get('[data-testid="main-nav-menu"]').children().find('.pi-comments').should('exist');
+    cy.get('[data-testid="main-nav-menu"]').children().find('.pi-database').should('not.exist');
+  });
 
-    cy.get('.layout-menu').should('be.visible');
-    cy.get('.layout-menu').children().should('have.length.greaterThan', 0);
+  it('should display technician menu correctly', () => {
+    cy.stub(AuthService, 'isLogged').returns(true);
+    mountAppMenu();
+    cy.get('[data-testid="main-nav-menu"]').should('be.visible');
+    cy.get('[data-testid="main-nav-menu"]').children().should('have.length.greaterThan', 1);
+    cy.get('[data-testid="main-nav-menu"]').children().find('.pi-comments').should('exist');
+    cy.get('[data-testid="main-nav-menu"]').children().find('.pi-database').should('exist');
   });
 });

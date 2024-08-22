@@ -1,7 +1,7 @@
 import App from '../../src/App.vue';
 
-describe('<App />', () => {
-  it('renders', () => {
+describe('App Component', () => {
+  it('should render correctly', () => {
     cy.mount(App);
   });
 });
