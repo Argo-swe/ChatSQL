@@ -113,8 +113,8 @@ const onLanguageChange = (value: string) => {
             text
             rounded
             :disabled="layoutConfig.scale.value === scales[scales.length - 1]"
-            @click="incrementScale"
             data-test-id="increase-scale"
+            @click="incrementScale"
           />
         </div>
       </section>

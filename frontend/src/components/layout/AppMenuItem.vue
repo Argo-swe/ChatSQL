@@ -120,7 +120,10 @@ const itemClick = (event: Event, item: any) => {
 </script>
 
 <template>
-  <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }" data-testid="menu-item">
+  <li
+    :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }"
+    data-testid="menu-item"
+  >
     <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">
       {{ item.label }}
     </div>
