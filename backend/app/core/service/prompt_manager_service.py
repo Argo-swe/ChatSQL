@@ -47,7 +47,7 @@ class PromptManagerService(PromptUseCase):
             return found_dic_response
 
         if query is None or query == "":
-            return StringDataResponseDto(
+            return ResponseDto(
                 message=PromptError.missing_query(),
                 status=ResponseStatusEnum.BAD_REQUEST,
             )

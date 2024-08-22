@@ -3,6 +3,7 @@ fastapi_camelcase
 fastapi_utils[all]
 jsonschema
 pytest
+pytest-asyncio
 pytest-mock
 python-multipart
 sqlalchemy
