@@ -2,6 +2,8 @@ import Button from 'primevue/button';
 import PrimeVue from 'primevue/config';
 import { createI18n } from 'vue-i18n';
 import { createRouter, createWebHistory } from 'vue-router';
+import AppFooter from '../../../src/components/layout/AppFooter.vue';
+import AppMenu from '../../../src/components/layout/AppMenu.vue';
 import MenuSidebar from '../../../src/components/layout/MenuSidebar.vue';
 
 const i18n = createI18n({
@@ -29,7 +31,9 @@ function mountMenuSidebar(props?) {
       }
     },
     components: {
-      PgButton: Button
+      PgButton: Button,
+      AppMenu,
+      AppFooter
     },
     props
   });
@@ -38,16 +42,16 @@ function mountMenuSidebar(props?) {
 describe('MenuSidebar Component', () => {
   it('should display correctly', () => {
     mountMenuSidebar();
-
-    cy.get('[data-test-id="menu-sidebar"]').should('be.visible');
+    cy.get('[data-testid="menu-sidebar"]').should('be.visible');
+    cy.get('[data-testid="main-nav-menu"]').should('be.visible');
+    cy.get('[data-testid="footer"]').should('be.visible');
   });
 
-  it('should show button when viewport is small', () => {
+  it('should toggle close button when viewport changes', () => {
     mountMenuSidebar();
-
-    // cy.get('[data-test-id="menu-sidebar"]').should('be.visible');
-    cy.viewport('iphone-x');
+    cy.viewport(992, 558);
     cy.get('#close-menu-sidebar').should('not.be.visible');
-    // cy.get('#close-menu-sidebar').click();
+    cy.viewport('iphone-x');
+    cy.get('#close-menu-sidebar').should('be.visible');
   });
 });

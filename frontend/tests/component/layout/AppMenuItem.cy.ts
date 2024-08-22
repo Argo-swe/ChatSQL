@@ -34,7 +34,6 @@ function mountItemWithSubMenu(props?) {
     item: {
       label: 'Test',
       icon: 'pi pi-check',
-      to: '/test',
       items: [
         {
           label: 'Test1',
@@ -85,7 +84,7 @@ describe('AppMenuItem Component', () => {
     cy.get('[data-testid="menu-item-text"]').should('have.text', 'Test');
   });
 
-  it('should display an item with a submenu', () => {
+  it('should handle an item with a submenu', () => {
     mountItemWithSubMenu({
       root: false
     });
@@ -97,5 +96,7 @@ describe('AppMenuItem Component', () => {
     cy.get('[data-testid="nav-submenu"]').children().should('have.length.greaterThan', 1);
     cy.get('[data-testid="nav-submenu"]').children().first().should('have.text', 'Test1');
     cy.get('[data-testid="nav-submenu"]').children().eq(1).should('have.text', 'Test2');
+    cy.get('[data-testid="menu-item"]').find('[data-testid="menu-item-link"]').first().click();
+    cy.get('[data-testid="nav-submenu"]').should('not.be.visible');
   });
 });
