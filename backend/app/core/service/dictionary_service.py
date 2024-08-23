@@ -149,12 +149,6 @@ class DictionaryService(DictionaryUseCase):
 
             return DictionaryResponseDto(data=new_dic, status=ResponseStatusEnum.OK)
 
-        return DictionaryResponseDto(
-            data=None,
-            message=DictionaryError.missing_dictionary_metadata(),
-            status=ResponseStatusEnum.BAD_REQUEST,
-        )
-
     def update_dictionary_metadata(
         self, id: int, dictionary: DictionaryDto
     ) -> DictionaryResponseDto:
