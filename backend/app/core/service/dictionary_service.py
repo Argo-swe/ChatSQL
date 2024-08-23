@@ -111,11 +111,13 @@ class DictionaryService(DictionaryUseCase):
         Returns:
             DictionaryResponseDto: A response DTO with the created dictionary data or an error message.
         """
-        if (
-            dictionary.name is not None
-            and dictionary.description is not None
-            and content
-        ):
+        if not content:
+            return DictionaryResponseDto(
+                data=None,
+                message=DictionaryError.missing_dictionary_file(),
+                status=ResponseStatusEnum.BAD_REQUEST,
+            )
+        else:
             found_dic = self._dictionary_repository.get_dictionary_by_name(
                 dictionary.name
             )
@@ -146,13 +148,6 @@ class DictionaryService(DictionaryUseCase):
             self._index_manager.create_index(new_dic.id)
 
             return DictionaryResponseDto(data=new_dic, status=ResponseStatusEnum.OK)
-
-        if not content:
-            return DictionaryResponseDto(
-                data=None,
-                message=DictionaryError.missing_dictionary_file(),
-                status=ResponseStatusEnum.BAD_REQUEST,
-            )
 
         return DictionaryResponseDto(
             data=None,

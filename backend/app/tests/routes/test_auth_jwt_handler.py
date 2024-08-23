@@ -33,7 +33,8 @@ def test_decode_expired_token(monkeypatch):
     expired_payload = {"exp": time.time() - 1000, "sub": 123}
     expired_token = jwt.encode(expired_payload, "test_secret", algorithm="HS256")
 
-    assert JwtHandler.decode(expired_token) is None
+    decoded_token = JwtHandler.decode(expired_token)
+    assert decoded_token is None
 
 
 def test_invalid_token(monkeypatch):
@@ -56,15 +57,11 @@ def test_missing_jwt_secret(monkeypatch):
 
 
 def test_decode_with_invalid_signature(monkeypatch):
-    # Simula l'ambiente con un JWT_SECRET sicuro
     monkeypatch.setenv("JWT_SECRET", "test_secret")
 
-    # Genera un token valido
     valid_token = JwtHandler.sign(123)["access_token"]
 
-    # Corrompi il token modificandone l'ultima parte (la firma)
-    invalid_token = valid_token[:-1] + "0"  # Cambia l'ultima cifra
+    invalid_token = valid_token[:-1] + "0"
 
-    # Verifica che la decodifica del token corrotto sollevi InvalidSignatureError
     decoded_token = JwtHandler.decode(invalid_token)
     assert decoded_token is None
