@@ -13,7 +13,6 @@ class DbManagerAbstractFactory(ABC):
         Returns:
             AuthenticationRepository: An instance of a repository handling authentication data.
         """
-        pass
 
     @abstractmethod
     def create_dictionary_repository(self) -> DictionaryRepository:
@@ -22,4 +21,3 @@ class DbManagerAbstractFactory(ABC):
         Returns:
             DictionaryRepository: An instance of a repository handling dictionary data.
         """
-        pass

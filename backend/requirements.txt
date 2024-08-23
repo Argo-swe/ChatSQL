@@ -4,6 +4,7 @@ fastapi_utils[all]
 jsonschema
 pytest
 pytest-asyncio
+pytest-cov
 pytest-mock
 python-multipart
 sqlalchemy

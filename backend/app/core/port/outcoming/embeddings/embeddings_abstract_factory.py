@@ -25,7 +25,6 @@ class EmbeddingsAbstractFactory(ABC):
         Returns:
             IndexManagerPort: An instance of an index manager.
         """
-        pass
 
     @abstractmethod
     def create_prompt_manager_with_dependencies(
@@ -40,7 +39,6 @@ class EmbeddingsAbstractFactory(ABC):
         Returns:
             PromptManagerPort: An instance of a prompt manager with its dependencies.
         """
-        pass
 
     @abstractmethod
     def create_prompt_manager(
@@ -54,4 +52,3 @@ class EmbeddingsAbstractFactory(ABC):
         Returns:
             PromptManagerPort: An instance of a prompt manager.
         """
-        pass

@@ -14,7 +14,6 @@ class DictionaryUseCase(ABC):
         Returns:
             DictionariesResponseDto: A list of available dictionaries.
         """
-        pass
 
     @abstractmethod
     def get_dictionary_by_id(self, id: int) -> DictionaryResponseDto:
@@ -26,7 +25,6 @@ class DictionaryUseCase(ABC):
         Returns:
             DictionaryResponseDto: The dictionary data associated with the given ID.
         """
-        pass
 
     @abstractmethod
     def get_dictionary_file(self, id: int) -> str:
@@ -38,7 +36,6 @@ class DictionaryUseCase(ABC):
         Returns:
             str: The file content of the dictionary.
         """
-        pass
 
     @abstractmethod
     def get_dictionary_preview(self, id: int) -> DictionaryResponseDto:
@@ -50,7 +47,6 @@ class DictionaryUseCase(ABC):
         Returns:
             DictionaryResponseDto: A preview of the dictionary data.
         """
-        pass
 
     @abstractmethod
     def create_dictionary(
@@ -65,16 +61,11 @@ class DictionaryUseCase(ABC):
         Returns:
             DictionaryResponseDto: The newly created dictionary data.
         """
-        pass
 
     @abstractmethod
     def update_dictionary_metadata(
         self, id: int, dictionary: DictionaryDto
     ) -> DictionaryResponseDto:
-        pass
-
-    @abstractmethod
-    def update_dictionary_file(self, id: int, file: str) -> DictionaryResponseDto:
         """Update the metadata of an existing dictionary by its ID.
 
         Args:
@@ -84,7 +75,18 @@ class DictionaryUseCase(ABC):
         Returns:
             DictionaryResponseDto: The updated dictionary data.
         """
-        pass
+
+    @abstractmethod
+    def update_dictionary_file(self, id: int, file: str) -> DictionaryResponseDto:
+        """Update the file of an existing dictionary by its ID.
+
+        Args:
+            id (int): The unique identifier of the dictionary to be updated.
+            file (str): The file content to be associated with the dictionary.
+
+        Returns:
+            DictionaryResponseDto: The updated dictionary data.
+        """
 
     @abstractmethod
     def delete_dictionary(self, id: int) -> ResponseDto:
@@ -96,4 +98,3 @@ class DictionaryUseCase(ABC):
         Returns:
             ResponseDto: The response indicating the success of the deletion.
         """
-        pass

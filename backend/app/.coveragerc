@@ -1,0 +1,16 @@
+[run]
+branch = True
+omit =
+    tests/*
+    app.py
+    configuration.py
+    tools/exceptions.py
+    tools/log_filter.py
+
+[report]
+omit =
+    tests/*
+    app.py
+    configuration.py
+    tools/exceptions.py
+    tools/log_filter.py

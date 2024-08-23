@@ -1,5 +1,5 @@
 import time
-from typing import Dict
+from typing import Any, Dict, Optional
 import jwt
 import os
 
@@ -22,7 +22,7 @@ class JwtHandler:
         return JwtHandler.__token_response(token)
 
     @staticmethod
-    def decode(token: str) -> dict | None:
+    def decode(token: str) -> Optional[Dict[str, Any]]:
         try:
             decoded_token = jwt.decode(
                 token, JwtHandler.JWT_SECRET, algorithms=[JwtHandler.JWT_ALGORITHM]
@@ -32,9 +32,5 @@ class JwtHandler:
                 return decoded_token
             else:
                 return None
-        except jwt.ExpiredSignatureError:
-            return None
-        except jwt.InvalidTokenError:
-            return None
-        except jwt.DecodeError:
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, jwt.DecodeError):
             return None

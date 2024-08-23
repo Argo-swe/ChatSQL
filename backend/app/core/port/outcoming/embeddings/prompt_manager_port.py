@@ -36,7 +36,6 @@ class PromptManagerPort(ABC):
         Returns:
             Any: The generated prompt.
         """
-        pass
 
     @abstractmethod
     def get_index_manager(self) -> IndexManagerPort:
@@ -45,7 +44,6 @@ class PromptManagerPort(ABC):
         Returns:
             IndexManagerPort: The index manager instance.
         """
-        pass
 
     @abstractmethod
     def _create_debug_manager(self) -> DebugManagerPort:
@@ -54,4 +52,3 @@ class PromptManagerPort(ABC):
         Returns:
             DebugManagerPort: The debug manager instance.
         """
-        pass

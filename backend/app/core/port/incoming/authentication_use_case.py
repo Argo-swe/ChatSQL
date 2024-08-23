@@ -15,4 +15,3 @@ class AuthenticationUseCase(ABC):
         Returns:
             AuthResponseDto: The authentication response containing user details and tokens.
         """
-        pass
