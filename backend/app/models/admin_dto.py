@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi_camelcase import CamelModel
+from fastapi_camelcase import CamelModel, ConfigDict
 
 
 class AdminDto(CamelModel):
@@ -7,5 +7,4 @@ class AdminDto(CamelModel):
     username: str
     password: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

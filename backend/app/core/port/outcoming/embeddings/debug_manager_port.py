@@ -15,7 +15,6 @@ class DebugManagerPort(ABC):
         Returns:
             List[str]: A list of log entries detailing the prompt generation process.
         """
-        pass
 
     @abstractmethod
     def semantic_search_log_custom_algorithm(
@@ -30,4 +29,3 @@ class DebugManagerPort(ABC):
         Returns:
             List[str]: A list of log entries detailing the prompt generation process.
         """
-        pass

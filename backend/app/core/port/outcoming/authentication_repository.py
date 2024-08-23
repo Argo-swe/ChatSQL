@@ -15,4 +15,3 @@ class AuthenticationRepository(ABC):
         Returns:
             The user details associated with the given username.
         """
-        pass

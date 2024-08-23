@@ -16,7 +16,6 @@ class FileRepository(ABC):
         Returns:
             None
         """
-        pass
 
     @abstractmethod
     def load(self, id: int) -> str:
@@ -28,7 +27,6 @@ class FileRepository(ABC):
         Returns:
             str: The content of the file.
         """
-        pass
 
     @abstractmethod
     def delete(self, id: int):
@@ -40,7 +38,6 @@ class FileRepository(ABC):
         Returns:
             None
         """
-        pass
 
     @abstractmethod
     def get_preview(self, id: int) -> Union[DictionaryPreviewDto, None]:
@@ -52,7 +49,6 @@ class FileRepository(ABC):
         Returns:
             DictionaryPreviewDto: The preview data of the dictionary.
         """
-        pass
 
     @abstractmethod
     def get_json_schema(self, id: int):
@@ -64,7 +60,6 @@ class FileRepository(ABC):
         Returns:
             dict: The JSON schema.
         """
-        pass
 
     @abstractmethod
     def extract_index_metadata(self, id: int) -> list:
@@ -76,7 +71,6 @@ class FileRepository(ABC):
         Returns:
             list: The extracted index metadata.
         """
-        pass
 
     @abstractmethod
     def extract_schema_metadata(self, id: int, tuples: list) -> str:
@@ -89,4 +83,3 @@ class FileRepository(ABC):
         Returns:
             str: The extracted schema metadata as a string.
         """
-        pass

@@ -13,4 +13,3 @@ class SchemaValidatorUseCase(ABC):
         Returns:
             bool: True if the schema is valid, False otherwise.
         """
-        pass

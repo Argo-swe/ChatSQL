@@ -11,7 +11,6 @@ class DictionaryRepository(ABC):
         Returns:
             List[DictionaryDto]: A list of all dictionaries. Each dictionary is represented by a `DictionaryDto` object.
         """
-        pass
 
     @abstractmethod
     def get_dictionary_by_id(self, id: int) -> DictionaryDto:
@@ -23,7 +22,6 @@ class DictionaryRepository(ABC):
         Returns:
             DictionaryDto: The dictionary data associated with the given ID.
         """
-        pass
 
     @abstractmethod
     def get_dictionary_by_name(self, name: str) -> DictionaryDto:
@@ -35,7 +33,6 @@ class DictionaryRepository(ABC):
         Returns:
             DictionaryDto: The dictionary data associated with the given name.
         """
-        pass
 
     @abstractmethod
     def create_dictionary(self, name: str, description: str) -> DictionaryDto:
@@ -48,7 +45,6 @@ class DictionaryRepository(ABC):
         Returns:
             DictionaryDto: The newly created dictionary data.
         """
-        pass
 
     @abstractmethod
     def update_dictionary(self, id: int, name: str, description: str) -> DictionaryDto:
@@ -62,7 +58,6 @@ class DictionaryRepository(ABC):
         Returns:
             DictionaryDto: The updated dictionary data.
         """
-        pass
 
     @abstractmethod
     def delete_dictionary(self, id: int):
@@ -74,4 +69,3 @@ class DictionaryRepository(ABC):
         Returns:
             None
         """
-        pass

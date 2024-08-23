@@ -22,7 +22,7 @@ ENV LANG=C.UTF-8
 WORKDIR /usr/src/
 
 # Create a non-root user
-RUN useradd --create-home --shell /bin/bash appuser
+# RUN useradd --create-home --shell /bin/bash appuser
 
 # Copy necessary files
 COPY ./config.json /opt/chatsql/config.json
@@ -68,7 +68,7 @@ RUN chmod +x ./entrypoint-backend.sh && \
 WORKDIR /usr/src/app
 
 # Change ownership of the working directory to the non-root user
-RUN chown -R appuser:appuser /usr/src/app /opt/chatsql
+# RUN chown -R appuser:appuser /usr/src/app /opt/chatsql
 
-# Switch to the non-root user
-USER appuser
+# # Switch to the non-root user
+# USER appuser

@@ -35,6 +35,13 @@ Ogni volta prima di eseguire un commit verranno eseguiti i controlli e solo in c
 
 L'interfaccia di backend esposta è raggiungibile all'indirizzo [http://localhost:8000/docs](http://localhost:8000/docs)
 
+## Testing
+
+Entrando nel container docker del backend dalla cartella `/usr/src/app` eseguire il comando
+```bash
+pytest --cov=. --cov-report term-missing tests
+```
+
 ### Variabili d'ambiente
 
 Creare un file locale il file `backend/.env.local` inserendo le variabili che si vogliono modificare rispetto al file `backend/.env` o che hanno valori da impostare

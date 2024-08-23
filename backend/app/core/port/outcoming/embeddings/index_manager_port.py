@@ -10,7 +10,6 @@ class IndexManagerPort(ABC):
         Returns:
             Any: The embeddings data.
         """
-        pass
 
     @abstractmethod
     def create_or_load_index(self, dictionary_id: int):
@@ -22,7 +21,6 @@ class IndexManagerPort(ABC):
         Returns:
             Any: The index data.
         """
-        pass
 
     @abstractmethod
     def create_index(self, dictionary_id: int, save_index: bool = True):
@@ -35,7 +33,6 @@ class IndexManagerPort(ABC):
         Returns:
             Any: The created index data.
         """
-        pass
 
     @abstractmethod
     def save_index(self, dictionary_id: int):
@@ -47,7 +44,6 @@ class IndexManagerPort(ABC):
         Returns:
             None
         """
-        pass
 
     @abstractmethod
     def load_index(self, dictionary_id: int):
@@ -59,7 +55,6 @@ class IndexManagerPort(ABC):
         Returns:
             Any: The loaded index data.
         """
-        pass
 
     @abstractmethod
     def delete_index(self, dictionary_id: int):
@@ -71,4 +66,3 @@ class IndexManagerPort(ABC):
         Returns:
             None
         """
-        pass

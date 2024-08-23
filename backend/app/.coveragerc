@@ -1,0 +1,6 @@
+[run]
+branch = True
+omit =
+    app.py
+    configuration.py
+    tools/log_filter.py

@@ -20,7 +20,6 @@ class PromptUseCase(ABC):
         Returns:
             StringDataResponseDto: The generated prompt as a string.
         """
-        pass
 
     @abstractmethod
     def generate_prompt_with_debug(
@@ -37,4 +36,3 @@ class PromptUseCase(ABC):
         Returns:
             PromptResponseDto: The generated prompt along with debug information.
         """
-        pass
