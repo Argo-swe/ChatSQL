@@ -6,6 +6,7 @@ import Sidebar from 'primevue/sidebar';
 import { ref } from 'vue';
 import { createI18n } from 'vue-i18n';
 import ConfigSidebar from '../../../src/components/layout/ConfigSidebar.vue';
+import { useLayout } from '../../../src/composables/layout';
 
 const i18n = createI18n({
   legacy: false,
@@ -14,6 +15,8 @@ const i18n = createI18n({
   globalInjection: true,
   message: 'Mock translation'
 });
+
+let originalScaleValue: number;
 
 function mountConfigSidebar(mockLayoutConfig?, props?) {
   return cy.mount(ConfigSidebar, {
@@ -39,7 +42,14 @@ function mountConfigSidebar(mockLayoutConfig?, props?) {
 
 describe('ConfigSidebar Component', () => {
   beforeEach(() => {
+    const { layoutConfig } = useLayout();
+    originalScaleValue = layoutConfig.scale.value;
     mountConfigSidebar();
+  });
+
+  afterEach(() => {
+    const { layoutConfig } = useLayout();
+    layoutConfig.scale.value = originalScaleValue;
   });
 
   it('should display correctly', () => {
