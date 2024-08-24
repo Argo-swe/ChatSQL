@@ -247,3 +247,27 @@ def test_delete_dictionary_non_existent(dictionary_repository, mock_session, moc
     # Ensure that delete and commit were NOT called since the dictionary does not exist
     mock_session.delete.assert_not_called()
     mock_session.commit.assert_not_called()
+
+
+"""Test for handling database errors during deletion"""
+
+
+def test_delete_dictionary_database_error(dictionary_repository, mock_session, mocker):
+    dictionary_id = 1
+
+    # Create a mock dictionary instance to be returned by get_dictionary_by_id
+    mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
+    mocker.patch.object(
+        dictionary_repository, "get_dictionary_by_id", return_value=mock_dictionary
+    )
+
+    # Simulate an exception being raised when trying to delete the dictionary
+    mock_session.delete.side_effect = Exception("Database error during deletion")
+
+    # Call the delete method and catch the exception
+    with pytest.raises(Exception, match="Database error during deletion"):
+        dictionary_repository.delete_dictionary(dictionary_id)
+
+    # Ensure that delete was called, but commit was not called due to the exception
+    mock_session.delete.assert_called_once_with(mock_dictionary)
+    mock_session.commit.assert_not_called()
