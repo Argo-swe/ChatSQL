@@ -118,11 +118,8 @@ describe('CreateUpdateDictionaryModal Component', () => {
       .find('input[type="file"]')
       .selectFile('cypress/fixtures/orders.json');
 
-    cy.get('[data-testid="dictionary-submit-button"]')
-      .click()
-      .then(() => {
-        cy.get('@messageSuccessSpy').should('have.been.called');
-      });
+    cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('@messageSuccessSpy').should('have.been.called');
   });
 
   it('should handle dictionary creation failure', () => {
@@ -133,11 +130,8 @@ describe('CreateUpdateDictionaryModal Component', () => {
       .find('input[type="file"]')
       .selectFile('cypress/fixtures/invalid_orders.json');
 
-    cy.get('[data-testid="dictionary-submit-button"]')
-      .click()
-      .then(() => {
-        cy.get('@messageErrorSpy').should('have.been.called');
-      });
+    cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('@messageErrorSpy').should('have.been.called');
   });
 
   it('should disable the submit button when file format is invalid', () => {
@@ -153,11 +147,8 @@ describe('CreateUpdateDictionaryModal Component', () => {
     cy.get('[data-testid="dictionary-description-input"]').clear();
     cy.get('[data-testid="dictionary-description-input"]').type('New dictionary description');
 
-    cy.get('[data-testid="dictionary-submit-button"]')
-      .click()
-      .then(() => {
-        cy.get('@messageSuccessSpy').should('have.been.called');
-      });
+    cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('@messageSuccessSpy').should('have.been.called');
   });
 
   it('should handle dictionary metadata update failure', () => {
@@ -165,11 +156,8 @@ describe('CreateUpdateDictionaryModal Component', () => {
     cy.get('[data-testid="dictionary-name-input"]').clear();
     cy.get('[data-testid="dictionary-name-input"]').type('***');
 
-    cy.get('[data-testid="dictionary-submit-button"]')
-      .click()
-      .then(() => {
-        cy.get('@messageErrorSpy').should('have.been.called');
-      });
+    cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('@messageErrorSpy').should('have.been.called');
   });
 
   it('should handle dictionary file update successfully', () => {
@@ -178,11 +166,8 @@ describe('CreateUpdateDictionaryModal Component', () => {
       .find('input[type="file"]')
       .selectFile('cypress/fixtures/orders.json');
 
-    cy.get('[data-testid="dictionary-submit-button"]')
-      .click()
-      .then(() => {
-        cy.get('@messageSuccessSpy').should('have.been.called');
-      });
+    cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('@messageSuccessSpy').should('have.been.called');
   });
 
   it('should handle dictionary file update failure', () => {
@@ -191,11 +176,8 @@ describe('CreateUpdateDictionaryModal Component', () => {
       .find('input[type="file"]')
       .selectFile('cypress/fixtures/invalid_orders.json');
 
-    cy.get('[data-testid="dictionary-submit-button"]')
-      .click()
-      .then(() => {
-        cy.get('@messageErrorSpy').should('have.been.called');
-      });
+    cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('@messageErrorSpy').should('have.been.called');
   });
 
   it('should clear the selected file', () => {

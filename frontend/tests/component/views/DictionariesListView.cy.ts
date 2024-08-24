@@ -86,7 +86,7 @@ function mockDeleteDictionary(response = getSuccessResponse()) {
   return mountDictionariesListView(mockApiClient);
 }
 
-describe('LoginDialog Component', () => {
+describe('DictionariesListView Component', () => {
   it('should render the dictionaries list correctly', () => {
     mountDictionariesListView(getGlobalMockApiClient());
     cy.get('[data-testid="dictionary-page-header"]').should('be.visible');
@@ -167,12 +167,8 @@ describe('LoginDialog Component', () => {
         options.accept();
       });
     });
-    cy.get('[data-testid="dictionary-delete-button"]')
-      .should('exist')
-      .click()
-      .then(() => {
-        cy.get('@messageSuccessSpy').should('have.been.called');
-      });
+    cy.get('[data-testid="dictionary-delete-button"]').should('exist').click();
+    cy.get('@messageSuccessSpy').should('have.been.called');
   });
 
   it('should handle dictionary deletion failure', () => {
@@ -181,11 +177,7 @@ describe('LoginDialog Component', () => {
         options.accept();
       });
     });
-    cy.get('[data-testid="dictionary-delete-button"]')
-      .should('exist')
-      .click()
-      .then(() => {
-        cy.get('@messageErrorSpy').should('have.been.called');
-      });
+    cy.get('[data-testid="dictionary-delete-button"]').should('exist').click();
+    cy.get('@messageErrorSpy').should('have.been.called');
   });
 });

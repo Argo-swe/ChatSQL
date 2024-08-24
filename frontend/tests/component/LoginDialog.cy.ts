@@ -79,19 +79,16 @@ describe('LoginDialog Component', () => {
     mountLoginDialog();
     cy.get('[data-testid="input-username"]').type('correctusername');
     cy.get('[data-testid="input-password"]').type('correctpassword');
-    cy.get('[data-testid="login-submit-button"]')
-      .click()
-      .then(() => {
-        // Checks localStorage
-        cy.window().then((win) => {
-          expect(win.localStorage.getItem('token')).to.equal('mockAccessToken');
-        });
-        // Checks method calling
-        cy.get('@messageSuccessSpy').should('have.been.called');
-        // Controls the form reset
-        cy.get('[data-testid="input-username"]').should('have.value', '');
-        cy.get('[data-testid="input-password"]').should('have.value', '');
-      });
+    cy.get('[data-testid="login-submit-button"]').click();
+    // Checks localStorage
+    cy.window().then((win) => {
+      expect(win.localStorage.getItem('token')).to.equal('mockAccessToken');
+    });
+    // Checks method calling
+    cy.get('@messageSuccessSpy').should('have.been.called');
+    // Controls the form reset
+    cy.get('[data-testid="input-username"]').should('have.value', '');
+    cy.get('[data-testid="input-password"]').should('have.value', '');
   });
 
   it('should handle form submission failure', () => {
@@ -107,12 +104,8 @@ describe('LoginDialog Component', () => {
     mountLoginDialog();
     cy.get('[data-testid="input-username"]').type('wrongusername');
     cy.get('[data-testid="input-password"]').type('wrongpassword');
-    cy.get('[data-testid="login-submit-button"]')
-      .click()
-      .then(() => {
-        // Checks method calling
-        cy.get('@messageErrorSpy').should('have.been.called');
-        cy.get('[data-testid="login-dialog"]').should('exist');
-      });
+    cy.get('[data-testid="login-submit-button"]').click();
+    cy.get('@messageErrorSpy').should('have.been.called');
+    cy.get('[data-testid="login-dialog"]').should('exist');
   });
 });
