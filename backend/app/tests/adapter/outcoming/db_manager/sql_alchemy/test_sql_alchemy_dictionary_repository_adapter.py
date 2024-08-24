@@ -317,3 +317,31 @@ def test_get_all_dictionaries(dictionary_repository, mock_session, mocker):
     # Ensure that the all() method was called to fetch all results
     mock_session.query(Dictionaries).all.assert_called_once()
     assert result == mock_dictionaries
+
+
+"""Test for get_dictionary_by_id"""
+
+
+def test_get_dictionary_by_id(dictionary_repository, mock_session, mocker):
+    # Given
+    dictionary_id = 1
+    mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
+    mock_session.query(Dictionaries).filter().first.return_value = mock_dictionary
+
+    # When
+    result = dictionary_repository.get_dictionary_by_id(dictionary_id)
+
+    # Then
+    # Ensure query was called with Dictionaries
+    mock_session.query.assert_any_call(Dictionaries)
+
+    # Check if filter was called with a condition involving the correct ID
+    called_args, _ = mock_session.query(Dictionaries).filter.call_args
+    assert called_args[0].left.name == "id"
+    assert called_args[0].right.value == dictionary_id
+
+    # Ensure that first() was called after the filter
+    mock_session.query(Dictionaries).filter().first.assert_called_once()
+
+    # Ensure the result is the expected mock dictionary
+    assert result == mock_dictionary
