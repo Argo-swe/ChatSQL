@@ -96,3 +96,29 @@ def test_update_dictionary_commit_failure(dictionary_repository, mock_session, m
 
     # Ensure that refresh was never called due to the commit failure
     mock_session.refresh.assert_not_called()
+
+
+"""Test for updating a non-existent dictionary entry"""
+
+
+def test_update_non_existent_dictionary(dictionary_repository, mock_session, mocker):
+    # Given
+    dictionary_id = 999  # Assume this ID does not exist
+    new_name = "Updated Name"
+    new_description = "Updated Description"
+
+    # Mock get_dictionary_by_id to return None for a non-existent dictionary
+    mocker.patch.object(
+        dictionary_repository, "get_dictionary_by_id", return_value=None
+    )
+
+    # When/Then
+    with pytest.raises(AttributeError):
+        # Expecting an AttributeError since we're trying to update a None object
+        dictionary_repository.update_dictionary(
+            dictionary_id, new_name, new_description
+        )
+
+    # Ensure that commit was never called since the dictionary doesn't exist
+    mock_session.commit.assert_not_called()
+    mock_session.refresh.assert_not_called()
