@@ -42,6 +42,24 @@ def test_create_authentication_repository(mocker):
     assert isinstance(auth_repo, SqlAlchemyAuthenticationRepositoryAdapter)
 
 
+"""Test for creation with error"""
+
+
+def test_create_authentication_repository_with_error(mocker):
+    # Given
+    factory = SqlAlchemyDbManagerFactory()
+
+    # Mock the constructor of SqlAlchemyAuthenticationRepositoryAdapter to raise an exception
+    mocker.patch(
+        "adapter.outcoming.db_manager.sql_alchemy.sql_alchemy_db_manager_factory.SqlAlchemyAuthenticationRepositoryAdapter",
+        side_effect=Exception("Failed to create authentication repository"),
+    )
+
+    # When/Then
+    with pytest.raises(Exception, match="Failed to create authentication repository"):
+        factory.create_authentication_repository()
+
+
 """Test for correct repository type"""
 
 
