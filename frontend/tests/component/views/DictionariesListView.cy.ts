@@ -86,6 +86,11 @@ function mockDeleteDictionary(response = getSuccessResponse()) {
   return mountDictionariesListView(mockApiClient);
 }
 
+function CheckSubComponentCall() {
+  cy.get('@openDialogSpy').should('have.been.called');
+  cy.get('@openDialogSpy').its('firstCall.args[0]').should('equal', CreateUpdateDictionaryModal);
+}
+
 describe('DictionariesListView Component', () => {
   it('should render the dictionaries list correctly', () => {
     mountDictionariesListView(getGlobalMockApiClient());
@@ -101,11 +106,8 @@ describe('DictionariesListView Component', () => {
         .should('exist')
         .click()
         .then(() => {
-          expect(openDialogSpy).to.be.called;
-
-          let callArgs = openDialogSpy.getCall(0).args[0];
-          expect(callArgs).to.equal(CreateUpdateDictionaryModal);
-          callArgs = openDialogSpy.getCall(0).args[1];
+          CheckSubComponentCall();
+          const callArgs = openDialogSpy.getCall(0).args[1];
           expect(callArgs.data.withFile).to.equal(true);
         });
     });
@@ -120,11 +122,8 @@ describe('DictionariesListView Component', () => {
         .should('exist')
         .click()
         .then(() => {
-          expect(openDialogSpy).to.be.called;
-
-          let callArgs = openDialogSpy.getCall(0).args[0];
-          expect(callArgs).to.equal(CreateUpdateDictionaryModal);
-          callArgs = openDialogSpy.getCall(0).args[1];
+          CheckSubComponentCall();
+          const callArgs = openDialogSpy.getCall(0).args[1];
           expect(callArgs.data.withFile).to.equal(false);
           expect(callArgs.data.dictionaryId).to.equal(0);
           expect(callArgs.data.dictionaryName).to.equal('Orders');
@@ -142,11 +141,8 @@ describe('DictionariesListView Component', () => {
         .should('exist')
         .click()
         .then(() => {
-          expect(openDialogSpy).to.be.called;
-
-          let callArgs = openDialogSpy.getCall(0).args[0];
-          expect(callArgs).to.equal(CreateUpdateDictionaryModal);
-          callArgs = openDialogSpy.getCall(0).args[1];
+          CheckSubComponentCall();
+          const callArgs = openDialogSpy.getCall(0).args[1];
           expect(callArgs.data.withFile).to.equal(true);
           expect(callArgs.data.dictionaryId).to.equal(0);
         });
