@@ -147,3 +147,17 @@ def test_create_dictionary_repository_returns_correct_type():
 
     # Then it should return an instance of SqlAlchemyDictionaryRepositoryAdapter
     assert isinstance(dict_repo, SqlAlchemyDictionaryRepositoryAdapter)
+
+
+"""INITIALIZATION LOGIC TEST"""
+
+
+def test_factory_initialization_calls_create_all(mocker):
+    # Mock the create_all method to ensure it's called
+    mock_create_all = mocker.patch.object(models.Base.metadata, "create_all")
+
+    # When initializing the factory
+    factory = SqlAlchemyDbManagerFactory()
+
+    # Then ensure create_all is called with the engine
+    mock_create_all.assert_called_once_with(bind=engine)
