@@ -50,7 +50,7 @@ const dbms: Ref<DbmsOption[]> = ref([
   { name: DbmsName.Oracle, code: DbmsCode.Oracle },
   { name: DbmsName.SQLite, code: DbmsCode.SQLite }
 ]);
-const selectedDbms = ref(localStorage.getItem('chat-dbms') || DbmsCode.Mysql);
+const selectedDbms = ref(localStorage.getItem('chat-dbms') || DbmsCode.MySQL);
 // Variable to control the state of the options form container
 const hide = ref(false);
 // Hide/Show switch for the toggle button
