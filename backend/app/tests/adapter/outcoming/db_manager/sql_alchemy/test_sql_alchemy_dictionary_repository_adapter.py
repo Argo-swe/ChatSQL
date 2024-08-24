@@ -20,6 +20,40 @@ def dictionary_repository(mock_session):
     return SqlAlchemyDictionaryRepositoryAdapter(session=mock_session)
 
 
+"""CREATE DICTIONARY TEST BATTERY"""
+
+"""Test for successful dictionary creation"""
+
+
+def test_create_dictionary_success(dictionary_repository, mock_session, mocker):
+    # Given
+    name = "New Dictionary"
+    description = "A description for the new dictionary"
+
+    # Create a mock dictionary instance that simulates the database model
+    mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
+    mock_dictionary.name = name
+    mock_dictionary.description = description
+
+    # Mock the session's add, commit, and refresh methods
+    mock_session.add.return_value = None
+    mock_session.commit.return_value = None
+    mock_session.refresh.return_value = None
+
+    # When
+    result = dictionary_repository.create_dictionary(name, description)
+
+    # Then
+    # Check that the dictionary's properties were set correctly
+    assert result.name == name
+    assert result.description == description
+
+    # Ensure that add, commit, and refresh were called correctly
+    mock_session.add.assert_called_once_with(result)
+    mock_session.commit.assert_called_once()
+    mock_session.refresh.assert_called_once_with(result)
+
+
 """UPDATE DICTIONARY TEST BATTERY"""
 
 
