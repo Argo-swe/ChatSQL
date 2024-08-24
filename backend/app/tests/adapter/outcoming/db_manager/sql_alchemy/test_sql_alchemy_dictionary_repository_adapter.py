@@ -292,3 +292,28 @@ def test_delete_dictionary_ensure_commit_called(
 
     # Ensure that commit is called after deletion
     mock_session.commit.assert_called_once()
+
+
+"""GETTERS TEST BATTERY"""
+
+
+"""Test for get_all_dictionaries"""
+
+
+def test_get_all_dictionaries(dictionary_repository, mock_session, mocker):
+    # Given
+    mock_dictionaries = [
+        mocker.create_autospec(Dictionaries, instance=True) for _ in range(3)
+    ]
+    mock_session.query(Dictionaries).all.return_value = mock_dictionaries
+
+    # When
+    result = dictionary_repository.get_all_dictionaries()
+
+    # Then
+    # Ensure that the query was performed on the Dictionaries model
+    # any_call is used in case the query method is called more than once during the code execution
+    mock_session.query.assert_any_call(Dictionaries)
+    # Ensure that the all() method was called to fetch all results
+    mock_session.query(Dictionaries).all.assert_called_once()
+    assert result == mock_dictionaries
