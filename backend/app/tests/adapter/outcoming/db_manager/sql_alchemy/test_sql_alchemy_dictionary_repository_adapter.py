@@ -199,3 +199,29 @@ def test_update_non_existent_dictionary(dictionary_repository, mock_session, moc
     # Ensure that commit was never called since the dictionary doesn't exist
     mock_session.commit.assert_not_called()
     mock_session.refresh.assert_not_called()
+
+
+"""DELETE DICTIONARY TEST BATTERY"""
+
+
+"""Test for successful deletion of a dictionary"""
+
+
+def test_delete_dictionary_success(dictionary_repository, mock_session, mocker):
+    dictionary_id = 1
+
+    # Create a mock dictionary instance to be returned by get_dictionary_by_id
+    mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
+    mocker.patch.object(
+        dictionary_repository, "get_dictionary_by_id", return_value=mock_dictionary
+    )
+
+    # Call the delete method
+    dictionary_repository.delete_dictionary(dictionary_id)
+
+    # Ensure that get_dictionary_by_id was called with the correct ID
+    dictionary_repository.get_dictionary_by_id.assert_called_once_with(dictionary_id)
+
+    # Ensure that the delete and commit methods were called on the session
+    mock_session.delete.assert_called_once_with(mock_dictionary)
+    mock_session.commit.assert_called_once()
