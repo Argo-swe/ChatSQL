@@ -271,3 +271,24 @@ def test_delete_dictionary_database_error(dictionary_repository, mock_session, m
     # Ensure that delete was called, but commit was not called due to the exception
     mock_session.delete.assert_called_once_with(mock_dictionary)
     mock_session.commit.assert_not_called()
+
+
+"""Test to ensure commit is always called after deletion"""
+
+
+def test_delete_dictionary_ensure_commit_called(
+    dictionary_repository, mock_session, mocker
+):
+    dictionary_id = 1
+
+    # Create a mock dictionary instance to be returned by get_dictionary_by_id
+    mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
+    mocker.patch.object(
+        dictionary_repository, "get_dictionary_by_id", return_value=mock_dictionary
+    )
+
+    # Call the delete method
+    dictionary_repository.delete_dictionary(dictionary_id)
+
+    # Ensure that commit is called after deletion
+    mock_session.commit.assert_called_once()
