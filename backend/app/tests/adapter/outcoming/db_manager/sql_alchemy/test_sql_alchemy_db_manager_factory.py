@@ -42,6 +42,20 @@ def test_create_authentication_repository(mocker):
     assert isinstance(auth_repo, SqlAlchemyAuthenticationRepositoryAdapter)
 
 
+"""Test for correct repository type"""
+
+
+def test_create_authentication_repository_returns_correct_type():
+    # Given
+    factory = SqlAlchemyDbManagerFactory()
+
+    # When creating the authentication repository
+    auth_repo = factory.create_authentication_repository()
+
+    # Then it should return an instance of SqlAlchemyAuthenticationRepositoryAdapter
+    assert isinstance(auth_repo, SqlAlchemyAuthenticationRepositoryAdapter)
+
+
 """CREATE DICTIONARY REPOSITORY TEST BATTERY"""
 
 
@@ -101,3 +115,17 @@ def test_create_dictionary_repository_multiple_calls(mocker):
     # Then ensure that a new instance is created each time
     assert dict_repo1 is not dict_repo2
     assert mock_dict_repo_constructor.call_count == 2
+
+
+"""Test for correct repository type"""
+
+
+def test_create_dictionary_repository_returns_correct_type():
+    # Given
+    factory = SqlAlchemyDbManagerFactory()
+
+    # When creating the dictionary repository
+    dict_repo = factory.create_dictionary_repository()
+
+    # Then it should return an instance of SqlAlchemyDictionaryRepositoryAdapter
+    assert isinstance(dict_repo, SqlAlchemyDictionaryRepositoryAdapter)
