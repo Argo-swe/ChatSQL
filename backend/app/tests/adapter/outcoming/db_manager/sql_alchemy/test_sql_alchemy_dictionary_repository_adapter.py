@@ -54,6 +54,29 @@ def test_create_dictionary_success(dictionary_repository, mock_session, mocker):
     mock_session.refresh.assert_called_once_with(result)
 
 
+"""Test for handling database commit failure during dictionary creation"""
+
+
+def test_create_dictionary_commit_failure(dictionary_repository, mock_session, mocker):
+    # Given
+    name = "New Dictionary"
+    description = "A description for the new dictionary"
+
+    # Simulate a commit failure
+    mock_session.commit.side_effect = Exception("Commit failed")
+
+    # When/Then
+    with pytest.raises(Exception, match="Commit failed"):
+        dictionary_repository.create_dictionary(name, description)
+
+    # Ensure that add was called but commit raised an exception
+    mock_session.add.assert_called_once()
+    mock_session.commit.assert_called_once()
+
+    # Ensure that refresh was never called due to the commit failure
+    mock_session.refresh.assert_not_called()
+
+
 """UPDATE DICTIONARY TEST BATTERY"""
 
 
