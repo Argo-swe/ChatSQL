@@ -13,23 +13,25 @@ from adapter.outcoming.db_manager.db_manager_factory import DbManagerFactory
 
 
 def test_create_sqlalchemy_db_manager_factory(mocker):
-    # Given
-    config = {"db_manager": "sqlalchemy"}
+    config = {
+        "db_manager": "sqlalchemy"
+    }  # Configuration specifying the use of SQLAlchemy as the DB manager
 
     # Mock the SqlAlchemyDbManagerFactory to track its instantiation
+    # This mock ensures that when SqlAlchemyDbManagerFactory is called within the DbManagerFactory, we can verify it was called correctly.
     mock_sqlalchemy_factory = mocker.patch(
         "adapter.outcoming.db_manager.db_manager_factory.SqlAlchemyDbManagerFactory",
         return_value=mocker.MagicMock(spec=SqlAlchemyDbManagerFactory),
     )
 
-    # When
+    # Call the create method of DbManagerFactory with the configuration
     result = DbManagerFactory.create(config)
 
-    # Then
-    # Ensure the factory method was called
+    # Ensure the factory method was called exactly once
     mock_sqlalchemy_factory.assert_called_once()
 
     # Ensure the result is an instance of SqlAlchemyDbManagerFactory
+    # This verifies that the correct factory is instantiated based on the config
     assert isinstance(result, SqlAlchemyDbManagerFactory)
 
 
@@ -37,14 +39,13 @@ def test_create_sqlalchemy_db_manager_factory(mocker):
 
 
 def test_create_unknown_db_manager_type():
-    # Given
-    config = {"db_manager": "unknown"}
+    config = {"db_manager": "unknown"}  # Configuration with an unknown DB manager type
 
-    # When/Then
+    # Attempt to create a DB manager with an unknown type and expect a ValueError
     with pytest.raises(ValueError) as exc_info:
         DbManagerFactory.create(config)
 
-    # Ensure the error message is correct
+    # Ensure the error message is correct and indicates the unknown type
     assert str(exc_info.value) == "Unknown DB manager type: unknown"
 
 
@@ -52,12 +53,11 @@ def test_create_unknown_db_manager_type():
 
 
 def test_create_missing_db_manager_key():
-    # Given
-    config = {}  # No "db_manager" key provided
+    config = {}  # Configuration without the "db_manager" key
 
-    # When/Then
+    # Attempt to create a DB manager with a missing key and expect a ValueError
     with pytest.raises(ValueError) as exc_info:
         DbManagerFactory.create(config)
 
-    # Ensure the error message is correct for the default case
+    # Ensure the error message is correct, indicating that the db_manager key was None
     assert str(exc_info.value) == "Unknown DB manager type: None"
