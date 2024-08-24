@@ -79,3 +79,25 @@ def test_create_dictionary_repository_with_error(mocker):
     # When/Then
     with pytest.raises(Exception, match="Failed to create repository"):
         factory.create_dictionary_repository()
+
+
+"""Test dictionary repository creation with multiple calls"""
+
+
+def test_create_dictionary_repository_multiple_calls(mocker):
+    # Given
+    factory = SqlAlchemyDbManagerFactory()
+
+    # Mock the constructor of SqlAlchemyDictionaryRepositoryAdapter to ensure it's called
+    mock_dict_repo_constructor = mocker.patch(
+        "adapter.outcoming.db_manager.sql_alchemy.sql_alchemy_db_manager_factory.SqlAlchemyDictionaryRepositoryAdapter",
+        side_effect=SqlAlchemyDictionaryRepositoryAdapter,
+    )
+
+    # When calling create_dictionary_repository multiple times
+    dict_repo1 = factory.create_dictionary_repository()
+    dict_repo2 = factory.create_dictionary_repository()
+
+    # Then ensure that a new instance is created each time
+    assert dict_repo1 is not dict_repo2
+    assert mock_dict_repo_constructor.call_count == 2
