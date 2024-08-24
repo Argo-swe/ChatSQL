@@ -21,6 +21,9 @@ def mock_sqlalchemy_engine(mocker):
 """CREATE AUTH REPOSITORY TEST BATTERY"""
 
 
+"""Test for regular creation"""
+
+
 def test_create_authentication_repository(mocker):
     # Given
     factory = SqlAlchemyDbManagerFactory()
@@ -58,3 +61,21 @@ def test_create_dictionary_repository(mocker):
     # Then ensure the factory returns the correct repository instance
     mock_dict_repo_constructor.assert_called_once()
     assert isinstance(dict_repo, SqlAlchemyDictionaryRepositoryAdapter)
+
+
+"""Test creation with error"""
+
+
+def test_create_dictionary_repository_with_error(mocker):
+    # Given
+    factory = SqlAlchemyDbManagerFactory()
+
+    # Mock the constructor of SqlAlchemyDictionaryRepositoryAdapter to raise an exception
+    mocker.patch(
+        "adapter.outcoming.db_manager.sql_alchemy.sql_alchemy_db_manager_factory.SqlAlchemyDictionaryRepositoryAdapter",
+        side_effect=Exception("Failed to create repository"),
+    )
+
+    # When/Then
+    with pytest.raises(Exception, match="Failed to create repository"):
+        factory.create_dictionary_repository()
