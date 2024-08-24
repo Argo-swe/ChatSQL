@@ -345,3 +345,31 @@ def test_get_dictionary_by_id(dictionary_repository, mock_session, mocker):
 
     # Ensure the result is the expected mock dictionary
     assert result == mock_dictionary
+
+
+"""Test for get_dictionary_by_name"""
+
+
+def test_get_dictionary_by_name(dictionary_repository, mock_session, mocker):
+    # Given
+    dictionary_name = "SampleDictionary"
+    mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
+    mock_session.query(Dictionaries).filter().first.return_value = mock_dictionary
+
+    # When
+    result = dictionary_repository.get_dictionary_by_name(dictionary_name)
+
+    # Then
+    # Ensure query was called with Dictionaries
+    mock_session.query.assert_any_call(Dictionaries)
+
+    # Check if filter was called with a condition involving the correct name
+    called_args, _ = mock_session.query(Dictionaries).filter.call_args
+    assert called_args[0].left.name == "name"
+    assert called_args[0].right.value == dictionary_name
+
+    # Ensure that first() was called after the filter
+    mock_session.query(Dictionaries).filter().first.assert_called_once()
+
+    # Ensure the result is the expected mock dictionary
+    assert result == mock_dictionary
