@@ -1,0 +1,60 @@
+import pytest
+from adapter.outcoming.db_manager.sql_alchemy.sql_alchemy_db_manager_factory import (
+    SqlAlchemyDbManagerFactory,
+)
+from adapter.outcoming.db_manager.sql_alchemy.sql_alchemy_authentication_repository_adapter import (
+    SqlAlchemyAuthenticationRepositoryAdapter,
+)
+from adapter.outcoming.db_manager.sql_alchemy.sql_alchemy_dictionary_repository_adapter import (
+    SqlAlchemyDictionaryRepositoryAdapter,
+)
+from adapter.outcoming.db_manager.sql_alchemy import models
+from adapter.outcoming.db_manager.sql_alchemy.base import engine
+
+
+# Fixture to mock the SQLAlchemy engine and model creation
+@pytest.fixture
+def mock_sqlalchemy_engine(mocker):
+    return mocker.patch.object(models.Base.metadata, "create_all")
+
+
+"""CREATE AUTH REPOSITORY TEST BATTERY"""
+
+
+def test_create_authentication_repository(mocker):
+    # Given
+    factory = SqlAlchemyDbManagerFactory()
+
+    # Mock the SqlAlchemyAuthenticationRepositoryAdapter's constructor to track its instantiation
+    mock_auth_repo_constructor = mocker.patch(
+        "adapter.outcoming.db_manager.sql_alchemy.sql_alchemy_db_manager_factory.SqlAlchemyAuthenticationRepositoryAdapter",
+        side_effect=SqlAlchemyAuthenticationRepositoryAdapter,  # Ensure the real object is returned
+    )
+
+    # When calling create_authentication_repository
+    auth_repo = factory.create_authentication_repository()
+
+    # Then ensure the factory returns the correct repository instance
+    mock_auth_repo_constructor.assert_called_once()
+    assert isinstance(auth_repo, SqlAlchemyAuthenticationRepositoryAdapter)
+
+
+"""CREATE DICTIONARY REPOSITORY TEST BATTERY"""
+
+
+def test_create_dictionary_repository(mocker):
+    # Given
+    factory = SqlAlchemyDbManagerFactory()
+
+    # Mock the SqlAlchemyDictionaryRepositoryAdapter's constructor to track its instantiation
+    mock_dict_repo_constructor = mocker.patch(
+        "adapter.outcoming.db_manager.sql_alchemy.sql_alchemy_db_manager_factory.SqlAlchemyDictionaryRepositoryAdapter",
+        side_effect=SqlAlchemyDictionaryRepositoryAdapter,  # Ensure the real object is returned
+    )
+
+    # When calling create_dictionary_repository
+    dict_repo = factory.create_dictionary_repository()
+
+    # Then ensure the factory returns the correct repository instance
+    mock_dict_repo_constructor.assert_called_once()
+    assert isinstance(dict_repo, SqlAlchemyDictionaryRepositoryAdapter)
