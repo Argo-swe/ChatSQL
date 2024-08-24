@@ -77,6 +77,26 @@ def test_create_dictionary_commit_failure(dictionary_repository, mock_session, m
     mock_session.refresh.assert_not_called()
 
 
+"""Test for handling empty name or description"""
+
+
+def test_create_dictionary_empty_name_or_description(
+    dictionary_repository, mock_session
+):
+    # Given
+    name = ""
+    description = "A description without a name"
+
+    # When/Then
+    with pytest.raises(ValueError):
+        dictionary_repository.create_dictionary(name, description)
+
+    # Ensure that add, commit, and refresh were never called
+    mock_session.add.assert_not_called()
+    mock_session.commit.assert_not_called()
+    mock_session.refresh.assert_not_called()
+
+
 """UPDATE DICTIONARY TEST BATTERY"""
 
 
