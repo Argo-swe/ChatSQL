@@ -12,13 +12,13 @@ import ToggleButton from 'primevue/togglebutton';
 import { createI18n } from 'vue-i18n';
 
 // Internal dependencies
-import ChatDeleteBtn from '../../../src/components/ChatDeleteBtn.vue';
-import ChatMessage from '../../../src/components/ChatMessage.vue';
-import DictPreview from '../../../src/components/DictPreview.vue';
-import ApiClientManager from '../../../src/services/api-client.service';
-import AuthService from '../../../src/services/auth.service';
-import MessageService from '../../../src/services/message.service';
-import ChatView from '../../../src/views/ChatView.vue';
+import ChatDeleteBtn from '@/components/ChatDeleteBtn.vue';
+import ChatMessage from '@/components/ChatMessage.vue';
+import DictPreview from '@/components/DictPreview.vue';
+import ApiClientManager from '@/services/api-client.service';
+import AuthService from '@/services/auth.service';
+import MessageService from '@/services/message.service';
+import ChatView from '@/views/ChatView.vue';
 
 // Mock VueI18n
 const i18n = createI18n({
@@ -66,7 +66,7 @@ function mountChatView(mockApiClient: any = getGlobalMockApiClient(), props?) {
  * Returns a global mock API client with stubs that simulate API calls.
  */
 function getGlobalMockApiClient() {
-  return {
+  const globalMockApiClient = {
     getAllDictionaries: cy.stub().resolves({
       data: {
         status: 'OK',
@@ -99,6 +99,9 @@ function getGlobalMockApiClient() {
       }
     })
   };
+  cy.wrap(globalMockApiClient.getAllDictionaries).as('getAllDictionaries');
+  cy.wrap(globalMockApiClient.getDictionaryPreview).as('getDictionaryPreview');
+  return globalMockApiClient;
 }
 
 /**
@@ -141,7 +144,7 @@ function getFailureResponse() {
 }
 
 /**
- * Mount the ChatView component with a custom mock API client for prompt generation.
+ * Mounts the ChatView component with a custom mock API client for prompt generation.
  * @param response - The mock response to return.
  */
 function mockGeneratePrompt(response: any = getPromptSuccessResponse()) {
@@ -154,7 +157,7 @@ function mockGeneratePrompt(response: any = getPromptSuccessResponse()) {
 }
 
 /**
- * Mount the ChatView component with a custom mock API client for prompt with debug generation.
+ * Mounts the ChatView component with a custom mock API client for prompt with debug generation.
  * @param response - The mock response to return.
  */
 function mockGeneratePromptWithDebug(response: any = getPromptWithDebugSuccessResponse()) {
@@ -229,8 +232,8 @@ describe('ChatView Component', () => {
      */
     cy.get('[data-testid="request-input"]').type('all orders');
     cy.get('[data-testid="request-button"]').click();
-    cy.get('[data-testid="chat-message-container"]').should('exist');
     cy.get('[data-testid="dictionary-preview-container"]').should('not.exist');
+    cy.get('[data-testid="chat-message-container"]').should('exist');
     /**
      * Reopens the preview of the dictionary and hides the chat messages.
      */
@@ -240,7 +243,7 @@ describe('ChatView Component', () => {
     /**
      * Closes the preview and shows the messages again.
      */
-    cy.get('[data-testid="dictionary-preview-hide-button"]').click();
+    cy.get('[data-testid="dictionary-preview-hide-button"]').should('exist').click();
     cy.get('[data-testid="dictionary-preview-container"]').should('not.exist');
     cy.get('[data-testid="chat-message-container"]').should('exist');
   });
@@ -277,6 +280,7 @@ describe('ChatView Component', () => {
     cy.get('ul > li').contains('spanish').should('exist').click();
     cy.get('[data-testid="request-input"]').type('all orders');
     cy.get('[data-testid="request-button"]').should('be.enabled').click();
+
     cy.get('@generatePrompt').should('have.been.calledWith', {
       dictionaryId: 1,
       query: 'all orders',
@@ -285,7 +289,7 @@ describe('ChatView Component', () => {
     });
     cy.get('[data-testid="chat-message-container"]').should('exist');
     cy.window().then((win) => {
-      const messages = JSON.parse(win.sessionStorage.getItem('chat-messages'));
+      const messages = JSON.parse(win.sessionStorage.getItem('chat-messages') || '');
       expect(messages[1].message).to.equal('Chat Response Message');
     });
     cy.get('[data-testid="request-input"]').should('be.empty');
