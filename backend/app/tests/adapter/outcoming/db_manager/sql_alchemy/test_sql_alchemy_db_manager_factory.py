@@ -153,8 +153,8 @@ def test_factory_initialization_calls_create_all(mocker):
     # Mock the create_all method to ensure it's called
     mock_create_all = mocker.patch.object(models.Base.metadata, "create_all")
 
-    # Initialize the factory
-    factory = SqlAlchemyDbManagerFactory()
+    # Instantiate the factory, which triggers the __init__ method
+    SqlAlchemyDbManagerFactory()
 
     # Verify that create_all is called with the engine
     mock_create_all.assert_called_once_with(bind=engine)
