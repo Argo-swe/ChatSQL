@@ -1,9 +1,13 @@
+// External dependencies
 import { createI18n } from 'vue-i18n';
 import { createRouter, createWebHistory } from 'vue-router';
-import AppMenu from '../../../src/components/layout/AppMenu.vue';
-import AppMenuItem from '../../../src/components/layout/AppMenuItem.vue';
-import AuthService from '../../../src/services/auth.service';
 
+// Internal dependencies
+import AppMenu from '@/components/layout/AppMenu.vue';
+import AppMenuItem from '@/components/layout/AppMenuItem.vue';
+import AuthService from '@/services/auth.service';
+
+// Mock VueI18n
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
@@ -12,6 +16,7 @@ const i18n = createI18n({
   message: 'Mock translation'
 });
 
+// Mock VueRouter
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -20,6 +25,10 @@ const router = createRouter({
   ]
 });
 
+/**
+ * Performs the mounting of the AppMenu component.
+ * @param props - (Optional) Properties to pass to the component during mount.
+ */
 function mountAppMenu(props?) {
   return cy.mount(AppMenu, {
     global: {
@@ -35,7 +44,11 @@ function mountAppMenu(props?) {
   });
 }
 
+/**
+ * Test suite for the AppMenu component.
+ */
 describe('AppMenu Component', () => {
+  // Single and isolated test case
   it('should display user menu correctly', () => {
     cy.stub(AuthService, 'isLogged').returns(false);
     mountAppMenu();
@@ -45,6 +58,7 @@ describe('AppMenu Component', () => {
     cy.get('[data-testid="main-nav-menu"]').children().find('.pi-database').should('not.exist');
   });
 
+  // Single and isolated test case
   it('should display technician menu correctly', () => {
     cy.stub(AuthService, 'isLogged').returns(true);
     mountAppMenu();

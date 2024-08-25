@@ -1,6 +1,10 @@
+// External dependencies
 import { createI18n } from 'vue-i18n';
-import AppFooter from '../../../src/components/layout/AppFooter.vue';
 
+// Internal dependencies
+import AppFooter from '@/components/layout/AppFooter.vue';
+
+// Mock VueI18n
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
@@ -9,6 +13,10 @@ const i18n = createI18n({
   message: 'Mock translation'
 });
 
+/**
+ * Performs the mounting of the AppFooter component.
+ * @param props - (Optional) Properties to pass to the component during mount.
+ */
 function mountAppFooter(props?) {
   return cy.mount(AppFooter, {
     global: {
@@ -22,7 +30,11 @@ function mountAppFooter(props?) {
   });
 }
 
+/**
+ * Test suite for the AppFooter component.
+ */
 describe('AppFooter Component', () => {
+  // Single and isolated test case
   it('should display correctly', () => {
     mountAppFooter();
     cy.get('[data-testid="footer"]').should('be.visible');

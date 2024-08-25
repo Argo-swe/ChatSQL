@@ -1,6 +1,10 @@
+// External dependencies
 import { createRouter, createWebHistory } from 'vue-router';
-import AppMenuItem from '../../../src/components/layout/AppMenuItem.vue';
 
+// Internal dependencies
+import AppMenuItem from '@/components/layout/AppMenuItem.vue';
+
+// Mock VueRouter
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -9,6 +13,10 @@ const router = createRouter({
   ]
 });
 
+/**
+ * Performs the mounting of the AppMenuItem component.
+ * @param props - Properties to pass to the component during mount.
+ */
 function mountAppMenuItem(props) {
   return cy.mount(AppMenuItem, {
     global: {
@@ -18,8 +26,12 @@ function mountAppMenuItem(props) {
   });
 }
 
+/**
+ * Mounts a simple menu item.
+ * @param props - (Optional) Additional properties to pass to the component during mount.
+ */
 function mountItem(props?) {
-  mountAppMenuItem({
+  return mountAppMenuItem({
     item: {
       label: 'Test',
       icon: 'pi pi-check',
@@ -29,8 +41,12 @@ function mountItem(props?) {
   });
 }
 
+/**
+ * Mounts a menu item with submenu.
+ * @param props - (Optional) Additional properties to pass to the component during mount.
+ */
 function mountItemWithSubMenu(props?) {
-  mountAppMenuItem({
+  return mountAppMenuItem({
     item: {
       label: 'Test',
       icon: 'pi pi-check',
@@ -51,30 +67,39 @@ function mountItemWithSubMenu(props?) {
   });
 }
 
+/**
+ * Test suite for the AppMenuItem component.
+ */
 describe('AppMenuItem Component', () => {
+  // Hook that runs before each test
   beforeEach(() => {
     mountItem({
       root: false
     });
   });
 
+  // Single and isolated test case
   it('should render correctly', () => {
-    cy.get('li[data-testid="menu-item"]').should('exist');
+    cy.get('[data-testid="menu-item"]').should('exist');
   });
 
-  it('should display the menu item text', () => {
+  // Single and isolated test case
+  it('should display the text of the menu item', () => {
     cy.get('[data-testid="menu-item-text"]').should('have.text', 'Test');
   });
 
+  // Single and isolated test case
   it('should not be active if not clicked', () => {
     cy.get('[data-testid="menu-item"]').should('not.have.class', 'active-menuitem');
   });
 
+  // Single and isolated test case
   it('should be active when clicked', () => {
     cy.get('[data-testid="menu-item-link"]').should('exist').click();
     cy.get('[data-testid="menu-item"]').should('have.class', 'active-menuitem');
   });
 
+  // Single and isolated test case
   it('should display a root item', () => {
     mountItem({
       root: true
@@ -84,6 +109,7 @@ describe('AppMenuItem Component', () => {
     cy.get('[data-testid="menu-item-text"]').should('have.text', 'Test');
   });
 
+  // Single and isolated test case
   it('should handle an item with a submenu', () => {
     mountItemWithSubMenu({
       root: false
@@ -92,6 +118,7 @@ describe('AppMenuItem Component', () => {
       .find('[data-testid="menu-item-text"]')
       .first()
       .should('have.text', 'Test');
+
     cy.get('[data-testid="nav-submenu"]').should('be.visible');
     cy.get('[data-testid="nav-submenu"]').children().should('have.length.greaterThan', 1);
     cy.get('[data-testid="nav-submenu"]').children().first().should('have.text', 'Test1');

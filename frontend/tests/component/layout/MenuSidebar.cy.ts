@@ -1,11 +1,15 @@
+// External dependencies
 import Button from 'primevue/button';
 import PrimeVue from 'primevue/config';
 import { createI18n } from 'vue-i18n';
 import { createRouter, createWebHistory } from 'vue-router';
-import AppFooter from '../../../src/components/layout/AppFooter.vue';
-import AppMenu from '../../../src/components/layout/AppMenu.vue';
-import MenuSidebar from '../../../src/components/layout/MenuSidebar.vue';
 
+// Internal dependencies
+import AppFooter from '@/components/layout/AppFooter.vue';
+import AppMenu from '@/components/layout/AppMenu.vue';
+import MenuSidebar from '@/components/layout/MenuSidebar.vue';
+
+// Mock VueI18n
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
@@ -14,6 +18,7 @@ const i18n = createI18n({
   message: 'Mock translation'
 });
 
+// Mock VueRouter
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -22,6 +27,10 @@ const router = createRouter({
   ]
 });
 
+/**
+ * Performs the mounting of the MenuSidebar component.
+ * @param props - (Optional) Properties to pass to the component during mount.
+ */
 function mountMenuSidebar(props?) {
   return cy.mount(MenuSidebar, {
     global: {
@@ -39,16 +48,24 @@ function mountMenuSidebar(props?) {
   });
 }
 
+/**
+ * Test suite for the MenuSidebar component.
+ */
 describe('MenuSidebar Component', () => {
-  it('should display correctly', () => {
+  // Hook that runs before each test
+  beforeEach(() => {
     mountMenuSidebar();
+  });
+
+  // Single and isolated test case
+  it('should display correctly', () => {
     cy.get('[data-testid="menu-sidebar"]').should('be.visible');
     cy.get('[data-testid="main-nav-menu"]').should('be.visible');
     cy.get('[data-testid="footer"]').should('be.visible');
   });
 
+  // Single and isolated test case
   it('should toggle close button when viewport changes', () => {
-    mountMenuSidebar();
     cy.viewport(992, 558);
     cy.get('#close-menu-sidebar').should('not.be.visible');
     cy.viewport('iphone-x');
