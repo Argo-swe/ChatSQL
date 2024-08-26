@@ -13,12 +13,12 @@ const version = ref(import.meta.env.VITE_VERSION ?? null);
 </script>
 
 <template>
-  <div class="layout-footer w-full">
+  <div class="layout-footer w-full" data-testid="footer">
     <div class="logo">
       <app-logo path="icons/argo_trasparente.svg" height="40"></app-logo>
     </div>
     <p class="copyright">
-      <strong v-if="version"> v{{ version }} </strong>
+      <strong v-if="version" data-testid="app-version">v{{ version }}</strong>
       <span>© {{ new Date().getFullYear() }} {{ t('footer.copyright.title') }}</span>
       <span>{{ t('footer.copyright.section') }}</span>
     </p>

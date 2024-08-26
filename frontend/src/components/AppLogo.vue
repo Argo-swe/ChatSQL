@@ -46,7 +46,14 @@ const logoClass: ComputedRef<CSSClasses> = computed(() => ({
 </script>
 
 <template>
-  <img :src="path" alt="" :width="width" :height="height" :class="logoClass" />
+  <img
+    :src="path"
+    alt=""
+    :width="width"
+    :height="height"
+    :class="logoClass"
+    data-testid="logo-img"
+  />
 </template>
 
 <style scoped>
