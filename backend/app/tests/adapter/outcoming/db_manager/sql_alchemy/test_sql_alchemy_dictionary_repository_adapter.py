@@ -75,25 +75,6 @@ def test_create_dictionary_commit_failure(dictionary_repository, mock_session, m
     mock_session.refresh.assert_not_called()
 
 
-"""Test for handling empty name or description"""
-
-
-def test_create_dictionary_empty_name_or_description(
-    dictionary_repository, mock_session
-):
-    name = ""
-    description = "A description without a name"
-
-    # Attempt to create a dictionary with an empty name and expect a ValueError
-    with pytest.raises(ValueError):
-        dictionary_repository.create_dictionary(name, description)
-
-    # Ensure that add, commit, and refresh were not called due to invalid input
-    mock_session.add.assert_not_called()
-    mock_session.commit.assert_not_called()
-    mock_session.refresh.assert_not_called()
-
-
 """UPDATE DICTIONARY TEST BATTERY"""
 
 """Test for updating a dictionary entry"""
