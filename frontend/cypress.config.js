@@ -13,8 +13,8 @@ export default defineConfig({
     },
     specPattern: 'tests/component/**/*.{js,ts,jsx,tsx}'
   },
-
   e2e: {
-    setupNodeEvents(on, config) {}
+    baseUrl: 'http://localhost:5173',
+    specPattern: 'tests/e2e/**/*.{js,ts,jsx,tsx}'
   }
 });
