@@ -1,8 +1,12 @@
+// External dependencies
 import { ref } from 'vue';
 import { createI18n } from 'vue-i18n';
-import DebugMessage from '../../src/components/DebugMessage.vue';
-import StringDataModal from '../../src/components/StringDataModal.vue';
 
+// Internal dependencies
+import DebugMessage from '@/components/DebugMessage.vue';
+import StringDataModal from '@/components/StringDataModal.vue';
+
+// Mock VueI18n
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
@@ -11,6 +15,11 @@ const i18n = createI18n({
   message: 'Mock translation'
 });
 
+/**
+ * Performs the mounting of the StringDataModal component.
+ * @param mockDialogRef - A mock of the dialogRef object, containing the data passed from the parent object.
+ * @param props - (Optional) Properties to pass to the component during mount.
+ */
 function mountStringDataModal(mockDialogRef, props?) {
   return cy.mount(StringDataModal, {
     global: {
@@ -29,27 +38,30 @@ function mountStringDataModal(mockDialogRef, props?) {
   });
 }
 
+/**
+ * Test suite for the StringDataModal component.
+ */
 describe('StringDataModal Component', () => {
-  it('renders DebugMessage when stringData is set', () => {
+  // Single and isolated test case
+  it('should render debug message when stringData is set', () => {
     const mockDialogRef = ref({
       data: {
         stringData: 'Debug Message'
       }
     });
-
     mountStringDataModal(mockDialogRef);
 
     cy.get('[data-testid="debug-message"]').should('exist');
     cy.get('[data-testid="debug-message"]').should('have.text', 'Debug Message');
   });
 
-  it('does not render DebugMessage when stringData is empty', () => {
+  // Single and isolated test case
+  it('should not render debug message when stringData is empty', () => {
     const mockDialogRef = ref({
       data: {
         stringData: ''
       }
     });
-
     mountStringDataModal(mockDialogRef);
 
     cy.get('[data-testid="debug-message"]').should('not.exist');
