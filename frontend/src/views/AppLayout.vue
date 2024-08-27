@@ -74,7 +74,7 @@ const containerClass: ComputedRef<CSSClasses> = computed(() => {
 </script>
 
 <template>
-  <div class="layout-wrapper" :class="containerClass">
+  <div class="layout-wrapper" :class="containerClass" data-testid="global-layout-wrapper">
     <app-topbar></app-topbar>
     <login-dialog />
     <div class="layout-sidebar">
