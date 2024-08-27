@@ -127,7 +127,7 @@ describe('ConfigSidebar Component', () => {
 
   // Single and isolated test case
   it('should change the language to italian', () => {
-    cy.get('[data-testid="language-dropdown"]').should('exist').click();
+    cy.get('[data-testid="global-language-dropdown"]').should('exist').click();
     cy.contains('locale.it').click({ force: true });
     cy.window().then((win) => {
       expect(win.localStorage.getItem('language')).to.equal('it');

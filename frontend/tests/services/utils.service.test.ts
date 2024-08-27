@@ -51,6 +51,7 @@ describe('UtilsService', () => {
       expect(UtilsService.stringToSnakeCase('123Test123String')).toBe('123_test123_string');
       expect(UtilsService.stringToSnakeCase('DDDddDDd')).toBe('dd_ddd_d_dd');
       expect(UtilsService.stringToSnakeCase('HTTPResponseCode2024')).toBe('http_response_code2024');
+      expect(UtilsService.stringToSnakeCase('New test name')).toBe('new_test_name');
       expect(UtilsService.stringToSnakeCase('')).toBe('');
     });
   });

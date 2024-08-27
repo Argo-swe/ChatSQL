@@ -89,5 +89,5 @@ const containerClass: ComputedRef<CSSClasses> = computed(() => {
     <PgScrollTop />
     <div class="layout-mask"></div>
   </div>
-  <PgToast position="bottom-right" />
+  <PgToast position="bottom-right" data-testid="toast-message" />
 </template>
