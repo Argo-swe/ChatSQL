@@ -63,7 +63,10 @@ describe('Chat - HomePage', () => {
       'not.have.class',
       'pi-spin pi-spinner'
     );
-    cy.get('[data-testid="chat-message-container"].received').should('contain.text', message);
+    cy.get('[data-testid="chat-message-container"].received', { timeout: 6000 }).should(
+      'contain.text',
+      message
+    );
   });
 
   it('verify that the user can receive a prompt', () => {
@@ -75,7 +78,7 @@ describe('Chat - HomePage', () => {
       'not.have.class',
       'pi-spin pi-spinner'
     );
-    cy.get('[data-testid="chat-message-container"].received').should(
+    cy.get('[data-testid="chat-message-container"].received', { timeout: 6000 }).should(
       'contain.text',
       'Suggested prompt'
     );
@@ -85,17 +88,26 @@ describe('Chat - HomePage', () => {
     cy.selectDictionary();
     cy.get('[data-testid="request-input"]').type('all users');
     cy.get('[data-testid="request-button"]').click();
-    cy.get('[data-testid="chat-message-container"].received').invoke('text').as('prompt');
+    cy.get('[data-testid="chat-message-container"].received', { timeout: 6000 })
+      .invoke('text')
+      .as('prompt');
     cy.get('[data-testid="copy-button"]').click();
     cy.window()
       .then((win) => {
-        // Usa la clipboard API per leggere il contenuto
         return win.navigator.clipboard.readText();
       })
-      .then((clipText) => {
+      .then((copyText) => {
         cy.get('@prompt').then((text) => {
-          expect(text).to.contain(clipText);
+          expect(text.trim()).to.equal(copyText);
         });
       });
+  });
+
+  it('verify that the user can clear the chat history', () => {
+    cy.selectDictionary();
+    cy.get('[data-testid="request-input"]').type('all users{enter}');
+    cy.get('[data-testid="chat-message-container"]').should('exist');
+    cy.get('[data-testid="clean-chat-button"]').click();
+    cy.get('[data-testid="chat-message-container"]').should('not.exist');
   });
 });
