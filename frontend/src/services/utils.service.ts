@@ -21,9 +21,8 @@ export default class UtilsService {
    * @returns The string converted to snake_case.
    */
   static stringToSnakeCase(string: string): string {
-    let newString = string.replace(/(.)([A-Z][a-z]+)/g, '$1_$2');
-    newString = newString.replace(/([a-z0-9])([A-Z])/g, '$1_$2');
-    return newString.toLowerCase();
+    const segments = string.match(/([A-Z]+(?=[A-Z][a-z]))|([A-Z]?[a-z]+\d*)|(\d+)|([A-Z]+)/g) || [];
+    return segments.map((s) => s.toLowerCase()).join('_');
   }
 
   /**
