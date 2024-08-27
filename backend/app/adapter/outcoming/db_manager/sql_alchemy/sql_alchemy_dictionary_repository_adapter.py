@@ -38,5 +38,6 @@ class SqlAlchemyDictionaryRepositoryAdapter(DictionaryRepository):
 
     def delete_dictionary(self, id: int):
         dictionary = self.get_dictionary_by_id(id)
-        self._session.delete(dictionary)
-        self._session.commit()
+        if dictionary:
+            self._session.delete(dictionary)
+            self._session.commit()
