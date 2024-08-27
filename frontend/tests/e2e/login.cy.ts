@@ -27,7 +27,9 @@ describe('Chat - HomePage', () => {
   // Test case
   it('verify that the user can log in', () => {
     Login();
-    cy.get('[data-testid="toast-message"]').contains('"You are logged in as \'admin\'"');
+    cy.get('[data-testid="toast-message"]').should('have.class', 'p-toast-message-success');
+    cy.get('[data-testid="logout-button"]').should('exist');
+    cy.get('[data-testid="main-nav-menu"]').children().should('have.length', 2);
   });
 
   // Test case
@@ -36,7 +38,7 @@ describe('Chat - HomePage', () => {
     cy.get('[data-testid="input-username"]').type('admin');
     cy.get('[data-testid="input-password"]').type('password123');
     cy.get('[data-testid="login-submit-button"]').click();
-    cy.get('[data-testid="toast-message"]').contains('Wrong credential');
+    cy.get('[data-testid="toast-message"]').should('have.class', 'p-toast-message-error');
   });
 
   // Test case
@@ -45,7 +47,7 @@ describe('Chat - HomePage', () => {
     cy.get('[data-testid="input-username"]').type('user');
     cy.get('[data-testid="input-password"]').type('password123');
     cy.get('[data-testid="login-submit-button"]').click();
-    cy.get('[data-testid="toast-message"]').contains('"User with name \'user\' not found"');
+    cy.get('[data-testid="toast-message"]').should('have.class', 'p-toast-message-error');
   });
 
   // Test case

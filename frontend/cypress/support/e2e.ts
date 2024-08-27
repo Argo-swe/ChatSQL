@@ -18,3 +18,38 @@ import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      setupDictionary(): Chainable<void>;
+      cleanupDictionary(): Chainable<void>;
+    }
+  }
+}
+
+Cypress.Commands.add('setupDictionary', () => {
+  cy.visit('/');
+  cy.get('[data-testid="login-button"]').click();
+  cy.get('[data-testid="input-username"]').type('admin');
+  cy.get('[data-testid="input-password"]').type('admin');
+  cy.get('[data-testid="login-submit-button"]')
+    .click()
+    .then(() => {
+      cy.visit('/dictionary');
+
+      cy.get('[data-testid="dictionary-create-button"]').click();
+      cy.get('[data-testid="dictionary-name-input"]').type('Test Orders');
+      cy.get('[data-testid="dictionary-description-input"]').type('Test Orders dictionary');
+      cy.get('[data-testid="dictionary-file-upload"]')
+        .find('input[type="file"]')
+        .selectFile('cypress/fixtures/orders.json', { force: true });
+
+      cy.get('[data-testid="dictionary-submit-button"]').click();
+    });
+});
+
+Cypress.Commands.add('cleanupDictionary', () => {
+  cy.get('[data-testid="dictionary-delete-button"]').last().click();
+  cy.get('[data-testid="confirm-dialog"]').find('[data-pc-name="acceptbutton"]').click();
+});
