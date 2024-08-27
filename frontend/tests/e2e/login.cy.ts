@@ -1,14 +1,4 @@
 /**
- * Performs the login process for an admin user.
- */
-function Login() {
-  cy.get('[data-testid="login-button"]').click();
-  cy.get('[data-testid="input-username"]').type('admin');
-  cy.get('[data-testid="input-password"]').type('admin');
-  cy.get('[data-testid="login-submit-button"]').click();
-}
-
-/**
  * Test suite for login and logout requirements.
  */
 describe('Chat - HomePage', () => {
@@ -26,7 +16,7 @@ describe('Chat - HomePage', () => {
 
   // Test case
   it('verify that the user can log in', () => {
-    Login();
+    cy.login();
     cy.get('[data-testid="toast-message"]').find('.p-toast-message-success').should('exist');
     cy.get('[data-testid="logout-button"]').should('exist');
     cy.get('[data-testid="main-nav-menu"]').children().should('have.length', 2);
@@ -52,7 +42,7 @@ describe('Chat - HomePage', () => {
 
   // Test case
   it('verify that the admin can log out', () => {
-    Login();
+    cy.login();
     cy.get('[data-testid="logout-button"]').click();
     cy.get('[data-testid="confirm-dialog"]').find('[data-pc-name="acceptbutton"]').click();
     cy.get('[data-testid="login-button"]').should('exist');

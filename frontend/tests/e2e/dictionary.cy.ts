@@ -3,6 +3,10 @@ describe('Dictionary Management', () => {
     cy.setupDictionary();
   });
 
+  after(() => {
+    cy.cleanupDictionary();
+  });
+
   beforeEach(() => {
     cy.session('login', () => {
       cy.visit('/');
@@ -13,10 +17,6 @@ describe('Dictionary Management', () => {
     }).then(() => {
       cy.visit('/dictionary');
     });
-  });
-
-  after(() => {
-    cy.cleanupDictionary();
   });
 
   it('verify that the admin can update dictionary name', () => {
