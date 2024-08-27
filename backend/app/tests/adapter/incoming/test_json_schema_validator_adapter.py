@@ -47,7 +47,7 @@ def test_validate_failure(mock_schema_file, invalid_json):
 def test_validate_file_not_found():
     adapter = JsonSchemaValidatorAdapter()
 
-    with pytest.raises(FileNotFoundError) as exc_info:
+    with pytest.raises(FileNotFoundError):
         with patch(
             "tools.utils.Utils.read_json_file_content", side_effect=FileNotFoundError
         ):

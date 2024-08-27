@@ -79,8 +79,7 @@ function isFileSelected(): boolean {
 }
 
 function isValidMetadata(value: string) {
-  // Regex pattern per validare alfanumerici, spazi, -, _
-  const validPattern = /^[\w\s\-_ ]+$/;
+  const validPattern = /^[\w\s-]+$/;
   console.log(value);
   return validPattern.test(value);
 }
