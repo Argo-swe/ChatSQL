@@ -27,7 +27,7 @@ describe('Chat - HomePage', () => {
   // Test case
   it('verify that the user can log in', () => {
     Login();
-    cy.get('[data-testid="toast-message"]').should('have.class', 'p-toast-message-success');
+    cy.get('[data-testid="toast-message"]').find('.p-toast-message-success').should('exist');
     cy.get('[data-testid="logout-button"]').should('exist');
     cy.get('[data-testid="main-nav-menu"]').children().should('have.length', 2);
   });
@@ -38,7 +38,7 @@ describe('Chat - HomePage', () => {
     cy.get('[data-testid="input-username"]').type('admin');
     cy.get('[data-testid="input-password"]').type('password123');
     cy.get('[data-testid="login-submit-button"]').click();
-    cy.get('[data-testid="toast-message"]').should('have.class', 'p-toast-message-error');
+    cy.get('[data-testid="toast-message"]').find('.p-toast-message-error').should('exist');
   });
 
   // Test case
@@ -47,7 +47,7 @@ describe('Chat - HomePage', () => {
     cy.get('[data-testid="input-username"]').type('user');
     cy.get('[data-testid="input-password"]').type('password123');
     cy.get('[data-testid="login-submit-button"]').click();
-    cy.get('[data-testid="toast-message"]').should('have.class', 'p-toast-message-error');
+    cy.get('[data-testid="toast-message"]').find('.p-toast-message-error').should('exist');
   });
 
   // Test case
