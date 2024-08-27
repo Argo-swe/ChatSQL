@@ -99,9 +99,7 @@ def test_prompt_generator_no_relevant_results(prompt_manager, mocker):
     result, log_content = prompt_manager.prompt_generator(dictionary_id, user_request)
 
     # Assertions
-    assert (
-        "Sorry, the ChatBOT was unable to find any relevant results" in result
-    )  # Verify that the no results message is returned
+    assert result is None  # Verify that the no results message is returned
     assert (
         log_content is None
     )  # Verify that no log content is returned (since logging is not activated by default)
@@ -181,7 +179,7 @@ def test_prompt_generator_empty_user_request(prompt_manager, mocker):
 
     # Assert that the result message indicates no relevant results were found.
     # This verifies that the method handles empty user inputs gracefully.
-    assert "unable to find any relevant results" in result
+    assert result is None
 
 
 """Test for different languages"""
