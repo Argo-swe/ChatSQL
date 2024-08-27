@@ -5,13 +5,6 @@ describe('Chat - HomePage', () => {
   // Hook that runs before each tests
   beforeEach(() => {
     cy.visit('/');
-    cy.get('[data-testid="open-settings-button"]').click();
-    cy.get('[data-testid="global-language-dropdown"]').click();
-    cy.get('li')
-      .find('[data-testid="global-language-option"]')
-      .contains('inglese')
-      .click({ force: true });
-    cy.get('body').click(0, 0);
   });
 
   // Test case

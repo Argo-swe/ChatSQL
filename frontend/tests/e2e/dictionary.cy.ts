@@ -1,24 +1,29 @@
+/**
+ * Test suite for dictionary management requirements.
+ */
 describe('Dictionary Management', () => {
+  // Hook that runs once before all tests
   before(() => {
+    cy.visit('/');
     cy.setupDictionary();
   });
 
+  // Hook that runs once after all tests
   after(() => {
     cy.cleanupDictionary();
   });
 
+  // Hook that runs before each test
   beforeEach(() => {
     cy.session('login', () => {
       cy.visit('/');
-      cy.get('[data-testid="login-button"]').click();
-      cy.get('[data-testid="input-username"]').type('admin');
-      cy.get('[data-testid="input-password"]').type('admin');
-      cy.get('[data-testid="login-submit-button"]').click();
+      cy.login();
     }).then(() => {
       cy.visit('/dictionary');
     });
   });
 
+  // Test case
   it('verify that the admin can update dictionary name', () => {
     cy.get('[data-testid="update-metadata-button"]').last().click();
     cy.get('[data-testid="dictionary-name-input"]').clear();
@@ -27,6 +32,7 @@ describe('Dictionary Management', () => {
     cy.get('[data-testid="dictionary-submit-button"]').click();
   });
 
+  // Test case
   it('verify that the admin can update dictionary description', () => {
     cy.get('[data-testid="update-metadata-button"]').last().click();
     cy.get('[data-testid="dictionary-description-input"]').clear();
@@ -35,6 +41,7 @@ describe('Dictionary Management', () => {
     cy.get('[data-testid="dictionary-submit-button"]').click();
   });
 
+  // Test case
   it('verify that the admin can update dictionary file', () => {
     cy.get('[data-testid="update-file-button"]').last().click();
     cy.get('[data-testid="dictionary-file-upload"]')
@@ -44,6 +51,7 @@ describe('Dictionary Management', () => {
     cy.get('[data-testid="dictionary-submit-button"]').click();
   });
 
+  // Test case
   it('verify that the admin can download dictionary file', () => {
     cy.get('[data-testid="download-file-button"]').last().click();
     const filename = 'cypress/downloads/new_test_name.json';
