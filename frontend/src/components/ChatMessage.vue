@@ -59,7 +59,7 @@ const openDebugMessage = () => {
 const copyToClipboard = () => {
   isCopying.value = true;
   navigator.clipboard
-    .writeText(message?.trim())
+    .writeText(message!.trim())
     .then(() => {
       messageService.messageSuccess(t('general.clipboard.name'), t('general.clipboard.success'));
       setTimeout(() => {
