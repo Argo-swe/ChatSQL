@@ -53,7 +53,7 @@ export type StatusMessages<TOptions extends BaseMessageOptions> = {
  * @property {String} debug - (Optional) The content of the debug.
  */
 export interface MessageWrapper {
-  message: string;
+  message: string | null;
   isSent: boolean;
   debug?: string;
 }

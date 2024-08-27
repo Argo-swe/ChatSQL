@@ -54,6 +54,7 @@
       "placeholder": "Choose a language"
     },
     "prompt": {
+      "empty": "Sorry, the ChatBOT was unable to find relevant results for the received request.\nWe invite you to try again with a different request.",
       "generate": "Generate prompts",
       "placeholder": "Enter a natural language request",
       "title": "Prompt"

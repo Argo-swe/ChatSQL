@@ -1,4 +1,6 @@
-from typing import Optional
+import re
+from typing import ClassVar, Optional
+from pydantic import field_validator
 from fastapi_camelcase import CamelModel, ConfigDict
 
 
@@ -8,3 +10,13 @@ class DictionaryDto(CamelModel):
     description: str
 
     model_config = ConfigDict(from_attributes=True)
+
+    valid_pattern: ClassVar[re.Pattern] = re.compile(r"^[\w\s\-_ ]+$")
+
+    @field_validator("name", "description", mode="before")
+    def validate_name_and_description(cls, value: str) -> str:  # noqa: N805
+        if not cls.valid_pattern.match(value):
+            raise ValueError(
+                "The field must contain only alphanumeric characters, spaces, hyphens (-), or underscores (_)."
+            )
+        return value

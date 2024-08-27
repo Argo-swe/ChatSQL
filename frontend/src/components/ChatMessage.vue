@@ -117,7 +117,7 @@ const copyToClipboard = () => {
             @click="openDebugMessage"
           />
         </div>
-        <p data-testid="chat-message">{{ message }}</p>
+        <p data-testid="chat-message">{{ message || t('chat.prompt.empty') }}</p>
       </div>
     </div>
   </div>

@@ -78,6 +78,13 @@ function isFileSelected(): boolean {
   return !withFile.value || selectedFile != null;
 }
 
+function isValidMetadata(value: string) {
+  // Regex pattern per validare alfanumerici, spazi, -, _
+  const validPattern = /^[\w\s\-_ ]+$/;
+  console.log(value);
+  return validPattern.test(value);
+}
+
 /**
  * Validates the form based on the current state.
  */
@@ -86,7 +93,9 @@ function isFormValid(): boolean {
     return (
       isFileSelected() &&
       dictionaryName.value?.length > 0 &&
-      dictionaryDescription.value?.length > 0
+      dictionaryDescription.value?.length > 0 &&
+      isValidMetadata(dictionaryName.value) &&
+      isValidMetadata(dictionaryDescription.value)
     );
   } else {
     return isFileSelected();
@@ -249,7 +258,7 @@ function submitForm() {
           required
           aria-labelledby="l-name"
           autocomplete="off"
-          :invalid="!dictionaryName"
+          :invalid="!dictionaryName || !isValidMetadata(dictionaryName)"
         />
       </div>
       <div class="flex flex-column gap-2 mt-4">
@@ -260,7 +269,7 @@ function submitForm() {
           required
           aria-labelledby="l-description"
           autocomplete="off"
-          :invalid="!dictionaryDescription"
+          :invalid="!dictionaryDescription || !isValidMetadata(dictionaryDescription)"
         />
       </div>
     </div>

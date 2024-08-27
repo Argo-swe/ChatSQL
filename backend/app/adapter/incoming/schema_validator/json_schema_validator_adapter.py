@@ -16,7 +16,7 @@ class JsonSchemaValidatorAdapter(SchemaValidatorUseCase):
         schema = Utils.read_json_file_content(self._dictionary_schema_file_path)
 
         try:
-            validate(dictionary, schema)
+            validate(Utils.string_to_json(dictionary), schema)
             return True
         except Exception:
             return False
