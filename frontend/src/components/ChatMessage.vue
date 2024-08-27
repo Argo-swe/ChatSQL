@@ -94,7 +94,7 @@ const copyToClipboard = () => {
       <div class="w-full border-round-lg messageBox">
         <div class="message-action-area">
           <PgButton
-            v-if="!isSent"
+            v-if="!isSent && message"
             :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'"
             class="m-1"
             outlined
@@ -106,7 +106,7 @@ const copyToClipboard = () => {
             @click="copyToClipboard"
           />
           <PgButton
-            v-if="!isSent && debug && isLogged"
+            v-if="!isSent && message && debug && isLogged"
             icon="pi pi-question-circle"
             outlined
             class="m-1"
