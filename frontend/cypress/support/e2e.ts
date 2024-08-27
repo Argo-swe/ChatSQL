@@ -61,4 +61,3 @@ Cypress.Commands.add('selectDictionary', () => {
   cy.get('[data-testid="dictionary-dropdown"]').click();
   cy.get('ul > li').contains('Test Orders').click();
 });
-
