@@ -78,6 +78,15 @@ function isFileSelected(): boolean {
 }
 
 /**
+ * Checks if the provided metadata value is valid based on a specific pattern.
+ * @param value - The metadata value to be validated.
+ */
+function isValidMetadata(value: string) {
+  const validPattern = /^[\w\s-]+$/;
+  return validPattern.test(value);
+}
+
+/**
  * Validates the form based on the current state.
  */
 function isFormValid(): boolean {
@@ -85,7 +94,9 @@ function isFormValid(): boolean {
     return (
       isFileSelected() &&
       dictionaryName.value?.length > 0 &&
-      dictionaryDescription.value?.length > 0
+      dictionaryDescription.value?.length > 0 &&
+      isValidMetadata(dictionaryName.value) &&
+      isValidMetadata(dictionaryDescription.value)
     );
   } else {
     return isFileSelected();
@@ -236,7 +247,7 @@ function submitForm() {
           required
           aria-labelledby="l-name"
           autocomplete="off"
-          :invalid="!dictionaryName"
+          :invalid="!dictionaryName || !isValidMetadata(dictionaryName)"
           data-testid="dictionary-name-input"
         />
       </div>
@@ -248,7 +259,7 @@ function submitForm() {
           required
           aria-labelledby="l-description"
           autocomplete="off"
-          :invalid="!dictionaryDescription"
+          :invalid="!dictionaryDescription || !isValidMetadata(dictionaryDescription)"
           data-testid="dictionary-description-input"
         />
       </div>

@@ -32,6 +32,18 @@ describe('Dictionary Management', () => {
   });
 
   // Test case
+  it('verify that the system returns an error if the dictionary name is bad formatted', () => {
+    cy.getDictionaryRow().within(() => {
+      cy.get('[data-testid="update-metadata-button"]').click();
+    });
+    cy.get('[data-testid="dictionary-name-input"]').clear();
+    cy.get('[data-testid="dictionary-name-input"]').type('***');
+
+    cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('[data-testid="toast-message"]').find('.p-toast-message-error').should('exist');
+  });
+
+  // Test case
   it('verify that the admin can update dictionary description', () => {
     cy.getDictionaryRow().within(() => {
       cy.get('[data-testid="update-metadata-button"]').click();

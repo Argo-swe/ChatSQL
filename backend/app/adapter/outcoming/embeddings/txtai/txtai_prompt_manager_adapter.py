@@ -23,19 +23,14 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
         lang="english",
         dbms="MariaDB",
         activate_log=False,
-    ) -> tuple[str, str | None]:
+    ) -> tuple[str | None, str | None]:
         self._index_manager.load_index(dictionary_id)
         tuples, log_content_phase_1 = self.__get_tuples(user_request, activate_log)
         relevant_tuples, log_content_phase_2 = self.__get_relevant_tuples(
             tuples, activate_log
         )
         if not relevant_tuples:
-            response = (
-                f"""Sorry, the ChatBOT was unable to find any relevant results for "{user_request}".\n"""
-                """We invite you to try again with a different request."""
-            )
-            log_content = "\n".join(log_content_phase_1) if activate_log else None
-            return response, log_content
+            return None, None
 
         dyn_string = self._file_repository.extract_schema_metadata(
             dictionary_id, relevant_tuples
