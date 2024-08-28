@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // External libraries
-import { onMounted, ref, type Ref } from 'vue';
+import { nextTick, onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
@@ -31,6 +31,9 @@ let isLogged = ref(AuthService.isLogged());
 const { getMessages, onGenerateMessages, getStatusMex } = useMessages();
 const onRetrieveMessages = getMessages('read');
 
+// Variable to control the visibility of the "Go to Bottom" button
+const showGoToBottom = ref(false);
+const messagesContainer: Ref<HTMLElement | null> = ref(null);
 const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
 const dictionaries = ref<Components.Schemas.DictionaryDto[] | null[]>();
 const selectedDictionary = ref<number | null>(null);
@@ -74,8 +77,42 @@ onMounted(() => {
     isLogged.value = AuthService.isLogged();
   });
 
-  loadMessages();
+  loadMessagesAndScroll();
 });
+
+/**
+ * Loads messages and scrolls to the bottom of the chat container.
+ * @function loadMessagesAndScroll
+ * @description Waits for the DOM to update with 'nextTick', then scrolls.
+ */
+async function loadMessagesAndScroll() {
+  loadMessages();
+  await nextTick();
+  scrollToBottom();
+}
+
+/**
+ * Handles the scroll event of the chat container.
+ * @function handleScroll
+ */
+const handleScroll = () => {
+  const container = messagesContainer.value;
+  if (container) {
+    const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
+    showGoToBottom.value = !isAtBottom;
+  }
+};
+
+/**
+ * Scrolls the chat container to the bottom smoothly.
+ * @function scrollToBottom
+ */
+const scrollToBottom = () => {
+  const anchor = document.getElementById('chat-hidden-anchor');
+  if (messagesContainer.value && anchor) {
+    anchor.scrollIntoView({ behavior: 'smooth' });
+  }
+};
 
 /**
  * Saves the selected language to localStorage.
@@ -425,7 +462,7 @@ async function generatePromptWithDebug(query: string) {
       @hide-details="hideDetails"
     ></DictPreview>
 
-    <div v-if="!detailsVisible" id="messages">
+    <div v-if="!detailsVisible" id="messages" ref="messagesContainer" @scroll="handleScroll">
       <ChatMessage
         v-for="(msg, index) in messages"
         :key="index"
@@ -433,6 +470,7 @@ async function generatePromptWithDebug(query: string) {
         :message="msg.message"
         :debug="msg.debug"
       ></ChatMessage>
+      <div id="chat-hidden-anchor" visible="false"></div>
     </div>
 
     <PgInputGroup id="input-container" class="mt-1" data-testid="request-container">
@@ -455,6 +493,18 @@ async function generatePromptWithDebug(query: string) {
         @click="runRequest"
       />
     </PgInputGroup>
+
+    <PgButton
+      v-show="showGoToBottom && !detailsVisible"
+      id="go-to-bottom"
+      class="w-2rem h-2rem"
+      icon="pi pi-angle-double-down"
+      severity="contrast"
+      rounded
+      outlined
+      :aria-label="t('chat.actions.scroll_to_bottom')"
+      @click="scrollToBottom"
+    />
   </div>
 </template>
 
@@ -464,6 +514,14 @@ async function generatePromptWithDebug(query: string) {
   max-height: 100%;
   position: relative;
   margin-bottom: -2rem;
+}
+
+#go-to-bottom {
+  position: absolute;
+  bottom: 5rem;
+  right: 50%;
+  transform: translateX(50%);
+  z-index: 1099;
 }
 
 .hide {

@@ -25,7 +25,8 @@
   "chat": {
     "actions": {
       "copy": "Copia negli appunti",
-      "open_debug": "Apri dettaglio debug"
+      "open_debug": "Apri dettaglio debug",
+      "scroll_to_bottom": "Scorri fino alla fine della chat"
     },
     "dbms": {
       "placeholder": "Scegli un DBMS"
@@ -145,6 +146,7 @@
     "ok": "ok",
     "password": "password",
     "save": "salva",
+    "scroll_to_top": "scorri fino all'inizio della pagina",
     "settings": "impostazioni",
     "show": "mostra",
     "shrink_view": "riduci finestra",

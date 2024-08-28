@@ -25,7 +25,8 @@
   "chat": {
     "actions": {
       "copy": "Copy to clipboard",
-      "open_debug": "Open debug details"
+      "open_debug": "Open debug details",
+      "scroll_to_bottom": "Scroll to the bottom of the chat"
     },
     "dbms": {
       "placeholder": "Choose a DBMS"
@@ -145,6 +146,7 @@
     "ok": "ok",
     "password": "password",
     "save": "save",
+    "scroll_to_top": "scroll to the top of the page",
     "settings": "settings",
     "show": "show",
     "shrink_view": "shrink view",
