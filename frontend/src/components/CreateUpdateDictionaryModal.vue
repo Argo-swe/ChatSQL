@@ -78,9 +78,12 @@ function isFileSelected(): boolean {
   return !withFile.value || selectedFile != null;
 }
 
+/**
+ * Checks if the provided metadata value is valid based on a specific pattern.
+ * @param value - The metadata value to be validated.
+ */
 function isValidMetadata(value: string) {
   const validPattern = /^[\w\s-]+$/;
-  console.log(value);
   return validPattern.test(value);
 }
 
