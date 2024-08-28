@@ -25,6 +25,7 @@ declare global {
       setupDictionary(): Chainable<void>;
       cleanupDictionary(): Chainable<void>;
       login(): Chainable<void>;
+      handleSession(): Chainable<void>;
       selectDictionary(): Chainable<void>;
       decreaseScale(): Chainable<void>;
       increaseScale(): Chainable<void>;
@@ -39,12 +40,19 @@ Cypress.Commands.add('login', () => {
   cy.get('[data-testid="login-submit-button"]').click();
 });
 
+Cypress.Commands.add('handleSession', () => {
+  cy.session('login', () => {
+    cy.visit('/');
+    cy.login();
+  });
+});
+
 Cypress.Commands.add('setupDictionary', () => {
   cy.login().then(() => {
     cy.visit('/dictionary');
     cy.get('[data-testid="dictionary-create-button"]').click();
-    cy.get('[data-testid="dictionary-name-input"]').type('Test Orders');
-    cy.get('[data-testid="dictionary-description-input"]').type('Test Orders dictionary');
+    cy.get('[data-testid="dictionary-name-input"]').type('System Test Orders');
+    cy.get('[data-testid="dictionary-description-input"]').type('System Test Orders dictionary');
     cy.get('[data-testid="dictionary-file-upload"]')
       .find('input[type="file"]')
       .selectFile('cypress/fixtures/orders.json', { force: true });
@@ -55,11 +63,16 @@ Cypress.Commands.add('setupDictionary', () => {
 
 Cypress.Commands.add('cleanupDictionary', () => {
   cy.visit('/dictionary');
-  cy.get('[data-testid="dictionary-delete-button"]').last().click();
+  cy.get('[data-testid="dictionaries-table"] tr')
+    .contains('System Test Orders')
+    .parents('tr')
+    .within(() => {
+      cy.get('[data-testid="dictionary-delete-button"]').click();
+    });
   cy.get('[data-testid="confirm-dialog"]').find('[data-pc-name="acceptbutton"]').click();
 });
 
 Cypress.Commands.add('selectDictionary', () => {
   cy.get('[data-testid="dictionary-dropdown"]').click();
-  cy.get('ul > li').contains('Test Orders').click();
+  cy.get('ul > li').contains('System Test Orders').click();
 });

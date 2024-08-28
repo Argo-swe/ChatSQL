@@ -29,7 +29,10 @@ describe('Chat - HomePage', () => {
   // Test case
   it('verify that a user can select a dictionary', () => {
     cy.selectDictionary();
-    cy.get('[data-testid="selected-dictionary-name"]').should('have.text', 'Test Orders (.json)');
+    cy.get('[data-testid="selected-dictionary-name"]').should(
+      'have.text',
+      'System Test Orders (.json)'
+    );
   });
 
   // Test case

@@ -15,10 +15,7 @@ describe('Chat - HomePage', () => {
 
   // Hook that runs before each test
   beforeEach(() => {
-    cy.session('login', () => {
-      cy.visit('/');
-      cy.login();
-    }).then(() => {
+    cy.handleSession().then(() => {
       cy.visit('/');
     });
   });
