@@ -39,7 +39,36 @@ describe('Dictionary Management', () => {
     cy.get('[data-testid="dictionary-name-input"]').clear();
     cy.get('[data-testid="dictionary-name-input"]').type('***');
 
+    cy.get('[data-testid="dictionary-name-input"]').invoke('removeAttr', 'invalid');
+    cy.get('[data-testid="dictionary-submit-button"]').invoke('removeAttr', 'disabled');
+    cy.get('[data-testid="dictionary-submit-button"]').click({ force: true });
+    cy.get('[data-testid="toast-message"]').find('.p-toast-message-error').should('exist');
+  });
+
+  // Test case
+  it('verify that the system returns an error if the dictionary name already exists', () => {
+    cy.get('[data-testid="dictionary-create-button"]').click();
+    cy.get('[data-testid="dictionary-name-input"]').type('System Test Orders 2');
+    cy.get('[data-testid="dictionary-description-input"]').type('Dictionary description');
+    cy.get('[data-testid="dictionary-file-upload"]')
+      .find('input[type="file"]')
+      .selectFile('cypress/fixtures/orders.json', { force: true });
+
     cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('[data-testid="toast-message"]').find('.p-toast-message-error').should('exist');
+  });
+
+  // Test case
+  it('verify that the system returns an error if the dictionary description is bad formatted', () => {
+    cy.getDictionaryRow().within(() => {
+      cy.get('[data-testid="update-metadata-button"]').click();
+    });
+    cy.get('[data-testid="dictionary-description-input"]').clear();
+    cy.get('[data-testid="dictionary-description-input"]').type('***');
+
+    cy.get('[data-testid="dictionary-description-input"]').invoke('removeAttr', 'invalid');
+    cy.get('[data-testid="dictionary-submit-button"]').invoke('removeAttr', 'disabled');
+    cy.get('[data-testid="dictionary-submit-button"]').click({ force: true });
     cy.get('[data-testid="toast-message"]').find('.p-toast-message-error').should('exist');
   });
 
