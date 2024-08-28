@@ -29,6 +29,7 @@ declare global {
       selectDictionary(): Chainable<void>;
       decreaseScale(): Chainable<void>;
       increaseScale(): Chainable<void>;
+      getDictionaryRow(): Chainable<void>;
     }
   }
 }
@@ -61,14 +62,15 @@ Cypress.Commands.add('setupDictionary', () => {
   });
 });
 
+Cypress.Commands.add('getDictionaryRow', () => {
+  cy.get('[data-testid="dictionaries-table"] tr').contains('System Test Orders').parents('tr');
+});
+
 Cypress.Commands.add('cleanupDictionary', () => {
   cy.visit('/dictionary');
-  cy.get('[data-testid="dictionaries-table"] tr')
-    .contains('System Test Orders')
-    .parents('tr')
-    .within(() => {
-      cy.get('[data-testid="dictionary-delete-button"]').click();
-    });
+  cy.getDictionaryRow().within(() => {
+    cy.get('[data-testid="dictionary-delete-button"]').click();
+  });
   cy.get('[data-testid="confirm-dialog"]').find('[data-pc-name="acceptbutton"]').click();
 });
 
