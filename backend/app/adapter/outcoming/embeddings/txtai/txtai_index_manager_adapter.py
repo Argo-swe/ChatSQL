@@ -12,10 +12,18 @@ class TxtaiIndexManagerAdapter(IndexManagerPort):
     def __init__(
         self,
         file_repository: FileRepository,
-        table_path="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-        column_path="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        table_path=None,
+        column_path=None,
     ):
-        # Modelli per la lingua inglese
+        print("\nTxtai settings...")
+        if table_path is None:
+            table_path = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        print(f"table_description_search_model_path: {table_path}")
+        if column_path is None:
+            column_path = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        print(f"column_description_search_model_path: {column_path}")
+        print("\n")
+
         self._embeddings = Embeddings(
             content=True,
             indexes={

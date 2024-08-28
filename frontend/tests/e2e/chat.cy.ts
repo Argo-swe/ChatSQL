@@ -67,7 +67,7 @@ describe('Chat - HomePage', () => {
   it('verify that the system returns a warning if the request is not eligible', () => {
     cy.selectDictionary();
     cy.get('[data-testid="request-input"]').type('123{enter}');
-    let message = 'Sorry, the ChatBOT was unable to find any relevant results for "ciao".\n';
+    let message = 'Sorry, the ChatBOT was unable to find any relevant results for "123".\n';
     message = message + 'We invite you to try again with a different request.';
     cy.get('[data-testid="request-button"]', { timeout: 15000 }).should(
       'not.have.class',
@@ -115,5 +115,17 @@ describe('Chat - HomePage', () => {
     cy.get('[data-testid="chat-message-container"]').should('exist');
     cy.get('[data-testid="clean-chat-button"]').click();
     cy.get('[data-testid="chat-message-container"]').should('not.exist');
+  });
+
+  // Test case
+  it('verify that the system supports requests in languages other than English', () => {
+    cy.selectDictionary();
+    cy.get('[data-testid="language-dropdown"]').click();
+    cy.get('ul > li').contains('italiano').should('exist').click();
+    cy.get('[data-testid="request-input"]').type('tutti gli utenti{enter}');
+    cy.get('[data-testid="chat-message-container"].received', { timeout: 15000 }).should(
+      'contain.text',
+      'Suggested prompt'
+    );
   });
 });
