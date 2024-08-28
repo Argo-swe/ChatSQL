@@ -10,30 +10,12 @@ describe('Chat - HomePage', () => {
 
   // Test case
   it('verify that the user can decrease the scale', () => {
-    cy.window().then((win) => {
-      const originalFontSize = parseFloat(
-        win.getComputedStyle(win.document.documentElement).fontSize
-      );
-      cy.get('[data-testid="decrease-scale-button"]').should('exist').click();
-      cy.window().then(() => {
-        const newFontSize = parseFloat(win.getComputedStyle(win.document.documentElement).fontSize);
-        expect(newFontSize).to.be.lessThan(originalFontSize);
-      });
-    });
+    cy.decreaseScale();
   });
 
   // Test case
   it('verify that the user can increase the scale', () => {
-    cy.window().then((win) => {
-      const originalFontSize = parseFloat(
-        win.getComputedStyle(win.document.documentElement).fontSize
-      );
-      cy.get('[data-testid="increase-scale-button"]').should('exist').click();
-      cy.window().then(() => {
-        const newFontSize = parseFloat(win.getComputedStyle(win.document.documentElement).fontSize);
-        expect(newFontSize).to.be.greaterThan(originalFontSize);
-      });
-    });
+    cy.increaseScale();
   });
 
   // Test case

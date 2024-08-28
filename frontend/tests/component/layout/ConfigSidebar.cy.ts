@@ -73,30 +73,12 @@ describe('ConfigSidebar Component', () => {
 
   // Single and isolated test case
   it('should decrease scale', () => {
-    cy.window().then((win) => {
-      const originalFontSize = parseFloat(
-        win.getComputedStyle(win.document.documentElement).fontSize
-      );
-      cy.get('[data-testid="decrease-scale-button"]').should('exist').click();
-      cy.window().then(() => {
-        const newFontSize = parseFloat(win.getComputedStyle(win.document.documentElement).fontSize);
-        expect(newFontSize).to.be.lessThan(originalFontSize);
-      });
-    });
+    cy.decreaseScale();
   });
 
   // Single and isolated test case
   it('should increase scale', () => {
-    cy.window().then((win) => {
-      const originalFontSize = parseFloat(
-        win.getComputedStyle(win.document.documentElement).fontSize
-      );
-      cy.get('[data-testid="increase-scale-button"]').should('exist').click();
-      cy.window().then(() => {
-        const newFontSize = parseFloat(win.getComputedStyle(win.document.documentElement).fontSize);
-        expect(newFontSize).to.be.greaterThan(originalFontSize);
-      });
-    });
+    cy.increaseScale();
   });
 
   // Single and isolated test case

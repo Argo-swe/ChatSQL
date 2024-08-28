@@ -31,6 +31,8 @@ declare global {
   namespace Cypress {
     interface Chainable {
       mount: typeof mount;
+      decreaseScale(): Chainable<void>;
+      increaseScale(): Chainable<void>;
     }
   }
 }

@@ -26,6 +26,8 @@ declare global {
       cleanupDictionary(): Chainable<void>;
       login(): Chainable<void>;
       selectDictionary(): Chainable<void>;
+      decreaseScale(): Chainable<void>;
+      increaseScale(): Chainable<void>;
     }
   }
 }
