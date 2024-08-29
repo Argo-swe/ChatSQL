@@ -47,10 +47,14 @@ const incrementScale = () => {
  * @param mode - Flag indicating whether the theme is light or dark.
  */
 const onChangeTheme = (theme: string, mode: boolean) => {
-  $primevue.changeTheme(layoutConfig.theme.value, theme, 'theme-css', () => {
-    layoutConfig.theme.value = theme;
-    layoutConfig.darkTheme.value = mode;
-  });
+  try {
+    $primevue.changeTheme(layoutConfig.theme.value, theme, 'theme-css', () => {
+      layoutConfig.theme.value = theme;
+      layoutConfig.darkTheme.value = mode;
+    });
+  } catch (error) {
+    console.warn('Error while changing theme: ' + error);
+  }
   localStorage.setItem('darkTheme', mode.toString());
 };
 
@@ -81,11 +85,13 @@ const onLanguageChange = (value: string) => {
     v-model:visible="layoutState.configSidebarVisible.value"
     position="right"
     class="layout-config-sidebar w-26rem"
+    data-testid="config-sidebar"
     pt:close-button="ml-auto"
   >
     <div class="p-2">
       <section
         class="pb-4 flex align-items-center justify-content-between border-bottom-1 surface-border"
+        data-testid="manage-scale-section"
       >
         <span class="text-xl font-semibold">{{ t(`settings.scale`) }}</span>
         <div
@@ -97,6 +103,7 @@ const onLanguageChange = (value: string) => {
             text
             rounded
             :disabled="layoutConfig.scale.value === scales[0]"
+            data-testid="decrease-scale-button"
             @click="decrementScale"
           />
           <i
@@ -113,6 +120,7 @@ const onLanguageChange = (value: string) => {
             text
             rounded
             :disabled="layoutConfig.scale.value === scales[scales.length - 1]"
+            data-testid="increase-scale-button"
             @click="incrementScale"
           />
         </div>
@@ -120,21 +128,25 @@ const onLanguageChange = (value: string) => {
 
       <section
         class="py-4 flex align-items-center justify-content-between border-bottom-1 surface-border"
+        data-testid="manage-theme-section"
       >
         <span class="text-xl font-semibold">{{ t(`settings.darkMode`) }}</span>
         <PgInputSwitch
           :model-value="layoutConfig.darkTheme.value"
+          data-testid="theme-input-switch"
           @update:model-value="onDarkModeChange"
         />
       </section>
 
       <section
         class="py-4 flex align-items-center justify-content-between border-bottom-1 surface-border"
+        data-testid="manage-language-section"
       >
         <span class="text-xl font-semibold">{{ t(`settings.language`) }}</span>
         <PgDropdown
           v-model="locale"
           :options="supportedLocales"
+          data-testid="language-dropdown"
           @update:model-value="onLanguageChange"
         >
           <template #value="slotProps">

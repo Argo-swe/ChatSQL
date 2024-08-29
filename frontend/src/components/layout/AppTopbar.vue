@@ -118,7 +118,7 @@ const onLogoutClick = () => {
 </script>
 
 <template>
-  <div class="layout-topbar">
+  <div class="layout-topbar" data-testid="topbar">
     <router-link to="/" class="layout-topbar-logo">
       <app-logo path="icons/argo_icona.svg" height="40"></app-logo>
       <span>ChatSQL</span>
@@ -127,6 +127,7 @@ const onLogoutClick = () => {
     <button
       class="p-link layout-menu-button layout-topbar-button"
       :aria-label="t('general.menu.openMainNavMenu')"
+      data-testid="open-main-nav-menu-button"
       @click="onMenuToggle()"
     >
       <i class="pi pi-bars"></i>
@@ -135,12 +136,18 @@ const onLogoutClick = () => {
     <button
       class="p-link layout-topbar-menu-button layout-topbar-button"
       :aria-label="t('text.toggle_menu')"
+      data-testid="open-option-menu-button"
       @click="onTopBarMenuButton()"
     >
       <i class="pi pi-ellipsis-v"></i>
     </button>
 
-    <div id="option-menu" class="layout-topbar-menu" :class="topbarMenuClasses">
+    <div
+      id="option-menu"
+      class="layout-topbar-menu"
+      :class="topbarMenuClasses"
+      data-testid="option-menu"
+    >
       <button
         class="p-link layout-topbar-button"
         :title="t('text.Settings')"
@@ -154,6 +161,7 @@ const onLogoutClick = () => {
         class="p-link layout-topbar-button"
         :title="t('text.Login')"
         :aria-label="t('text.Login')"
+        data-testid="login-button"
         @click="onLoginClick()"
       >
         <i class="pi pi-user"></i><span>{{ t('text.Login') }}</span>
@@ -163,6 +171,7 @@ const onLogoutClick = () => {
         class="p-link layout-topbar-button"
         :title="t('text.Logout')"
         :aria-label="t('text.Logout')"
+        data-testid="logout-button"
         @click="onLogoutClick()"
       >
         <i class="pi pi-sign-out"></i><span>{{ t('text.Logout') }}</span>
