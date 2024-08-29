@@ -14,6 +14,15 @@ class DictionaryError:
         return f"Dictionary with name '{name}' already exists"
 
     @staticmethod
+    def file_too_large() -> str:
+        """Generates an error message indicating that the dictionary schema file is too large.
+
+        Returns:
+            str: An appropriate error message.
+        """
+        return "Dictionary file is too large, max size 1MB"
+
+    @staticmethod
     def format_error() -> str:
         """Generates an error message indicating that the dictionary schema is badly formatted.
 

@@ -3,5 +3,5 @@ from fastapi_camelcase import CamelModel
 
 
 class PromptDto(CamelModel):
-    prompt: str
+    prompt: Optional[str] = None
     debug: Optional[str] = None

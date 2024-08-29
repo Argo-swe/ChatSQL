@@ -132,7 +132,7 @@ const hideDetails = () => {
  * @param isSent - A flag indicating whether the message has been sent or received by the user.
  * @param debug - (Optional) The content of the debug.
  */
-function addMessage(message: string, isSent: boolean, debug?: string) {
+function addMessage(message: string | null, isSent: boolean, debug?: string) {
   messages.value.push({
     message,
     debug,

@@ -59,7 +59,7 @@ const openDebugMessage = () => {
 const copyToClipboard = () => {
   isCopying.value = true;
   navigator.clipboard
-    .writeText(message.trim())
+    .writeText(message!.trim())
     .then(() => {
       messageService.messageSuccess(t('general.clipboard.name'), t('general.clipboard.success'));
       setTimeout(() => {
@@ -94,7 +94,7 @@ const copyToClipboard = () => {
       <div class="w-full border-round-lg messageBox">
         <div class="message-action-area">
           <PgButton
-            v-if="!isSent"
+            v-if="!isSent && message"
             :icon="isCopying ? 'pi pi-check' : 'pi pi-copy'"
             class="m-1"
             outlined
@@ -117,7 +117,7 @@ const copyToClipboard = () => {
             @click="openDebugMessage"
           />
         </div>
-        <p data-testid="chat-message">{{ message }}</p>
+        <p data-testid="chat-message">{{ message || t('chat.prompt.empty') }}</p>
       </div>
     </div>
   </div>
