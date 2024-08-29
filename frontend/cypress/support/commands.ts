@@ -36,6 +36,9 @@
 //   }
 // }
 
+/**
+ * Cypress command to scale down the user interface.
+ */
 Cypress.Commands.add('decreaseScale', () => {
   cy.window().then((win) => {
     const originalFontSize = parseFloat(
@@ -49,6 +52,9 @@ Cypress.Commands.add('decreaseScale', () => {
   });
 });
 
+/**
+ * Cypress command to scale up the user interface.
+ */
 Cypress.Commands.add('increaseScale', () => {
   cy.window().then((win) => {
     const originalFontSize = parseFloat(

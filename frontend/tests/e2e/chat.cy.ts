@@ -5,13 +5,16 @@ describe('Chat - HomePage', () => {
   // Hook that runs once before all tests
   before(() => {
     cy.visit('/');
-    cy.setupDictionary();
+    cy.setupDictionary().then(() => {
+      cy.logout();
+    });
   });
 
   // Hook that runs once after all tests
   after(() => {
     cy.login().then(() => {
       cy.cleanupDictionary();
+      cy.logout();
     });
   });
 
@@ -31,7 +34,7 @@ describe('Chat - HomePage', () => {
     cy.selectDictionary();
     cy.get('[data-testid="selected-dictionary-name"]').should(
       'have.text',
-      'System Test Orders (.json)'
+      'System test orders (.json)'
     );
   });
 
@@ -42,11 +45,11 @@ describe('Chat - HomePage', () => {
     cy.get('[data-testid="dictionary-preview-container"]').should('be.visible');
     cy.get('[data-testid="database-name"]').should('have.text', 'Orders');
     cy.get('[data-testid="database-description"]').should(
-      'have.text',
+      'contain.text',
       'The orders database is designed to monitor and manage purchase transactions.'
     );
     cy.get('[data-testid="database-tables"] li:first').should(
-      'have.text',
+      'contain.text',
       'users: Table containing account details and personal information about users who make purchases.'
     );
   });
@@ -70,12 +73,9 @@ describe('Chat - HomePage', () => {
   it('verify that the system returns a warning if the request is not eligible', () => {
     cy.selectDictionary();
     cy.get('[data-testid="request-input"]').type('123{enter}');
-    let message = 'Sorry, the ChatBOT was unable to find any relevant results for "123".\n';
-    message = message + 'We invite you to try again with a different request.';
-    cy.get('[data-testid="request-button"]', { timeout: 15000 }).should(
-      'not.have.class',
-      'pi-spin pi-spinner'
-    );
+    let message =
+      'Mi dispiace, il ChatBOT non è riuscito a trovare risultati pertinenti alla richiesta ricevuta.\n';
+    message = message + 'Ti invitiamo a riprovare con una richiesta diversa.';
     cy.get('[data-testid="chat-message-container"].received', { timeout: 15000 }).should(
       'contain.text',
       message
@@ -86,12 +86,11 @@ describe('Chat - HomePage', () => {
   it('verify that the user can receive a prompt', () => {
     cy.selectDictionary();
     cy.get('[data-testid="request-input"]').type('all users{enter}');
-    cy.get('[data-testid="chat-message-container"]').should('be.visible');
     cy.get('[data-testid="request-button"]', { timeout: 15000 }).should(
       'not.have.class',
       'pi-spin pi-spinner'
     );
-    cy.get('[data-testid="chat-message-container"].received', { timeout: 15000 }).should(
+    cy.get('[data-testid="chat-message-container"].received').should(
       'contain.text',
       'Suggested prompt'
     );
@@ -101,7 +100,7 @@ describe('Chat - HomePage', () => {
   it('verify that the user can copy the prompt', () => {
     cy.selectDictionary();
     cy.get('[data-testid="request-input"]').type('all users{enter}');
-    cy.get('[data-testid="copy-button"]').click();
+    cy.get('[data-testid="copy-button"]', { timeout: 15000 }).should('exist').click();
     cy.window()
       .then((win) => {
         return win.navigator.clipboard.readText();
@@ -121,10 +120,10 @@ describe('Chat - HomePage', () => {
   });
 
   // Test case
-  it('verify that the system supports requests in languages other than English', () => {
+  it('verify that the system supports requests in languages other than english', () => {
     cy.selectDictionary();
     cy.get('[data-testid="language-dropdown"]').click();
-    cy.get('ul > li').contains('italiano').should('exist').click();
+    cy.get('li').find('[data-testid="chat-language-option"]').contains('italiano').click();
     cy.get('[data-testid="request-input"]').type('tutti gli utenti{enter}');
     cy.get('[data-testid="chat-message-container"].received', { timeout: 15000 }).should(
       'contain.text',

@@ -95,8 +95,7 @@ function isFormValid(): boolean {
       isFileSelected() &&
       dictionaryName.value?.length > 0 &&
       dictionaryDescription.value?.length > 0 &&
-      isValidMetadata(dictionaryName.value) &&
-      isValidMetadata(dictionaryDescription.value)
+      isValidMetadata(dictionaryName.value)
     );
   } else {
     return isFileSelected();
@@ -259,7 +258,7 @@ function submitForm() {
           required
           aria-labelledby="l-description"
           autocomplete="off"
-          :invalid="!dictionaryDescription || !isValidMetadata(dictionaryDescription)"
+          :invalid="!dictionaryDescription"
           data-testid="dictionary-description-input"
         />
       </div>

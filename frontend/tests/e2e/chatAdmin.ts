@@ -5,12 +5,15 @@ describe('Chat - HomePage', () => {
   // Hook that runs once before all tests
   before(() => {
     cy.visit('/');
-    cy.setupDictionary();
+    cy.setupDictionary().then(() => {
+      cy.logout();
+    });
   });
 
   // Hook that runs once after all tests
   after(() => {
     cy.cleanupDictionary();
+    cy.logout();
   });
 
   // Hook that runs before each test
@@ -33,7 +36,7 @@ describe('Chat - HomePage', () => {
     cy.selectDictionary();
     cy.get('[data-testid="request-input"]').type('all users{enter}');
     cy.get('[data-testid="debug-button"]', { timeout: 15000 }).should('exist').click();
-    cy.get('[data-testid="debug-message-download"]').should('exist').click();
+    cy.get('[data-testid="debug-message-download"]').click();
     const filename = 'cypress/downloads/chatsql_log.txt';
     cy.readFile(filename, { timeout: 15000 }).should('contain', 'Request: all users');
   });

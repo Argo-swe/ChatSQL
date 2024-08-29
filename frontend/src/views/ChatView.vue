@@ -438,12 +438,12 @@ async function generatePromptWithDebug(query: string) {
           @update:model-value="onLanguageChange"
         >
           <template #value="slotProps">
-            <div class="capitalize">
+            <div class="capitalize" data-testid="chat-language-option">
               {{ t(`text.${slotProps.value}`) }}
             </div>
           </template>
           <template #option="slotProps">
-            <div class="capitalize">
+            <div class="capitalize" data-testid="chat-language-option">
               {{ t(`text.${slotProps.option}`) }}
             </div>
           </template>

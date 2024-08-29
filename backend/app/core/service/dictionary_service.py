@@ -8,7 +8,6 @@ from models.dictionary_dto import DictionaryDto
 from models.responses.response_dto import ResponseDto, ResponseStatusEnum
 from models.responses.dictionary_response_dto import DictionaryResponseDto
 from models.responses.dictionaries_response_dto import DictionariesResponseDto
-from tools.utils import Utils
 from tools.exceptions import DictionaryError
 
 
@@ -215,7 +214,7 @@ class DictionaryService(DictionaryUseCase):
             return found_dic_response
 
         # Validate dictionary schema
-        is_valid = self._schema_validator.validate(Utils.string_to_json(content))
+        is_valid = self._schema_validator.validate(content)
 
         if not is_valid:
             return DictionaryResponseDto(
