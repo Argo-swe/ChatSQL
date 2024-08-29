@@ -1,12 +1,16 @@
+// External dependencies
 import Avatar from 'primevue/avatar';
 import Button from 'primevue/button';
 import DialogService from 'primevue/dialogservice';
 import ToastService from 'primevue/toastservice';
 import { createI18n } from 'vue-i18n';
-import ChatMessage from '../../src/components/ChatMessage.vue';
-import StringDataModal from '../../src/components/StringDataModal.vue';
-import AuthService from '../../src/services/auth.service';
 
+// Internal dependencies
+import ChatMessage from '@/components/ChatMessage.vue';
+import StringDataModal from '@/components/StringDataModal.vue';
+import AuthService from '@/services/auth.service';
+
+// Mock VueI18n
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
@@ -15,6 +19,10 @@ const i18n = createI18n({
   message: 'Mock translation'
 });
 
+/**
+ * Performs the mounting of the ChatMessage component.
+ * @param props - (Optional) Properties to pass to the component during mount.
+ */
 function mountChatMessage(props?) {
   return cy.mount(ChatMessage, {
     global: {
@@ -32,6 +40,9 @@ function mountChatMessage(props?) {
   });
 }
 
+/**
+ * Mounts a chat message representing a request sent by the user.
+ */
 function UserRequest() {
   return mountChatMessage({
     message: 'Chat Request Message',
@@ -39,6 +50,9 @@ function UserRequest() {
   });
 }
 
+/**
+ * Mounts a chat message representing a response sent by the ChatBOT to the user.
+ */
 function ChatBotResponse() {
   return mountChatMessage({
     message: 'Chat Response Message',
@@ -46,6 +60,9 @@ function ChatBotResponse() {
   });
 }
 
+/**
+ * Mounts a chat message representing a response sent by the ChatBOT to the admin.
+ */
 function ChatBotResponseWithDebug() {
   return mountChatMessage({
     message: 'Chat Response Message',
@@ -54,58 +71,71 @@ function ChatBotResponseWithDebug() {
   });
 }
 
+/**
+ * Verify that the call heard by the spy invoked the StringDataModal component.
+ */
+function CheckSubComponentCall() {
+  cy.get('@openDialogSpy').should('have.been.called');
+  cy.get('@openDialogSpy').its('firstCall.args[0]').should('equal', StringDataModal);
+}
+
+/**
+ * Test suite for the ChatMessage component.
+ */
 describe('ChatMessage Component', () => {
-  it('should display the user message with correct classes', () => {
+  // Single and isolated test case
+  it('should display the user message correctly', () => {
     UserRequest();
     cy.get('[data-testid="chat-message-container"]').should('have.class', 'sent');
     cy.get('[data-testid="message-avatar"]').find('.pi').should('have.class', 'pi-user');
-    cy.get('[data-testid="chat-message"]').should('contain.text', 'Chat Request Message');
+    cy.get('[data-testid="chat-message"]').should('have.text', 'Chat Request Message');
   });
 
-  it('should display the chatbot message with correct classes', () => {
+  // Single and isolated test case
+  it('should display the chatbot message correctly', () => {
     ChatBotResponse();
     cy.get('[data-testid="chat-message-container"]').should('have.class', 'received');
     cy.get('[data-testid="message-avatar"]').find('.pi').should('have.class', 'pi-database');
-    cy.get('[data-testid="chat-message"]').should('contain.text', 'Chat Response Message');
+    cy.get('[data-testid="chat-message"]').should('have.text', 'Chat Response Message');
   });
 
-  it('should hide the buttons if the message has been sent by a user', () => {
+  // Single and isolated test case
+  it('should hide the action area if the message has been sent by a user', () => {
     UserRequest();
     cy.get('[data-testid="copy-button"]').should('not.exist');
     cy.get('[data-testid="debug-button"]').should('not.exist');
   });
 
+  // Single and isolated test case
   it('should call the copy to clipboard function with correct data', () => {
-    // Intercepts the call to 'navigator.clipboard.writeText' and simulate a success
     cy.window().then((win) => {
-      const clipboardStub = cy.stub(win.navigator.clipboard, 'writeText').resolves();
-      cy.wrap(clipboardStub).as('clipboardStub');
+      cy.spy(win.navigator.clipboard, 'writeText').as('clipboardSpy');
     });
     ChatBotResponse();
     cy.get('[data-testid="copy-button"]').should('exist').click();
-    cy.get('@clipboardStub').should('be.calledWith', 'Chat Response Message');
+    cy.get('@clipboardSpy').should('be.calledWith', 'Chat Response Message');
   });
 
+  // Single and isolated test case
   it('should hide debug button if the user is not logged in', () => {
     cy.stub(AuthService, 'isLogged').returns(false);
     ChatBotResponseWithDebug();
     cy.get('[data-testid="debug-button"]').should('not.exist');
   });
 
-  it('shows debug modal when clicking the debug button', () => {
+  // Single and isolated test case
+  it('should display debug modal when clicking the debug button', () => {
     cy.stub(AuthService, 'isLogged').returns(true);
 
     ChatBotResponseWithDebug().then(({ component }) => {
       const openDialogSpy = cy.spy(component.dialog, 'open').as('openDialogSpy');
 
       cy.get('[data-testid="debug-button"]')
+        .should('exist')
         .click()
         .then(() => {
-          expect(openDialogSpy).to.be.called;
-
-          let callArgs = openDialogSpy.getCall(0).args[0];
-          expect(callArgs).to.equal(StringDataModal);
-          callArgs = openDialogSpy.getCall(0).args[1];
+          CheckSubComponentCall();
+          const callArgs = openDialogSpy.getCall(0).args[1];
           expect(callArgs.data.stringData).to.equal('Prompt generation debug');
         });
     });

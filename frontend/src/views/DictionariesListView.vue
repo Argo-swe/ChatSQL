@@ -18,7 +18,6 @@ import CreateUpdateDictionaryModal from '@/components/CreateUpdateDictionaryModa
 const { t } = useI18n();
 const dialog = useDialog();
 const confirm = useConfirm();
-let client = ApiClientManager.getApiClient();
 const messageService = MessageService.getInstance();
 
 // Gain access to functions and maps to view status messages
@@ -50,24 +49,20 @@ onMounted(() => {
 async function retrieveDictionaries() {
   loading.value = true;
   dictionaries.value = [];
-  (await client)
-    .getAllDictionaries()
-    .then((response) => {
-      if (response.data?.status == 'OK') {
-        dictionaries.value = response.data.data;
-      } else {
-        console.warn(response.data);
-      }
-    })
-    .catch((error) => {
-      messageService.messageError(
-        t('dictionary.title'),
-        `${t('general.list.error')}\n${error.message}`
-      );
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+  try {
+    const client = await ApiClientManager.getApiClient();
+    const response = await client.getAllDictionaries();
+
+    if (response.data?.status == 'OK') {
+      dictionaries.value = response.data.data;
+    } else {
+      console.warn(response.data);
+    }
+  } catch (error) {
+    messageService.messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -140,22 +135,19 @@ function onClickUpdateFile(dictionary: Components.Schemas.DictionaryDto) {
  * @param dictionary - The dictionary object containing metadata needed to fetch and download the file.
  */
 async function onClickDownloadFile(dictionary: Components.Schemas.DictionaryDto) {
-  (await client)
-    .getDictionaryFile(dictionary.id, undefined, {
+  try {
+    const client = await ApiClientManager.getApiClient();
+    const response = await client.getDictionaryFile(dictionary.id, undefined, {
       responseType: 'blob'
-    })
-    .then((response) => {
-      UtilsService.downloadFile(
-        `${UtilsService.stringToSnakeCase(dictionary.name)}_schema.json`,
-        response.data
-      );
-    })
-    .catch((error) => {
-      messageService.messageError(
-        t('dictionary.title'),
-        `${t('general.list.error')}\n${error.message}`
-      );
     });
+
+    UtilsService.downloadFile(
+      `${UtilsService.stringToSnakeCase(dictionary.name)}_schema.json`,
+      response.data
+    );
+  } catch (error) {
+    messageService.messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
+  }
 }
 
 /**
@@ -172,35 +164,35 @@ function onClickDelete(dictionaryId: number) {
     acceptClass: 'p-button-success',
     rejectLabel: t('text.No'),
     accept: async () => {
-      (await client)
-        .deleteDictionary(dictionaryId)
-        .then((response) => {
-          if (response.data?.status == 'OK') {
-            retrieveDictionaries();
-            messageService.messageSuccess(t('dictionary.title'), t('actions.delete.success'));
-          } else {
-            messageService.messageError(
-              t('dictionary.title'),
-              getStatusMex(onDeleteMessages, response.data?.status, {
-                message: response.data?.message,
-                dictionaryId
-              })
-            );
-          }
-        })
-        .catch((error) => {
+      try {
+        const client = await ApiClientManager.getApiClient();
+        const response = await client.deleteDictionary(dictionaryId);
+
+        if (response.data?.status == 'OK') {
+          retrieveDictionaries();
+          messageService.messageSuccess(t('dictionary.title'), t('actions.delete.success'));
+        } else {
           messageService.messageError(
             t('dictionary.title'),
-            `${t('actions.delete.error')}\n${error.message}`
+            getStatusMex(onDeleteMessages, response.data?.status, {
+              message: response.data?.message,
+              dictionaryId
+            })
           );
-        });
+        }
+      } catch (error) {
+        messageService.messageError(
+          t('dictionary.title'),
+          `${t('actions.delete.error')}\n${error}`
+        );
+      }
     }
   });
 }
 </script>
 
 <template>
-  <div class="flex justify-content-between flex-wrap">
+  <div class="flex justify-content-between flex-wrap" data-testid="dictionary-page-header">
     <div class="flex m-2">
       <h1>{{ t('dictionary.title', 2) }}</h1>
     </div>
@@ -211,6 +203,7 @@ function onClickDelete(dictionaryId: number) {
         severity="success"
         class="ml-2"
         rounded
+        data-testid="dictionary-create-button"
         @click="onClickCreate()"
       />
     </div>
@@ -224,6 +217,7 @@ function onClickDelete(dictionaryId: number) {
     table-style="min-width: 50rem"
     :always-show-paginator="false"
     :loading="loading"
+    data-testid="dictionaries-table"
   >
     <template #empty> {{ t('general.list.empty') }} </template>
     <template #loading> {{ t('general.list.loading') }} </template>
@@ -241,6 +235,7 @@ function onClickDelete(dictionaryId: number) {
           :title="t('dictionary.update')"
           class="ml-2"
           rounded
+          data-testid="update-metadata-button"
           @click="onClickUpdateMetadata(slotProps.data)"
         />
         <PgButton
@@ -248,6 +243,7 @@ function onClickDelete(dictionaryId: number) {
           :title="t('dictionary.file.update')"
           class="ml-2"
           rounded
+          data-testid="update-file-button"
           @click="onClickUpdateFile(slotProps.data)"
         />
         <PgButton
@@ -256,6 +252,7 @@ function onClickDelete(dictionaryId: number) {
           severity="help"
           class="ml-2"
           rounded
+          data-testid="download-file-button"
           @click="onClickDownloadFile(slotProps.data)"
         />
         <PgButton
@@ -264,6 +261,7 @@ function onClickDelete(dictionaryId: number) {
           severity="danger"
           class="ml-2"
           rounded
+          data-testid="dictionary-delete-button"
           @click="onClickDelete(slotProps.data.id)"
         />
       </template>
