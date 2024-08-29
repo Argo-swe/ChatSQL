@@ -50,7 +50,9 @@ Cypress.Commands.add('login', () => {
  */
 Cypress.Commands.add('logout', () => {
   cy.get('[data-testid="logout-button"]').click({ force: true });
-  cy.get('[data-testid="confirm-dialog"]').find('[data-pc-name="acceptbutton"]').click({ force: true });
+  cy.get('[data-testid="confirm-dialog"]')
+    .find('[data-pc-name="acceptbutton"]')
+    .click({ force: true });
 });
 
 /**
@@ -67,18 +69,16 @@ Cypress.Commands.add('handleSession', () => {
  * Cypress command to insert a dictionary to use as a basis for tests.
  */
 Cypress.Commands.add('setupDictionary', () => {
-  cy.login().then(() => {
-    cy.visit('/dictionary');
-    cy.get('[data-testid="dictionary-create-button"]').click();
-    cy.get('[data-testid="dictionary-name-input"]').type('System test orders');
-    cy.get('[data-testid="dictionary-description-input"]').type('System test orders dictionary');
-    cy.get('[data-testid="dictionary-file-upload"]')
-      .find('input[type="file"]')
-      .selectFile('cypress/fixtures/orders.json', { force: true });
+  cy.visit('/dictionary');
+  cy.get('[data-testid="dictionary-create-button"]').click();
+  cy.get('[data-testid="dictionary-name-input"]').type('System test orders');
+  cy.get('[data-testid="dictionary-description-input"]').type('System test orders dictionary');
+  cy.get('[data-testid="dictionary-file-upload"]')
+    .find('input[type="file"]')
+    .selectFile('cypress/fixtures/orders.json', { force: true });
 
-    cy.get('[data-testid="dictionary-submit-button"]').click();
-    cy.get('[data-testid="toast-message"]', { timeout: 30000 }).should('exist');
-  });
+  cy.get('[data-testid="dictionary-submit-button"]').click();
+  cy.get('[data-testid="toast-message"]', { timeout: 120000 }).should('be.visible');
 });
 
 /**

@@ -4,10 +4,9 @@
 describe('Dictionary Management', () => {
   // Hook that runs once before all tests
   before(() => {
-    cy.visit('/');
-    // Verify that the admin can insert a new data dictionary
-    cy.setupDictionary().then(() => {
-      cy.logout();
+    cy.handleSession().then(() => {
+      // Verify that the admin can insert a new data dictionary
+      cy.setupDictionary();
     });
   });
 

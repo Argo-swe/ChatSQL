@@ -4,9 +4,8 @@
 describe('Chat - HomePage', () => {
   // Hook that runs once before all tests
   before(() => {
-    cy.visit('/');
-    cy.setupDictionary().then(() => {
-      cy.logout();
+    cy.handleSession().then(() => {
+      cy.setupDictionary();
     });
   });
 
