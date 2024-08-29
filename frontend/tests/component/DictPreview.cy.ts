@@ -1,8 +1,12 @@
+// External dependencies
 import Button from 'primevue/button';
 import ScrollPanel from 'primevue/scrollpanel';
 import { createI18n } from 'vue-i18n';
-import DictPreview from '../../src/components/DictPreview.vue';
 
+// Internal dependencies
+import DictPreview from '@/components/DictPreview.vue';
+
+// Mock VueI18n
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
@@ -11,6 +15,10 @@ const i18n = createI18n({
   message: 'Mock translation'
 });
 
+/**
+ * Performs the mounting of the DictPreview component.
+ * @param props - (Optional) Properties to pass to the component during mount.
+ */
 function mountDictPreview(props?) {
   return cy.mount(DictPreview, {
     global: {
@@ -27,8 +35,12 @@ function mountDictPreview(props?) {
   });
 }
 
+/**
+ * Test suite for the DictPreview component.
+ */
 describe('DictPreview Component', () => {
-  it('should not exist if detailsVisible equals false', () => {
+  // Single and isolated test case
+  it('should not render if detailsVisible equals false', () => {
     mountDictPreview({
       detailsVisible: false,
       dictionaryPreview: {
@@ -40,6 +52,7 @@ describe('DictPreview Component', () => {
     cy.get('[data-testid="dictionary-preview-container"]').should('not.exist');
   });
 
+  // Single and isolated test case
   it('should render with correct data', () => {
     mountDictPreview({
       detailsVisible: true,
@@ -71,6 +84,7 @@ describe('DictPreview Component', () => {
     );
   });
 
+  // Single and isolated test case
   it('should toggle expansion state on click', () => {
     mountDictPreview({
       detailsVisible: true,
@@ -80,11 +94,12 @@ describe('DictPreview Component', () => {
         tables: []
       }
     });
-    cy.get('[data-testid="dictionary-preview-expand-button"]').click();
+    cy.get('[data-testid="dictionary-preview-expand-button"]').should('exist').click();
     cy.get('[data-testid="dictionary-preview-container"]').should('have.class', 'expanded');
     cy.get('[data-testid="dictionary-preview-expand-button"]')
       .find('.pi')
       .should('have.class', 'pi-window-minimize');
+
     cy.get('[data-testid="dictionary-preview-expand-button"]').click({ force: true });
     cy.get('[data-testid="dictionary-preview-container"]').should('not.have.class', 'expanded');
     cy.get('[data-testid="dictionary-preview-expand-button"]')
@@ -92,6 +107,7 @@ describe('DictPreview Component', () => {
       .should('have.class', 'pi-expand');
   });
 
+  // Single and isolated test case
   it('should emit hide details event on click', () => {
     mountDictPreview({
       detailsVisible: true,
@@ -102,7 +118,7 @@ describe('DictPreview Component', () => {
       },
       onHideDetails: cy.spy().as('hideDetailsSpy')
     });
-    cy.get('[data-testid="dictionary-preview-hide-button"]').click();
+    cy.get('[data-testid="dictionary-preview-hide-button"]').should('exist').click();
     cy.get('@hideDetailsSpy').should('have.been.called');
   });
 });

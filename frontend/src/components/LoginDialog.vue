@@ -34,8 +34,8 @@ function resetForm() {
  */
 const handleSuccessfulLogin = (accessToken: string) => {
   localStorage.setItem('token', accessToken);
-  layoutState.loginDialogVisible.value = false;
   resetForm();
+  layoutState.loginDialogVisible.value = false;
   window.dispatchEvent(
     new CustomEvent('token-localstorage-changed', {
       detail: {
