@@ -49,8 +49,8 @@ Cypress.Commands.add('login', () => {
  * Cypress command to logout.
  */
 Cypress.Commands.add('logout', () => {
-  cy.get('[data-testid="logout-button"]').click();
-  cy.get('[data-testid="confirm-dialog"]').find('[data-pc-name="acceptbutton"]').click();
+  cy.get('[data-testid="logout-button"]').click({ force: true });
+  cy.get('[data-testid="confirm-dialog"]').find('[data-pc-name="acceptbutton"]').click({ force: true });
 });
 
 /**
