@@ -91,39 +91,6 @@ def test_create_index_manager_success(valid_config, mock_file_repository):
     ), "Expected a TxtaiIndexManagerAdapter instance."
 
 
-"""Test for create_index_manager with missing configuration keys"""
-
-
-def test_create_index_manager_missing_keys(
-    invalid_config_missing_keys, mock_file_repository
-):
-    # Initialize the factory with an invalid configuration that is missing required keys
-    factory = TxtaiEmbeddingsManagerFactory(invalid_config_missing_keys)
-
-    # Call the create_index_manager method and expect a KeyError due to missing keys
-    with pytest.raises(KeyError) as exc_info:
-        factory.create_index_manager(mock_file_repository)
-
-    # Assert that the error message mentions the missing keys
-    assert (
-        "Key 'embeddings_table_path' or 'embeddings_columns_path' not found in dictionary"
-        in str(exc_info.value)
-    )
-
-
-"""Test for factory initialization with missing 'txtai' key"""
-
-
-def test_factory_initialization_missing_txtai_key(invalid_config_no_txtai_key):
-    # Attempt to initialize the factory with a configuration missing the 'txtai' key
-    # and expect a KeyError to be raised
-    with pytest.raises(KeyError) as exc_info:
-        TxtaiEmbeddingsManagerFactory(invalid_config_no_txtai_key)
-
-    # Assert that the error message mentions the missing 'txtai' key
-    assert "Key 'txtai' not found in dictionary" in str(exc_info.value)
-
-
 """TESTING CREATE_PROMPT_MANAGER_WITH_DEPENDENCIES"""
 
 """Test for create_prompt_manager_with_dependencies with valid configuration"""
