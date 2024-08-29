@@ -11,6 +11,7 @@
       "success": "Successfully deleted"
     },
     "formatError": "Wrong format",
+    "sizeError": "Dictionary file is too large, max size 1MB",
     "generate": {
       "error": "Error during generation",
       "success": "Generation successful"
@@ -118,7 +119,10 @@
     "title": "Login"
   },
   "primevue": {
-    "emptymessage": "No available options"
+    "emptymessage": "No available options",
+    "file": {
+      "invalidFileType": "Invalid file type, allowed file types: application/json"
+    }
   },
   "settings": {
     "darkMode": "Dark mode",

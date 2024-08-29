@@ -280,6 +280,7 @@ function submitForm() {
         mode="basic"
         name="demo[]"
         accept="application/json"
+        :invalid-file-type-message="t('primevue.file.invalidFileType')"
         required
         :choose-label="t('general.input.fileupload')"
         :disabled="fileSelected"

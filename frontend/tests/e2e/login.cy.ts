@@ -36,8 +36,7 @@ describe('Chat - HomePage', () => {
   // Test case
   it('verify that the admin can log out', () => {
     cy.login();
-    cy.get('[data-testid="logout-button"]').click();
-    cy.get('[data-testid="confirm-dialog"]').find('[data-pc-name="acceptbutton"]').click();
+    cy.logout();
     cy.get('[data-testid="login-button"]').should('exist');
     cy.get('[data-testid="main-nav-menu"]').children().should('have.length', 1);
   });

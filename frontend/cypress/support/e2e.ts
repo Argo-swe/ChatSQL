@@ -25,6 +25,7 @@ declare global {
       setupDictionary(): Chainable<void>;
       cleanupDictionary(): Chainable<void>;
       login(): Chainable<void>;
+      logout(): Chainable<void>;
       handleSession(): Chainable<void>;
       selectDictionary(): Chainable<void>;
       decreaseScale(): Chainable<void>;
@@ -39,6 +40,11 @@ Cypress.Commands.add('login', () => {
   cy.get('[data-testid="input-username"]').type('admin');
   cy.get('[data-testid="input-password"]').type('admin');
   cy.get('[data-testid="login-submit-button"]').click();
+});
+
+Cypress.Commands.add('logout', () => {
+  cy.get('[data-testid="logout-button"]').click();
+  cy.get('[data-testid="confirm-dialog"]').find('[data-pc-name="acceptbutton"]').click();
 });
 
 Cypress.Commands.add('handleSession', () => {
@@ -59,6 +65,7 @@ Cypress.Commands.add('setupDictionary', () => {
       .selectFile('cypress/fixtures/orders.json', { force: true });
 
     cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.logout();
   });
 });
 

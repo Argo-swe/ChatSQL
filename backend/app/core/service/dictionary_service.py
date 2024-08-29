@@ -122,7 +122,7 @@ class DictionaryService(DictionaryUseCase):
                 return DictionaryResponseDto(
                     data=None,
                     message=DictionaryError.file_too_large(),
-                    status=ResponseStatusEnum.BAD_REQUEST,
+                    status=ResponseStatusEnum.CONTENT_TOO_LARGE,
                 )
 
             found_dic = self._dictionary_repository.get_dictionary_by_name(
@@ -206,7 +206,7 @@ class DictionaryService(DictionaryUseCase):
             return DictionaryResponseDto(
                 data=None,
                 message=DictionaryError.file_too_large(),
-                status=ResponseStatusEnum.BAD_REQUEST,
+                status=ResponseStatusEnum.CONTENT_TOO_LARGE,
             )
 
         found_dic_response = self.get_dictionary_by_id(id)

@@ -11,6 +11,7 @@
       "success": "Eliminato con successo"
     },
     "formatError": "Formato errato",
+    "sizeError": "Il file del dizionario è troppo grande, dimensione massima 1 MB",
     "generate": {
       "error": "Errore durante la generazione",
       "success": "Generazione avvenuta con successo"
@@ -118,7 +119,10 @@
     "title": "Accedi"
   },
   "primevue": {
-    "emptymessage": "Nessuna opzione disponibile"
+    "emptymessage": "Nessuna opzione disponibile",
+    "file": {
+      "invalidFileType": "Tipo di file non valido, tipi di file consentiti: application/json"
+    }
   },
   "settings": {
     "darkMode": "Modalità scuro",

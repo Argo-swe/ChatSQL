@@ -73,6 +73,45 @@ describe('Dictionary Management', () => {
   });
 
   // Test case
+  it('verify that the system returns an error if file size is greater than 1 MB', () => {
+    cy.getDictionaryRow().within(() => {
+      cy.get('[data-testid="update-file-button"]').click();
+    });
+    cy.get('[data-testid="dictionary-file-upload"]')
+      .find('input[type="file"]')
+      .selectFile('cypress/fixtures/too_large_file.json', { force: true });
+
+    cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('[data-testid="toast-message"]').find('.p-toast-message-error').should('exist');
+  });
+
+  // Test case
+  it('verify that the system returns an error if dictionary file is bad formatted', () => {
+    cy.getDictionaryRow().within(() => {
+      cy.get('[data-testid="update-file-button"]').click();
+    });
+    cy.get('[data-testid="dictionary-file-upload"]')
+      .find('input[type="file"]')
+      .selectFile('cypress/fixtures/invalid_orders.json', { force: true });
+
+    cy.get('[data-testid="dictionary-submit-button"]').click();
+    cy.get('[data-testid="toast-message"]').find('.p-toast-message-error').should('exist');
+  });
+
+  // Test case
+  it('verify that the system returns an error if the file is not a json', () => {
+    cy.getDictionaryRow().within(() => {
+      cy.get('[data-testid="update-file-button"]').click();
+    });
+    cy.get('[data-testid="dictionary-file-upload"]')
+      .find('input[type="file"]')
+      .selectFile('cypress/fixtures/orders.txt', { force: true });
+
+    cy.get('.p-message-error').should('exist');
+    cy.get('[data-testid="dictionary-submit-button"]').should('be.disabled');
+  });
+
+  // Test case
   it('verify that the admin can update dictionary description', () => {
     cy.getDictionaryRow().within(() => {
       cy.get('[data-testid="update-metadata-button"]').click();
