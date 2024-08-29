@@ -194,7 +194,7 @@ describe('CreateUpdateDictionaryModal Component', () => {
   it('should handle dictionary metadata update failure', () => {
     mockUpdateDictionaryMetadata(getFailureResponse());
     cy.get('[data-testid="dictionary-name-input"]').clear();
-    cy.get('[data-testid="dictionary-name-input"]').type('***');
+    cy.get('[data-testid="dictionary-name-input"]').type('Name already exists');
 
     cy.get('[data-testid="dictionary-submit-button"]').click();
     cy.get('@messageErrorSpy').should('have.been.called');
