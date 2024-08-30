@@ -1,4 +1,3 @@
-import pytest
 import jwt
 import os
 import time

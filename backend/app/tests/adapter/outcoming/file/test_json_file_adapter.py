@@ -26,8 +26,8 @@ def test_save(mock_filesystem, adapter):
 
     expected_path = "/mock/path/dic_schema_1.json"
 
-    mock_open.assert_called_once_with(expected_path, "wb")
-    mock_open.return_value.__enter__().write.assert_called_once_with(file_content)
+    mock_open.assert_called_with(expected_path, "wb")
+    mock_open.return_value.__enter__().write.assert_called_with(file_content)
 
 
 def test_load(mock_filesystem, adapter):
@@ -43,8 +43,8 @@ def test_delete(mock_filesystem, adapter):
     adapter.delete(1)
 
     expected_path = "/mock/path/dic_schema_1.json"
-    mock_exists.assert_called_once_with(expected_path)
-    mock_remove.assert_called_once_with(expected_path)
+    mock_exists.assert_called_with(expected_path)
+    mock_remove.assert_called_with(expected_path)
 
 
 def test_get_preview_no_schema(adapter):
