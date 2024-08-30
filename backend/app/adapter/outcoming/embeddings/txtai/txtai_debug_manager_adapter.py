@@ -70,14 +70,18 @@ class TxtaiDebugManagerAdapter(DebugManagerPort):
                     f'The table {tuple["table_name"]} is kept because it has a sufficiently high score.\n'
                 )
                 score = tuple["max_score"]
-            elif scoring_distance <= 0.25:
+            elif scoring_distance <= 0.15:
                 log_content.append(
-                    f'The table {tuple["table_name"]} is kept because the score difference with the previous table is less than 0.25.\n'
+                    f'The table {tuple["table_name"]} is kept because the score difference with the previous table is less than 0.15.\n'
                 )
-                score = tuple["max_score"]
+                if score == 0:
+                    log_content.append(
+                        f'The remaining tables are discarded because the score is not high enough. {tuple["table_name"]} is the highest scoring table.\n'
+                    )
+                    break
             else:
                 log_content.append(
-                    "The remaining tables are discarded because the score is not high enough and the score difference with the previous tables is greater than 0.25.\n"
+                    "The remaining tables are discarded because the score is not high enough and the score difference with the previous tables is greater than 0.15.\n"
                 )
                 break
         return log_content
