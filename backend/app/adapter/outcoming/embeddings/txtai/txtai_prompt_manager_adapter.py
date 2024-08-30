@@ -55,7 +55,7 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             similar(':x', 'column_description') AND
             score >= 0.2
             GROUP BY table_name
-            HAVING max_score >= 0.3
+            HAVING max_score >= 0.35
             ORDER BY max_score DESC
             LIMIT {query_limit}
         """
@@ -82,10 +82,8 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             if tuple["max_score"] >= 0.45:
                 relevant_tuples.append(tuple)
                 score = tuple["max_score"]
-            elif scoring_distance <= 0.15:
+            elif scoring_distance <= 0.2:
                 relevant_tuples.append(tuple)
-                if score == 0:
-                    break
             else:
                 break
         if activate_log:
