@@ -14,6 +14,10 @@ import MenuSidebar from '@/components/layout/MenuSidebar.vue';
 
 import AppLayout from '@/views/AppLayout.vue';
 
+import { useLayout } from '@/composables/layout';
+
+const { layoutConfig, layoutState } = useLayout();
+
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
@@ -56,4 +60,41 @@ describe('AppLayout Component', () => {
     mountAppLayout();
     cy.get('[data-testid="layout-wrapper"]').should('be.visible');
   });
+
+  it('should apply the correct classes based on layoutConfig and layoutState', () => {
+    layoutConfig.darkTheme.value = false;
+    layoutConfig.menuMode.value = 'overlay';
+    layoutState.staticMenuDesktopInactive.value = true;
+    layoutState.overlayMenuActive.value = true;
+    layoutState.staticMenuMobileActive.value = true;
+    layoutConfig.ripple.value = false;
+
+    mountAppLayout();
+
+    cy.get('[data-testid="layout-wrapper"]').should('have.class', 'layout-theme-light');
+    cy.get('[data-testid="layout-wrapper"]').should('have.class', 'layout-overlay');
+    cy.get('[data-testid="layout-wrapper"]').should('have.class', 'layout-overlay-active');
+    cy.get('[data-testid="layout-wrapper"]').should('have.class', 'layout-mobile-active');
+    cy.get('[data-testid="layout-wrapper"]').should('have.class', 'p-ripple-disabled');
+  
+  });
+
+  it('should apply different classes when layoutConfig and layoutState change', () => {
+    // layoutConfig.darkTheme.value = true; // why this no worky??
+    layoutConfig.menuMode.value = 'static';
+    layoutState.staticMenuDesktopInactive.value = true;
+    layoutState.overlayMenuActive.value = false;
+    layoutState.staticMenuMobileActive.value = false;
+    layoutConfig.ripple.value = true;
+
+    mountAppLayout();
+
+    // cy.get('[data-testid="layout-wrapper"]').should('have.class', 'layout-theme-dark');
+    cy.get('[data-testid="layout-wrapper"]').should('have.class', 'layout-static');
+    cy.get('[data-testid="layout-wrapper"]').should('have.class', 'layout-static-inactive');
+    cy.get('[data-testid="layout-wrapper"]').should('not.have.class', 'layout-overlay-active');
+    cy.get('[data-testid="layout-wrapper"]').should('not.have.class', 'layout-mobile-active');
+    cy.get('[data-testid="layout-wrapper"]').should('not.have.class', 'p-ripple-disabled');
+  });
+
 });
