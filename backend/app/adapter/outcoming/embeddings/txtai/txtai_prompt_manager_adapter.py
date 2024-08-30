@@ -48,6 +48,7 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
 
     def __get_tuples(self, user_request: str, activate_log: bool):
         query_limit = 20
+        # The max_score field can vary from 0.3 to 0.4. This affects system recall
         sql_query = f"""
             SELECT table_name, text, table_pos, column_description, MAX(score) AS max_score, AVG(score) AS avg_score
             FROM txtai WHERE
@@ -82,6 +83,7 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             if tuple["max_score"] >= 0.45:
                 relevant_tuples.append(tuple)
                 score = tuple["max_score"]
+            # The scoring_distance variable can vary from 0.15 to 0.25. This affects system recall
             elif scoring_distance <= 0.2:
                 relevant_tuples.append(tuple)
             else:
