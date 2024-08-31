@@ -131,6 +131,8 @@ jobs:
       if: ${{ github.event.action != 'closed' }}
       run: |
         docker exec chatsql-backend-1 bash -c 'pytest --cov=. --cov-report term-missing tests'
+        cd ${{ github.workspace }}/backend/app/
+        ls
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
