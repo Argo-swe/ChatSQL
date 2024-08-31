@@ -31,10 +31,15 @@ declare global {
   namespace Cypress {
     interface Chainable {
       mount: typeof mount;
+      decreaseScale(): Chainable<void>;
+      increaseScale(): Chainable<void>;
     }
   }
 }
 
+/**
+ * Cypress command to mount a component.
+ */
 Cypress.Commands.add('mount', mount);
 
 // Example use:

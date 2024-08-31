@@ -152,6 +152,7 @@ const onLogoutClick = () => {
         class="p-link layout-topbar-button"
         :title="t('text.Settings')"
         :aria-label="t('text.Settings')"
+        data-testid="open-settings-button"
         @click="onSettingsClick()"
       >
         <i class="pi pi-cog"></i><span>{{ t('text.Settings') }}</span>

@@ -14,26 +14,18 @@ class TxtaiEmbeddingsManagerFactory(EmbeddingsAbstractFactory):
 
     def __init__(self, config: dict) -> None:
         super().__init__(config)
-        if "txtai" not in config:
-            raise KeyError("Key 'txtai' not found in dictionary")
 
     def create_index_manager(
         self, file_repository: FileRepository
     ) -> TxtaiIndexManagerAdapter:
-        txtai_config = self._config["txtai"]
-        if (
-            "embeddings_table_path" in txtai_config
-            and "embeddings_columns_path" in txtai_config
-        ):
+        if "txtai" in self._config:
             return TxtaiIndexManagerAdapter(
                 file_repository,
-                txtai_config["embeddings_table_path"],
-                txtai_config["embeddings_columns_path"],
+                self._config["txtai"].get("embeddings_table_path"),
+                self._config["txtai"].get("embeddings_columns_path"),
             )
         else:
-            raise KeyError(
-                "Key 'embeddings_table_path' or 'embeddings_columns_path' not found in dictionary"
-            )
+            return TxtaiIndexManagerAdapter(file_repository)
 
     def create_prompt_manager_with_dependencies(
         self, index_manager: TxtaiIndexManagerAdapter, file_repository: FileRepository

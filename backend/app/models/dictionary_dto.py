@@ -13,8 +13,8 @@ class DictionaryDto(CamelModel):
 
     valid_pattern: ClassVar[re.Pattern] = re.compile(r"^[\w\s\-]+$")
 
-    @field_validator("name", "description", mode="before")
-    def validate_name_and_description(cls, value: str) -> str:  # noqa: N805
+    @field_validator("name", mode="before")
+    def validate_name(cls, value: str) -> str:  # noqa: N805
         if not cls.valid_pattern.match(value):
             raise ValueError(
                 "The field must contain only alphanumeric characters, spaces, hyphens (-), or underscores (_)."

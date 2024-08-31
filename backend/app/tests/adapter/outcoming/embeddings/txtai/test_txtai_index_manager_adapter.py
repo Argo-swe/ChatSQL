@@ -1,27 +1,5 @@
 import pytest
-import os
-import shutil
-import tempfile
 
-# To avoid getting a Permission denied when accessing /opt/chatsql,
-# we need to mock the makedirs method before importing the modules.
-# Apply the mock before importing the module
-os.makedirs = lambda *args, **kwargs: None  # Mock os.makedirs to do nothing
-
-
-@pytest.fixture(scope="module")
-def temp_dir():
-    # Create a temporary directory for the test
-    temp_dir = tempfile.mkdtemp()
-    yield temp_dir
-    # Clean up the directory after the test
-    shutil.rmtree(temp_dir)
-
-
-# The base path for indexes is redirected to the temporary directory for testing
-_indexes_out_file_base_path = temp_dir
-
-# Now import the module after the mocks are applied
 from adapter.outcoming.embeddings.txtai.txtai_index_manager_adapter import (
     TxtaiIndexManagerAdapter,
 )

@@ -11,6 +11,7 @@
       "success": "Eliminato con successo"
     },
     "formatError": "Formato errato",
+    "sizeError": "Il file del dizionario è troppo grande, dimensione massima 1 MB",
     "generate": {
       "error": "Errore durante la generazione",
       "success": "Generazione avvenuta con successo"
@@ -25,7 +26,8 @@
   "chat": {
     "actions": {
       "copy": "Copia negli appunti",
-      "open_debug": "Apri dettaglio debug"
+      "open_debug": "Apri dettaglio debug",
+      "scroll_to_bottom": "Scorri fino alla fine della chat"
     },
     "dbms": {
       "placeholder": "Scegli un DBMS"
@@ -117,7 +119,10 @@
     "title": "Accedi"
   },
   "primevue": {
-    "emptymessage": "Nessuna opzione disponibile"
+    "emptymessage": "Nessuna opzione disponibile",
+    "file": {
+      "invalidFileType": "Tipo di file non valido, tipi di file consentiti: application/json"
+    }
   },
   "settings": {
     "darkMode": "Modalità scuro",
@@ -146,6 +151,7 @@
     "ok": "ok",
     "password": "password",
     "save": "salva",
+    "scroll_to_top": "scorri fino all'inizio della pagina",
     "settings": "impostazioni",
     "show": "mostra",
     "shrink_view": "riduci finestra",

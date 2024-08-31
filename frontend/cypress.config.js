@@ -11,9 +11,13 @@ export default defineConfig({
       bundler: 'vite'
     },
     setupNodeEvents(on, config) {
-      coverageTask(on, config); // Add code coverage tasks
+      coverageTask(on, config);
       return config;
     },
     specPattern: 'tests/component/**/*.{js,ts,jsx,tsx}'
+  },
+  e2e: {
+    baseUrl: 'http://localhost:5173',
+    specPattern: 'tests/e2e/**/*.{js,ts,jsx,tsx}'
   }
 });

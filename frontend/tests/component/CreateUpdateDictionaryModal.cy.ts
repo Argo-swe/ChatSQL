@@ -171,6 +171,13 @@ describe('CreateUpdateDictionaryModal Component', () => {
   });
 
   // Single and isolated test case
+  it('should disable the submit button when dictionary name is invalid', () => {
+    mockUpdateDictionaryMetadata();
+    cy.get('[data-testid="dictionary-name-input"]').type('***');
+    cy.get('[data-testid="dictionary-submit-button"]').should('be.disabled');
+  });
+
+  // Single and isolated test case
   it('should disable the submit button when file format is invalid', () => {
     mockUpdateDictionaryFile();
     cy.get('[data-testid="dictionary-file-upload"]')

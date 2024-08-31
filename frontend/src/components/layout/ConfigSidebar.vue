@@ -146,16 +146,16 @@ const onLanguageChange = (value: string) => {
         <PgDropdown
           v-model="locale"
           :options="supportedLocales"
-          data-testid="language-dropdown"
+          data-testid="global-language-dropdown"
           @update:model-value="onLanguageChange"
         >
           <template #value="slotProps">
-            <div class="capitalize">
+            <div class="capitalize" data-testid="global-language-option">
               {{ t(`locale.${slotProps.value}`) }}
             </div>
           </template>
           <template #option="slotProps">
-            <div class="capitalize">
+            <div class="capitalize" data-testid="global-language-option">
               {{ t(`locale.${slotProps.option}`) }}
             </div>
           </template>

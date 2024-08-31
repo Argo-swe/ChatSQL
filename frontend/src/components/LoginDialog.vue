@@ -84,7 +84,7 @@ async function submitForm() {
 <template>
   <div class="card flex justify-center">
     <PgDialog
-      v-model:visible="layoutState.loginDialogVisible"
+      v-model:visible="layoutState.loginDialogVisible.value"
       data-testid="login-dialog"
       modal
       header="Login"
