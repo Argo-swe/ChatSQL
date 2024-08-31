@@ -135,7 +135,7 @@ jobs:
     - name: Copy coverage report from Docker container
       if: ${{ github.event.action != 'closed' }}
       run: |
-        docker cp chatsql-backend-1:/app/coverage.xml ./coverage.xml
+        docker cp chatsql-backend-1:/coverage.xml ./coverage.xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
