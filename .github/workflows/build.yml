@@ -130,7 +130,15 @@ jobs:
       continue-on-error: true
       if: ${{ github.event.action != 'closed' }}
       run: |
-        docker exec chatsql-backend-1 bash -c 'pytest'
+        docker exec chatsql-backend-1 bash -c 'pytest --cov=. --cov-report term-missing tests'
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: ${{ github.workspace }}/backend/app/coverage.xml
+        name: backend-coverage
+        token: ${{ secrets.CODECOV_TOKEN }}
+        verbose: true
 
     # Avvio del contenitore Docker (frontend)
     - name: Start Docker Container
