@@ -332,7 +332,7 @@ def test_get_tuples_sql_query_and_search_execution(mocker, prompt_manager):
         similar(':x', 'column_description') AND
         score >= 0.2
         GROUP BY table_name
-        HAVING max_score >= 0.3 OR avg_score >= 0.28
+        HAVING max_score >= 0.35
         ORDER BY max_score DESC
         LIMIT {query_limit}
     """

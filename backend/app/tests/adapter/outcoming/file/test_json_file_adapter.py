@@ -9,17 +9,19 @@ from tools.utils import Utils
 def mock_filesystem():
     with patch("builtins.open", new_callable=MagicMock) as mock_open, patch(
         "os.path.exists", return_value=True
-    ) as mock_exists, patch("os.remove") as mock_remove:
-        yield mock_open, mock_exists, mock_remove
+    ) as mock_exists, patch("os.remove") as mock_remove, patch(
+        "os.makedirs"
+    ) as mock_makedirs:
+        yield mock_open, mock_exists, mock_remove, mock_makedirs
 
 
 @pytest.fixture
-def adapter():
+def adapter(mock_filesystem):
     return JsonFileAdapter(file_path="/mock/path")
 
 
 def test_save(mock_filesystem, adapter):
-    mock_open, _, _ = mock_filesystem
+    mock_open, _, _, _ = mock_filesystem
 
     file_content = '{"database_name": "test_db"}'
     adapter.save(1, file_content)
@@ -31,7 +33,7 @@ def test_save(mock_filesystem, adapter):
 
 
 def test_load(mock_filesystem, adapter):
-    _, _, _ = mock_filesystem
+    _, _, _, _ = mock_filesystem
     result = adapter.load(1)
 
     expected_path = "/mock/path/dic_schema_1.json"
@@ -39,7 +41,7 @@ def test_load(mock_filesystem, adapter):
 
 
 def test_delete(mock_filesystem, adapter):
-    _, mock_exists, mock_remove = mock_filesystem
+    _, mock_exists, mock_remove, _ = mock_filesystem
     adapter.delete(1)
 
     expected_path = "/mock/path/dic_schema_1.json"
