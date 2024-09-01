@@ -66,7 +66,7 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm i
 
-    # Esegue il linting e la la formattazione del codice nel backend utilizzando pre-commit
+    # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
     - name: Code Linting (backend)
       if: ${{ github.event.action != 'closed' }}
       run: |
@@ -100,7 +100,7 @@ jobs:
         cd ${{ github.workspace }}/frontend
         mv ./coverage ./coverage-jest
 
-   # Esegue i test dei componenti frontend con Cpress
+   # Esegue i test dei componenti frontend con Cypress
     - name: Run Unit and Integration Tests (frontend with Cypress)
       if: ${{ github.event.action != 'closed' }}
       run: |
