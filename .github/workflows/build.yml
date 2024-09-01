@@ -130,7 +130,22 @@ jobs:
       continue-on-error: true
       if: ${{ github.event.action != 'closed' }}
       run: |
-        docker exec chatsql-backend-1 bash -c 'pytest'
+        docker exec chatsql-backend-1 bash -c '
+          ls 
+          pytest --cov=. --cov-report term-missing tests'
+
+    - name: Copy coverage report from Docker container
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        docker cp chatsql-backend-1:usr/src/app/coverage.xml ./coverage.xml
+
+    - name: Upload coverage to Codecov
+      continue-on-error: true
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage.xml
+        token: ${{ secrets.CODECOV_TOKEN }}
+        verbose: true
 
     # Avvio del contenitore Docker (frontend)
     - name: Start Docker Container

@@ -1,3 +1,6 @@
+![Codecov](https://codecov.io/gh/Argo-swe/ChatSQL/branch/develop/graph/badge.svg)
+[![Workflow](https://github.com/Argo-swe/ChatSQL/actions/workflows/build.yml/badge.svg)](https://github.com/Argo-swe/ChatSQL/actions/workflows/build.yml)
+
 <h1 align="center">ChatSQL</h1>
 <h2 align="center">Documentazione</h2>
 <p align="center">La documentazione di progetto è visibile <a href="https://github.com/Argo-swe/Docs" target="_blank"><b>qui</b></a>.</p>
