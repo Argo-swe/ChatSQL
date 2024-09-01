@@ -1,4 +1,4 @@
-![Codecov](https://codecov.io/gh/Argo-swe/ChatSQL/branch/develop/graph/badge.svg)
+[![Codecov](https://codecov.io/gh/Argo-swe/ChatSQL/graph/badge.svg?token=QBI95HAT9J)](https://codecov.io/gh/Argo-swe/ChatSQL)
 [![Workflow](https://github.com/Argo-swe/ChatSQL/actions/workflows/build.yml/badge.svg)](https://github.com/Argo-swe/ChatSQL/actions/workflows/build.yml)
 
 <h1 align="center">ChatSQL</h1>
