@@ -92,8 +92,26 @@ jobs:
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:jest
+
+    # Esegue i test di unità nel frontend
+    - name: Run Unit and Integration Tests (frontend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
         mv ./coverage/lcov.info ../jest-lcov.info
+
+   # Esegue i test di unità nel frontend
+    - name: Run Unit and Integration Tests (frontend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
         npm run test:cypress
+
+   # Esegue i test di unità nel frontend
+    - name: Run Unit and Integration Tests (frontend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
         mv ./coverage/lcov.info ../cypress-lcov.info
 
     # Creazione file .env.local
