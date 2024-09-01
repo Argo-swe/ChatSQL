@@ -113,6 +113,7 @@ jobs:
       run: |
         cd ${{ github.workspace }}/frontend
         mv ./coverage ./coverage_cypress
+        rm -rf ./coverage
 
     # Creazione file .env.local
     - name: Add env.local
