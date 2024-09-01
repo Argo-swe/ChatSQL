@@ -94,14 +94,14 @@ jobs:
         npm run test:jest
 
     # Esegue i test di unità nel frontend
-    - name: Run Unit and Integration Tests (frontend)
-      if: ${{ github.event.action != 'closed' }}
-      run: |
-        cd ${{ github.workspace }}/frontend
-        mv ./coverage/clover.xml ../jest-clover.xml
-        ls
-        cd ..
-        ls
+    #- name: Run Unit and Integration Tests (frontend)
+      #if: ${{ github.event.action != 'closed' }}
+      #run: |
+        #cd ${{ github.workspace }}/frontend
+        #mv ./coverage/clover.xml ../jest-clover.xml
+        #ls
+        #cd ..
+        #ls
 
    # Esegue i test di unità nel frontend
     - name: Run Unit and Integration Tests (frontend)
@@ -111,11 +111,11 @@ jobs:
         npm run test:cypress
 
    # Esegue i test di unità nel frontend
-    - name: Run Unit and Integration Tests (frontend)
-      if: ${{ github.event.action != 'closed' }}
-      run: |
-        cd ${{ github.workspace }}/frontend
-        mv ./coverage/clover.xml ../cypress-clover.xml
+    #- name: Run Unit and Integration Tests (frontend)
+      #if: ${{ github.event.action != 'closed' }}
+      #run: |
+        #cd ${{ github.workspace }}/frontend
+        #mv ./coverage/clover.xml ../cypress-clover.xml
 
     # Creazione file .env.local
     - name: Add env.local
@@ -168,7 +168,7 @@ jobs:
       continue-on-error: true
       uses: codecov/codecov-action@v3.1.0
       with:
-        files: coverage.xml, jest-clover.xml, cypress-clover.xml
+        #files: coverage.xml, jest-clover.xml, cypress-clover.xml
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
 
