@@ -1,12 +1,7 @@
 import re
 from sqlalchemy import create_engine
 
-# Try to import declarative_base from the new location in SQLAlchemy 2.x
-try:
-    from sqlalchemy.orm import declarative_base
-except ImportError:
-    # Fall back to the old location for SQLAlchemy 1.x
-    from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 from sqlalchemy.orm import sessionmaker
 import os

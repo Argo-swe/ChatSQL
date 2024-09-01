@@ -8,7 +8,6 @@ from models.dictionary_dto import DictionaryDto
 from models.responses.response_dto import ResponseDto, ResponseStatusEnum
 from models.responses.dictionary_response_dto import DictionaryResponseDto
 from models.responses.dictionaries_response_dto import DictionariesResponseDto
-from tools.utils import Utils
 from tools.exceptions import DictionaryError
 
 
@@ -118,6 +117,13 @@ class DictionaryService(DictionaryUseCase):
                 status=ResponseStatusEnum.BAD_REQUEST,
             )
         else:
+            if not self.__file_size_checker(content):
+                return DictionaryResponseDto(
+                    data=None,
+                    message=DictionaryError.file_too_large(),
+                    status=ResponseStatusEnum.CONTENT_TOO_LARGE,
+                )
+
             found_dic = self._dictionary_repository.get_dictionary_by_name(
                 dictionary.name
             )
@@ -129,12 +135,8 @@ class DictionaryService(DictionaryUseCase):
                     status=ResponseStatusEnum.CONFLICT,
                 )
 
-            new_dic = self._dictionary_repository.create_dictionary(
-                dictionary.name, dictionary.description
-            )
-
             # Validate dictionary schema
-            is_valid = self._schema_validator.validate(Utils.string_to_json(content))
+            is_valid = self._schema_validator.validate(content)
 
             if not is_valid:
                 return DictionaryResponseDto(
@@ -142,6 +144,10 @@ class DictionaryService(DictionaryUseCase):
                     message=DictionaryError.format_error(),
                     status=ResponseStatusEnum.BAD_REQUEST,
                 )
+
+            new_dic = self._dictionary_repository.create_dictionary(
+                dictionary.name, dictionary.description
+            )
 
             self._file_repository.save(new_dic.id, content)
 
@@ -194,13 +200,21 @@ class DictionaryService(DictionaryUseCase):
         Returns:
             DictionaryResponseDto: A response DTO with the updated dictionary data or an error message.
         """
+
+        if not self.__file_size_checker(content):
+            return DictionaryResponseDto(
+                data=None,
+                message=DictionaryError.file_too_large(),
+                status=ResponseStatusEnum.CONTENT_TOO_LARGE,
+            )
+
         found_dic_response = self.get_dictionary_by_id(id)
 
         if found_dic_response.status is not ResponseStatusEnum.OK:
             return found_dic_response
 
         # Validate dictionary schema
-        is_valid = self._schema_validator.validate(Utils.string_to_json(content))
+        is_valid = self._schema_validator.validate(content)
 
         if not is_valid:
             return DictionaryResponseDto(
@@ -234,3 +248,15 @@ class DictionaryService(DictionaryUseCase):
         self._index_manager.delete_index(id)
 
         return ResponseDto(status=ResponseStatusEnum.OK)
+
+    def __file_size_checker(self, content: str) -> bool:
+        """Check if the size of the given content is within the allowed limit.
+
+        Args:
+            content (str): The content to check the size of.
+
+        Returns:
+            bool: True if the size of the content is within the allowed limit (1 MB), False otherwise.
+        """
+        max_size_in_bytes = 1 * 1024 * 1024
+        return len(content) <= max_size_in_bytes

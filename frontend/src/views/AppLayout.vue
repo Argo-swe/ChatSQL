@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // External libraries
 import { computed, ref, watch, type ComputedRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
 import { useCheckOutsideClick } from '@/composables/check-click';
@@ -13,6 +14,7 @@ import AppTopbar from '@/components/layout/AppTopbar.vue';
 import ConfigSidebar from '@/components/layout/ConfigSidebar.vue';
 import MenuSidebar from '@/components/layout/MenuSidebar.vue';
 
+const { t } = useI18n();
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 const { isOutsideClicked } = useCheckOutsideClick(['.layout-sidebar', '.layout-menu-button']);
 const outsideClickListener = ref<((event: Event) => void) | null>(null);
@@ -74,7 +76,7 @@ const containerClass: ComputedRef<CSSClasses> = computed(() => {
 </script>
 
 <template>
-  <div class="layout-wrapper" :class="containerClass">
+  <div class="layout-wrapper" :class="containerClass" data-testid="global-layout-wrapper">
     <app-topbar></app-topbar>
     <login-dialog />
     <div class="layout-sidebar">
@@ -86,8 +88,8 @@ const containerClass: ComputedRef<CSSClasses> = computed(() => {
       </div>
     </div>
     <config-sidebar></config-sidebar>
-    <PgScrollTop />
+    <PgScrollTop :aria-label="t('text.scroll_to_top')" />
     <div class="layout-mask"></div>
   </div>
-  <PgToast position="bottom-right" />
+  <PgToast position="bottom-right" data-testid="toast-message" />
 </template>

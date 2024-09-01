@@ -11,7 +11,6 @@ import ApiClientManager from '@/services/api-client.service';
 import MessageService from '@/services/message.service';
 
 const { t } = useI18n();
-const client = ApiClientManager.getApiClient();
 const messageService = MessageService.getInstance();
 const dialogRef = inject<Ref<DynamicDialogInstance>>('dialogRef');
 
@@ -79,6 +78,15 @@ function isFileSelected(): boolean {
 }
 
 /**
+ * Checks if the provided metadata value is valid based on a specific pattern.
+ * @param value - The metadata value to be validated.
+ */
+function isValidMetadata(value: string) {
+  const validPattern = /^[\w\s-]+$/;
+  return validPattern.test(value);
+}
+
+/**
  * Validates the form based on the current state.
  */
 function isFormValid(): boolean {
@@ -86,7 +94,8 @@ function isFormValid(): boolean {
     return (
       isFileSelected() &&
       dictionaryName.value?.length > 0 &&
-      dictionaryDescription.value?.length > 0
+      dictionaryDescription.value?.length > 0 &&
+      isValidMetadata(dictionaryName.value)
     );
   } else {
     return isFileSelected();
@@ -101,8 +110,9 @@ function isFormValid(): boolean {
  */
 async function createDictionary() {
   loading.value = true;
-  (await client)
-    .createDictionary(
+  try {
+    const client = await ApiClientManager.getApiClient();
+    const response = await client.createDictionary(
       {
         name: dictionaryName.value,
         description: dictionaryDescription.value
@@ -115,30 +125,24 @@ async function createDictionary() {
           'Content-Type': 'multipart/form-data'
         }
       }
-    )
-    .then((response) => {
-      if (response.data?.status == 'OK') {
-        messageService.messageSuccess(t('dictionary.title'), t('actions.create.success'));
-        closeDialog(true);
-      } else {
-        messageService.messageError(
-          t('dictionary.title'),
-          getStatusMex(onCreateMessages, response.data?.status, {
-            message: response.data?.message,
-            dictionaryName: dictionaryName.value
-          })
-        );
-      }
-    })
-    .catch((error) => {
+    );
+    if (response.data?.status == 'OK') {
+      messageService.messageSuccess(t('dictionary.title'), t('actions.create.success'));
+      closeDialog(true);
+    } else {
       messageService.messageError(
         t('dictionary.title'),
-        `${t('actions.create.error')}\n${error.message}`
+        getStatusMex(onCreateMessages, response.data?.status, {
+          message: response.data?.message,
+          dictionaryName: dictionaryName.value
+        })
       );
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+    }
+  } catch (error) {
+    messageService.messageError(t('dictionary.title'), `${t('actions.create.error')}\n${error}`);
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -170,24 +174,19 @@ function handleUpdateResponse(messageHeader: string, response: any) {
  */
 async function updateDictionaryMetadata() {
   loading.value = true;
-  (await client)
-    .updateDictionaryMetadata(dictionaryId.value, {
+  try {
+    const client = await ApiClientManager.getApiClient();
+    const response = await client.updateDictionaryMetadata(dictionaryId.value, {
       id: dictionaryId.value,
       name: dictionaryName.value,
       description: dictionaryDescription.value
-    })
-    .then((response) => {
-      handleUpdateResponse('dictionary.title', response);
-    })
-    .catch((error) => {
-      messageService.messageError(
-        t('dictionary.title'),
-        `${t('actions.update.error')}\n${error.message}`
-      );
-    })
-    .finally(() => {
-      loading.value = false;
     });
+    handleUpdateResponse('dictionary.title', response);
+  } catch (error) {
+    messageService.messageError(t('dictionary.title'), `${t('actions.update.error')}\n${error}`);
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -197,8 +196,9 @@ async function updateDictionaryMetadata() {
  */
 async function updateDictionaryFile() {
   loading.value = true;
-  (await client)
-    .updateDictionaryFile(
+  try {
+    const client = await ApiClientManager.getApiClient();
+    const response = await client.updateDictionaryFile(
       dictionaryId.value,
       {
         file: selectedFile!
@@ -208,19 +208,16 @@ async function updateDictionaryFile() {
           'Content-Type': 'multipart/form-data'
         }
       }
-    )
-    .then((response) => {
-      handleUpdateResponse('dictionary.file.title', response);
-    })
-    .catch((error) => {
-      messageService.messageError(
-        t('dictionary.file.title'),
-        `${t('actions.update.error')}\n${error.message}`
-      );
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+    );
+    handleUpdateResponse('dictionary.file.title', response);
+  } catch (error) {
+    messageService.messageError(
+      t('dictionary.file.title'),
+      `${t('actions.update.error')}\n${error}`
+    );
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -239,7 +236,7 @@ function submitForm() {
 </script>
 
 <template>
-  <form @submit.prevent="submitForm">
+  <form data-testid="handle-dictionary-form" @submit.prevent="submitForm">
     <div v-if="onCreation || !withFile" class="mb-4">
       <div class="flex flex-column gap-2">
         <label id="l-name" for="name"> {{ t('text.Name') }} </label>
@@ -249,7 +246,8 @@ function submitForm() {
           required
           aria-labelledby="l-name"
           autocomplete="off"
-          :invalid="!dictionaryName"
+          :invalid="!dictionaryName || !isValidMetadata(dictionaryName)"
+          data-testid="dictionary-name-input"
         />
       </div>
       <div class="flex flex-column gap-2 mt-4">
@@ -261,6 +259,7 @@ function submitForm() {
           aria-labelledby="l-description"
           autocomplete="off"
           :invalid="!dictionaryDescription"
+          data-testid="dictionary-description-input"
         />
       </div>
     </div>
@@ -272,6 +271,7 @@ function submitForm() {
         class="mr-2"
         severity="danger"
         :aria-label="t('dictionary.file.clear')"
+        data-testid="clear-file-button"
         @click="clearSelectedFile()"
       />
       <PgFileUpload
@@ -279,9 +279,11 @@ function submitForm() {
         mode="basic"
         name="demo[]"
         accept="application/json"
+        :invalid-file-type-message="t('primevue.file.invalidFileType')"
         required
         :choose-label="t('general.input.fileupload')"
         :disabled="fileSelected"
+        data-testid="dictionary-file-upload"
         @select="onSelectedFile"
       />
     </div>
@@ -295,6 +297,7 @@ function submitForm() {
           type="submit"
           class="mt-4"
           severity="success"
+          data-testid="dictionary-submit-button"
           :disabled="!isFormValid() || loading"
         />
       </div>

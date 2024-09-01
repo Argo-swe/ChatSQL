@@ -40,7 +40,7 @@ const isDarkTheme = computed(() => layoutConfig.darkTheme);
  * @param item - The menu item to set as active.
  */
 const setActiveMenuItem = (item: any) => {
-  layoutConfig.activeMenuItem = item.value || item;
+  layoutConfig.activeMenuItem = item?.value || item;
 };
 
 /**

@@ -11,6 +11,7 @@
       "success": "Successfully deleted"
     },
     "formatError": "Wrong format",
+    "sizeError": "Dictionary file is too large, max size 1MB",
     "generate": {
       "error": "Error during generation",
       "success": "Generation successful"
@@ -25,7 +26,8 @@
   "chat": {
     "actions": {
       "copy": "Copy to clipboard",
-      "open_debug": "Open debug details"
+      "open_debug": "Open debug details",
+      "scroll_to_bottom": "Scroll to the bottom of the chat"
     },
     "dbms": {
       "placeholder": "Choose a DBMS"
@@ -54,6 +56,7 @@
       "placeholder": "Choose a language"
     },
     "prompt": {
+      "empty": "Sorry, the ChatBOT was unable to find relevant results for the received request.\nWe invite you to try again with a different request.",
       "generate": "Generate prompts",
       "placeholder": "Enter a natural language request",
       "title": "Prompt"
@@ -116,7 +119,10 @@
     "title": "Login"
   },
   "primevue": {
-    "emptymessage": "No available options"
+    "emptymessage": "No available options",
+    "file": {
+      "invalidFileType": "Invalid file type, allowed file types: application/json"
+    }
   },
   "settings": {
     "darkMode": "Dark mode",
@@ -145,6 +151,7 @@
     "ok": "ok",
     "password": "password",
     "save": "save",
+    "scroll_to_top": "scroll to the top of the page",
     "settings": "settings",
     "show": "show",
     "shrink_view": "shrink view",

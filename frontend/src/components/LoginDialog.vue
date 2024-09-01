@@ -34,8 +34,8 @@ function resetForm() {
  */
 const handleSuccessfulLogin = (accessToken: string) => {
   localStorage.setItem('token', accessToken);
-  layoutState.loginDialogVisible.value = false;
   resetForm();
+  layoutState.loginDialogVisible.value = false;
   window.dispatchEvent(
     new CustomEvent('token-localstorage-changed', {
       detail: {
@@ -84,7 +84,7 @@ async function submitForm() {
 <template>
   <div class="card flex justify-center">
     <PgDialog
-      v-model:visible="layoutState.loginDialogVisible"
+      v-model:visible="layoutState.loginDialogVisible.value"
       data-testid="login-dialog"
       modal
       header="Login"

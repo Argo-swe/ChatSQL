@@ -6,7 +6,7 @@ import DynamicDialog from 'primevue/dynamicdialog';
 
 <template>
   <router-view />
-  <ConfirmDialog></ConfirmDialog>
+  <ConfirmDialog data-testid="confirm-dialog"></ConfirmDialog>
   <DynamicDialog />
 </template>
 

@@ -2,9 +2,5 @@
     "db_manager": "sqlalchemy",
     "embeddings_type": "txtai",
     "file_type": "json",
-    "txtai": {
-        "embeddings_columns_path": null,
-        "embeddings_table_path": null
-    },
     "validation_file_type": "json"
 }
