@@ -173,7 +173,10 @@ jobs:
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
+        ls
         npm run test:system
+        cd coverage
+        cat clover.xml
 
     - name: Upload coverage to Codecov
       continue-on-error: true
