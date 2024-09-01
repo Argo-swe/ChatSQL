@@ -205,8 +205,8 @@ jobs:
 
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
-      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+      #if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
       uses: actions/upload-artifact@v4
       with:
         name: ChatSQL
-        path: ChatSQL
+        path: frontend/coverage
