@@ -18,6 +18,10 @@ export default defineConfig({
   },
   e2e: {
     baseUrl: 'http://localhost:5173',
+    setupNodeEvents(on, config) {
+      coverageTask(on, config);
+      return config;
+    },
     specPattern: 'tests/e2e/**/*.{js,ts,jsx,tsx}'
   }
 });
