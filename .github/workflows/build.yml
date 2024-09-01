@@ -162,15 +162,13 @@ jobs:
       if: ${{ github.event.action != 'closed' }}
       run: |
         docker cp chatsql-backend-1:usr/src/app/coverage.xml ./coverage.xml
+        ls
 
     - name: Upload coverage to Codecov
       continue-on-error: true
       uses: codecov/codecov-action@v3.1.0
       with:
-        files: |
-          ./coverage.xml
-          ./jest-lcov.info
-          ./cypress-lcov.info
+        files: ./coverage.xml, ./jest-lcov.info, ./cypress-lcov.info
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
 
