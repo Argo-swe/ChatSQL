@@ -36,6 +36,8 @@
 //   }
 // }
 
+import '@cypress/code-coverage/support';
+
 /**
  * Cypress command to scale down the user interface.
  */
