@@ -176,6 +176,10 @@ jobs:
         npm run test:system
         cd coverage
         cat clover.xml
+        ls
+        cat lcov.info
+        ls
+        cat coverage-final.json
 
     - name: Upload coverage to Codecov
       continue-on-error: true
