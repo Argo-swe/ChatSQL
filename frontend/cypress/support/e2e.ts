@@ -35,6 +35,8 @@ declare global {
   }
 }
 
+import '@cypress/code-coverage/support';
+
 /**
  * Cypress command to login.
  */
