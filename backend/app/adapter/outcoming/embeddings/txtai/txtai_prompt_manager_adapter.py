@@ -1,9 +1,7 @@
-from adapter.outcoming.embeddings.txtai.txtai_index_manager_adapter import (
-    TxtaiIndexManagerAdapter,
-)
 from adapter.outcoming.embeddings.txtai.txtai_debug_manager_adapter import (
     TxtaiDebugManagerAdapter,
 )
+from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 from core.port.outcoming.embeddings.debug_manager_port import DebugManagerPort
 from core.port.outcoming.file_repository import FileRepository
 from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
@@ -11,7 +9,7 @@ from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
 
 class TxtaiPromptManagerAdapter(PromptManagerPort):
     def __init__(
-        self, index_manager: TxtaiIndexManagerAdapter, file_repository: FileRepository
+        self, index_manager: IndexManagerPort, file_repository: FileRepository
     ):
         super().__init__(index_manager)
         self._file_repository = file_repository
@@ -67,7 +65,7 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             log_content = self._debug_manager.semantic_search_log(user_request, tuples)
         return tuples, log_content
 
-    def get_index_manager(self) -> TxtaiIndexManagerAdapter:
+    def get_index_manager(self) -> IndexManagerPort:
         return self._index_manager
 
     def _create_debug_manager(self) -> DebugManagerPort:
