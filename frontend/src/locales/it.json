@@ -11,13 +11,13 @@
       "success": "Eliminato con successo"
     },
     "formatError": "Formato errato",
-    "sizeError": "Il file del dizionario è troppo grande, dimensione massima 1 MB",
     "generate": {
       "error": "Errore durante la generazione",
       "success": "Generazione avvenuta con successo"
     },
     "notFoundById": "{item} con id {id} non trovato",
     "notFoundByName": "{item} con nome '{name}' non trovato",
+    "sizeError": "Il file del dizionario è troppo grande, dimensione massima 1 MB",
     "update": {
       "error": "Errore durante l'aggiornamento",
       "success": "Aggiornato con successo"
@@ -106,6 +106,10 @@
       "closeMainNavMenu": "Chiudi il menu di navigazione principale",
       "openMainNavMenu": "Apri il menu di navigazione principale",
       "technicianFunctionalities": "Funzionalità del tecnico"
+    },
+    "search": {
+      "searchByName": "Ricerca per nome",
+      "searchByDescription": "Ricerca per descrizione"
     }
   },
   "locale": {

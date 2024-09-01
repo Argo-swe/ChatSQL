@@ -11,13 +11,13 @@
       "success": "Successfully deleted"
     },
     "formatError": "Wrong format",
-    "sizeError": "Dictionary file is too large, max size 1MB",
     "generate": {
       "error": "Error during generation",
       "success": "Generation successful"
     },
     "notFoundById": "{item} with id {id} not found",
     "notFoundByName": "{item} with name '{name}' not found",
+    "sizeError": "Dictionary file is too large, max size 1MB",
     "update": {
       "error": "Error during update",
       "success": "Successfully updated"
@@ -106,6 +106,10 @@
       "closeMainNavMenu": "Close main navigation menu",
       "openMainNavMenu": "Open main navigation menu",
       "technicianFunctionalities": "Technician functionalities"
+    },
+    "search": {
+      "searchByName": "Search by name",
+      "searchByDescription": "Search by description"
     }
   },
   "locale": {

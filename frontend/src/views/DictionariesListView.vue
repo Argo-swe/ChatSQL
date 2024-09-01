@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // External libraries
+import { FilterMatchMode } from 'primevue/api';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
 import { onMounted, ref } from 'vue';
@@ -26,6 +27,12 @@ const onDeleteMessages = getMessages('delete');
 
 let dictionaries = ref();
 let loading = ref(false);
+
+// Define a configuration for the table filters
+const filters = ref({
+  name: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  description: { value: null, matchMode: FilterMatchMode.CONTAINS }
+});
 
 const dialogPropsPreset = {
   style: {
@@ -210,7 +217,9 @@ function onClickDelete(dictionaryId: number) {
   </div>
 
   <PgDataTable
+    v-model:filters="filters"
     :value="dictionaries"
+    filter-display="row"
     paginator
     :rows="10"
     :rows-per-page-options="[5, 10, 20, 50]"
@@ -221,13 +230,28 @@ function onClickDelete(dictionaryId: number) {
   >
     <template #empty> {{ t('general.list.empty') }} </template>
     <template #loading> {{ t('general.list.loading') }} </template>
-    <PgColumn field="name" :header="t('text.Name')" sortable style="width: 25%"></PgColumn>
-    <PgColumn
-      field="description"
-      :header="t('text.Description')"
-      sortable
-      style="width: 55%"
-    ></PgColumn>
+    <PgColumn field="name" :header="t('text.Name')" sortable style="width: 25%">
+      <template #filter="{ filterModel, filterCallback }">
+        <PgInputText
+          v-model="filterModel.value"
+          type="text"
+          :placeholder="t('general.search.searchByName')"
+          :aria-label="t('general.search.searchByName')"
+          @input="filterCallback()"
+        />
+      </template>
+    </PgColumn>
+    <PgColumn field="description" :header="t('text.Description')" sortable style="width: 55%">
+      <template #filter="{ filterModel, filterCallback }">
+        <PgInputText
+          v-model="filterModel.value"
+          type="text"
+          :placeholder="t('general.search.searchByDescription')"
+          :aria-label="t('general.search.searchByDescription')"
+          @input="filterCallback()"
+        />
+      </template>
+    </PgColumn>
     <PgColumn style="width: 20%" body-style="text-align:right">
       <template #body="slotProps">
         <PgButton
