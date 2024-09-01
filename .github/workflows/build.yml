@@ -86,33 +86,33 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm run lint
 
-    # Esegue i test di unità nel frontend
-    - name: Run Unit and Integration Tests (frontend)
+    # Esegue i test di unità nel frontend con jest
+    - name: Run Unit Tests (frontend with Jest)
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:jest
 
-    # Esegue i test di unità nel frontend
-    - name: Run Unit and Integration Tests (frontend)
+    # Rinomina la cartella coverage dopo i test con jest
+    - name: Rename Coverage Folder after Jest Testing
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         mv ./coverage ./coverage_jest
 
-   # Esegue i test di unità nel frontend
-    - name: Run Unit and Integration Tests (frontend)
+   # Esegue i test dei componenti frontend con cypress
+    - name: Run Unit and Integration Tests (frontend with Cypress)
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:cypress
 
-   # Esegue i test di unità nel frontend
-    - name: Run Unit and Integration Tests (frontend)
+   # Rinomina la cartella coverage dopo i test con cypress
+    - name: Rename Coverage Folder after Cypress Testing
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
-        rm -rf ./coverage
+        mv ./coverage ./coverage_cypress
 
     # Creazione file .env.local
     - name: Add env.local
@@ -148,18 +148,14 @@ jobs:
 
     # Esegue i test di unità nel backend
     - name: Run Unit and Integration Tests (backend)
-      continue-on-error: true
       if: ${{ github.event.action != 'closed' }}
       run: |
-        docker exec chatsql-backend-1 bash -c '
-          ls 
-          pytest --cov=. --cov-report term-missing tests'
-
-    - name: Copy coverage report from Docker container
-      if: ${{ github.event.action != 'closed' }}
-      run: |
-        docker cp chatsql-backend-1:usr/src/app/coverage.xml ./coverage.xml
-        ls
+        docker exec chatsql-backend-1 bash -c 'pytest --cov=. --cov-report term-missing tests'
+    
+    #- name: Copy coverage report from Docker container
+      #if: ${{ github.event.action != 'closed' }}
+      #run: |
+        #docker cp chatsql-backend-1:usr/src/app/coverage.xml ./coverage.xml
       
     # Avvio del contenitore Docker (frontend)
     - name: Start Docker Container
@@ -172,20 +168,12 @@ jobs:
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
-        ls
         npm run test:system
-        cd coverage
-        cat clover.xml
-        ls
-        cat lcov.info
-        ls
-        cat coverage-final.json
 
-    - name: Upload coverage to Codecov
-      continue-on-error: true
-      uses: codecov/codecov-action@v3.1.0
+    # Carica i report di copertura su CodeCov
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v4
       with:
-        #files: coverage.xml, jest-clover.xml, cypress-clover.xml
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
 
@@ -205,8 +193,8 @@ jobs:
 
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
-      #if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
       uses: actions/upload-artifact@v4
       with:
         name: ChatSQL
-        path: frontend/coverage
+        path: ChatSQL
