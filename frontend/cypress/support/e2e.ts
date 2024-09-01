@@ -19,6 +19,8 @@ import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
+import '@cypress/code-coverage/support';
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -34,8 +36,6 @@ declare global {
     }
   }
 }
-
-import '@cypress/code-coverage/support';
 
 /**
  * Cypress command to login.
