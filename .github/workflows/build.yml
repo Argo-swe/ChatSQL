@@ -152,10 +152,11 @@ jobs:
       run: |
         docker exec chatsql-backend-1 bash -c 'pytest --cov=. --cov-report term-missing tests'
     
-    #- name: Copy coverage report from Docker container
-      #if: ${{ github.event.action != 'closed' }}
-      #run: |
-        #docker cp chatsql-backend-1:usr/src/app/coverage.xml ./coverage.xml
+    # Copia il report di copertura dal container Docker al workspace del job
+    - name: Copy Coverage Report from Docker Container
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        docker cp chatsql-backend-1:usr/src/app/coverage.xml ./coverage.xml
       
     # Avvio del contenitore Docker (frontend)
     - name: Start Docker Container (frontend)
