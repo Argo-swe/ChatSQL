@@ -22,7 +22,7 @@ export default class UtilsService {
    */
   static stringToSnakeCase(string: string): string {
     const segments =
-      string.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g) || [];
+      string.match(/[A-Z]{2,}(?=[A-Z][a-z]+\d*|\b)|[A-Z]?[a-z]+\d*|[A-Z]|\d+/g) || [];
 
     return segments.map((s) => s.toLowerCase()).join('_');
   }
