@@ -99,6 +99,9 @@ jobs:
       run: |
         cd ${{ github.workspace }}/frontend
         mv ./coverage/lcov.info ../jest-lcov.info
+        ls
+        cd ..
+        ls
 
    # Esegue i test di unità nel frontend
     - name: Run Unit and Integration Tests (frontend)
