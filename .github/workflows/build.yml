@@ -86,33 +86,33 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm run lint
 
-    # Esegue i test di unità nel frontend con jest
+    # Esegue i test di unità nel frontend con Jest
     - name: Run Unit Tests (frontend with Jest)
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:jest
 
-    # Rinomina la cartella coverage dopo i test con jest
-    - name: Rename Coverage Folder after Jest Testing
+    # Rinomina la cartella coverage generata da Jest
+    - name: Rename Jest Coverage Folder (frontend)
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
-        mv ./coverage ./coverage_jest
+        mv ./coverage ./coverage-jest
 
-   # Esegue i test dei componenti frontend con cypress
+   # Esegue i test dei componenti frontend con Cpress
     - name: Run Unit and Integration Tests (frontend with Cypress)
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:cypress
 
-   # Rinomina la cartella coverage dopo i test con cypress
-    - name: Rename Coverage Folder after Cypress Testing
+   # Rinomina la cartella coverage generata da Cypress
+    - name: Rename Cypress Coverage Folder (frontend)
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
-        mv ./coverage ./coverage_cypress
+        mv ./coverage ./coverage-cypress
 
     # Creazione file .env.local
     - name: Add env.local
@@ -141,12 +141,12 @@ jobs:
         docker tag ghcr.io/argo-swe/chatsql-frontend:latest chatsql-frontend:latest
 
     # Avvio del contenitore Docker (backend)
-    - name: Start Docker Container
+    - name: Start Docker Container (backend)
       if: ${{ github.event.action != 'closed' }}
       run: |
         docker compose up backend -d
 
-    # Esegue i test di unità nel backend
+    # Esegue i test di unità e integrazione nel backend
     - name: Run Unit and Integration Tests (backend)
       if: ${{ github.event.action != 'closed' }}
       run: |
@@ -158,7 +158,7 @@ jobs:
         #docker cp chatsql-backend-1:usr/src/app/coverage.xml ./coverage.xml
       
     # Avvio del contenitore Docker (frontend)
-    - name: Start Docker Container
+    - name: Start Docker Container (frontend)
       if: ${{ github.event.action != 'closed' }}
       run: |
         docker compose up frontend -d
