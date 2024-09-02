@@ -1,4 +1,3 @@
-import pytest
 import jwt
 import os
 import time
@@ -61,7 +60,7 @@ def test_decode_with_invalid_signature(monkeypatch):
 
     valid_token = JwtHandler.sign(123)["access_token"]
 
-    invalid_token = valid_token[:-1] + "0"
+    invalid_token = valid_token[:-1] + "TEST"
 
     decoded_token = JwtHandler.decode(invalid_token)
     assert decoded_token is None

@@ -185,14 +185,12 @@ def test_semantic_search_log_custom_algorithm_no_tuples(txtai_debug_manager):
     relevant_tuples = []
     tuples = []
 
+    # Call the semantic_search_log_custom_algorithm method with empty lists
     result = txtai_debug_manager.semantic_search_log_custom_algorithm(
         relevant_tuples, tuples
     )
 
-    # Assert that the length of the result log is exactly 3 lines:
-    # 1. The header indicating the start of phase 2
-    # 2. The list of pertinent tables header
-    # 3. The "No tables found." message
+    # Assert that the length of the result log is exactly 3 lines
     assert len(result) == 3
 
     # Assert that the specific message "No tables found." appears in the third line of the log
@@ -203,33 +201,22 @@ def test_semantic_search_log_custom_algorithm_no_tuples(txtai_debug_manager):
 
 
 def test_semantic_search_log_custom_algorithm_all_kept(txtai_debug_manager):
-    # Define a list of relevant_tuples where all tables have a max_score >= 0.45
     relevant_tuples = [
         {"table_name": "Table1", "max_score": 0.5},
         {"table_name": "Table2", "max_score": 0.6},
         {"table_name": "Table3", "max_score": 0.55},
     ]
-    # In this test, the tuples list is identical to relevant_tuples
     tuples = relevant_tuples
 
-    # Call the method being tested with the relevant tuples
+    # Call the semantic_search_log_custom_algorithm method with all high-scoring tables
     result = txtai_debug_manager.semantic_search_log_custom_algorithm(
         relevant_tuples, tuples
     )
 
     # Assert that each table is kept because their max_score is above the 0.45 threshold
-    assert (
-        "The table Table1 is kept because it has a sufficiently high score."
-        in result[2]
-    )
-    assert (
-        "The table Table2 is kept because it has a sufficiently high score."
-        in result[3]
-    )
-    assert (
-        "The table Table3 is kept because it has a sufficiently high score."
-        in result[4]
-    )
+    assert "The table Table1 is kept because it has a high score." in result[2]
+    assert "The table Table2 is kept because it has a high score." in result[3]
+    assert "The table Table3 is kept because it has a high score." in result[4]
 
     # Verify that the log contains only the expected entries (no discard message)
     assert len(result) == 5  # 3 log entries for the tables + 2 header lines
@@ -239,29 +226,24 @@ def test_semantic_search_log_custom_algorithm_all_kept(txtai_debug_manager):
 
 
 def test_semantic_search_log_custom_algorithm_some_discarded(txtai_debug_manager):
-    # Define a list of relevant_tuples where the first table is kept, but the following tables should be discarded due to low max_score
     relevant_tuples = [
         {"table_name": "Table1", "max_score": 0.9},  # This table should be kept
         {"table_name": "Table2", "max_score": 0.4},  # This table should be discarded
         {"table_name": "Table3", "max_score": 0.35},  # This table should be discarded
     ]
-    # In this test, the tuples list is identical to relevant_tuples
     tuples = relevant_tuples
 
-    # Call the method being tested with the relevant tuples
+    # Call the semantic_search_log_custom_algorithm method where some tables should be discarded
     result = txtai_debug_manager.semantic_search_log_custom_algorithm(
         relevant_tuples, tuples
     )
 
     # Assert that the first table is kept because it has a sufficiently high score (>= 0.45)
-    assert (
-        "The table Table1 is kept because it has a sufficiently high score."
-        in result[2]
-    )
+    assert "The table Table1 is kept because it has a high score." in result[2]
 
     # Assert that the remaining tables are discarded due to their low scores
     assert (
-        "The remaining tables are discarded because the score is not high enough and the score difference with the previous tables is greater than 0.25."
+        "The remaining tables are discarded because the score is not high enough and the score difference with the previous highly relevant tables is greater than 0.2."
         in result[3]
     )
 
@@ -275,34 +257,32 @@ def test_semantic_search_log_custom_algorithm_some_discarded(txtai_debug_manager
 def test_semantic_search_log_custom_algorithm_first_underscore_table(
     txtai_debug_manager,
 ):
-    # Define a list of relevant_tuples where the first table has a max_score below 0.45, but it is kept because the scoring distance (starting from 0) is within 0.25
     relevant_tuples = [
         {
             "table_name": "Table1",
             "max_score": 0.4,
-        },  # Table1 should be kept due to scoring_distance <= 0.25
+        },
         {
             "table_name": "Table2",
             "max_score": 0.35,
-        },  # Table2 should also be kept for the same reason
+        },
     ]
-    # In this test, the tuples list is identical to relevant_tuples
     tuples = relevant_tuples
 
-    # Call the method being tested with the relevant tuples
+    # Call the semantic_search_log_custom_algorithm method where the first table score is low but within an acceptable range
     result = txtai_debug_manager.semantic_search_log_custom_algorithm(
         relevant_tuples, tuples
     )
 
-    # Assert that the first table is kept because the score difference is less than 0.25
+    # Assert that the first table is kept because the score difference is less than 0.2
     assert (
-        "The table Table1 is kept because the score difference with the previous table is less than 0.25."
+        "The table Table1 is kept because the score difference with the previous highly relevant table is less than 0.2 or the global score range is between 0.35 and 0.45."
         in result[2]
     )
 
     # Assert that the second table is also kept due to a similar score difference
     assert (
-        "The table Table2 is kept because the score difference with the previous table is less than 0.25."
+        "The table Table2 is kept because the score difference with the previous highly relevant table is less than 0.2 or the global score range is between 0.35 and 0.45."
         in result[3]
     )
 

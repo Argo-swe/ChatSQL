@@ -1,0 +1,48 @@
+{
+  "database_name": "Orders",
+  "database_description": "The orders database is designed to monitor and manage purchase transactions.",
+  "tables": [
+    {
+      "name": "users",
+      "description": "Table containing account details and personal information about users who make purchases.",
+      "table_synonyms": [
+        "clients",
+        "customers",
+        "members",
+        "consumers"
+      ],
+      "columns": [
+        {
+          "name": "username",
+          "type": "string",
+          "description": "The unique login name for a user.",
+          "column_synonyms": [
+            "nickname",
+            "alias"
+          ]
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "description": "The user's email address.",
+          "column_synonyms": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The user's first name.",
+          "column_synonyms": null
+        },
+        {
+          "name": "surname",
+          "type": "string",
+          "description": "The user's surname.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "username"
+      ]
+    }
+  ]
+}

@@ -1,25 +1,4 @@
 import pytest
-import os
-import shutil
-import tempfile
-
-# To avoid getting a Permission denied when accessing /opt/chatsql,
-# we need to mock the makedirs method before importing the modules.
-# Mock os.makedirs to do nothing
-os.makedirs = lambda *args, **kwargs: None
-
-
-@pytest.fixture(scope="module")
-def temp_dir():
-    # Create a temporary directory for the test session
-    temp_dir = tempfile.mkdtemp()
-    yield temp_dir
-    # Clean up the directory after the test
-    shutil.rmtree(temp_dir)
-
-
-# The base path for indexes is redirected to the temporary directory for testing
-_indexes_out_file_base_path = temp_dir
 
 # Now import the module after applying the mock and redirecting the base path
 from adapter.outcoming.embeddings.txtai.txtai_index_manager_adapter import (
@@ -47,17 +26,6 @@ def valid_config():
         "txtai": {
             "embeddings_table_path": "some_table_path",
             "embeddings_columns_path": "some_columns_path",
-        }
-    }
-
-
-@pytest.fixture
-def invalid_config_missing_keys():
-    # Provide an invalid configuration dictionary missing essential keys to test error handling
-    return {
-        "txtai": {
-            # "embeddings_table_path" is missing, only "embeddings_columns_path" is present
-            "embeddings_columns_path": "some_columns_path"
         }
     }
 
@@ -91,37 +59,22 @@ def test_create_index_manager_success(valid_config, mock_file_repository):
     ), "Expected a TxtaiIndexManagerAdapter instance."
 
 
-"""Test for create_index_manager with missing configuration keys"""
+"""Test for create_index_manager with configuration lacking 'txtai' key"""
 
 
-def test_create_index_manager_missing_keys(
-    invalid_config_missing_keys, mock_file_repository
+def test_create_index_manager_no_txtai_key(
+    invalid_config_no_txtai_key, mock_file_repository
 ):
-    # Initialize the factory with an invalid configuration that is missing required keys
-    factory = TxtaiEmbeddingsManagerFactory(invalid_config_missing_keys)
+    # Initialize the factory with a configuration that lacks the 'txtai' key
+    factory = TxtaiEmbeddingsManagerFactory(invalid_config_no_txtai_key)
 
-    # Call the create_index_manager method and expect a KeyError due to missing keys
-    with pytest.raises(KeyError) as exc_info:
-        factory.create_index_manager(mock_file_repository)
+    # Call the create_index_manager method to create an index manager
+    index_manager = factory.create_index_manager(mock_file_repository)
 
-    # Assert that the error message mentions the missing keys
-    assert (
-        "Key 'embeddings_table_path' or 'embeddings_columns_path' not found in dictionary"
-        in str(exc_info.value)
-    )
-
-
-"""Test for factory initialization with missing 'txtai' key"""
-
-
-def test_factory_initialization_missing_txtai_key(invalid_config_no_txtai_key):
-    # Attempt to initialize the factory with a configuration missing the 'txtai' key
-    # and expect a KeyError to be raised
-    with pytest.raises(KeyError) as exc_info:
-        TxtaiEmbeddingsManagerFactory(invalid_config_no_txtai_key)
-
-    # Assert that the error message mentions the missing 'txtai' key
-    assert "Key 'txtai' not found in dictionary" in str(exc_info.value)
+    # Assert that the returned object is an instance of TxtaiIndexManagerAdapter
+    assert isinstance(
+        index_manager, TxtaiIndexManagerAdapter
+    ), "Expected a TxtaiIndexManagerAdapter instance."
 
 
 """TESTING CREATE_PROMPT_MANAGER_WITH_DEPENDENCIES"""

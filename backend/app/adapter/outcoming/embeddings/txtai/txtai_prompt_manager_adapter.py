@@ -1,9 +1,7 @@
-from adapter.outcoming.embeddings.txtai.txtai_index_manager_adapter import (
-    TxtaiIndexManagerAdapter,
-)
 from adapter.outcoming.embeddings.txtai.txtai_debug_manager_adapter import (
     TxtaiDebugManagerAdapter,
 )
+from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 from core.port.outcoming.embeddings.debug_manager_port import DebugManagerPort
 from core.port.outcoming.file_repository import FileRepository
 from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
@@ -11,7 +9,7 @@ from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
 
 class TxtaiPromptManagerAdapter(PromptManagerPort):
     def __init__(
-        self, index_manager: TxtaiIndexManagerAdapter, file_repository: FileRepository
+        self, index_manager: IndexManagerPort, file_repository: FileRepository
     ):
         super().__init__(index_manager)
         self._file_repository = file_repository
@@ -23,19 +21,14 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
         lang="english",
         dbms="MariaDB",
         activate_log=False,
-    ) -> tuple[str, str | None]:
+    ) -> tuple[str | None, str | None]:
         self._index_manager.load_index(dictionary_id)
         tuples, log_content_phase_1 = self.__get_tuples(user_request, activate_log)
         relevant_tuples, log_content_phase_2 = self.__get_relevant_tuples(
             tuples, activate_log
         )
         if not relevant_tuples:
-            response = (
-                f"""Sorry, the ChatBOT was unable to find any relevant results for "{user_request}".\n"""
-                """We invite you to try again with a different request."""
-            )
-            log_content = "\n".join(log_content_phase_1) if activate_log else None
-            return response, log_content
+            return None, None
 
         dyn_string = self._file_repository.extract_schema_metadata(
             dictionary_id, relevant_tuples
@@ -53,6 +46,7 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
 
     def __get_tuples(self, user_request: str, activate_log: bool):
         query_limit = 20
+        # The max_score field can vary from 0.3 to 0.4. This affects system recall
         sql_query = f"""
             SELECT table_name, text, table_pos, column_description, MAX(score) AS max_score, AVG(score) AS avg_score
             FROM txtai WHERE
@@ -60,7 +54,7 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             similar(':x', 'column_description') AND
             score >= 0.2
             GROUP BY table_name
-            HAVING max_score >= 0.3 OR avg_score >= 0.28
+            HAVING max_score >= 0.35
             ORDER BY max_score DESC
             LIMIT {query_limit}
         """
@@ -72,7 +66,7 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             log_content = self._debug_manager.semantic_search_log(user_request, tuples)
         return tuples, log_content
 
-    def get_index_manager(self) -> TxtaiIndexManagerAdapter:
+    def get_index_manager(self) -> IndexManagerPort:
         return self._index_manager
 
     def _create_debug_manager(self) -> DebugManagerPort:
@@ -84,9 +78,12 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
         log_content = []
         for tuple in tuples:
             scoring_distance = score - tuple["max_score"]
-            if tuple["max_score"] >= 0.45 or scoring_distance <= 0.25:
+            if tuple["max_score"] >= 0.45:
                 relevant_tuples.append(tuple)
                 score = tuple["max_score"]
+            # The scoring_distance variable can vary from 0.15 to 0.25. This affects system recall
+            elif scoring_distance <= 0.2:
+                relevant_tuples.append(tuple)
             else:
                 break
         if activate_log:

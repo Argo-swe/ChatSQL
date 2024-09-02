@@ -53,7 +53,7 @@ export type StatusMessages<TOptions extends BaseMessageOptions> = {
  * @property {String} debug - (Optional) The content of the debug.
  */
 export interface MessageWrapper {
-  message: string;
+  message: string | null;
   isSent: boolean;
   debug?: string;
 }
@@ -101,7 +101,7 @@ export interface CSSClasses {
 
 // Define an enum for DBMS codes
 export enum DbmsCode {
-  Mysql = 'Mysql',
+  MySQL = 'MySQL',
   PostgreSQL = 'PostgreSQL',
   MariaDB = 'MariaDB',
   Microsoft = 'Microsoft',
@@ -111,7 +111,7 @@ export enum DbmsCode {
 
 // Define an enum for DBMS names
 export enum DbmsName {
-  Mysql = 'Mysql',
+  MySQL = 'MySQL',
   PostgreSQL = 'PostgreSQL',
   MariaDB = 'MariaDB',
   Microsoft = 'Microsoft SQL Server',

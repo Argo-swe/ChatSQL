@@ -22,6 +22,8 @@ function getI18n() {
  */
 const onCreateMessages: StatusMessages<DictionaryMessageOptions> = {
   OK: () => getI18n()('actions.create.success'),
+  CONTENT_TOO_LARGE: () =>
+    `${getI18n()('actions.create.error')}\n${getI18n()('actions.sizeError')}`,
   BAD_REQUEST: () => `${getI18n()('actions.create.error')}\n${getI18n()('actions.formatError')}`,
   CONFLICT: ({ dictionaryName }: DictionaryMessageOptions = {}) =>
     `${getI18n()('actions.create.error')}\n${getI18n()('actions.alreadyExistsByName', { item: getI18n()('dictionary.title'), name: dictionaryName })}`,
@@ -35,6 +37,8 @@ const onCreateMessages: StatusMessages<DictionaryMessageOptions> = {
  */
 const onUpdateMessages: StatusMessages<DictionaryMessageOptions> = {
   OK: () => getI18n()('actions.update.success'),
+  CONTENT_TOO_LARGE: () =>
+    `${getI18n()('actions.update.error')}\n${getI18n()('actions.sizeError')}`,
   BAD_REQUEST: () => `${getI18n()('actions.update.error')}\n${getI18n()('actions.formatError')}`,
   NOT_FOUND: ({ dictionaryId }: DictionaryMessageOptions = {}) =>
     `${getI18n()('actions.update.error')}\n${getI18n()('actions.notFoundById', { item: getI18n()('dictionary.title'), id: dictionaryId })}`,

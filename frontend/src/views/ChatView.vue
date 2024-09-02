@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // External libraries
-import { onMounted, ref, type Ref } from 'vue';
+import { nextTick, onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // Internal dependencies
@@ -31,6 +31,9 @@ let isLogged = ref(AuthService.isLogged());
 const { getMessages, onGenerateMessages, getStatusMex } = useMessages();
 const onRetrieveMessages = getMessages('read');
 
+// Variable to control the visibility of the "Go to Bottom" button
+const showGoToBottom = ref(false);
+const messagesContainer: Ref<HTMLElement | null> = ref(null);
 const messages: Ref<MessageWrapper[]> = ref<MessageWrapper[]>([]);
 const dictionaries = ref<Components.Schemas.DictionaryDto[] | null[]>();
 const selectedDictionary = ref<number | null>(null);
@@ -43,14 +46,14 @@ const languages: Ref<Languages[]> = ref([
 ]);
 const selectedLanguage = ref(localStorage.getItem('chat-language') || Languages.en);
 const dbms: Ref<DbmsOption[]> = ref([
-  { name: DbmsName.Mysql, code: DbmsCode.Mysql },
+  { name: DbmsName.MySQL, code: DbmsCode.MySQL },
   { name: DbmsName.PostgreSQL, code: DbmsCode.PostgreSQL },
   { name: DbmsName.MariaDB, code: DbmsCode.MariaDB },
   { name: DbmsName.Microsoft, code: DbmsCode.Microsoft },
   { name: DbmsName.Oracle, code: DbmsCode.Oracle },
   { name: DbmsName.SQLite, code: DbmsCode.SQLite }
 ]);
-const selectedDbms = ref(localStorage.getItem('chat-dbms') || DbmsCode.Mysql);
+const selectedDbms = ref(localStorage.getItem('chat-dbms') || DbmsCode.MySQL);
 // Variable to control the state of the options form container
 const hide = ref(false);
 // Hide/Show switch for the toggle button
@@ -74,8 +77,42 @@ onMounted(() => {
     isLogged.value = AuthService.isLogged();
   });
 
-  loadMessages();
+  loadMessagesAndScroll();
 });
+
+/**
+ * Loads messages and scrolls to the bottom of the chat container.
+ * @function loadMessagesAndScroll
+ * @description Waits for the DOM to update with 'nextTick', then scrolls.
+ */
+async function loadMessagesAndScroll() {
+  loadMessages();
+  await nextTick();
+  scrollToBottom();
+}
+
+/**
+ * Handles the scroll event of the chat container.
+ * @function handleScroll
+ */
+const handleScroll = () => {
+  const container = messagesContainer.value;
+  if (container) {
+    const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
+    showGoToBottom.value = !isAtBottom;
+  }
+};
+
+/**
+ * Scrolls the chat container to the bottom smoothly.
+ * @function scrollToBottom
+ */
+const scrollToBottom = () => {
+  const anchor = document.getElementById('chat-hidden-anchor');
+  if (messagesContainer.value && anchor) {
+    anchor.scrollIntoView({ behavior: 'smooth' });
+  }
+};
 
 /**
  * Saves the selected language to localStorage.
@@ -132,7 +169,7 @@ const hideDetails = () => {
  * @param isSent - A flag indicating whether the message has been sent or received by the user.
  * @param debug - (Optional) The content of the debug.
  */
-function addMessage(message: string, isSent: boolean, debug?: string) {
+function addMessage(message: string | null, isSent: boolean, debug?: string) {
   messages.value.push({
     message,
     debug,
@@ -190,63 +227,53 @@ function handleSuccessfulRetrieve(response: any) {
  * Retrieves a list of dictionaries.
  * @function retrieveDictionaries
  */
-function retrieveDictionaries() {
+async function retrieveDictionaries() {
   dictionaries.value = [];
-  ApiClientManager.getApiClient().then((client) => {
-    client
-      .getAllDictionaries()
-      .then((response) => {
-        if (response.data?.status == 'OK') {
-          handleSuccessfulRetrieve(response);
-        } else {
-          messageService.messageError(
-            t('dictionary.title'),
-            getStatusMex(onRetrieveMessages, response.data?.status, {
-              message: response.data?.message
-            })
-          );
-        }
-      })
-      .catch((error) => {
-        messageService.messageError(
-          t('dictionary.title'),
-          `${t('general.list.error')}\n${error.message}`
-        );
-      });
-  });
+  try {
+    const client = await ApiClientManager.getApiClient();
+    const response = await client.getAllDictionaries();
+
+    if (response.data?.status == 'OK') {
+      handleSuccessfulRetrieve(response);
+    } else {
+      messageService.messageError(
+        t('dictionary.title'),
+        getStatusMex(onRetrieveMessages, response.data?.status, {
+          message: response.data?.message
+        })
+      );
+    }
+  } catch (error) {
+    messageService.messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
+  }
 }
 
 /**
  * Retrieves detailed information about the selected dictionary.
  * @function getDictionaryInfo
  */
-function getDictionaryInfo() {
-  ApiClientManager.getApiClient().then((client) => {
-    client
-      .getDictionaryPreview({
-        id: selectedDictionary.value!
-      })
-      .then((response) => {
-        if (response.data?.status == 'OK') {
-          Object.assign(dictionaryPreview.value, response.data?.data);
-          detailsVisible.value = true;
-        } else {
-          messageService.messageError(
-            t('dictionary.title'),
-            getStatusMex(onRetrieveMessages, response.data?.status, {
-              message: response.data?.message,
-              dictionaryId: selectedDictionary.value!
-            })
-          );
-        }
-      })
-      .catch((error) => {
-        messageService.messageError(
-          t('dictionary.title'),
-          `${t('general.list.error')}\n${error.message}`
-        );
-      });
-  });
+async function getDictionaryInfo() {
+  try {
+    const client = await ApiClientManager.getApiClient();
+    const response = await client.getDictionaryPreview({
+      id: selectedDictionary.value!
+    });
+
+    if (response.data?.status == 'OK') {
+      Object.assign(dictionaryPreview.value, response.data?.data);
+      detailsVisible.value = true;
+    } else {
+      messageService.messageError(
+        t('dictionary.title'),
+        getStatusMex(onRetrieveMessages, response.data?.status, {
+          message: response.data?.message,
+          dictionaryId: selectedDictionary.value!
+        })
+      );
+    }
+  } catch (error) {
+    messageService.messageError(t('dictionary.title'), `${t('general.list.error')}\n${error}`);
+  }
 }
 
 /**
@@ -284,38 +311,32 @@ function runRequest() {
  * @function generatePrompt
  * @param query - The trimmed user request.
  */
-function generatePrompt(query: string) {
+async function generatePrompt(query: string) {
   loading.value = true;
-  ApiClientManager.getApiClient().then((client) => {
-    client
-      .generatePrompt({
-        dictionaryId: selectedDictionary.value!,
-        query: query,
-        dbms: selectedDbms.value,
-        lang: selectedLanguage.value
-      })
-      .then((response) => {
-        if (response.data?.status == 'OK') {
-          addMessage(response.data.data!, false);
-        } else {
-          messageService.messageError(
-            t('chat.prompt.title'),
-            getStatusMex(onGenerateMessages, response.data?.status, {
-              message: response.data?.message
-            })
-          );
-        }
-      })
-      .catch((error) => {
-        messageService.messageError(
-          t('chat.prompt.title'),
-          `${t('actions.generate.error')}\n${error.message}`
-        );
-      })
-      .finally(() => {
-        loading.value = false;
-      });
-  });
+  try {
+    const client = await ApiClientManager.getApiClient();
+    const response = await client.generatePrompt({
+      dictionaryId: selectedDictionary.value!,
+      query: query,
+      dbms: selectedDbms.value,
+      lang: selectedLanguage.value
+    });
+
+    if (response.data?.status == 'OK') {
+      addMessage(response.data.data!, false);
+    } else {
+      messageService.messageError(
+        t('chat.prompt.title'),
+        getStatusMex(onGenerateMessages, response.data?.status, {
+          message: response.data?.message
+        })
+      );
+    }
+  } catch (error) {
+    messageService.messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`);
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -323,46 +344,42 @@ function generatePrompt(query: string) {
  * @function generatePromptWithDebug
  * @param query - The trimmed user request.
  */
-function generatePromptWithDebug(query: string) {
+async function generatePromptWithDebug(query: string) {
   loading.value = true;
-  ApiClientManager.getApiClient().then((client) => {
-    client
-      .generatePromptWithDebug({
-        dictionaryId: selectedDictionary.value!,
-        query: query,
-        dbms: selectedDbms.value,
-        lang: selectedLanguage.value
-      })
-      .then((response) => {
-        if (response.data?.status == 'OK') {
-          addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
-        } else {
-          messageService.messageError(
-            t('chat.prompt.title'),
-            getStatusMex(onGenerateMessages, response.data?.status, {
-              message: response.data?.message
-            })
-          );
-        }
-      })
-      .catch((error) => {
-        messageService.messageError(
-          t('chat.prompt.title'),
-          `${t('actions.generate.error')}\n${error.message}`
-        );
-      })
-      .finally(() => {
-        loading.value = false;
-      });
-  });
+  try {
+    const client = await ApiClientManager.getApiClient();
+    const response = await client.generatePromptWithDebug({
+      dictionaryId: selectedDictionary.value!,
+      query: query,
+      dbms: selectedDbms.value,
+      lang: selectedLanguage.value
+    });
+
+    if (response.data?.status == 'OK') {
+      addMessage(response.data.data?.prompt!, false, response.data.data?.debug || undefined);
+    } else {
+      messageService.messageError(
+        t('chat.prompt.title'),
+        getStatusMex(onGenerateMessages, response.data?.status, {
+          message: response.data?.message
+        })
+      );
+    }
+  } catch (error) {
+    messageService.messageError(t('chat.prompt.title'), `${t('actions.generate.error')}\n${error}`);
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
 <template>
-  <div id="chat" class="flex flex-column">
-    <div id="titlebar-container" class="card p-3">
+  <div id="chat" class="flex flex-column" data-testid="chat">
+    <div id="titlebar-container" class="card p-3" data-testid="title-bar-container">
       <div id="chat-title" class="flex flex-row align-items-center">
-        <h1 class="m-1 text-xl font-semibold">{{ getDictionaryName(selectedDictionary) }}</h1>
+        <h1 class="m-1 text-xl font-semibold" data-testid="selected-dictionary-name">
+          {{ getDictionaryName(selectedDictionary) }}
+        </h1>
         <PgToggleButton
           v-model="checked"
           :on-label="t('text.Show')"
@@ -371,11 +388,12 @@ function generatePromptWithDebug(query: string) {
           off-icon="pi pi-times"
           class="w-9rem m-1"
           :aria-label="t('text.toggle_view')"
+          data-testid="title-bar-toggle-button"
           @click="toggleSelectView"
         />
       </div>
       <PgDivider :class="{ hide: hide }" />
-      <div :class="{ hide: hide }" class="flex flex-wrap flex-row">
+      <div :class="{ hide: hide }" class="flex flex-wrap flex-row" data-testid="select-view">
         <PgInputGroup class="w-full sm:w-fit">
           <PgDropdown
             v-model="selectedDictionary"
@@ -386,6 +404,7 @@ function generatePromptWithDebug(query: string) {
             :placeholder="t('chat.dictionary.placeholder')"
             :empty-message="t('primevue.emptymessage')"
             class="h-fit m-2 mr-0"
+            data-testid="dictionary-dropdown"
             @update:model-value="onDictionaryChange"
           />
           <PgButton
@@ -395,6 +414,7 @@ function generatePromptWithDebug(query: string) {
             class="h-fit m-2 ml-0"
             :title="t('chat.dictionary.details.show_details')"
             :aria-label="t('chat.dictionary.details.show_details')"
+            data-testid="dictionary-preview-button"
             @click="getDictionaryInfo"
           />
         </PgInputGroup>
@@ -406,6 +426,7 @@ function generatePromptWithDebug(query: string) {
           option-value="code"
           class="w-fit h-fit m-2"
           :aria-label="t('chat.dbms.placeholder')"
+          data-testid="dbms-dropdown"
           @update:model-value="onDbmsChange"
         />
         <PgDropdown
@@ -413,15 +434,16 @@ function generatePromptWithDebug(query: string) {
           :options="languages"
           :aria-label="t('chat.lang.placeholder')"
           class="w-fit h-fit m-2"
+          data-testid="language-dropdown"
           @update:model-value="onLanguageChange"
         >
           <template #value="slotProps">
-            <div class="capitalize">
+            <div class="capitalize" data-testid="chat-language-option">
               {{ t(`text.${slotProps.value}`) }}
             </div>
           </template>
           <template #option="slotProps">
-            <div class="capitalize">
+            <div class="capitalize" data-testid="chat-language-option">
               {{ t(`text.${slotProps.option}`) }}
             </div>
           </template>
@@ -440,7 +462,7 @@ function generatePromptWithDebug(query: string) {
       @hide-details="hideDetails"
     ></DictPreview>
 
-    <div v-if="!detailsVisible" id="messages">
+    <div v-if="!detailsVisible" id="messages" ref="messagesContainer" @scroll="handleScroll">
       <ChatMessage
         v-for="(msg, index) in messages"
         :key="index"
@@ -448,9 +470,10 @@ function generatePromptWithDebug(query: string) {
         :message="msg.message"
         :debug="msg.debug"
       ></ChatMessage>
+      <div id="chat-hidden-anchor" visible="false"></div>
     </div>
 
-    <PgInputGroup id="input-container" class="mt-1">
+    <PgInputGroup id="input-container" class="mt-1" data-testid="request-container">
       <PgTextarea
         v-model="request"
         :placeholder="t('chat.prompt.placeholder')"
@@ -458,6 +481,7 @@ function generatePromptWithDebug(query: string) {
         auto-resize
         class="w-full"
         :aria-label="t('chat.prompt.placeholder')"
+        data-testid="request-input"
         @keydown.enter="handleEnterKeyRequest"
       />
       <PgButton
@@ -465,9 +489,22 @@ function generatePromptWithDebug(query: string) {
         :title="t('chat.prompt.generate')"
         :aria-label="t('chat.prompt.generate')"
         :disabled="loading || !selectedDictionary || !request"
+        data-testid="request-button"
         @click="runRequest"
       />
     </PgInputGroup>
+
+    <PgButton
+      v-show="showGoToBottom && !detailsVisible"
+      id="go-to-bottom"
+      class="w-2rem h-2rem"
+      icon="pi pi-angle-double-down"
+      severity="contrast"
+      rounded
+      outlined
+      :aria-label="t('chat.actions.scroll_to_bottom')"
+      @click="scrollToBottom"
+    />
   </div>
 </template>
 
@@ -477,6 +514,14 @@ function generatePromptWithDebug(query: string) {
   max-height: 100%;
   position: relative;
   margin-bottom: -2rem;
+}
+
+#go-to-bottom {
+  position: absolute;
+  bottom: 5rem;
+  right: 50%;
+  transform: translateX(50%);
+  z-index: 1099;
 }
 
 .hide {

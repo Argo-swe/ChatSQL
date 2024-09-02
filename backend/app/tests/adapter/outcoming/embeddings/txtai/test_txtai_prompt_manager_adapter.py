@@ -99,9 +99,7 @@ def test_prompt_generator_no_relevant_results(prompt_manager, mocker):
     result, log_content = prompt_manager.prompt_generator(dictionary_id, user_request)
 
     # Assertions
-    assert (
-        "Sorry, the ChatBOT was unable to find any relevant results" in result
-    )  # Verify that the no results message is returned
+    assert result is None  # Verify that the no results message is returned
     assert (
         log_content is None
     )  # Verify that no log content is returned (since logging is not activated by default)
@@ -177,11 +175,11 @@ def test_prompt_generator_empty_user_request(prompt_manager, mocker):
     )
 
     # Call the prompt_generator method with the empty user request.
-    result, log_content = prompt_manager.prompt_generator(dictionary_id, user_request)
+    result = prompt_manager.prompt_generator(dictionary_id, user_request)
 
     # Assert that the result message indicates no relevant results were found.
     # This verifies that the method handles empty user inputs gracefully.
-    assert "unable to find any relevant results" in result
+    assert result[0] is None
 
 
 """Test for different languages"""
@@ -213,14 +211,12 @@ def test_prompt_generator_different_language(
     mock_file_repository.extract_schema_metadata.return_value = "Mocked schema metadata"
 
     # Call the prompt_generator method with the specific language parameter.
-    result, log_content = prompt_manager.prompt_generator(
-        dictionary_id, user_request, lang=lang
-    )
+    result = prompt_manager.prompt_generator(dictionary_id, user_request, lang=lang)
 
     # Assert that the generated prompt string correctly includes the language setting.
     # This verifies that the prompt is generated in the specified language.
     assert (
-        f"Answer in {lang}." in result
+        f"Answer in {lang}." in result[0]
     )  # Ensure the language setting is reflected in the output
 
 
@@ -251,14 +247,12 @@ def test_prompt_generator_different_dbms(prompt_manager, mocker, mock_file_repos
     mock_file_repository.extract_schema_metadata.return_value = "Mocked schema metadata"
 
     # Call the prompt_generator method with the specific DBMS parameter.
-    result, log_content = prompt_manager.prompt_generator(
-        dictionary_id, user_request, dbms=dbms
-    )
+    result = prompt_manager.prompt_generator(dictionary_id, user_request, dbms=dbms)
 
     # Assert that the generated prompt string correctly includes the DBMS setting.
     # This verifies that the prompt is tailored for the specified DBMS.
     assert (
-        f"Convert user request to a suitable SQL query for {dbms}." in result
+        f"Convert user request to a suitable SQL query for {dbms}." in result[0]
     )  # Ensure the DBMS setting is reflected in the output
 
 
@@ -296,9 +290,7 @@ def test_prompt_generator_file_repository_failure(
     # Try-except block to catch the exception raised by the method
     # and verify that it is correctly handled.
     try:
-        result, log_content = prompt_manager.prompt_generator(
-            dictionary_id, user_request
-        )
+        result = prompt_manager.prompt_generator(dictionary_id, user_request)
         # If the method doesn't raise an exception, check the result.
         # Typically, you'd assert that an error message or specific handling occurs.
         assert (
@@ -340,7 +332,7 @@ def test_get_tuples_sql_query_and_search_execution(mocker, prompt_manager):
         similar(':x', 'column_description') AND
         score >= 0.2
         GROUP BY table_name
-        HAVING max_score >= 0.3 OR avg_score >= 0.28
+        HAVING max_score >= 0.35
         ORDER BY max_score DESC
         LIMIT {query_limit}
     """
@@ -377,7 +369,7 @@ def test_get_tuples_logging_activation(mocker, prompt_manager):
     activate_log = True
 
     # Mock the search method to return sample tuples
-    mock_search = mocker.patch.object(
+    mocker.patch.object(
         prompt_manager._index_manager.get_embeddings(),
         "search",
         return_value=[{"table_name": "SampleTable"}],
@@ -411,7 +403,7 @@ def test_get_tuples_empty_search_results(mocker, prompt_manager):
     activate_log = False
 
     # Mock the search method to return no tuples
-    mock_search = mocker.patch.object(
+    mocker.patch.object(
         prompt_manager._index_manager.get_embeddings(), "search", return_value=[]
     )
 

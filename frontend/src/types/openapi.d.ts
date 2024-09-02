@@ -134,7 +134,7 @@ declare namespace Components {
       /**
        * Prompt
        */
-      prompt: string;
+      prompt?: /* Prompt */ string | null;
       /**
        * Debug
        */
@@ -169,6 +169,7 @@ declare namespace Components {
       | 'ERROR'
       | 'BAD_CREDENTIAL'
       | 'BAD_REQUEST'
+      | 'CONTENT_TOO_LARGE'
       | 'NOT_FOUND'
       | 'CONFLICT';
     /**
@@ -232,8 +233,13 @@ declare namespace Paths {
        * Name
        */
       export type Name = string;
+      /**
+       * Summary
+       */
+      export type Summary = any;
     }
     export interface QueryParameters {
+      summary?: /* Summary */ Parameters.Summary;
       id?: /* Id */ Parameters.Id;
       name: /* Name */ Parameters.Name;
       description: /* Description */ Parameters.Description;
@@ -424,7 +430,9 @@ declare namespace Paths {
 
 export interface OperationMethods {
   /**
-   * getAllDictionaries - Getalldictionaries
+   * getAllDictionaries - Retrieve all dictionaries
+   *
+   * Retrieve a list of all dictionaries available in the system.
    */
   'getAllDictionaries'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -433,6 +441,8 @@ export interface OperationMethods {
   ): OperationResponse<Paths.GetAllDictionaries.Responses.$200>;
   /**
    * createDictionary - Createdictionary
+   *
+   * Create a new dictionary with metadata and an optional file.
    */
   'createDictionary'(
     parameters?: Parameters<Paths.CreateDictionary.QueryParameters> | null,
@@ -440,7 +450,9 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.CreateDictionary.Responses.$200>;
   /**
-   * getDictionary - Getdictionary
+   * getDictionary - Retrieve a dictionary by ID
+   *
+   * Retrieve the details of a specific dictionary by its ID.
    */
   'getDictionary'(
     parameters?: Parameters<Paths.GetDictionary.PathParameters> | null,
@@ -448,7 +460,9 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.GetDictionary.Responses.$200>;
   /**
-   * updateDictionaryMetadata - Updatedictionarymetadata
+   * updateDictionaryMetadata - Update dictionary metadata by ID
+   *
+   * Update the metadata of a specific dictionary by its ID.
    */
   'updateDictionaryMetadata'(
     parameters?: Parameters<Paths.UpdateDictionaryMetadata.PathParameters> | null,
@@ -456,7 +470,9 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.UpdateDictionaryMetadata.Responses.$200>;
   /**
-   * deleteDictionary - Deletedictionary
+   * deleteDictionary - Delete a dictionary by ID
+   *
+   * Delete a specific dictionary by its ID.
    */
   'deleteDictionary'(
     parameters?: Parameters<Paths.DeleteDictionary.PathParameters> | null,
@@ -464,7 +480,9 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.DeleteDictionary.Responses.$200>;
   /**
-   * getDictionaryFile - Getdictionaryfile
+   * getDictionaryFile - Download a dictionary file by ID
+   *
+   * Download the file associated with a specific dictionary by its ID.
    */
   'getDictionaryFile'(
     parameters?: Parameters<Paths.GetDictionaryFile.PathParameters> | null,
@@ -472,7 +490,9 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.GetDictionaryFile.Responses.$200>;
   /**
-   * updateDictionaryFile - Updatedictionaryfile
+   * updateDictionaryFile - Update dictionary file by ID
+   *
+   * Update the file associated with a specific dictionary by its ID.
    */
   'updateDictionaryFile'(
     parameters?: Parameters<Paths.UpdateDictionaryFile.PathParameters> | null,
@@ -480,7 +500,9 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.UpdateDictionaryFile.Responses.$200>;
   /**
-   * getDictionaryPreview - Getdictionarypreview
+   * getDictionaryPreview - Retrieve a dictionary preview by ID
+   *
+   * Retrieve a preview of a specific dictionary by its ID.
    */
   'getDictionaryPreview'(
     parameters?: Parameters<Paths.GetDictionaryPreview.PathParameters> | null,
@@ -488,7 +510,16 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.GetDictionaryPreview.Responses.$200>;
   /**
-   * generatePrompt - Generateprompt
+   * generatePrompt - Generate a prompt based on query parameters
+   *
+   * Generate a prompt using the provided parameters.
+   *
+   * - **dictionaryId**: ID of the dictionary to be used.
+   * - **query**: The input query string to generate the prompt.
+   * - **dbms**: The database management system being used.
+   * - **lang**: The language for the generated prompt.
+   *
+   * Returns the generated prompt as a string.
    */
   'generatePrompt'(
     parameters?: Parameters<Paths.GeneratePrompt.QueryParameters> | null,
@@ -496,7 +527,16 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.GeneratePrompt.Responses.$200>;
   /**
-   * generatePromptWithDebug - Generatepromptwithdebug
+   * generatePromptWithDebug - Generate a prompt with debug information
+   *
+   * Generate a prompt with detailed debug information.
+   *
+   * - **dictionaryId**: ID of the dictionary to be used.
+   * - **query**: The input query string to generate the prompt.
+   * - **dbms**: The database management system being used.
+   * - **lang**: The language for the generated prompt.
+   *
+   * Returns the generated prompt along with additional debug data.
    */
   'generatePromptWithDebug'(
     parameters?: Parameters<Paths.GeneratePromptWithDebug.QueryParameters> | null,
@@ -504,7 +544,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.GeneratePromptWithDebug.Responses.$200>;
   /**
-   * login - Login
+   * login - User login
+   *
+   * Authenticate a user with the provided credentials.
+   *
+   * - **username**: The username of the user.
+   * - **password**: The password of the user.
+   *
+   * Returns an authentication token if the login is successful.
    */
   'login'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -512,7 +559,11 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.Login.Responses.$200>;
   /**
-   * main - Main
+   * main - Root endpoint
+   *
+   * Return a simple greeting message.
+   *
+   * This endpoint can be used to verify that the API is reachable.
    */
   'main'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -520,7 +571,11 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ): OperationResponse<Paths.Main.Responses.$200>;
   /**
-   * healthcheck - Healthcheck
+   * healthcheck - Health check endpoint
+   *
+   * Check the health status of the API.
+   *
+   * Returns a status message indicating whether the API is running.
    */
   'healthcheck'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -532,7 +587,9 @@ export interface OperationMethods {
 export interface PathsDictionary {
   ['/api/dictionary/']: {
     /**
-     * getAllDictionaries - Getalldictionaries
+     * getAllDictionaries - Retrieve all dictionaries
+     *
+     * Retrieve a list of all dictionaries available in the system.
      */
     'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -541,6 +598,8 @@ export interface PathsDictionary {
     ): OperationResponse<Paths.GetAllDictionaries.Responses.$200>;
     /**
      * createDictionary - Createdictionary
+     *
+     * Create a new dictionary with metadata and an optional file.
      */
     'post'(
       parameters?: Parameters<Paths.CreateDictionary.QueryParameters> | null,
@@ -550,7 +609,9 @@ export interface PathsDictionary {
   };
   ['/api/dictionary/{id}']: {
     /**
-     * getDictionary - Getdictionary
+     * getDictionary - Retrieve a dictionary by ID
+     *
+     * Retrieve the details of a specific dictionary by its ID.
      */
     'get'(
       parameters?: Parameters<Paths.GetDictionary.PathParameters> | null,
@@ -558,7 +619,9 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetDictionary.Responses.$200>;
     /**
-     * updateDictionaryMetadata - Updatedictionarymetadata
+     * updateDictionaryMetadata - Update dictionary metadata by ID
+     *
+     * Update the metadata of a specific dictionary by its ID.
      */
     'put'(
       parameters?: Parameters<Paths.UpdateDictionaryMetadata.PathParameters> | null,
@@ -566,7 +629,9 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.UpdateDictionaryMetadata.Responses.$200>;
     /**
-     * deleteDictionary - Deletedictionary
+     * deleteDictionary - Delete a dictionary by ID
+     *
+     * Delete a specific dictionary by its ID.
      */
     'delete'(
       parameters?: Parameters<Paths.DeleteDictionary.PathParameters> | null,
@@ -576,7 +641,9 @@ export interface PathsDictionary {
   };
   ['/api/dictionary/{id}/file']: {
     /**
-     * getDictionaryFile - Getdictionaryfile
+     * getDictionaryFile - Download a dictionary file by ID
+     *
+     * Download the file associated with a specific dictionary by its ID.
      */
     'get'(
       parameters?: Parameters<Paths.GetDictionaryFile.PathParameters> | null,
@@ -584,7 +651,9 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ): OperationResponse<Paths.GetDictionaryFile.Responses.$200>;
     /**
-     * updateDictionaryFile - Updatedictionaryfile
+     * updateDictionaryFile - Update dictionary file by ID
+     *
+     * Update the file associated with a specific dictionary by its ID.
      */
     'put'(
       parameters?: Parameters<Paths.UpdateDictionaryFile.PathParameters> | null,
@@ -594,7 +663,9 @@ export interface PathsDictionary {
   };
   ['/api/dictionary/{id}/dictionary-preview']: {
     /**
-     * getDictionaryPreview - Getdictionarypreview
+     * getDictionaryPreview - Retrieve a dictionary preview by ID
+     *
+     * Retrieve a preview of a specific dictionary by its ID.
      */
     'get'(
       parameters?: Parameters<Paths.GetDictionaryPreview.PathParameters> | null,
@@ -604,7 +675,16 @@ export interface PathsDictionary {
   };
   ['/api/prompt/']: {
     /**
-     * generatePrompt - Generateprompt
+     * generatePrompt - Generate a prompt based on query parameters
+     *
+     * Generate a prompt using the provided parameters.
+     *
+     * - **dictionaryId**: ID of the dictionary to be used.
+     * - **query**: The input query string to generate the prompt.
+     * - **dbms**: The database management system being used.
+     * - **lang**: The language for the generated prompt.
+     *
+     * Returns the generated prompt as a string.
      */
     'get'(
       parameters?: Parameters<Paths.GeneratePrompt.QueryParameters> | null,
@@ -614,7 +694,16 @@ export interface PathsDictionary {
   };
   ['/api/prompt/debug']: {
     /**
-     * generatePromptWithDebug - Generatepromptwithdebug
+     * generatePromptWithDebug - Generate a prompt with debug information
+     *
+     * Generate a prompt with detailed debug information.
+     *
+     * - **dictionaryId**: ID of the dictionary to be used.
+     * - **query**: The input query string to generate the prompt.
+     * - **dbms**: The database management system being used.
+     * - **lang**: The language for the generated prompt.
+     *
+     * Returns the generated prompt along with additional debug data.
      */
     'get'(
       parameters?: Parameters<Paths.GeneratePromptWithDebug.QueryParameters> | null,
@@ -624,7 +713,14 @@ export interface PathsDictionary {
   };
   ['/api/login/']: {
     /**
-     * login - Login
+     * login - User login
+     *
+     * Authenticate a user with the provided credentials.
+     *
+     * - **username**: The username of the user.
+     * - **password**: The password of the user.
+     *
+     * Returns an authentication token if the login is successful.
      */
     'post'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -634,7 +730,11 @@ export interface PathsDictionary {
   };
   ['/']: {
     /**
-     * main - Main
+     * main - Root endpoint
+     *
+     * Return a simple greeting message.
+     *
+     * This endpoint can be used to verify that the API is reachable.
      */
     'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -644,7 +744,11 @@ export interface PathsDictionary {
   };
   ['/healthcheck']: {
     /**
-     * healthcheck - Healthcheck
+     * healthcheck - Health check endpoint
+     *
+     * Check the health status of the API.
+     *
+     * Returns a status message indicating whether the API is running.
      */
     'get'(
       parameters?: Parameters<UnknownParamsObject> | null,

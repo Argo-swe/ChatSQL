@@ -19,9 +19,8 @@ import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-import { mount } from 'cypress/vue';
-
 import '@cypress/code-coverage/support';
+import { mount } from 'cypress/vue';
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
@@ -31,10 +30,15 @@ declare global {
   namespace Cypress {
     interface Chainable {
       mount: typeof mount;
+      decreaseScale(): Chainable<void>;
+      increaseScale(): Chainable<void>;
     }
   }
 }
 
+/**
+ * Cypress command to mount a component.
+ */
 Cypress.Commands.add('mount', mount);
 
 // Example use:

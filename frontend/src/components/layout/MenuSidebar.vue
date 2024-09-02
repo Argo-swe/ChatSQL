@@ -20,9 +20,10 @@ const { t } = useI18n();
     severity="contrast"
     outlined
     :aria-label="t('general.menu.closeMainNavMenu')"
+    data-testid="close-menu-sidebar"
     @click="onMenuToggle()"
   />
-  <div class="flex flex-column justify-content-between flex-wrap h-full">
+  <div class="flex flex-column justify-content-between flex-wrap h-full" data-testid="menu-sidebar">
     <div class="flex m-2">
       <app-menu></app-menu>
     </div>
