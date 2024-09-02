@@ -100,6 +100,15 @@ describe('ChatMessage Component', () => {
   });
 
   // Single and isolated test case
+  it('should display the chatbot message with null value', () => {
+    mountChatMessage({
+      message: null,
+      isSent: false
+    });
+    cy.get('[data-testid="chat-message"]').should('have.text', 'chat.prompt.empty');
+  });
+
+  // Single and isolated test case
   it('should hide the action area if the message has been sent by a user', () => {
     UserRequest();
     cy.get('[data-testid="copy-button"]').should('not.exist');

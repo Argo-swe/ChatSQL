@@ -462,7 +462,13 @@ async function generatePromptWithDebug(query: string) {
       @hide-details="hideDetails"
     ></DictPreview>
 
-    <div v-if="!detailsVisible" id="messages" ref="messagesContainer" @scroll="handleScroll">
+    <div
+      v-if="!detailsVisible"
+      id="messages"
+      ref="messagesContainer"
+      data-testid="messages-container"
+      @scroll="handleScroll"
+    >
       <ChatMessage
         v-for="(msg, index) in messages"
         :key="index"
@@ -503,6 +509,7 @@ async function generatePromptWithDebug(query: string) {
       rounded
       outlined
       :aria-label="t('chat.actions.scroll_to_bottom')"
+      data-testid="chat-scroll-to-bottom"
       @click="scrollToBottom"
     />
   </div>

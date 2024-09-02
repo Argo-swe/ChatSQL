@@ -43,8 +43,7 @@ function mountChatView(mockApiClient: any = getGlobalMockApiClient(), props?) {
     global: {
       plugins: [i18n, PrimeVue, ConfirmationService, DialogService, ToastService],
       mocks: {
-        t: (key) => key,
-        handleEnterKeyRequest: cy.spy().as('handleEnterKeyRequestSpy')
+        t: (key) => key
       },
       components: {
         PgToggleButton: ToggleButton,
@@ -230,8 +229,7 @@ describe('ChatView Component', () => {
     /**
      * Sends a request that overlaps the dictionary preview.
      */
-    cy.get('[data-testid="request-input"]').type('all orders');
-    cy.get('[data-testid="request-button"]').click();
+    cy.get('[data-testid="request-input"]').type('all orders{enter}');
     cy.get('[data-testid="dictionary-preview-container"]').should('not.exist');
     cy.get('[data-testid="chat-message-container"]').should('exist');
     /**
@@ -263,14 +261,6 @@ describe('ChatView Component', () => {
   });
 
   // Single and isolated test case
-  it('should send the request when enter key is pressed', () => {
-    mockGeneratePrompt();
-    selectDictionary();
-    cy.get('[data-testid="request-input"]').type('all orders{enter}');
-    cy.get('@handleEnterKeyRequestSpy').should('have.been.called');
-  });
-
-  // Single and isolated test case
   it('should handle prompt generation successfully', () => {
     mockGeneratePrompt();
     selectDictionary();
@@ -299,8 +289,7 @@ describe('ChatView Component', () => {
   it('should handle prompt generation failure', () => {
     mockGeneratePrompt(getFailureResponse());
     selectDictionary();
-    cy.get('[data-testid="request-input"]').type('invalid request');
-    cy.get('[data-testid="request-button"]').click();
+    cy.get('[data-testid="request-input"]').type('invalid request{enter}');
     cy.get('@messageErrorSpy').should('have.been.called');
   });
 
@@ -309,20 +298,42 @@ describe('ChatView Component', () => {
     cy.stub(AuthService, 'isLogged').returns(true);
     mockGeneratePromptWithDebug();
     selectDictionary();
-    cy.get('[data-testid="request-input"]').type('all orders');
-    cy.get('[data-testid="request-button"]').click();
+    cy.get('[data-testid="request-input"]').type('all orders{enter}');
     cy.get('[data-testid="chat-message-container"]').should('exist');
     cy.get('[data-testid="debug-button"]').should('exist');
+  });
+
+  // Single and isolated test case
+  it('should handle prompt with debug generation failure', () => {
+    cy.stub(AuthService, 'isLogged').returns(true);
+    mockGeneratePromptWithDebug(getFailureResponse());
+    selectDictionary();
+    cy.get('[data-testid="request-input"]').type('invalid request{enter}');
+    cy.get('@messageErrorSpy').should('have.been.called');
   });
 
   // Single and isolated test case
   it('should clear the chat history when clicking delete button', () => {
     mockGeneratePrompt();
     selectDictionary();
-    cy.get('[data-testid="request-input"]').type('all orders');
-    cy.get('[data-testid="request-button"]').click();
+    cy.get('[data-testid="request-input"]').type('all orders{enter}');
     cy.get('[data-testid="chat-message-container"]').should('exist');
     cy.get('[data-testid="clean-chat-button"]').should('exist').click();
     cy.get('[data-testid="chat-message-container"]').should('not.exist');
+  });
+
+  // Single and isolated test case
+  it('should scroll to the end of the chat when button is clicked', () => {
+    mockGeneratePrompt();
+    selectDictionary();
+    for (let i = 0; i < 5; i++) {
+      cy.get('[data-testid="request-input"]').type('all orders{enter}');
+    }
+    cy.get('[data-testid="messages-container"]')
+      .scrollTo('0%', '30%')
+      .then(() => {
+        cy.get('[data-testid="chat-scroll-to-bottom"]').should('be.visible').click();
+        cy.get('[data-testid="chat-message-container"]').last().should('be.visible');
+      });
   });
 });

@@ -101,6 +101,23 @@ function getFailureResponse() {
 }
 
 /**
+ * Mounts the DictionariesListView component with a custom mock API client for an empty list of dictionaries.
+ * @param response - The mock response to return.
+ */
+function mockEmptyDictionariesList() {
+  const mockApiClient = {
+    getAllDictionaries: cy.stub().resolves({
+      data: {
+        status: 'NOT_FOUND',
+        data: {}
+      }
+    })
+  };
+  cy.wrap(mockApiClient.getAllDictionaries).as('getAllDictionaries');
+  return mountDictionariesListView(mockApiClient);
+}
+
+/**
  * Mounts the DictionariesListView component with a custom mock API client for dictionary deletion.
  * @param response - The mock response to return.
  */
@@ -126,10 +143,16 @@ function CheckSubComponentCall() {
  */
 describe('DictionariesListView Component', () => {
   // Single and isolated test case
-  it('should render the dictionaries list correctly', () => {
+  it('should render the list of dictionaries correctly', () => {
     mountDictionariesListView();
     cy.get('[data-testid="dictionary-page-header"]').should('be.visible');
     cy.get('[data-testid="dictionaries-table"]').should('be.visible');
+  });
+
+  // Single and isolated test case
+  it('should display an empty list of dictionaries', () => {
+    mockEmptyDictionariesList();
+    cy.contains('general.list.empty').should('exist');
   });
 
   // Single and isolated test case

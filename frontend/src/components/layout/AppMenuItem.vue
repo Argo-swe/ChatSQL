@@ -143,7 +143,11 @@ const itemClick = (event: Event, item: any) => {
     >
       <i :class="item.icon" class="layout-menuitem-icon"></i>
       <span class="layout-menuitem-text" data-testid="menu-item-text">{{ item.label }}</span>
-      <i v-if="item.items" class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
+      <i
+        v-if="item.items"
+        class="pi pi-fw pi-angle-down layout-submenu-toggler"
+        data-testid="submenu-toggler"
+      ></i>
     </a>
     <!-- Internal navigation link (managed by Vue Router) -->
     <router-link
@@ -156,7 +160,11 @@ const itemClick = (event: Event, item: any) => {
     >
       <i :class="item.icon" class="layout-menuitem-icon"></i>
       <span class="layout-menuitem-text" data-testid="menu-item-text">{{ item.label }}</span>
-      <i v-if="item.items" class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
+      <i
+        v-if="item.items"
+        class="pi pi-fw pi-angle-down layout-submenu-toggler"
+        data-testid="submenu-toggler"
+      ></i>
     </router-link>
     <!-- Sub menu with transition -->
     <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
