@@ -10,7 +10,7 @@
       "error": "Error while deleting",
       "success": "Successfully deleted"
     },
-    "formatError": "Wrong format",
+    "formatError": "Wrong request format",
     "sizeError": "Dictionary file is too large, max size 1MB",
     "generate": {
       "error": "Error during generation",
