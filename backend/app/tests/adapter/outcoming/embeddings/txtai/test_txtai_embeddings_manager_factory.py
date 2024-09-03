@@ -31,17 +31,6 @@ def valid_config():
 
 
 @pytest.fixture
-def invalid_config_missing_keys():
-    # Provide an invalid configuration dictionary missing essential keys to test error handling
-    return {
-        "txtai": {
-            # "embeddings_table_path" is missing, only "embeddings_columns_path" is present
-            "embeddings_columns_path": "some_columns_path"
-        }
-    }
-
-
-@pytest.fixture
 def invalid_config_no_txtai_key():
     # Provide an invalid configuration dictionary missing the main "txtai" key to test error handling
     return {
@@ -60,6 +49,24 @@ def invalid_config_no_txtai_key():
 def test_create_index_manager_success(valid_config, mock_file_repository):
     # Initialize the factory with a valid configuration
     factory = TxtaiEmbeddingsManagerFactory(valid_config)
+
+    # Call the create_index_manager method to create an index manager
+    index_manager = factory.create_index_manager(mock_file_repository)
+
+    # Assert that the returned object is an instance of TxtaiIndexManagerAdapter
+    assert isinstance(
+        index_manager, TxtaiIndexManagerAdapter
+    ), "Expected a TxtaiIndexManagerAdapter instance."
+
+
+"""Test for create_index_manager with configuration lacking 'txtai' key"""
+
+
+def test_create_index_manager_no_txtai_key(
+    invalid_config_no_txtai_key, mock_file_repository
+):
+    # Initialize the factory with a configuration that lacks the 'txtai' key
+    factory = TxtaiEmbeddingsManagerFactory(invalid_config_no_txtai_key)
 
     # Call the create_index_manager method to create an index manager
     index_manager = factory.create_index_manager(mock_file_repository)

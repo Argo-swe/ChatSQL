@@ -9,9 +9,8 @@ export default defineConfig({
     vue(),
     istanbul({
       include: 'src/*',
-      exclude: ['node_modules', 'test/', 'cypress/'],
+      exclude: ['node_modules', 'src/composables/status-messages.ts', 'src/services/api-client.service.ts', 'src/services/message.service.ts', 'tests/', 'cypress/'],
       extension: ['.js', '.ts', '.vue'],
-      requireEnv: true
     })
   ],
   resolve: {

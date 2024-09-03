@@ -66,7 +66,7 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm i
 
-    # Esegue il linting e la la formattazione del codice nel backend utilizzando pre-commit
+    # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
     - name: Code Linting (backend)
       if: ${{ github.event.action != 'closed' }}
       run: |
@@ -86,12 +86,33 @@ jobs:
         cd ${{ github.workspace }}/frontend
         npm run lint
 
-    # Esegue i test di unità nel frontend
-    - name: Run Unit and Integration Tests (frontend)
+    # Esegue i test di unità nel frontend con Jest
+    - name: Run Unit Tests (frontend with Jest)
       if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
-        npm run test:all
+        npm run test:jest
+
+    # Rinomina la cartella coverage generata da Jest
+    - name: Rename Jest Coverage Folder (frontend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
+        mv ./coverage ./coverage-jest
+
+   # Esegue i test dei componenti frontend con Cypress
+    - name: Run Unit and Integration Tests (frontend with Cypress)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm run test:cypress
+
+   # Rinomina la cartella coverage generata da Cypress
+    - name: Rename Cypress Coverage Folder (frontend)
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        cd ${{ github.workspace }}/frontend
+        mv ./coverage ./coverage-cypress
 
     # Creazione file .env.local
     - name: Add env.local
@@ -120,20 +141,25 @@ jobs:
         docker tag ghcr.io/argo-swe/chatsql-frontend:latest chatsql-frontend:latest
 
     # Avvio del contenitore Docker (backend)
-    - name: Start Docker Container
+    - name: Start Docker Container (backend)
       if: ${{ github.event.action != 'closed' }}
       run: |
         docker compose up backend -d
 
-    # Esegue i test di unità nel backend
+    # Esegue i test di unità e integrazione nel backend
     - name: Run Unit and Integration Tests (backend)
-      continue-on-error: true
       if: ${{ github.event.action != 'closed' }}
       run: |
-        docker exec chatsql-backend-1 bash -c 'pytest'
-
+        docker exec chatsql-backend-1 bash -c 'pytest --cov=. --cov-report term-missing tests'
+    
+    # Copia il report di copertura dal container Docker al workspace del job
+    - name: Copy Coverage Report from Docker Container
+      if: ${{ github.event.action != 'closed' }}
+      run: |
+        docker cp chatsql-backend-1:usr/src/app/coverage.xml ./coverage.xml
+      
     # Avvio del contenitore Docker (frontend)
-    - name: Start Docker Container
+    - name: Start Docker Container (frontend)
       if: ${{ github.event.action != 'closed' }}
       run: |
         docker compose up frontend -d
@@ -144,6 +170,13 @@ jobs:
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:system
+
+    # Carica i report di copertura su CodeCov
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        verbose: true
 
     # Arresto dell'esecuzione del contenitore Docker
     - name: Stop Docker Container
