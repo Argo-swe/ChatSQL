@@ -150,7 +150,7 @@ jobs:
     - name: Run Unit and Integration Tests (backend)
       if: ${{ github.event.action != 'closed' }}
       run: |
-        docker exec chatsql-backend-1 bash -c 'pytest --cov=. --cov-report term-missing tests'
+        docker exec chatsql-backend-1 bash -c 'pytest --cov=. --cov-report term-missing --cov-report xml tests'
     
     # Copia il report di copertura dal container Docker al workspace del job
     - name: Copy Coverage Report from Docker Container
