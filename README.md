@@ -1,4 +1,4 @@
-[![Code coverage badge](https://codecov.io/gh/Argo-swe/ChatSQL/graph/badge.svg?token=QBI95HAT9J)](https://codecov.io/gh/Argo-swe/ChatSQL)
+[![codecov](https://codecov.io/gh/Argo-swe/ChatSQL/graph/badge.svg?token=QBI95HAT9J)](https://codecov.io/gh/Argo-swe/ChatSQL)
 [![Workflow status badge](https://github.com/Argo-swe/ChatSQL/actions/workflows/build.yml/badge.svg)](https://github.com/Argo-swe/ChatSQL/actions/workflows/build.yml)
 
 <h1 align="center">ChatSQL</h1>
