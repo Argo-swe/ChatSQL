@@ -239,24 +239,22 @@ function submitForm() {
   <form data-testid="handle-dictionary-form" @submit.prevent="submitForm">
     <div v-if="onCreation || !withFile" class="mb-4">
       <div class="flex flex-column gap-2">
-        <label id="l-name" for="name"> {{ t('text.Name') }} </label>
+        <label for="name"> {{ t('text.Name') }} </label>
         <PgInputText
           id="name"
           v-model="dictionaryName"
           required
-          aria-labelledby="l-name"
           autocomplete="off"
           :invalid="!dictionaryName || !isValidMetadata(dictionaryName)"
           data-testid="dictionary-name-input"
         />
       </div>
       <div class="flex flex-column gap-2 mt-4">
-        <label id="l-description" for="description"> {{ t('text.Description') }} </label>
+        <label for="description"> {{ t('text.Description') }} </label>
         <PgInputText
           id="description"
           v-model="dictionaryDescription"
           required
-          aria-labelledby="l-description"
           autocomplete="off"
           :invalid="!dictionaryDescription"
           data-testid="dictionary-description-input"

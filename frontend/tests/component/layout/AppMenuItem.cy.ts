@@ -118,6 +118,7 @@ describe('AppMenuItem Component', () => {
       .find('[data-testid="menu-item-text"]')
       .first()
       .should('have.text', 'Test');
+    cy.get('[data-testid="menu-item"]').find('[data-testid="submenu-toggler"]').should('exist');
 
     cy.get('[data-testid="nav-submenu"]').should('be.visible');
     cy.get('[data-testid="nav-submenu"]').children().should('have.length.greaterThan', 1);

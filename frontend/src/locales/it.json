@@ -10,7 +10,7 @@
       "error": "Errore durante l'eliminazione",
       "success": "Eliminato con successo"
     },
-    "formatError": "Formato errato",
+    "formatError": "Formato della richiesta errato",
     "generate": {
       "error": "Errore durante la generazione",
       "success": "Generazione avvenuta con successo"

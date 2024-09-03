@@ -10,7 +10,7 @@
       "error": "Error while deleting",
       "success": "Successfully deleted"
     },
-    "formatError": "Wrong format",
+    "formatError": "Wrong request format",
     "generate": {
       "error": "Error during generation",
       "success": "Generation successful"
