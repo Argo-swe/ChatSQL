@@ -237,6 +237,7 @@ function onClickDelete(dictionaryId: number) {
           type="text"
           :placeholder="t('general.search.searchByName')"
           :aria-label="t('general.search.searchByName')"
+          data-testid="search-by-name"
           @input="filterCallback()"
         />
       </template>
@@ -248,6 +249,7 @@ function onClickDelete(dictionaryId: number) {
           type="text"
           :placeholder="t('general.search.searchByDescription')"
           :aria-label="t('general.search.searchByDescription')"
+          data-testid="search-by-description"
           @input="filterCallback()"
         />
       </template>
