@@ -5,6 +5,7 @@ import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import DataTable from 'primevue/datatable';
 import DialogService from 'primevue/dialogservice';
+import InputText from 'primevue/inputtext';
 import ToastService from 'primevue/toastservice';
 import { createI18n } from 'vue-i18n';
 
@@ -44,6 +45,7 @@ function mountDictionariesListView(mockApiClient: any = getGlobalMockApiClient()
         PgButton: Button,
         PgDataTable: DataTable,
         PgColumn: Column,
+        PgInputText: InputText,
         CreateUpdateDictionaryModal
       }
     },
@@ -64,6 +66,11 @@ function getGlobalMockApiClient() {
             id: 1,
             name: 'Orders',
             description: 'Orders dictionary'
+          },
+          {
+            id: 2,
+            name: 'Test name',
+            description: 'Test description'
           }
         ]
       }
@@ -131,11 +138,26 @@ function mockDeleteDictionary(response: any = getSuccessResponse()) {
 }
 
 /**
- * Verify that the call heard by the spy invoked the CreateUpdateDictionaryModal component.
+ * Verifies that the call heard by the spy invoked the CreateUpdateDictionaryModal component.
  */
 function CheckSubComponentCall() {
   cy.get('@openDialogSpy').should('have.been.called');
   cy.get('@openDialogSpy').its('firstCall.args[0]').should('equal', CreateUpdateDictionaryModal);
+}
+
+/**
+ * Checks the result of a successful search.
+ */
+function checkSuccessfulSearch() {
+  cy.contains('Orders').should('not.exist');
+  cy.contains('Test name').should('exist');
+}
+
+/**
+ * Checks the result of an empty search.
+ */
+function checkEmptySearch() {
+  cy.contains('general.list.empty').should('exist');
 }
 
 /**
@@ -148,11 +170,39 @@ describe('DictionariesListView Component', () => {
     cy.get('[data-testid="dictionary-page-header"]').should('be.visible');
     cy.get('[data-testid="dictionaries-table"]').should('be.visible');
   });
-
+  
   // Single and isolated test case
   it('should display an empty list of dictionaries', () => {
     mockEmptyDictionariesList();
     cy.contains('general.list.empty').should('exist');
+  });
+
+  // Single and isolated test case
+  it('should handle search by name successfully', () => {
+    mountDictionariesListView();
+    cy.get('[data-testid="search-by-name"]').type('Test name');
+    checkSuccessfulSearch();
+  });
+
+  // Single and isolated test case
+  it('should handle search by name failure', () => {
+    mountDictionariesListView();
+    cy.get('[data-testid="search-by-name"]').type('Cinema');
+    checkEmptySearch();
+  });
+
+  // Single and isolated test case
+  it('should handle search by description successfully', () => {
+    mountDictionariesListView();
+    cy.get('[data-testid="search-by-description"]').type('Test description');
+    checkSuccessfulSearch();
+  });
+
+  // Single and isolated test case
+  it('should handle search by description failure', () => {
+    mountDictionariesListView();
+    cy.get('[data-testid="search-by-description"]').type('Gym');
+    checkEmptySearch();
   });
 
   // Single and isolated test case

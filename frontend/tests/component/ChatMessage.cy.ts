@@ -72,7 +72,7 @@ function ChatBotResponseWithDebug() {
 }
 
 /**
- * Verify that the call heard by the spy invoked the StringDataModal component.
+ * Verifies that the call heard by the spy invoked the StringDataModal component.
  */
 function CheckSubComponentCall() {
   cy.get('@openDialogSpy').should('have.been.called');
