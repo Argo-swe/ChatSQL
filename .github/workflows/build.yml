@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Azioni atomiche eseguite in sequenza all'interno del job
-    if: ${{ github.event.pull_request.draft == false }}
+    if: ${{ github.event.pull_request.draft == false && (github.event.action != 'closed' || github.event.pull_request.merged == true) }}
     steps:
 
     # Clonazione del repository all'interno dell'ambiente di esecuzione del job
@@ -30,7 +30,6 @@ jobs:
 
     # Salvataggio e ripristino della cache
     - name: Cache Docker
-      if: ${{ github.event.action != 'closed' }}
       uses: actions/cache@v4
       id: cache-docker
       with:
@@ -39,7 +38,6 @@ jobs:
 
     # Autenticazione nel registro dei contenitori di GitHub
     - name: Login to GHCR
-      if: ${{ github.event.action != 'closed' }}
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
@@ -49,81 +47,70 @@ jobs:
 
     # Configura l'ambiente Node.js     
     - name: Setup Node.js
-      if: ${{ github.event.action != 'closed' }}
       uses: actions/setup-node@v4
       with:
           node-version: '20'
 
     # Controlla la versione di Node.js
     - name: Check Node Version
-      if: ${{ github.event.action != 'closed' }}
       run: node -v
 
     # Installa le dipendenze del progetto
     - name: Installing Dependencies
-      if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm i
 
     # Esegue il linting e la formattazione del codice nel backend utilizzando pre-commit
     - name: Code Linting (backend)
-      if: ${{ github.event.action != 'closed' }}
       run: |
         sh setup-pre-commit.sh && pre-commit run --all-files    
 
     # Esegue il type check del frontend
     - name: Build Frontend
-      if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm run type-check
 
     # Esegue il linting del codice nel frontend
     - name: Code Linting (frontend)
-      if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm run lint
 
     # Esegue i test di unità nel frontend con Jest
     - name: Run Unit Tests (frontend with Jest)
-      if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:jest
 
     # Rinomina la cartella coverage generata da Jest
     - name: Rename Jest Coverage Folder (frontend)
-      if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         mv ./coverage ./coverage-jest
 
    # Esegue i test dei componenti frontend con Cypress
     - name: Run Unit and Integration Tests (frontend with Cypress)
-      if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:cypress
 
    # Rinomina la cartella coverage generata da Cypress
     - name: Rename Cypress Coverage Folder (frontend)
-      if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         mv ./coverage ./coverage-cypress
 
     # Creazione file .env.local
     - name: Add env.local
-      if: ${{ github.event.action != 'closed' }}
       run: |
         touch backend/.env.local
         touch frontend/.env.local
     
     # Creazione e caricamento dell'immagine su GHCR
     - name: Build and Push Image
-      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit != 'true' }}
+      if: ${{ steps.cache-docker.outputs.cache-hit != 'true' }}
       run: |
         docker compose build
         docker tag chatsql-backend:latest ghcr.io/argo-swe/chatsql-backend:latest
@@ -133,7 +120,7 @@ jobs:
 
     # Recupero dell'immagine da GHCR
     - name: Pull Image
-      if: ${{ github.event.action != 'closed' && steps.cache-docker.outputs.cache-hit == 'true' }}
+      if: ${{ steps.cache-docker.outputs.cache-hit == 'true' }}
       run: |
         docker pull ghcr.io/argo-swe/chatsql-backend:latest
         docker pull ghcr.io/argo-swe/chatsql-frontend:latest
@@ -142,31 +129,26 @@ jobs:
 
     # Avvio del contenitore Docker (backend)
     - name: Start Docker Container (backend)
-      if: ${{ github.event.action != 'closed' }}
       run: |
         docker compose up backend -d
 
     # Esegue i test di unità e integrazione nel backend
     - name: Run Unit and Integration Tests (backend)
-      if: ${{ github.event.action != 'closed' }}
       run: |
         docker exec chatsql-backend-1 bash -c 'pytest --cov=. --cov-report term-missing --cov-report xml tests'
     
     # Copia il report di copertura dal container Docker al workspace del job
     - name: Copy Coverage Report from Docker Container
-      if: ${{ github.event.action != 'closed' }}
       run: |
         docker cp chatsql-backend-1:usr/src/app/coverage.xml ./coverage.xml
       
     # Avvio del contenitore Docker (frontend)
     - name: Start Docker Container (frontend)
-      if: ${{ github.event.action != 'closed' }}
       run: |
         docker compose up frontend -d
 
     # Esegue i test di sistema
     - name: Run System Tests
-      if: ${{ github.event.action != 'closed' }}
       run: |
         cd ${{ github.workspace }}/frontend
         npm run test:system
@@ -180,13 +162,12 @@ jobs:
 
     # Arresto dell'esecuzione del contenitore Docker
     - name: Stop Docker Container
-      if: ${{ github.event.action != 'closed' }}
       run: |
         docker compose stop
 
     # Creazione della directory principale
     - name: Parent Folder
-      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+      if: ${{ github.event.action == 'closed' }}
       run: |
         mkdir -p ChatSQL/MVP
         shopt -s extglob
@@ -194,7 +175,7 @@ jobs:
 
     # Pubblicazione dell'artefatto generato durante il processo di build
     - name: Publish Artifact
-      if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+      if: ${{ github.event.action == 'closed' }}
       uses: actions/upload-artifact@v4
       with:
         name: ChatSQL
