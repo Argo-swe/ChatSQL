@@ -449,6 +449,7 @@ async function generatePromptWithDebug(query: string) {
           </template>
         </PgDropdown>
         <ChatDeleteBtn
+          v-show="!detailsVisible"
           :messages="messages"
           :loading="loading"
           @clear-messages="clearMessages"
@@ -501,7 +502,7 @@ async function generatePromptWithDebug(query: string) {
     </PgInputGroup>
 
     <PgButton
-      v-show="showGoToBottom && !detailsVisible"
+      v-show="showGoToBottom && !detailsVisible && messages.length > 0"
       id="go-to-bottom"
       class="w-2rem h-2rem"
       icon="pi pi-angle-double-down"
