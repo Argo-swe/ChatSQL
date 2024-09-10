@@ -11,7 +11,8 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
     def __init__(
         self, index_manager: IndexManagerPort, file_repository: FileRepository
     ):
-        super().__init__(index_manager)
+        self._index_manager = index_manager
+        self._debug_manager = TxtaiDebugManagerAdapter(self._index_manager)
         self._file_repository = file_repository
 
     def prompt_generator(
@@ -68,9 +69,6 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
 
     def get_index_manager(self) -> IndexManagerPort:
         return self._index_manager
-
-    def _create_debug_manager(self) -> DebugManagerPort:
-        return TxtaiDebugManagerAdapter(self._index_manager)
 
     def __get_relevant_tuples(self, tuples, activate_log):
         relevant_tuples = []

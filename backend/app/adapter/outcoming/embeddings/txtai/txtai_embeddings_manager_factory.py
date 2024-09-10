@@ -15,7 +15,12 @@ from core.port.outcoming.embeddings.embeddings_abstract_factory import (
 class TxtaiEmbeddingsManagerFactory(EmbeddingsAbstractFactory):
 
     def __init__(self, config: dict) -> None:
-        super().__init__(config)
+        """Initialize the factory with a configuration.
+
+        Args:
+            config (dict): A dictionary containing configuration settings.
+        """
+        self._config = config
 
     def create_index_manager(self, file_repository: FileRepository) -> IndexManagerPort:
         if "txtai" in self._config:

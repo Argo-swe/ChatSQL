@@ -76,7 +76,7 @@ class DictionaryService(DictionaryUseCase):
         if found_dic_response.status is not ResponseStatusEnum.OK:
             return None
 
-        return self._file_repository.load(id)
+        return self._file_repository.get_file_path(id)
 
     def get_dictionary_preview(self, id: int) -> DictionaryResponseDto:
         """Retrieve a preview of a dictionary by its ID.

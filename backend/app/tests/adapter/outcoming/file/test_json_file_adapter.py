@@ -56,8 +56,8 @@ def test_load(mock_filesystem, adapter):
     # Extract the mock objects from the fixture
     _, _, _, _ = mock_filesystem
 
-    # Call the load method to get the file path
-    result = adapter.load(1)
+    # Call the get_file_path method to get the file path
+    result = adapter.get_file_path(1)
 
     expected_path = "/mock/path/dic_schema_1.json"
 

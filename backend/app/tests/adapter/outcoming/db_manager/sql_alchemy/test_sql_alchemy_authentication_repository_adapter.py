@@ -25,7 +25,7 @@ def auth_repository(mock_session):
 """Test for retrieving an existing user by username"""
 
 
-def test_get_user_by_username_existing_user(auth_repository, mock_session, mocker):
+def test_get_admin_by_username_existing_user(auth_repository, mock_session, mocker):
     username = "existing_user"
 
     # Create a mock Admins instance that simulates the database model
@@ -35,8 +35,8 @@ def test_get_user_by_username_existing_user(auth_repository, mock_session, mocke
     # Mock the query, filter, and first methods to return the mock_admin when queried
     mock_session.query(Admins).filter().first.return_value = mock_admin
 
-    # Call the get_user_by_username method
-    result = auth_repository.get_user_by_username(username)
+    # Call the get_admin_by_username method
+    result = auth_repository.get_admin_by_username(username)
 
     # Ensure that the query was performed on the Admins model
     mock_session.query.assert_any_call(Admins)
@@ -54,14 +54,14 @@ def test_get_user_by_username_existing_user(auth_repository, mock_session, mocke
 """Test for retrieving a non-existent user by username"""
 
 
-def test_get_user_by_username_non_existent_user(auth_repository, mock_session, mocker):
+def test_get_admin_by_username_non_existent_user(auth_repository, mock_session, mocker):
     username = "non_existent_user"
 
     # Mock the query, filter, and first methods to simulate no user found by returning None
     mock_session.query(Admins).filter().first.return_value = None
 
-    # Call the get_user_by_username method
-    result = auth_repository.get_user_by_username(username)
+    # Call the get_admin_by_username method
+    result = auth_repository.get_admin_by_username(username)
 
     # Ensure that the query was performed on the Admins model
     mock_session.query.assert_any_call(Admins)

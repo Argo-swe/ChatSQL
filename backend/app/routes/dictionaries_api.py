@@ -152,6 +152,7 @@ def create_dictionary_router(config: Configuration):
         "/{id}",
         tags=[tag],
         response_model=ResponseDto,
+        dependencies=[Depends(JwtBearer())],
         name="deleteDictionary",
         summary="Delete a dictionary by ID",
     )
