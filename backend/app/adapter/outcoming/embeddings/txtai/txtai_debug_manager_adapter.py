@@ -82,5 +82,14 @@ class TxtaiDebugManagerAdapter(DebugManagerPort):
         return log_content
 
     def __get_debug_header(self, level="DEBUG", system="ChatSQL"):
+        """Generate a formatted debug header string.
+
+        Args:
+            level (str): The severity level of the log message.
+            system (str): The name of the system generating the log.
+        
+        Returns:
+            str: A formatted string suitable for use as a log header.
+        """
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         return f"[{timestamp}] [{system}] [{level}]"

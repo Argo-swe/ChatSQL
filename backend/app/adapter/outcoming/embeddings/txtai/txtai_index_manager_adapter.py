@@ -15,6 +15,11 @@ class TxtaiIndexManagerAdapter(IndexManagerPort):
         table_path=None,
         column_path=None,
     ):
+        """Initialize an instance of the class, setting up embeddings and file repository paths.
+        
+        This constructor initializes the embeddings with default or provided paths to the model used
+        for table and column description search.
+        """
         print("\nTxtai settings...")
         if table_path is None:
             table_path = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
@@ -71,4 +76,5 @@ class TxtaiIndexManagerAdapter(IndexManagerPort):
             shutil.rmtree(delete_path)
 
     def __index_file_path(self, dictionary_id: int) -> str:
+        """Generate the path for storing or accessing the index of a dictionary based on its ID."""
         return f"{self._indexes_out_file_base_path}/index_{dictionary_id}"
