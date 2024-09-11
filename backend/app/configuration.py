@@ -13,15 +13,19 @@ from core.service.prompt_manager_service import PromptManagerService
 
 
 class Configuration:
+    """Singleton class responsible for loading and managing application configuration."""
+
     _instance = None
 
-    # singleton implementation
+    # Singleton implementation
     def __new__(cls, *args, **kwargs):
+        """Create a new instance of Configuration if one does not already exist."""
         if not cls._instance:
             cls._instance = super(Configuration, cls).__new__(cls)
         return cls._instance
 
     def __init__(self) -> None:
+        """Initialize the Configuration instance by loading configuration from a JSON file."""
         if not hasattr(self, "_initialized"):
 
             try:
@@ -65,10 +69,13 @@ class Configuration:
             self._initialized = True
 
     def get_prompt_manager_service(self) -> PromptManagerService:
+        """Get the instance of the prompt manager service."""
         return self._prompt_manager_service
 
     def get_dictionary_service(self) -> DictionaryService:
+        """Get the instance of the dictionary service."""
         return self._dictionary_service
 
     def get_authentication_service(self) -> AuthenticationService:
+        """Get the instance of the authentication service."""
         return self._authentication_service

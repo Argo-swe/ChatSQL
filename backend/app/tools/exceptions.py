@@ -76,14 +76,29 @@ class LoginError:
 
     @staticmethod
     def invalid_authentication_scheme() -> str:
+        """Generates an error message indicating that the authentication scheme is invalid.
+
+        Returns:
+            str: An appropriate error message.
+        """
         return "Invalid authentication scheme"
 
     @staticmethod
     def invalid_authorization_code() -> str:
+        """Generates an error message indicating that the authorization code is invalid.
+
+        Returns:
+            str: An appropriate error message.
+        """
         return "Invalid authorization code"
 
     @staticmethod
     def invalid_expired_token() -> str:
+        """Generates an error message indicating that the token is either invalid or expired.
+
+        Returns:
+            str: An appropriate error message.
+        """
         return "Invalid or expired token"
 
 

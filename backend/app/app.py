@@ -40,8 +40,7 @@ logging.getLogger("uvicorn.access").addFilter(EndpointFilter(excluded_endpoints)
 
 @app.get("/", summary="Root endpoint")
 async def main():
-    """
-    Return a simple greeting message.
+    """Return a simple greeting message.
 
     This endpoint can be used to verify that the API is reachable.
     """
@@ -50,8 +49,7 @@ async def main():
 
 @app.get("/healthcheck", summary="Health check endpoint")
 async def healthcheck():
-    """
-    Check the health status of the API.
+    """Check the health status of the API.
 
     Returns a status message indicating whether the API is running.
     """
