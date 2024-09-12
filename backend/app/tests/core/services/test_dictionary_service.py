@@ -128,7 +128,7 @@ def test_get_dictionary_preview_not_found(service, mock_dependencies):
     response = service.get_dictionary_preview(1)
 
     assert response.status == ResponseStatusEnum.NOT_FOUND
-    assert response.message == DictionaryError.dictionary_not_found("1")
+    assert response.message == DictionaryError.dictionary_not_found(1)
 
     mock_dependencies["file_repository"].get_preview.assert_not_called()
 
