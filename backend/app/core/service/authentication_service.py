@@ -39,5 +39,7 @@ class AuthenticationService(AuthenticationUseCase):
                 status=ResponseStatusEnum.BAD_CREDENTIAL,
                 message=LoginError.wrong_password(),
             )
-        token = JwtHandler.sign(user.id)
+        token = None
+        if user.id:
+            token = JwtHandler.sign(user.id)
         return AuthResponseDto(data=token, status=ResponseStatusEnum.OK)
