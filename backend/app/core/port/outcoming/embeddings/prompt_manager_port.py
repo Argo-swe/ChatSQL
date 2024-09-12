@@ -14,7 +14,7 @@ class PromptManagerPort(ABC):
         lang: str = "english",
         dbms: str = "MariaDB",
         activate_log: bool = False,
-    ):
+    ) -> tuple[str | None, str | None]:
         """Generate a prompt based on the provided parameters.
 
         Args:
@@ -25,7 +25,7 @@ class PromptManagerPort(ABC):
             activate_log (bool, optional): Whether to activate logging (default is False).
 
         Returns:
-            Any: The generated prompt.
+            tuple[str | None, str | None]: A tuple containing the generated prompt and optional debug information.
         """
 
     @abstractmethod

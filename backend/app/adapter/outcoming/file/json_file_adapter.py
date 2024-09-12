@@ -44,6 +44,10 @@ class JsonFileAdapter(FileRepository):
     def extract_index_metadata(self, id: int) -> list:
         documents = []
         schema = self._get_json_schema(id)
+
+        if schema is None:
+            return []
+
         for pos, table in enumerate(schema["tables"]):
             for column in table["columns"]:
                 doc = {
@@ -57,6 +61,10 @@ class JsonFileAdapter(FileRepository):
 
     def extract_schema_metadata(self, id: int, tuples: list) -> str:
         schema = self._get_json_schema(id)
+
+        if schema is None:
+            return ""
+
         dyn_string = (
             "Suggested prompt:\n"
             "In table schema the character ':' separates the column name from its type\n"
@@ -93,6 +101,7 @@ class JsonFileAdapter(FileRepository):
                         f'{foreign_key["reference_table_name"]} ('
                         f'{", ".join(foreign_key["reference_column_names"])})\n'
                     )
+            dyn_string += "\n"
         dyn_string += dyn_ref_string + "\n"
         return dyn_string
 

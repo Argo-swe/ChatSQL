@@ -50,11 +50,11 @@ class DictionaryError:
         return "Dictionary name and description are mandatory"
 
     @staticmethod
-    def dictionary_not_found(id: str) -> str:
+    def dictionary_not_found(id: int) -> str:
         """Generates an error message indicating that a dictionary with the specified ID was not found.
 
         Args:
-            id (str): The ID of the dictionary.
+            id (int): The ID of the dictionary.
 
         Returns:
             str: An appropriate error message.

@@ -148,10 +148,10 @@ class DictionaryService(DictionaryUseCase):
             new_dic = self._dictionary_repository.create_dictionary(
                 dictionary.name, dictionary.description
             )
+            if new_dic.id:
+                self._file_repository.save(new_dic.id, content)
 
-            self._file_repository.save(new_dic.id, content)
-
-            self._index_manager.create_index(new_dic.id)
+                self._index_manager.create_index(new_dic.id)
 
             return DictionaryResponseDto(data=new_dic, status=ResponseStatusEnum.OK)
 

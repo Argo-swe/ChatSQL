@@ -15,6 +15,9 @@ class JsonSchemaValidatorAdapter(SchemaValidatorUseCase):
         """Validate a JSON object dictionary with base ChatSQL dictionary schema"""
         schema = Utils.read_json_file_content(self._dictionary_schema_file_path)
 
+        if schema is None:
+            return False
+
         try:
             validate(Utils.string_to_json(dictionary), schema)
             return True
