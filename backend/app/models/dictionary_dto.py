@@ -5,7 +5,7 @@ from fastapi_camelcase import CamelModel, ConfigDict
 
 
 class DictionaryDto(CamelModel):
-    """Data Transfer Object for handling dictionary information.
+    """Data Transfer Object for carrying dictionary information.
 
     Attributes:
         id (Optional[int]): The unique identifier of the dictionary, optional for creating new entries.

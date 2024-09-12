@@ -8,7 +8,7 @@ _indexes_out_file_base_path = "/opt/chatsql/indexes"
 os.makedirs(_indexes_out_file_base_path, exist_ok=True)
 
 
-class TxtaiIndexManagerAdapter(IndexManagerPort):
+class TxtaiIndexManagerAdapter(IndexManagerPort[Embeddings]):
     def __init__(
         self,
         file_repository: FileRepository,
@@ -42,7 +42,12 @@ class TxtaiIndexManagerAdapter(IndexManagerPort):
         self._file_repository = file_repository
         self._indexes_out_file_base_path = _indexes_out_file_base_path
 
-    def get_embeddings(self):
+    def get_embeddings(self) -> Embeddings:
+        """Retrieve embeddings used for indexing.
+
+        Returns:
+            Embeddings: The embeddings data.
+        """
         return self._embeddings
 
     def create_or_load_index(self, dictionary_id: int):

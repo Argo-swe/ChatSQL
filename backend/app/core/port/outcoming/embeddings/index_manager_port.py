@@ -1,14 +1,16 @@
 from abc import ABC, abstractmethod
+from typing import TypeVar, Generic
 
+T = TypeVar('T')
 
-class IndexManagerPort(ABC):
+class IndexManagerPort(ABC, Generic[T]):
 
     @abstractmethod
-    def get_embeddings(self):
+    def get_embeddings(self) -> T:
         """Retrieve embeddings used for indexing.
 
         Returns:
-            Any: The embeddings data.
+            T: The embeddings data.
         """
 
     @abstractmethod

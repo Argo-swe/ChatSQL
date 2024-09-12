@@ -3,7 +3,7 @@ from fastapi_camelcase import CamelModel, ConfigDict
 
 
 class AdminDto(CamelModel):
-    """Data Transfer Object for handling admin information.
+    """Data Transfer Object for carrying admin information.
 
     Attributes:
         id (Optional[int]): The unique identifier of the admin, optional for creating new users.

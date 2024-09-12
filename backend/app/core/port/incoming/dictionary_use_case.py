@@ -27,14 +27,14 @@ class DictionaryUseCase(ABC):
         """
 
     @abstractmethod
-    def get_dictionary_file(self, id: int) -> str:
-        """Retrieve the file content of a specific dictionary by its ID.
+    def get_dictionary_file_path(self, id: int) -> str:
+        """Retrieve the file path of a specific dictionary by its ID.
 
         Args:
             id (int): The unique identifier of the dictionary.
 
         Returns:
-            str: The file content of the dictionary.
+            str: The file path of the dictionary.
         """
 
     @abstractmethod

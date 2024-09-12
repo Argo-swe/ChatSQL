@@ -9,7 +9,7 @@ class PromptUseCase(ABC):
     def generate_prompt(
         self, dictionary_id: int, query: str, dbms: str, language: str
     ) -> StringDataResponseDto:
-        """Generate a prompt based on the given dictionary, query, DBMS, and language.
+        """Generate a prompt based on the given dictionary, query, DBMS and language.
 
         Args:
             dictionary_id (int): The unique identifier of the dictionary to be used.
@@ -25,7 +25,7 @@ class PromptUseCase(ABC):
     def generate_prompt_with_debug(
         self, dictionary_id: int, query: str, dbms: str, language: str
     ) -> PromptResponseDto:
-        """Generate a prompt along with debug information based on the given dictionary, query, DBMS, and language.
+        """Generate a prompt along with debug information based on the given dictionary, query, DBMS and language.
 
         Args:
             dictionary_id (int): The unique identifier of the dictionary to be used.

@@ -56,7 +56,7 @@ def create_dictionary_router(config: Configuration):
         id: int, dictionary_service: DictionaryService = Depends(get_dictionary_service)
     ):
         """Download the file associated with a specific dictionary by its ID."""
-        response = dictionary_service.get_dictionary_file(id)
+        response = dictionary_service.get_dictionary_file_path(id)
 
         if response is not None:
             return FileResponse(response)

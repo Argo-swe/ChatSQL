@@ -62,14 +62,14 @@ class DictionaryService(DictionaryUseCase):
             status=ResponseStatusEnum.NOT_FOUND,
         )
 
-    def get_dictionary_file(self, id: int) -> Optional[str]:
-        """Retrieve the file content of a dictionary by its ID.
+    def get_dictionary_file_path(self, id: int) -> Optional[str]:
+        """Retrieve the file path of a dictionary by its ID.
 
         Args:
             id (int): The ID of the dictionary.
 
         Returns:
-            Optional[str]: The content of the dictionary file or None if the dictionary is not found or an error occurred.
+            Optional[str]: The path of the dictionary file or None if the dictionary is not found or an error occurred.
         """
         found_dic_response = self.get_dictionary_by_id(id)
 

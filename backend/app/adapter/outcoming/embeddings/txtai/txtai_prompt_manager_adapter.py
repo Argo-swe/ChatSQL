@@ -2,7 +2,6 @@ from adapter.outcoming.embeddings.txtai.txtai_debug_manager_adapter import (
     TxtaiDebugManagerAdapter,
 )
 from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
-from core.port.outcoming.embeddings.debug_manager_port import DebugManagerPort
 from core.port.outcoming.file_repository import FileRepository
 from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
 
@@ -46,6 +45,17 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
         return dyn_string, log_content
 
     def __get_tuples(self, user_request: str, activate_log: bool):
+        """Execute an SQL-like query using txtai to perform semantic search on table and column description fields.
+
+        Args:
+            user_request (str): The user's query string, which is used to search for relevant matches.
+            activate_log (bool): Flag indicating whether to log the details of the semantic search process.
+
+        Returns:
+            tuple: 
+                - The results of the semantic search.
+                - A list of log entries (if logging is enabled), otherwise an empty list.
+        """
         query_limit = 20
         # The max_score field can vary from 0.3 to 0.4. This affects system recall
         sql_query = f"""
@@ -62,7 +72,7 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
         tuples = self._index_manager.get_embeddings().search(
             sql_query, limit=query_limit * 10, parameters={"x": user_request}
         )
-        log_content = None
+        log_content = []
         if activate_log:
             log_content = self._debug_manager.semantic_search_log(user_request, tuples)
         return tuples, log_content
@@ -71,6 +81,17 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
         return self._index_manager
 
     def __get_relevant_tuples(self, tuples, activate_log):
+        """Filters a list of search results (tuples) to find the most relevant ones based on their scores.
+
+        Args:
+            tuples: A list of tuples to filter.
+            activate_log: A flag to indicate whether the filtering process should be logged.
+
+        Returns:
+            tuple:
+                - A list of tuples that have been deemed relevant based on score thresholds.
+                - A list of log entries (if logging is enabled), otherwise an empty list.
+        """
         relevant_tuples = []
         score = 0
         log_content = []
@@ -85,9 +106,8 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
             else:
                 break
         if activate_log:
-            log_content.extend(
-                self._debug_manager.semantic_search_log_custom_algorithm(
-                    relevant_tuples, tuples
-                )
+            log_content = self._debug_manager.semantic_search_log_custom_algorithm(
+                relevant_tuples, tuples
             )
+            
         return relevant_tuples, log_content
