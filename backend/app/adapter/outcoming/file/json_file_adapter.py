@@ -13,7 +13,7 @@ class JsonFileAdapter(FileRepository):
         os.makedirs(self._out_file_base_path, exist_ok=True)
 
     def save(self, id: int, file: str):
-        with open(self.get_file_path(id), "wb") as out_file:
+        with open(self.get_file_path(id), "w") as out_file:
             out_file.write(file)
 
     def get_file_path(self, id: int) -> str:

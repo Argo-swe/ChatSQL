@@ -95,6 +95,8 @@ def create_dictionary_router(config: Configuration):
         """Create a new dictionary with metadata and an optional file."""
         if file:
             content = await file.read()
+            if isinstance(content, bytes):
+                content = content.decode('utf-8')
         else:
             content = ""
         return await dictionary_service.create_dictionary(dictionary, content)
@@ -115,6 +117,8 @@ def create_dictionary_router(config: Configuration):
         """Update the file associated with a specific dictionary by its ID."""
         if file:
             content = await file.read()
+            if isinstance(content, bytes):
+                content = content.decode('utf-8')
         else:
             content = ""
         return await dictionary_service.update_dictionary_file(id, content)
