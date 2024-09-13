@@ -25,7 +25,7 @@ class JsonFileAdapter(FileRepository):
 
     def get_preview(self, id: int) -> Union[DictionaryPreviewDto, None]:
         dictionary_preview = {}
-        schema = self._get_json_schema(id)
+        schema = self.__get_json_schema(id)
         if schema is None:
             return None
         dictionary_preview["database_name"] = schema["database_name"]
@@ -43,7 +43,7 @@ class JsonFileAdapter(FileRepository):
 
     def extract_index_metadata(self, id: int) -> list:
         documents = []
-        schema = self._get_json_schema(id)
+        schema = self.__get_json_schema(id)
 
         if schema is None:
             return []
@@ -60,7 +60,7 @@ class JsonFileAdapter(FileRepository):
         return documents
 
     def extract_schema_metadata(self, id: int, tuples: list) -> str:
-        schema = self._get_json_schema(id)
+        schema = self.__get_json_schema(id)
 
         if schema is None:
             return ""
@@ -105,7 +105,7 @@ class JsonFileAdapter(FileRepository):
         dyn_string += dyn_ref_string + "\n"
         return dyn_string
 
-    def _get_json_schema(self, id: int):
+    def __get_json_schema(self, id: int):
         """Retrieve the JSON schema associated with a specific ID.
 
         Args:

@@ -10,9 +10,9 @@ class PromptManagerPort(ABC):
         self,
         dictionary_id: int,
         user_request: str,
-        lang: str,
-        dbms: str,
-        activate_log: bool,
+        lang: str = "english",
+        dbms: str = "MariaDB",
+        activate_log: bool = False,
     ) -> tuple[str | None, str | None]:
         """Generate a prompt based on the provided parameters.
 

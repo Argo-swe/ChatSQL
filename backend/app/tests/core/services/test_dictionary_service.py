@@ -73,7 +73,7 @@ def test_get_dictionary_file_found(service, mock_dependencies):
     mock_dependencies["dictionary_repository"].get_dictionary_by_id.return_value = (
         DictionaryDto(id=1, name="Dict1", description="Description1")
     )
-    mock_dependencies["file_repository"].load.return_value = "file_path"
+    mock_dependencies["file_repository"].get_file_path.return_value = "file_path"
 
     response = service.get_dictionary_file_path(1)
 
@@ -81,7 +81,7 @@ def test_get_dictionary_file_found(service, mock_dependencies):
     mock_dependencies[
         "dictionary_repository"
     ].get_dictionary_by_id.assert_called_once_with(1)
-    mock_dependencies["file_repository"].load.assert_called_once_with(1)
+    mock_dependencies["file_repository"].get_file_path.assert_called_once_with(1)
 
 
 def test_get_dictionary_file_not_found(service, mock_dependencies):

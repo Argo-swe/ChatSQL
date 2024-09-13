@@ -40,8 +40,8 @@ def test_save(mock_filesystem, adapter):
 
     expected_path = "/mock/path/dic_schema_1.json"
 
-    # Verify that the correct file was opened in write-binary mode
-    mock_open.assert_called_with(expected_path, "wb")
+    # Verify that the correct file was opened in write mode
+    mock_open.assert_called_with(expected_path, "w")
 
     # Verify that the content was written to the file
     mock_open.return_value.__enter__().write.assert_called_with(file_content)
