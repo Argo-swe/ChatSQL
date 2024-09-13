@@ -81,10 +81,10 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
         return self._index_manager
 
     def __get_relevant_tuples(self, tuples, activate_log):
-        """Filters a list of search results (tuples) to find the most relevant ones based on their scores.
+        """Filters the tuples to find the most relevant ones based on their scores.
 
         Args:
-            tuples: A list of tuples to filter.
+            tuples: The tuples to filter.
             activate_log: A flag to indicate whether the filtering process should be logged.
 
         Returns:

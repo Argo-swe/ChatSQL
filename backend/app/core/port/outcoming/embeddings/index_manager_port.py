@@ -27,7 +27,7 @@ class IndexManagerPort(ABC, Generic[T]):
         """
 
     @abstractmethod
-    def create_index(self, dictionary_id: int, save_index: bool = True):
+    def create_index(self, dictionary_id: int, save_index: bool):
         """Create a new index for a specific dictionary.
 
         Args:
