@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-from core.port.outcoming.embeddings.debug_manager_port import DebugManagerPort
 from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 
 
