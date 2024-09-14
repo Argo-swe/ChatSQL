@@ -13,6 +13,7 @@ def create_prompt_router(config: Configuration):
     router = APIRouter()
 
     def get_prompt_manager_service() -> PromptManagerService:
+        """Retrieve the prompt manager service instance from the configuration."""
         return config.get_prompt_manager_service()
 
     @router.get(
@@ -31,8 +32,7 @@ def create_prompt_router(config: Configuration):
             get_prompt_manager_service
         ),
     ) -> StringDataResponseDto:
-        """
-        Generate a prompt using the provided parameters.
+        """Generate a prompt using the provided parameters.
 
         - **dictionaryId**: ID of the dictionary to be used.
         - **query**: The input query string to generate the prompt.
@@ -60,8 +60,7 @@ def create_prompt_router(config: Configuration):
             get_prompt_manager_service
         ),
     ) -> PromptResponseDto:
-        """
-        Generate a prompt with detailed debug information.
+        """Generate a prompt with detailed debug information.
 
         - **dictionaryId**: ID of the dictionary to be used.
         - **query**: The input query string to generate the prompt.

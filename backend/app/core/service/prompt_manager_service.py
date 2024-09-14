@@ -94,7 +94,7 @@ class PromptManagerService(PromptUseCase):
 
     def __generate_prompt(
         self, dictionary_id: int, query: str, dbms: str, language: str, log: bool
-    ) -> Tuple[str, Optional[str]]:
+    ) -> Tuple[Optional[str], Optional[str]]:
         """Internal method to generate a prompt using the prompt manager.
 
         Args:
@@ -109,5 +109,5 @@ class PromptManagerService(PromptUseCase):
         """
         prompt, log_content = self._prompt_manager.prompt_generator(
             dictionary_id, query, language, dbms, activate_log=log
-        )  # type: ignore
+        )
         return prompt, log_content

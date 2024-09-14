@@ -6,7 +6,7 @@ from models.admin_dto import AdminDto
 class AuthenticationRepository(ABC):
 
     @abstractmethod
-    def get_user_by_username(self, username: str) -> AdminDto:
+    def get_admin_by_username(self, username: str) -> AdminDto:
         """Retrieve user details by username.
 
         Args:

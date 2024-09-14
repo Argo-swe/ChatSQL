@@ -6,4 +6,10 @@ from models.responses.response_dto import ResponseDto
 
 
 class DictionaryResponseDto(ResponseDto):
+    """Data Transfer Object for responses related to a single dictionary.
+
+    Attributes:
+        data (Optional[Union[DictionaryDto, DictionaryPreviewDto]]): Information or preview of a dictionary (if present).
+    """
+
     data: Optional[Union[DictionaryDto, DictionaryPreviewDto]] = None

@@ -10,6 +10,7 @@ def create_login_router(config: Configuration):
     router = APIRouter()
 
     def get_authentication_service() -> AuthenticationService:
+        """Retrieve the authentication service instance from the configuration."""
         return config.get_authentication_service()
 
     @router.post(
@@ -24,9 +25,8 @@ def create_login_router(config: Configuration):
         authentication_service: AuthenticationService = Depends(
             get_authentication_service
         ),
-    ):
-        """
-        Authenticate a user with the provided credentials.
+    ) -> AuthResponseDto:
+        """Authenticate a user with the provided credentials.
 
         - **username**: The username of the user.
         - **password**: The password of the user.

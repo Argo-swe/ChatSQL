@@ -18,14 +18,14 @@ class FileRepository(ABC):
         """
 
     @abstractmethod
-    def load(self, id: int) -> str:
-        """Load and return the file content associated with a specific ID.
+    def get_file_path(self, id: int) -> str:
+        """Return the path of the file associated with a specific ID.
 
         Args:
             id (int): The unique identifier for the file.
 
         Returns:
-            str: The content of the file.
+            str: The path of the file.
         """
 
     @abstractmethod
@@ -47,18 +47,7 @@ class FileRepository(ABC):
             id (int): The unique identifier for the dictionary.
 
         Returns:
-            DictionaryPreviewDto: The preview data of the dictionary.
-        """
-
-    @abstractmethod
-    def get_json_schema(self, id: int):
-        """Retrieve the JSON schema associated with a specific ID.
-
-        Args:
-            id (int): The unique identifier for the schema.
-
-        Returns:
-            dict: The JSON schema.
+            Union[DictionaryPreviewDto, None]: The preview data of the dictionary.
         """
 
     @abstractmethod

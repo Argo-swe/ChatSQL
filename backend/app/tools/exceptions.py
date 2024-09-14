@@ -50,11 +50,11 @@ class DictionaryError:
         return "Dictionary name and description are mandatory"
 
     @staticmethod
-    def dictionary_not_found(id: str) -> str:
+    def dictionary_not_found(id: int) -> str:
         """Generates an error message indicating that a dictionary with the specified ID was not found.
 
         Args:
-            id (str): The ID of the dictionary.
+            id (int): The ID of the dictionary.
 
         Returns:
             str: An appropriate error message.
@@ -76,14 +76,29 @@ class LoginError:
 
     @staticmethod
     def invalid_authentication_scheme() -> str:
+        """Generates an error message indicating that the authentication scheme is invalid.
+
+        Returns:
+            str: An appropriate error message.
+        """
         return "Invalid authentication scheme"
 
     @staticmethod
     def invalid_authorization_code() -> str:
+        """Generates an error message indicating that the authorization code is invalid.
+
+        Returns:
+            str: An appropriate error message.
+        """
         return "Invalid authorization code"
 
     @staticmethod
     def invalid_expired_token() -> str:
+        """Generates an error message indicating that the token is either invalid or expired.
+
+        Returns:
+            str: An appropriate error message.
+        """
         return "Invalid or expired token"
 
 

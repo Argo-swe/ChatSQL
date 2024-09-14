@@ -17,6 +17,7 @@ def create_dictionary_router(config: Configuration):
     router = APIRouter()
 
     def get_dictionary_service() -> DictionaryService:
+        """Retrieve the dictionary service instance from the configuration."""
         return config.get_dictionary_service()
 
     @router.get(
@@ -29,9 +30,7 @@ def create_dictionary_router(config: Configuration):
     def get_all_dictionaries(
         dictionary_service: DictionaryService = Depends(get_dictionary_service),
     ) -> DictionariesResponseDto:
-        """
-        Retrieve a list of all dictionaries available in the system.
-        """
+        """Retrieve the list of all dictionaries available in the system."""
         return dictionary_service.get_dictionary_list()
 
     @router.get(
@@ -44,9 +43,7 @@ def create_dictionary_router(config: Configuration):
     def get_dictionary(
         id: int, dictionary_service: DictionaryService = Depends(get_dictionary_service)
     ) -> DictionaryResponseDto:
-        """
-        Retrieve the details of a specific dictionary by its ID.
-        """
+        """Retrieve the details of a specific dictionary by its ID."""
         return dictionary_service.get_dictionary_by_id(id)
 
     @router.get(
@@ -58,10 +55,8 @@ def create_dictionary_router(config: Configuration):
     def get_dictionary_file(
         id: int, dictionary_service: DictionaryService = Depends(get_dictionary_service)
     ):
-        """
-        Download the file associated with a specific dictionary by its ID.
-        """
-        response = dictionary_service.get_dictionary_file(id)
+        """Download the file associated with a specific dictionary by its ID."""
+        response = dictionary_service.get_dictionary_file_path(id)
 
         if response is not None:
             return FileResponse(response)
@@ -81,9 +76,7 @@ def create_dictionary_router(config: Configuration):
     def get_dictionary_preview(
         id: int, dictionary_service: DictionaryService = Depends(get_dictionary_service)
     ) -> DictionaryResponseDto:
-        """
-        Retrieve a preview of a specific dictionary by its ID.
-        """
+        """Retrieve the preview of a specific dictionary by its ID."""
         return dictionary_service.get_dictionary_preview(id)
 
     @router.post(
@@ -99,11 +92,11 @@ def create_dictionary_router(config: Configuration):
         dictionary_service: DictionaryService = Depends(get_dictionary_service),
         summary="Create a new dictionary",
     ) -> DictionaryResponseDto:
-        """
-        Create a new dictionary with metadata and an optional file.
-        """
+        """Create a new dictionary with metadata and an optional file."""
         if file:
             content = await file.read()
+            if isinstance(content, bytes):
+                content = content.decode("utf-8")
         else:
             content = ""
         return await dictionary_service.create_dictionary(dictionary, content)
@@ -121,11 +114,11 @@ def create_dictionary_router(config: Configuration):
         file: Annotated[UploadFile, File()],
         dictionary_service: DictionaryService = Depends(get_dictionary_service),
     ) -> DictionaryResponseDto:
-        """
-        Update the file associated with a specific dictionary by its ID.
-        """
+        """Update the file associated with a specific dictionary by its ID."""
         if file:
             content = await file.read()
+            if isinstance(content, bytes):
+                content = content.decode("utf-8")
         else:
             content = ""
         return await dictionary_service.update_dictionary_file(id, content)
@@ -143,24 +136,21 @@ def create_dictionary_router(config: Configuration):
         dictionary: DictionaryDto,
         dictionary_service: DictionaryService = Depends(get_dictionary_service),
     ) -> DictionaryResponseDto:
-        """
-        Update the metadata of a specific dictionary by its ID.
-        """
+        """Update the metadata of a specific dictionary by its ID."""
         return dictionary_service.update_dictionary_metadata(id, dictionary)
 
     @router.delete(
         "/{id}",
         tags=[tag],
         response_model=ResponseDto,
+        dependencies=[Depends(JwtBearer())],
         name="deleteDictionary",
         summary="Delete a dictionary by ID",
     )
     def delete_dictionary(
         id: int, dictionary_service: DictionaryService = Depends(get_dictionary_service)
     ) -> ResponseDto:
-        """
-        Delete a specific dictionary by its ID.
-        """
+        """Delete a specific dictionary by its ID."""
         return dictionary_service.delete_dictionary(id)
 
     return router

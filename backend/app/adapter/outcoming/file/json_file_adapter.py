@@ -13,19 +13,19 @@ class JsonFileAdapter(FileRepository):
         os.makedirs(self._out_file_base_path, exist_ok=True)
 
     def save(self, id: int, file: str):
-        with open(self._generate_schema_file_name(id), "wb") as out_file:
+        with open(self.get_file_path(id), "w") as out_file:
             out_file.write(file)
 
-    def load(self, id: int) -> str:
-        return self._generate_schema_file_name(id)
+    def get_file_path(self, id: int) -> str:
+        return f"{self._out_file_base_path}/dic_schema_{id}.json"
 
     def delete(self, id: int):
-        if os.path.exists(self._generate_schema_file_name(id)):
-            os.remove(self._generate_schema_file_name(id))
+        if os.path.exists(self.get_file_path(id)):
+            os.remove(self.get_file_path(id))
 
     def get_preview(self, id: int) -> Union[DictionaryPreviewDto, None]:
         dictionary_preview = {}
-        schema = self.get_json_schema(id)
+        schema = self.__get_json_schema(id)
         if schema is None:
             return None
         dictionary_preview["database_name"] = schema["database_name"]
@@ -43,7 +43,11 @@ class JsonFileAdapter(FileRepository):
 
     def extract_index_metadata(self, id: int) -> list:
         documents = []
-        schema = self.get_json_schema(id)
+        schema = self.__get_json_schema(id)
+
+        if schema is None:
+            return []
+
         for pos, table in enumerate(schema["tables"]):
             for column in table["columns"]:
                 doc = {
@@ -56,7 +60,11 @@ class JsonFileAdapter(FileRepository):
         return documents
 
     def extract_schema_metadata(self, id: int, tuples: list) -> str:
-        schema = self.get_json_schema(id)
+        schema = self.__get_json_schema(id)
+
+        if schema is None:
+            return ""
+
         dyn_string = (
             "Suggested prompt:\n"
             "In table schema the character ':' separates the column name from its type\n"
@@ -93,11 +101,17 @@ class JsonFileAdapter(FileRepository):
                         f'{foreign_key["reference_table_name"]} ('
                         f'{", ".join(foreign_key["reference_column_names"])})\n'
                     )
+            dyn_string += "\n"
         dyn_string += dyn_ref_string + "\n"
         return dyn_string
 
-    def get_json_schema(self, id: int):
-        return Utils.read_json_file_content(self._generate_schema_file_name(id))
+    def __get_json_schema(self, id: int):
+        """Retrieve the JSON schema associated with a specific ID.
 
-    def _generate_schema_file_name(self, id: int) -> str:
-        return f"{self._out_file_base_path}/dic_schema_{id}.json"
+        Args:
+            id (int): The unique identifier for the schema.
+
+        Returns:
+            dict: The JSON schema.
+        """
+        return Utils.read_json_file_content(self.get_file_path(id))

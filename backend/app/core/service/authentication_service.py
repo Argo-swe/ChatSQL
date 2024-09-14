@@ -28,7 +28,7 @@ class AuthenticationService(AuthenticationUseCase):
                 - If the password is incorrect, the status will be `ResponseStatusEnum.BAD_CREDENTIAL` with an appropriate message.
                 - If the credentials are valid, the status will be `ResponseStatusEnum.OK` and the response will include a JWT token.
         """
-        user = self._authentication_repository.get_user_by_username(username)
+        user = self._authentication_repository.get_admin_by_username(username)
 
         if user is None:
             return AuthResponseDto(data=None, status=ResponseStatusEnum.NOT_FOUND)
@@ -39,5 +39,7 @@ class AuthenticationService(AuthenticationUseCase):
                 status=ResponseStatusEnum.BAD_CREDENTIAL,
                 message=LoginError.wrong_password(),
             )
-        token = JwtHandler.sign(user.id)
+        token = None
+        if user.id:
+            token = JwtHandler.sign(user.id)
         return AuthResponseDto(data=token, status=ResponseStatusEnum.OK)

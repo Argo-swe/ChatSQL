@@ -62,21 +62,21 @@ class DictionaryService(DictionaryUseCase):
             status=ResponseStatusEnum.NOT_FOUND,
         )
 
-    def get_dictionary_file(self, id: int) -> Optional[str]:
-        """Retrieve the file content of a dictionary by its ID.
+    def get_dictionary_file_path(self, id: int) -> Optional[str]:
+        """Retrieve the file path of a dictionary by its ID.
 
         Args:
             id (int): The ID of the dictionary.
 
         Returns:
-            Optional[str]: The content of the dictionary file or None if the dictionary is not found or an error occurred.
+            Optional[str]: The path of the dictionary file or None if the dictionary is not found or an error occurred.
         """
         found_dic_response = self.get_dictionary_by_id(id)
 
         if found_dic_response.status is not ResponseStatusEnum.OK:
             return None
 
-        return self._file_repository.load(id)
+        return self._file_repository.get_file_path(id)
 
     def get_dictionary_preview(self, id: int) -> DictionaryResponseDto:
         """Retrieve a preview of a dictionary by its ID.
@@ -148,10 +148,10 @@ class DictionaryService(DictionaryUseCase):
             new_dic = self._dictionary_repository.create_dictionary(
                 dictionary.name, dictionary.description
             )
+            if new_dic.id:
+                self._file_repository.save(new_dic.id, content)
 
-            self._file_repository.save(new_dic.id, content)
-
-            self._index_manager.create_index(new_dic.id)
+                self._index_manager.create_index(new_dic.id)
 
             return DictionaryResponseDto(data=new_dic, status=ResponseStatusEnum.OK)
 

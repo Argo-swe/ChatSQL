@@ -73,21 +73,21 @@ def test_get_dictionary_file_found(service, mock_dependencies):
     mock_dependencies["dictionary_repository"].get_dictionary_by_id.return_value = (
         DictionaryDto(id=1, name="Dict1", description="Description1")
     )
-    mock_dependencies["file_repository"].load.return_value = "file_content"
+    mock_dependencies["file_repository"].get_file_path.return_value = "file_path"
 
-    response = service.get_dictionary_file(1)
+    response = service.get_dictionary_file_path(1)
 
-    assert response == "file_content"
+    assert response == "file_path"
     mock_dependencies[
         "dictionary_repository"
     ].get_dictionary_by_id.assert_called_once_with(1)
-    mock_dependencies["file_repository"].load.assert_called_once_with(1)
+    mock_dependencies["file_repository"].get_file_path.assert_called_once_with(1)
 
 
 def test_get_dictionary_file_not_found(service, mock_dependencies):
     mock_dependencies["dictionary_repository"].get_dictionary_by_id.return_value = None
 
-    response = service.get_dictionary_file(1)
+    response = service.get_dictionary_file_path(1)
 
     assert response is None
     mock_dependencies[
@@ -128,7 +128,7 @@ def test_get_dictionary_preview_not_found(service, mock_dependencies):
     response = service.get_dictionary_preview(1)
 
     assert response.status == ResponseStatusEnum.NOT_FOUND
-    assert response.message == DictionaryError.dictionary_not_found("1")
+    assert response.message == DictionaryError.dictionary_not_found(1)
 
     mock_dependencies["file_repository"].get_preview.assert_not_called()
 

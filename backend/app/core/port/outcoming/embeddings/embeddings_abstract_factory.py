@@ -7,14 +7,6 @@ from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
 
 class EmbeddingsAbstractFactory(ABC):
 
-    def __init__(self, config: dict) -> None:
-        """Initialize the factory with a configuration.
-
-        Args:
-            config (dict): A dictionary containing configuration settings.
-        """
-        self._config = config
-
     @abstractmethod
     def create_index_manager(self, file_repository: FileRepository) -> IndexManagerPort:
         """Create and return an instance of IndexManagerPort.

@@ -9,5 +9,5 @@ class SqlAlchemyAuthenticationRepositoryAdapter(AuthenticationRepository):
     def __init__(self, session=SessionLocal()):
         self._session = session
 
-    def get_user_by_username(self, username: str) -> AdminDto:
+    def get_admin_by_username(self, username: str) -> AdminDto:
         return self._session.query(Admins).filter(Admins.username == username).first()

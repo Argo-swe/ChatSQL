@@ -10,13 +10,21 @@ declare namespace Components {
   namespace Schemas {
     /**
      * AuthResponseDto
+     * Data Transfer Object for authentication responses.
+     *
+     * Attributes:
+     *     data (dict | None): Contains authentication-related data (if present).
      */
     export interface AuthResponseDto {
       /**
        * Message
        */
       message?: /* Message */ string | null;
-      status: /* ResponseStatusEnum */ ResponseStatusEnum;
+      status: /**
+       * ResponseStatusEnum
+       * Enumeration representing possible response statuses.
+       */
+      ResponseStatusEnum;
       /**
        * Data
        */
@@ -44,20 +52,43 @@ declare namespace Components {
     }
     /**
      * DictionariesResponseDto
+     * Data Transfer Object for responses that include a list of dictionaries.
+     *
+     * Attributes:
+     *     data (list[DictionaryDto] | list[None]): A list of DictionaryDto representing the dictionaries (if present).
      */
     export interface DictionariesResponseDto {
       /**
        * Message
        */
       message?: /* Message */ string | null;
-      status: /* ResponseStatusEnum */ ResponseStatusEnum;
+      status: /**
+       * ResponseStatusEnum
+       * Enumeration representing possible response statuses.
+       */
+      ResponseStatusEnum;
       /**
        * Data
        */
-      data: /* Data */ /* DictionaryDto */ DictionaryDto[] | null[];
+      data: /* Data */ /**
+       * DictionaryDto
+       * Data Transfer Object for carrying dictionary information.
+       *
+       * Attributes:
+       *     id (Optional[int]): The unique identifier of the dictionary, optional for creating new entries.
+       *     name (str): The name of the dictionary.
+       *     description (str): The description of the dictionary.
+       */
+      DictionaryDto[] | null[];
     }
     /**
      * DictionaryDto
+     * Data Transfer Object for carrying dictionary information.
+     *
+     * Attributes:
+     *     id (Optional[int]): The unique identifier of the dictionary, optional for creating new entries.
+     *     name (str): The name of the dictionary.
+     *     description (str): The description of the dictionary.
      */
     export interface DictionaryDto {
       /**
@@ -75,6 +106,12 @@ declare namespace Components {
     }
     /**
      * DictionaryPreviewDto
+     * Data Transfer Object to preview the contents of a dictionary.
+     *
+     * Attributes:
+     *     database_name (str): The name of the database.
+     *     database_description (str): The description of the database.
+     *     tables (List[TableDto]): A list of tables contained in the database.
      */
     export interface DictionaryPreviewDto {
       /**
@@ -88,22 +125,56 @@ declare namespace Components {
       /**
        * Tables
        */
-      tables: /* TableDto */ TableDto[];
+      tables: /**
+       * TableDto
+       * Data Transfer Object for representing table information within a database schema.
+       *
+       * Attributes:
+       *     name (str): The name of the table in the database.
+       *     description (str): The description of the table in the database.
+       */
+      TableDto[];
     }
     /**
      * DictionaryResponseDto
+     * Data Transfer Object for responses related to a single dictionary.
+     *
+     * Attributes:
+     *     data (Optional[Union[DictionaryDto, DictionaryPreviewDto]]): Information or preview of a dictionary (if present).
      */
     export interface DictionaryResponseDto {
       /**
        * Message
        */
       message?: /* Message */ string | null;
-      status: /* ResponseStatusEnum */ ResponseStatusEnum;
+      status: /**
+       * ResponseStatusEnum
+       * Enumeration representing possible response statuses.
+       */
+      ResponseStatusEnum;
       /**
        * Data
        */
-      data?: /* Data */ /* DictionaryDto */
-      DictionaryDto | /* DictionaryPreviewDto */ DictionaryPreviewDto | null;
+      data?: /* Data */ /**
+       * DictionaryDto
+       * Data Transfer Object for carrying dictionary information.
+       *
+       * Attributes:
+       *     id (Optional[int]): The unique identifier of the dictionary, optional for creating new entries.
+       *     name (str): The name of the dictionary.
+       *     description (str): The description of the dictionary.
+       */
+      | DictionaryDto /**
+         * DictionaryPreviewDto
+         * Data Transfer Object to preview the contents of a dictionary.
+         *
+         * Attributes:
+         *     database_name (str): The name of the database.
+         *     database_description (str): The description of the database.
+         *     tables (List[TableDto]): A list of tables contained in the database.
+         */
+        | DictionaryPreviewDto
+        | null;
     }
     /**
      * HTTPValidationError
@@ -116,6 +187,11 @@ declare namespace Components {
     }
     /**
      * LoginDto
+     * Data Transfer Object for carrying user login information.
+     *
+     * Attributes:
+     *     username (str): The username provided by the user during login.
+     *     password (str): The password provided by the user during login.
      */
     export interface LoginDto {
       /**
@@ -129,6 +205,11 @@ declare namespace Components {
     }
     /**
      * PromptDto
+     * Data Transfer Object for carrying prompt data.
+     *
+     * Attributes:
+     *     prompt (Optional[str]): An optional string representing the prompt.
+     *     debug (Optional[str]): An optional string for debugging information.
      */
     export interface PromptDto {
       /**
@@ -142,27 +223,53 @@ declare namespace Components {
     }
     /**
      * PromptResponseDto
+     * Data Transfer Object for prompt responses.
+     *
+     * Attributes:
+     *     data (PromptDto | None): Object representing prompt-related data (if present).
      */
     export interface PromptResponseDto {
       /**
        * Message
        */
       message?: /* Message */ string | null;
-      status: /* ResponseStatusEnum */ ResponseStatusEnum;
-      data: /* PromptDto */ PromptDto | null;
+      status: /**
+       * ResponseStatusEnum
+       * Enumeration representing possible response statuses.
+       */
+      ResponseStatusEnum;
+      data: /**
+       * PromptDto
+       * Data Transfer Object for carrying prompt data.
+       *
+       * Attributes:
+       *     prompt (Optional[str]): An optional string representing the prompt.
+       *     debug (Optional[str]): An optional string for debugging information.
+       */
+      PromptDto | null;
     }
     /**
      * ResponseDto
+     * Base Data Transfer Object for API responses.
+     *
+     * Attributes:
+     *     message (Optional[str]): An optional message giving details about the response.
+     *     status (ResponseStatusEnum): The status of the response.
      */
     export interface ResponseDto {
       /**
        * Message
        */
       message?: /* Message */ string | null;
-      status: /* ResponseStatusEnum */ ResponseStatusEnum;
+      status: /**
+       * ResponseStatusEnum
+       * Enumeration representing possible response statuses.
+       */
+      ResponseStatusEnum;
     }
     /**
      * ResponseStatusEnum
+     * Enumeration representing possible response statuses.
      */
     export type ResponseStatusEnum =
       | 'OK'
@@ -174,13 +281,21 @@ declare namespace Components {
       | 'CONFLICT';
     /**
      * StringDataResponseDto
+     * Data Transfer Object for responses that return string data.
+     *
+     * Attributes:
+     *     data (Optional[str]): An optional string representing the response data.
      */
     export interface StringDataResponseDto {
       /**
        * Message
        */
       message?: /* Message */ string | null;
-      status: /* ResponseStatusEnum */ ResponseStatusEnum;
+      status: /**
+       * ResponseStatusEnum
+       * Enumeration representing possible response statuses.
+       */
+      ResponseStatusEnum;
       /**
        * Data
        */
@@ -188,6 +303,11 @@ declare namespace Components {
     }
     /**
      * TableDto
+     * Data Transfer Object for representing table information within a database schema.
+     *
+     * Attributes:
+     *     name (str): The name of the table in the database.
+     *     description (str): The description of the table in the database.
      */
     export interface TableDto {
       /**
@@ -247,7 +367,15 @@ declare namespace Paths {
     export type RequestBody =
       /* Body_createDictionary_api_dictionary__post */ Components.Schemas.BodyCreateDictionaryApiDictionaryPost;
     namespace Responses {
-      export type $200 = /* DictionaryResponseDto */ Components.Schemas.DictionaryResponseDto;
+      export type $200 =
+        /**
+         * DictionaryResponseDto
+         * Data Transfer Object for responses related to a single dictionary.
+         *
+         * Attributes:
+         *     data (Optional[Union[DictionaryDto, DictionaryPreviewDto]]): Information or preview of a dictionary (if present).
+         */
+        Components.Schemas.DictionaryResponseDto;
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
@@ -262,7 +390,16 @@ declare namespace Paths {
       id: /* Id */ Parameters.Id;
     }
     namespace Responses {
-      export type $200 = /* ResponseDto */ Components.Schemas.ResponseDto;
+      export type $200 =
+        /**
+         * ResponseDto
+         * Base Data Transfer Object for API responses.
+         *
+         * Attributes:
+         *     message (Optional[str]): An optional message giving details about the response.
+         *     status (ResponseStatusEnum): The status of the response.
+         */
+        Components.Schemas.ResponseDto;
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
@@ -292,7 +429,15 @@ declare namespace Paths {
       lang: /* Lang */ Parameters.Lang;
     }
     namespace Responses {
-      export type $200 = /* StringDataResponseDto */ Components.Schemas.StringDataResponseDto;
+      export type $200 =
+        /**
+         * StringDataResponseDto
+         * Data Transfer Object for responses that return string data.
+         *
+         * Attributes:
+         *     data (Optional[str]): An optional string representing the response data.
+         */
+        Components.Schemas.StringDataResponseDto;
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
@@ -322,13 +467,29 @@ declare namespace Paths {
       lang: /* Lang */ Parameters.Lang;
     }
     namespace Responses {
-      export type $200 = /* PromptResponseDto */ Components.Schemas.PromptResponseDto;
+      export type $200 =
+        /**
+         * PromptResponseDto
+         * Data Transfer Object for prompt responses.
+         *
+         * Attributes:
+         *     data (PromptDto | None): Object representing prompt-related data (if present).
+         */
+        Components.Schemas.PromptResponseDto;
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
   namespace GetAllDictionaries {
     namespace Responses {
-      export type $200 = /* DictionariesResponseDto */ Components.Schemas.DictionariesResponseDto;
+      export type $200 =
+        /**
+         * DictionariesResponseDto
+         * Data Transfer Object for responses that include a list of dictionaries.
+         *
+         * Attributes:
+         *     data (list[DictionaryDto] | list[None]): A list of DictionaryDto representing the dictionaries (if present).
+         */
+        Components.Schemas.DictionariesResponseDto;
     }
   }
   namespace GetDictionary {
@@ -342,7 +503,15 @@ declare namespace Paths {
       id: /* Id */ Parameters.Id;
     }
     namespace Responses {
-      export type $200 = /* DictionaryResponseDto */ Components.Schemas.DictionaryResponseDto;
+      export type $200 =
+        /**
+         * DictionaryResponseDto
+         * Data Transfer Object for responses related to a single dictionary.
+         *
+         * Attributes:
+         *     data (Optional[Union[DictionaryDto, DictionaryPreviewDto]]): Information or preview of a dictionary (if present).
+         */
+        Components.Schemas.DictionaryResponseDto;
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
@@ -372,7 +541,15 @@ declare namespace Paths {
       id: /* Id */ Parameters.Id;
     }
     namespace Responses {
-      export type $200 = /* DictionaryResponseDto */ Components.Schemas.DictionaryResponseDto;
+      export type $200 =
+        /**
+         * DictionaryResponseDto
+         * Data Transfer Object for responses related to a single dictionary.
+         *
+         * Attributes:
+         *     data (Optional[Union[DictionaryDto, DictionaryPreviewDto]]): Information or preview of a dictionary (if present).
+         */
+        Components.Schemas.DictionaryResponseDto;
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
@@ -382,9 +559,26 @@ declare namespace Paths {
     }
   }
   namespace Login {
-    export type RequestBody = /* LoginDto */ Components.Schemas.LoginDto;
+    export type RequestBody =
+      /**
+       * LoginDto
+       * Data Transfer Object for carrying user login information.
+       *
+       * Attributes:
+       *     username (str): The username provided by the user during login.
+       *     password (str): The password provided by the user during login.
+       */
+      Components.Schemas.LoginDto;
     namespace Responses {
-      export type $200 = /* AuthResponseDto */ Components.Schemas.AuthResponseDto;
+      export type $200 =
+        /**
+         * AuthResponseDto
+         * Data Transfer Object for authentication responses.
+         *
+         * Attributes:
+         *     data (dict | None): Contains authentication-related data (if present).
+         */
+        Components.Schemas.AuthResponseDto;
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
@@ -406,7 +600,15 @@ declare namespace Paths {
     export type RequestBody =
       /* Body_updateDictionaryFile_api_dictionary__id__file_put */ Components.Schemas.BodyUpdateDictionaryFileApiDictionaryIdFilePut;
     namespace Responses {
-      export type $200 = /* DictionaryResponseDto */ Components.Schemas.DictionaryResponseDto;
+      export type $200 =
+        /**
+         * DictionaryResponseDto
+         * Data Transfer Object for responses related to a single dictionary.
+         *
+         * Attributes:
+         *     data (Optional[Union[DictionaryDto, DictionaryPreviewDto]]): Information or preview of a dictionary (if present).
+         */
+        Components.Schemas.DictionaryResponseDto;
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
@@ -420,9 +622,27 @@ declare namespace Paths {
     export interface PathParameters {
       id: /* Id */ Parameters.Id;
     }
-    export type RequestBody = /* DictionaryDto */ Components.Schemas.DictionaryDto;
+    export type RequestBody =
+      /**
+       * DictionaryDto
+       * Data Transfer Object for carrying dictionary information.
+       *
+       * Attributes:
+       *     id (Optional[int]): The unique identifier of the dictionary, optional for creating new entries.
+       *     name (str): The name of the dictionary.
+       *     description (str): The description of the dictionary.
+       */
+      Components.Schemas.DictionaryDto;
     namespace Responses {
-      export type $200 = /* DictionaryResponseDto */ Components.Schemas.DictionaryResponseDto;
+      export type $200 =
+        /**
+         * DictionaryResponseDto
+         * Data Transfer Object for responses related to a single dictionary.
+         *
+         * Attributes:
+         *     data (Optional[Union[DictionaryDto, DictionaryPreviewDto]]): Information or preview of a dictionary (if present).
+         */
+        Components.Schemas.DictionaryResponseDto;
       export type $422 = /* HTTPValidationError */ Components.Schemas.HTTPValidationError;
     }
   }
@@ -432,7 +652,7 @@ export interface OperationMethods {
   /**
    * getAllDictionaries - Retrieve all dictionaries
    *
-   * Retrieve a list of all dictionaries available in the system.
+   * Retrieve the list of all dictionaries available in the system.
    */
   'getAllDictionaries'(
     parameters?: Parameters<UnknownParamsObject> | null,
@@ -502,7 +722,7 @@ export interface OperationMethods {
   /**
    * getDictionaryPreview - Retrieve a dictionary preview by ID
    *
-   * Retrieve a preview of a specific dictionary by its ID.
+   * Retrieve the preview of a specific dictionary by its ID.
    */
   'getDictionaryPreview'(
     parameters?: Parameters<Paths.GetDictionaryPreview.PathParameters> | null,
@@ -589,7 +809,7 @@ export interface PathsDictionary {
     /**
      * getAllDictionaries - Retrieve all dictionaries
      *
-     * Retrieve a list of all dictionaries available in the system.
+     * Retrieve the list of all dictionaries available in the system.
      */
     'get'(
       parameters?: Parameters<UnknownParamsObject> | null,
@@ -665,7 +885,7 @@ export interface PathsDictionary {
     /**
      * getDictionaryPreview - Retrieve a dictionary preview by ID
      *
-     * Retrieve a preview of a specific dictionary by its ID.
+     * Retrieve the preview of a specific dictionary by its ID.
      */
     'get'(
       parameters?: Parameters<Paths.GetDictionaryPreview.PathParameters> | null,
@@ -759,3 +979,22 @@ export interface PathsDictionary {
 }
 
 export type Client = OpenAPIClient<OperationMethods, PathsDictionary>;
+
+export type AuthResponseDto = Components.Schemas.AuthResponseDto;
+export type Body_createDictionary_api_dictionary__post =
+  Components.Schemas.BodyCreateDictionaryApiDictionaryPost;
+export type Body_updateDictionaryFile_api_dictionary__id__file_put =
+  Components.Schemas.BodyUpdateDictionaryFileApiDictionaryIdFilePut;
+export type DictionariesResponseDto = Components.Schemas.DictionariesResponseDto;
+export type DictionaryDto = Components.Schemas.DictionaryDto;
+export type DictionaryPreviewDto = Components.Schemas.DictionaryPreviewDto;
+export type DictionaryResponseDto = Components.Schemas.DictionaryResponseDto;
+export type HTTPValidationError = Components.Schemas.HTTPValidationError;
+export type LoginDto = Components.Schemas.LoginDto;
+export type PromptDto = Components.Schemas.PromptDto;
+export type PromptResponseDto = Components.Schemas.PromptResponseDto;
+export type ResponseDto = Components.Schemas.ResponseDto;
+export type ResponseStatusEnum = Components.Schemas.ResponseStatusEnum;
+export type StringDataResponseDto = Components.Schemas.StringDataResponseDto;
+export type TableDto = Components.Schemas.TableDto;
+export type ValidationError = Components.Schemas.ValidationError;
