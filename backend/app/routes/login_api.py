@@ -25,7 +25,7 @@ def create_login_router(config: Configuration):
         authentication_service: AuthenticationService = Depends(
             get_authentication_service
         ),
-    ):
+    ) -> AuthResponseDto:
         """Authenticate a user with the provided credentials.
 
         - **username**: The username of the user.

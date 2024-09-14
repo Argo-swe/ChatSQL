@@ -8,5 +8,6 @@ class LoginDto(CamelModel):
         username (str): The username provided by the user during login.
         password (str): The password provided by the user during login.
     """
+
     username: str
     password: str

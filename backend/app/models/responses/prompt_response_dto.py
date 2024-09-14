@@ -8,4 +8,5 @@ class PromptResponseDto(ResponseDto):
     Attributes:
         data (PromptDto | None): Object representing prompt-related data (if present).
     """
+
     data: PromptDto | None

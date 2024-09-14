@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional, Union
 from models.dictionary_dto import DictionaryDto
 from models.responses.response_dto import ResponseDto
 from models.responses.dictionary_response_dto import DictionaryResponseDto
@@ -16,25 +17,27 @@ class DictionaryUseCase(ABC):
         """
 
     @abstractmethod
-    def get_dictionary_by_id(self, id: int) -> DictionaryResponseDto:
+    def get_dictionary_by_id(
+        self, id: int
+    ) -> Union[DictionaryResponseDto, ResponseDto]:
         """Retrieve a specific dictionary by its ID.
 
         Args:
             id (int): The unique identifier of the dictionary.
 
         Returns:
-            DictionaryResponseDto: The dictionary data associated with the given ID.
+            Union[DictionaryResponseDto, ResponseDto]: The dictionary data associated with the given ID or an error message.
         """
 
     @abstractmethod
-    def get_dictionary_file_path(self, id: int) -> str:
+    def get_dictionary_file_path(self, id: int) -> Optional[str]:
         """Retrieve the file path of a specific dictionary by its ID.
 
         Args:
             id (int): The unique identifier of the dictionary.
 
         Returns:
-            str: The file path of the dictionary.
+            Optional[str]: The file path of the dictionary.
         """
 
     @abstractmethod
@@ -50,13 +53,13 @@ class DictionaryUseCase(ABC):
 
     @abstractmethod
     def create_dictionary(
-        self, dictionary: DictionaryDto, file: str
+        self, dictionary: DictionaryDto, content: str
     ) -> DictionaryResponseDto:
         """Create a new dictionary with the provided metadata and file.
 
         Args:
             dictionary (DictionaryDto): The metadata of the dictionary to be created.
-            file (str): The file content to be associated with the dictionary.
+            content (str): The file content to be associated with the dictionary.
 
         Returns:
             DictionaryResponseDto: The newly created dictionary data.
@@ -77,12 +80,12 @@ class DictionaryUseCase(ABC):
         """
 
     @abstractmethod
-    def update_dictionary_file(self, id: int, file: str) -> DictionaryResponseDto:
+    def update_dictionary_file(self, id: int, content: str) -> DictionaryResponseDto:
         """Update the file of an existing dictionary by its ID.
 
         Args:
             id (int): The unique identifier of the dictionary to be updated.
-            file (str): The file content to be associated with the dictionary.
+            content (str): The file content to be associated with the dictionary.
 
         Returns:
             DictionaryResponseDto: The updated dictionary data.

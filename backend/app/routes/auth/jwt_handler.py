@@ -36,7 +36,7 @@ class JwtHandler:
 
         Args:
             token (str): The JWT token to decode and verify.
-        
+
         Returns:
             Optional[Dict[str, Any]]: The decoded token payload if the token is valid and not expired, otherwise None.
         """

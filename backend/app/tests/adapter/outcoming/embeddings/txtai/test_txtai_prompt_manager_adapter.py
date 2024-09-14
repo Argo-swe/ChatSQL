@@ -301,7 +301,10 @@ def test_prompt_generator_file_repository_failure(
         # If an exception is caught, ensure it's the expected one.
         assert str(e) == "Error extracting schema metadata"
 
+
 """Test for get_index_manager method"""
+
+
 def test_get_index_manager(prompt_manager, mock_index_manager):
     # Call the get_index_manager method
     result = prompt_manager.get_index_manager()

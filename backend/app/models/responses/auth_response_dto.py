@@ -7,4 +7,5 @@ class AuthResponseDto(ResponseDto):
     Attributes:
         data (dict | None): Contains authentication-related data (if present).
     """
+
     data: dict | None

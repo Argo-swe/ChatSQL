@@ -11,4 +11,5 @@ class DictionaryResponseDto(ResponseDto):
     Attributes:
         data (Optional[Union[DictionaryDto, DictionaryPreviewDto]]): Information or preview of a dictionary (if present).
     """
+
     data: Optional[Union[DictionaryDto, DictionaryPreviewDto]] = None

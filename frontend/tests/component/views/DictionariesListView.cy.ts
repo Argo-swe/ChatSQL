@@ -170,7 +170,7 @@ describe('DictionariesListView Component', () => {
     cy.get('[data-testid="dictionary-page-header"]').should('be.visible');
     cy.get('[data-testid="dictionaries-table"]').should('be.visible');
   });
-  
+
   // Single and isolated test case
   it('should display an empty list of dictionaries', () => {
     mockEmptyDictionariesList();

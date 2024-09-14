@@ -47,7 +47,7 @@ class FileRepository(ABC):
             id (int): The unique identifier for the dictionary.
 
         Returns:
-            DictionaryPreviewDto: The preview data of the dictionary.
+            Union[DictionaryPreviewDto, None]: The preview data of the dictionary.
         """
 
     @abstractmethod

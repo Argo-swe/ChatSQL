@@ -109,5 +109,5 @@ class PromptManagerService(PromptUseCase):
         """
         prompt, log_content = self._prompt_manager.prompt_generator(
             dictionary_id, query, language, dbms, activate_log=log
-        )  
+        )
         return prompt, log_content

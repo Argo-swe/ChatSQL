@@ -8,4 +8,5 @@ class DictionariesResponseDto(ResponseDto):
     Attributes:
         data (list[DictionaryDto] | list[None]): A list of DictionaryDto representing the dictionaries (if present).
     """
+
     data: list[DictionaryDto] | list[None]

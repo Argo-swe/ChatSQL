@@ -16,7 +16,7 @@ class TxtaiIndexManagerAdapter(IndexManagerPort[Embeddings]):
         column_path=None,
     ):
         """Initialize an instance of the class, setting up embeddings and file repository paths.
-        
+
         This constructor initializes the embeddings with default or provided paths to the model used
         for table and column description search.
         """

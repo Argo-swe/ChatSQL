@@ -15,9 +15,7 @@ class SearchAlgorithmPort(ABC):
             activate_log (bool): Flag indicating whether to log the details of the semantic search process.
 
         Returns:
-            Tuple: 
+            Tuple:
                 - The results of the semantic search.
                 - A list of log entries.
         """
-        
-       

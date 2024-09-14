@@ -10,8 +10,9 @@ class DictionaryDto(CamelModel):
     Attributes:
         id (Optional[int]): The unique identifier of the dictionary, optional for creating new entries.
         name (str): The name of the dictionary.
-        description (str): The description of the dictionary.    
+        description (str): The description of the dictionary.
     """
+
     id: Optional[int] = None
     name: str
     description: str

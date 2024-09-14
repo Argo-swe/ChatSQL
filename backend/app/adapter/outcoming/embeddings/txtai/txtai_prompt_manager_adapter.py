@@ -1,4 +1,6 @@
-from adapter.outcoming.embeddings.txtai.txtai_search_algorithm_adapter import TxtaiSearchAlgorithmAdapter
+from adapter.outcoming.embeddings.txtai.txtai_search_algorithm_adapter import (
+    TxtaiSearchAlgorithmAdapter,
+)
 from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 from core.port.outcoming.file_repository import FileRepository
 from core.port.outcoming.embeddings.prompt_manager_port import PromptManagerPort
@@ -21,7 +23,9 @@ class TxtaiPromptManagerAdapter(PromptManagerPort):
         activate_log=False,
     ) -> tuple[str | None, str | None]:
         self._index_manager.load_index(dictionary_id)
-        tuples, log_content_phase_1 = self._search_algorithm.semantic_search(user_request, activate_log)
+        tuples, log_content_phase_1 = self._search_algorithm.semantic_search(
+            user_request, activate_log
+        )
         relevant_tuples, log_content_phase_2 = self._search_algorithm.search_filtering(
             tuples, activate_log
         )

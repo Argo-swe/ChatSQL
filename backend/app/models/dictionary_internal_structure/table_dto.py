@@ -8,6 +8,7 @@ class TableDto(CamelModel):
         name (str): The name of the table in the database.
         description (str): The description of the table in the database.
     """
+
     name: str
     description: str
 

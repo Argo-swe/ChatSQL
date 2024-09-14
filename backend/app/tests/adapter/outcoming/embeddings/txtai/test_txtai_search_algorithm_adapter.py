@@ -1,7 +1,10 @@
 import pytest
-from adapter.outcoming.embeddings.txtai.txtai_search_algorithm_adapter import TxtaiSearchAlgorithmAdapter
+from adapter.outcoming.embeddings.txtai.txtai_search_algorithm_adapter import (
+    TxtaiSearchAlgorithmAdapter,
+)
 from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 import time
+
 
 @pytest.fixture
 def mock_index_manager(mocker):
@@ -14,6 +17,8 @@ def txtai_search_algorithm(mock_index_manager):
 
 
 """Test for successful semantic search with logging enabled"""
+
+
 def test_semantic_search_with_logging(mocker, txtai_search_algorithm):
     user_request = "Sample request"
     activate_log = True
@@ -22,21 +27,30 @@ def test_semantic_search_with_logging(mocker, txtai_search_algorithm):
     mock_search = mocker.patch.object(
         txtai_search_algorithm._index_manager.get_embeddings(),
         "search",
-        return_value=[{"table_name": "SampleTable", "text": "sample text", "column_description": "sample column description", "max_score": 0.9}],
+        return_value=[
+            {
+                "table_name": "SampleTable",
+                "text": "sample text",
+                "column_description": "sample column description",
+                "max_score": 0.9,
+            }
+        ],
     )
 
     # Mock the explain method in the embeddings
     mock_explain = mocker.patch.object(
         txtai_search_algorithm._index_manager.get_embeddings(),
         "explain",
-        return_value=[{"tokens": [("term1", 0.8), ("term2", 0.7)]}]
+        return_value=[{"tokens": [("term1", 0.8), ("term2", 0.7)]}],
     )
 
     # Spy on the _semantic_search_log method to verify it's called when logging is activated
     mock_log = mocker.spy(txtai_search_algorithm, "_semantic_search_log")
 
     # Call the semantic_search method with logging activated
-    tuples, log_content = txtai_search_algorithm.semantic_search(user_request, activate_log)
+    tuples, log_content = txtai_search_algorithm.semantic_search(
+        user_request, activate_log
+    )
 
     # Assert that the search method was called with the correct arguments
     mock_search.assert_called_once()
@@ -49,7 +63,14 @@ def test_semantic_search_with_logging(mocker, txtai_search_algorithm):
     normalized_log_content = [line.strip() for line in log_content]
 
     # Assert that the method returns the correct tuples and log content
-    assert tuples == [{"table_name": "SampleTable", "text": "sample text", "column_description": "sample column description", "max_score": 0.9}]
+    assert tuples == [
+        {
+            "table_name": "SampleTable",
+            "text": "sample text",
+            "column_description": "sample column description",
+            "max_score": 0.9,
+        }
+    ]
 
     # Assert that the token importance is in the log content
     assert any("term1: 0.8" in line for line in normalized_log_content)
@@ -57,6 +78,8 @@ def test_semantic_search_with_logging(mocker, txtai_search_algorithm):
 
 
 """Test for filtering relevant tuples without logging"""
+
+
 def test_search_filtering_without_logging(mocker, txtai_search_algorithm):
     tuples = [
         {"table_name": "Table1", "max_score": 0.5},
@@ -66,7 +89,9 @@ def test_search_filtering_without_logging(mocker, txtai_search_algorithm):
     activate_log = False
 
     # Call the search_filtering method without logging
-    relevant_tuples, log_content = txtai_search_algorithm.search_filtering(tuples, activate_log)
+    relevant_tuples, log_content = txtai_search_algorithm.search_filtering(
+        tuples, activate_log
+    )
 
     # Assert that the method filtered the tuples correctly
     assert relevant_tuples == [
@@ -80,6 +105,8 @@ def test_search_filtering_without_logging(mocker, txtai_search_algorithm):
 
 
 """Test for generating semantic search log with no tuples"""
+
+
 def test_semantic_search_log_no_tuples(txtai_search_algorithm):
     user_request = "Test request"
     tuples = []
@@ -94,6 +121,8 @@ def test_semantic_search_log_no_tuples(txtai_search_algorithm):
 
 
 """Test for generating semantic search log with tuples"""
+
+
 def test_semantic_search_log_with_tuples(mocker, txtai_search_algorithm):
     user_request = "Test request"
     tuples = [
@@ -109,7 +138,7 @@ def test_semantic_search_log_with_tuples(mocker, txtai_search_algorithm):
     mocker.patch.object(
         txtai_search_algorithm._index_manager.get_embeddings(),
         "explain",
-        return_value=[{"tokens": [("term1", 0.8), ("term2", 0.7)]}]
+        return_value=[{"tokens": [("term1", 0.8), ("term2", 0.7)]}],
     )
 
     result = txtai_search_algorithm._semantic_search_log(user_request, tuples)
@@ -124,6 +153,8 @@ def test_semantic_search_log_with_tuples(mocker, txtai_search_algorithm):
 
 
 """Test for filtering log with no relevant tuples"""
+
+
 def test_search_filtering_log_no_relevant_tuples(txtai_search_algorithm):
     relevant_tuples = []
     tuples = []
@@ -138,6 +169,8 @@ def test_search_filtering_log_no_relevant_tuples(txtai_search_algorithm):
 
 
 """Test for filtering log with relevant tuples"""
+
+
 def test_search_filtering_log_with_relevant_tuples(txtai_search_algorithm):
     relevant_tuples = [
         {"table_name": "Table1", "max_score": 0.9},
@@ -151,14 +184,23 @@ def test_search_filtering_log_with_relevant_tuples(txtai_search_algorithm):
     normalized_result = [line.strip() for line in result]
 
     # Assert that the log contains relevant information about the kept tables
-    assert any("The table Table1 is kept because it has a high score." in line for line in normalized_result)
-    assert any("The table Table2 is kept because it has a high score." in line for line in normalized_result) 
-    
+    assert any(
+        "The table Table1 is kept because it has a high score." in line
+        for line in normalized_result
+    )
+    assert any(
+        "The table Table2 is kept because it has a high score." in line
+        for line in normalized_result
+    )
+
 
 def test_search_filtering_log_with_discarded_tuples(txtai_search_algorithm):
     relevant_tuples = [
         {"table_name": "Table1", "max_score": 0.9},  # This tuple should be kept
-        {"table_name": "Table2", "max_score": 0.4},  # This tuple should be discarded (score difference > 0.2)
+        {
+            "table_name": "Table2",
+            "max_score": 0.4,
+        },  # This tuple should be discarded (score difference > 0.2)
     ]
     tuples = relevant_tuples
 
@@ -168,13 +210,24 @@ def test_search_filtering_log_with_discarded_tuples(txtai_search_algorithm):
     normalized_result = [line.strip() for line in result]
 
     # Assert that the log contains relevant information about the kept and discarded tables
-    assert any("The table Table1 is kept because it has a high score." in line for line in normalized_result)
-    assert any("The remaining tables are discarded because the score is not high enough and the score difference with the previous highly relevant tables is greater than 0.2." in line for line in normalized_result)
+    assert any(
+        "The table Table1 is kept because it has a high score." in line
+        for line in normalized_result
+    )
+    assert any(
+        "The remaining tables are discarded because the score is not high enough and the score difference with the previous highly relevant tables is greater than 0.2."
+        in line
+        for line in normalized_result
+    )
 
 
 """Test for generating debug header"""
+
+
 def test_get_debug_header(txtai_search_algorithm):
-    result = txtai_search_algorithm._TxtaiSearchAlgorithmAdapter__get_debug_header(level="INFO", system="TestSystem")
-    
+    result = txtai_search_algorithm._TxtaiSearchAlgorithmAdapter__get_debug_header(
+        level="INFO", system="TestSystem"
+    )
+
     # Assert that the log contains the correct format with INFO level and TestSystem
     assert "[TestSystem] [INFO]" in result

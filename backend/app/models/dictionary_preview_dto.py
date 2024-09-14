@@ -11,6 +11,7 @@ class DictionaryPreviewDto(CamelModel):
         database_description (str): The description of the database.
         tables (List[TableDto]): A list of tables contained in the database.
     """
+
     database_name: str
     database_description: str
     tables: List[TableDto]

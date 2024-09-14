@@ -7,7 +7,7 @@ from core.port.outcoming.embeddings.index_manager_port import IndexManagerPort
 class TxtaiSearchAlgorithmAdapter(SearchAlgorithmPort):
     def __init__(self, index_manager: IndexManagerPort):
         self._index_manager = index_manager
-    
+
     def semantic_search(self, user_request: str, activate_log: bool):
         """Execute an SQL-like query using txtai to perform semantic search on table and column description fields.
 
@@ -16,7 +16,7 @@ class TxtaiSearchAlgorithmAdapter(SearchAlgorithmPort):
             activate_log (bool): Flag indicating whether to log the details of the semantic search process.
 
         Returns:
-            tuple: 
+            tuple:
                 - The results of the semantic search.
                 - A list of log entries (if logging is enabled), otherwise an empty list.
         """
@@ -67,10 +67,8 @@ class TxtaiSearchAlgorithmAdapter(SearchAlgorithmPort):
             else:
                 break
         if activate_log:
-            log_content = self._search_filtering_log(
-                relevant_tuples, tuples
-            )
-            
+            log_content = self._search_filtering_log(relevant_tuples, tuples)
+
         return relevant_tuples, log_content
 
     def _semantic_search_log(self, user_request: str, tuples: list) -> List[str]:
@@ -126,9 +124,7 @@ class TxtaiSearchAlgorithmAdapter(SearchAlgorithmPort):
             log_content.append("\n")
         return log_content
 
-    def _search_filtering_log(
-        self, relevant_tuples: list, tuples: list
-    ) -> List[str]:
+    def _search_filtering_log(self, relevant_tuples: list, tuples: list) -> List[str]:
         """Log the details of a filtering process using a custom algorithm.
 
         Args:
@@ -170,7 +166,7 @@ class TxtaiSearchAlgorithmAdapter(SearchAlgorithmPort):
         Args:
             level (str): The severity level of the log message.
             system (str): The name of the system generating the log.
-        
+
         Returns:
             str: A formatted string suitable for use as a log header.
         """

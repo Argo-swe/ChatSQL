@@ -10,6 +10,7 @@ class AdminDto(CamelModel):
         username (str): The username of the admin.
         password (str): The password of the admin.
     """
+
     id: Optional[int] = None
     username: str
     password: str
