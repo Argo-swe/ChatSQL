@@ -1,0 +1,6 @@
+{
+    "db_manager": "sqlalchemy",
+    "embeddings_type": "txtai",
+    "file_type": "json",
+    "validation_file_type": "json"
+}

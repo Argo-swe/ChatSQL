@@ -1,8 +1,15 @@
-from pydantic import BaseModel
+from fastapi_camelcase import CamelModel, ConfigDict
 
-class TableDto(BaseModel):
+
+class TableDto(CamelModel):
+    """Data Transfer Object for representing table information within a database schema.
+
+    Attributes:
+        name (str): The name of the table in the database.
+        description (str): The description of the table in the database.
+    """
+
     name: str
     description: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

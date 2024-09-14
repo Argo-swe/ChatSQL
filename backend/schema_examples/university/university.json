@@ -1,0 +1,278 @@
+{
+  "database_name": "University",
+  "database_description": "The university database is designed to manage and track students, courses, enrollments, and faculty information.",
+  "tables": [
+    {
+      "name": "students",
+      "description": "Table containing personal details of students enrolled in the university.",
+      "table_synonyms": [
+        "pupils",
+        "learners",
+        "scholars"
+      ],
+      "columns": [
+        {
+          "name": "student_id",
+          "type": "integer",
+          "description": "The unique identifier for a student.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "description": "The unique login name for a student.",
+          "column_synonyms": [
+            "nickname",
+            "alias"
+          ]
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "description": "The student's email address.",
+          "column_synonyms": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The student's first name.",
+          "column_synonyms": null
+        },
+        {
+          "name": "surname",
+          "type": "string",
+          "description": "The student's surname.",
+          "column_synonyms": null
+        },
+        {
+          "name": "date_of_birth",
+          "type": "date",
+          "description": "The student's date of birth.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "student_id"
+      ]
+    },
+    {
+      "name": "courses",
+      "description": "Table containing information about courses offered by the university.",
+      "table_synonyms": [
+        "subjects",
+        "classes"
+      ],
+      "columns": [
+        {
+          "name": "course_id",
+          "type": "integer",
+          "description": "The unique identifier for a course.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "The title of the course.",
+          "column_synonyms": [
+            "name",
+            "course_name"
+          ]
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "description": "A brief description of the course.",
+          "column_synonyms": null
+        },
+        {
+          "name": "credits",
+          "type": "integer",
+          "description": "The number of credits awarded for completing the course.",
+          "column_synonyms": [
+            "credit_hours",
+            "units"
+          ]
+        }
+      ],
+      "primary_key": [
+        "course_id"
+      ]
+    },
+    {
+      "name": "faculty",
+      "description": "Table containing information about faculty members who teach courses.",
+      "table_synonyms": [
+        "professors",
+        "instructors",
+        "lecturers"
+      ],
+      "columns": [
+        {
+          "name": "faculty_id",
+          "type": "integer",
+          "description": "The unique identifier for a faculty member.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The faculty member's first name.",
+          "column_synonyms": null
+        },
+        {
+          "name": "surname",
+          "type": "string",
+          "description": "The faculty member's surname.",
+          "column_synonyms": null
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "description": "The faculty member's email address.",
+          "column_synonyms": null
+        },
+        {
+          "name": "department",
+          "type": "string",
+          "description": "The department to which the faculty member belongs.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "faculty_id"
+      ]
+    },
+    {
+      "name": "enrollments",
+      "description": "Table containing information about students enrolled in courses.",
+      "table_synonyms": [
+        "registrations",
+        "signups"
+      ],
+      "columns": [
+        {
+          "name": "enrollment_id",
+          "type": "integer",
+          "description": "The unique identifier for an enrollment record.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "student_id",
+          "type": "integer",
+          "description": "Foreign key referencing the student enrolled in the course.",
+          "column_synonyms": null
+        },
+        {
+          "name": "course_id",
+          "type": "integer",
+          "description": "Foreign key referencing the course in which the student is enrolled.",
+          "column_synonyms": null
+        },
+        {
+          "name": "enrollment_date",
+          "type": "date",
+          "description": "The date when the student enrolled in the course.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "enrollment_id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "student_id"
+          ],
+          "reference_table_name": "students",
+          "reference_column_names": [
+            "student_id"
+          ]
+        },
+        {
+          "foreign_key_column_names": [
+            "course_id"
+          ],
+          "reference_table_name": "courses",
+          "reference_column_names": [
+            "course_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "teaching_assignments",
+      "description": "Table containing information about faculty members assigned to teach courses.",
+      "table_synonyms": [
+        "instructor_assignments",
+        "course_assignments"
+      ],
+      "columns": [
+        {
+          "name": "assignment_id",
+          "type": "integer",
+          "description": "The unique identifier for a teaching assignment.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "faculty_id",
+          "type": "integer",
+          "description": "Foreign key referencing the faculty member assigned to teach the course.",
+          "column_synonyms": null
+        },
+        {
+          "name": "course_id",
+          "type": "integer",
+          "description": "Foreign key referencing the course being taught.",
+          "column_synonyms": null
+        },
+        {
+          "name": "semester",
+          "type": "string",
+          "description": "The semester during which the course is taught.",
+          "column_synonyms": [
+            "term",
+            "session"
+          ]
+        }
+      ],
+      "primary_key": [
+        "assignment_id"
+      ],
+      "foreign_keys": [
+        {
+          "foreign_key_column_names": [
+            "faculty_id"
+          ],
+          "reference_table_name": "faculty",
+          "reference_column_names": [
+            "faculty_id"
+          ]
+        },
+        {
+          "foreign_key_column_names": [
+            "course_id"
+          ],
+          "reference_table_name": "courses",
+          "reference_column_names": [
+            "course_id"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -16,6 +16,8 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
+/cypress/downloads/
+/cypress/e2e/
 
 # Editor directories and files
 .vscode/*
@@ -31,3 +33,4 @@ coverage
 
 node_modules
 swagger-codegen-cli-3.jar
+.nyc_output

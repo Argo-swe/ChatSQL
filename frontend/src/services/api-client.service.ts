@@ -1,15 +1,36 @@
 import { OpenAPIClientAxios } from 'openapi-client-axios';
 import type { Client as ApiClient } from '../types/openapi';
 
-const api = new OpenAPIClientAxios({
-    definition: import.meta.env.VITE_OPENAPI_BASE_URL
-});
+/**
+ * Manages the creation and retrieval of an API client.
+ */
+export default class ApiClientManager {
+  private static api: OpenAPIClientAxios;
+  private static client?: ApiClient;
 
-const client = await api.getClient<ApiClient>();
-
-export const getApiClient = () => {
-  if (localStorage.getItem("token")) {
-    client.defaults.headers['authorization'] = `Bearer ${localStorage.getItem("token")}`;
+  /**
+   * Static block to initialize the OpenAPIClientAxios instance.
+   */
+  static {
+    ApiClientManager.api = new OpenAPIClientAxios({
+      definition: import.meta.env.VITE_OPENAPI_BASE_URL
+    });
   }
-  return client;
+
+  /**
+   * Initializes (if necessary) and retrieves the API client.
+   * Automatically attaches the token from localStorage if available.
+   * @returns The API client with headers set.
+   */
+  public static async getApiClient(): Promise<ApiClient> {
+    if (!ApiClientManager.client) {
+      ApiClientManager.client = await ApiClientManager.api.getClient<ApiClient>();
+    }
+
+    if (localStorage.getItem('token')) {
+      ApiClientManager.client.defaults.headers['authorization'] =
+        `Bearer ${localStorage.getItem('token')}`;
+    }
+    return ApiClientManager.client;
+  }
 }

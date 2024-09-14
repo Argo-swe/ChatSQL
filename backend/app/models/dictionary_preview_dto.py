@@ -1,11 +1,19 @@
 from typing import List
-from pydantic import BaseModel
+from fastapi_camelcase import CamelModel, ConfigDict
 from models.dictionary_internal_structure.table_dto import TableDto
 
-class DictionaryPreviewDto(BaseModel):
+
+class DictionaryPreviewDto(CamelModel):
+    """Data Transfer Object to preview the contents of a dictionary.
+
+    Attributes:
+        database_name (str): The name of the database.
+        database_description (str): The description of the database.
+        tables (List[TableDto]): A list of tables contained in the database.
+    """
+
     database_name: str
     database_description: str
     tables: List[TableDto]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

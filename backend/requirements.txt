@@ -1,11 +1,12 @@
-aiofiles
-fastapi
+fastapi[standard]
+fastapi_camelcase
 fastapi_utils[all]
 jsonschema
-parameterized
-# pydantic
+pytest
+pytest-asyncio
+pytest-cov
+pytest-mock
 python-multipart
 sqlalchemy
-# txtai
-psycopg2    # per usare database PostgreSQL
+psycopg2
 pyjwt

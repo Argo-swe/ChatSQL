@@ -1,131 +1,194 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useLayout } from '@/components/layout/composables/layout';
+// External libraries
+import { useConfirm } from 'primevue/useconfirm';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+
+// Internal dependencies
+import { useCheckOutsideClick } from '@/composables/check-click';
+import { useLayout } from '@/composables/layout';
 import AuthService from '@/services/auth.service';
 
-import { useConfirm } from "primevue/useconfirm";
-const confirm = useConfirm();
-
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n();
-
-const { layoutConfig, onMenuToggle, layoutState } = useLayout();
+// Child Components
+import AppLogo from '@/components/AppLogo.vue';
 
 const router = useRouter();
-
+const confirm = useConfirm();
+const { t } = useI18n();
+const { onMenuToggle, layoutState } = useLayout();
+const { isOutsideClicked } = useCheckOutsideClick([
+  '.layout-topbar-menu',
+  '.layout-topbar-menu-button'
+]);
+const outsideClickListener = ref<((event: Event) => void) | null>(null);
+const topbarMenuActive = ref(false);
 let isLogged = ref(AuthService.isLogged());
 
-const outsideClickListener = ref(null);
-const topbarMenuActive = ref(false);
-
 onMounted(() => {
-    bindOutsideClickListener();
-    window.addEventListener('token-localstorage-changed', () => {
-        isLogged.value = AuthService.isLogged();
-    });
+  bindOutsideClickListener();
+  window.addEventListener('token-localstorage-changed', () => {
+    isLogged.value = AuthService.isLogged();
+  });
 });
 
 onBeforeUnmount(() => {
-    unbindOutsideClickListener();
+  unbindOutsideClickListener();
 });
 
-const logoUrl = computed(() => {
-    return `/layout/images/argo_icona.svg`;
-});
-
-const onTopBarMenuButton = () => {
-    topbarMenuActive.value = !topbarMenuActive.value;
-};
-const onSettingsClick = () => {
-    topbarMenuActive.value = false;
-    layoutState.configSidebarVisible.value = !layoutState.configSidebarVisible.value;
-};
-const onLoginClick = () => {
-    topbarMenuActive.value = false;
-    layoutState.loginDialogVisible.value = !layoutState.loginDialogVisible.value;
-};
-const onLogoutClick = () => {
-    confirm.require({
-        message: t('general.confirm.proceed'),
-        header: t('text.Logout'),
-        icon: 'pi pi-exclamation-triangle',
-        acceptLabel: t('text.Yes'),
-        rejectLabel: t('text.No'),
-        accept: () => {
-            AuthService.logout();
-            router.push('/')
-        }
-    });
-};
-const topbarMenuClasses = computed(() => {
-    return {
-        'layout-topbar-menu-mobile-active': topbarMenuActive.value
-    };
-});
-
+/**
+ * Binds a click event listener to the document to detect clicks outside a specific area.
+ * @function bindOutsideClickListener
+ * @description This arrow function will toggle the visibility of the topbar menu when a click outside is detected.
+ */
 const bindOutsideClickListener = () => {
-    if (!outsideClickListener.value) {
-        outsideClickListener.value = (event) => {
-            if (isOutsideClicked(event)) {
-                topbarMenuActive.value = false;
-            }
-        };
-        document.addEventListener('click', outsideClickListener.value);
-    }
+  if (!outsideClickListener.value) {
+    outsideClickListener.value = (event: Event) => {
+      if (topbarMenuActive.value && isOutsideClicked(event)) {
+        topbarMenuActive.value = false;
+      }
+    };
+    document.addEventListener('click', outsideClickListener.value);
+  }
 };
+
+/**
+ * Removes the click event listener from the document and resets the listener reference to null.
+ *  @function unbindOutsideClickListener
+ */
 const unbindOutsideClickListener = () => {
-    if (outsideClickListener.value) {
-        document.removeEventListener('click', outsideClickListener);
-        outsideClickListener.value = null;
-    }
+  if (outsideClickListener.value) {
+    document.removeEventListener('click', outsideClickListener.value);
+    outsideClickListener.value = null;
+  }
 };
-const isOutsideClicked = (event) => {
-    if (!topbarMenuActive.value) return;
 
-    const sidebarEl = document.querySelector('.layout-topbar-menu');
-    const topbarEl = document.querySelector('.layout-topbar-menu-button');
+/**
+ * Toggles the visibility state of the topbar menu
+ * @function onTopBarMenuButton
+ */
+const onTopBarMenuButton = () => {
+  topbarMenuActive.value = !topbarMenuActive.value;
+};
 
-    return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
+/**
+ * Toggles the CSS class for the mobile menu.
+ */
+const topbarMenuClasses = computed(() => {
+  return {
+    'layout-topbar-menu-mobile-active': topbarMenuActive.value
+  };
+});
+
+/**
+ * Toggles the visibility of the config sidebar and closes the topbar menu.
+ * @function onSettingsClick
+ */
+const onSettingsClick = () => {
+  topbarMenuActive.value = false;
+  layoutState.configSidebarVisible.value = !layoutState.configSidebarVisible.value;
+};
+
+/**
+ * Toggles the visibility of the login dialog and closes the topbar menu.
+ * @function onLoginClick
+ */
+const onLoginClick = () => {
+  topbarMenuActive.value = false;
+  layoutState.loginDialogVisible.value = !layoutState.loginDialogVisible.value;
+};
+
+/**
+ * Shows a confirmation dialog and performs the logout action if accepted.
+ * @function onLogoutClick
+ */
+const onLogoutClick = () => {
+  confirm.require({
+    message: t('general.confirm.proceed'),
+    header: t('text.Logout'),
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: t('text.Yes'),
+    rejectLabel: t('text.No'),
+    accept: () => {
+      AuthService.logout();
+      router.push('/');
+    }
+  });
 };
 </script>
 
 <template>
-    <div class="layout-topbar">
-        <router-link to="/" class="layout-topbar-logo">
-            <img :src="logoUrl" alt="Logo" class="argo-logo" />
-            <span>ChatSQL</span>
-        </router-link>
+  <div class="layout-topbar" data-testid="topbar">
+    <router-link to="/" class="layout-topbar-logo">
+      <app-logo path="icons/argo_icona.svg" height="40"></app-logo>
+      <span>ChatSQL</span>
+    </router-link>
 
-        <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()" :aria-label="t('general.menu.openMainNavMenu')">
-            <i class="pi pi-bars"></i>
-        </button>
+    <button
+      class="p-link layout-menu-button layout-topbar-button"
+      :aria-label="t('general.menu.openMainNavMenu')"
+      data-testid="open-main-nav-menu-button"
+      @click="onMenuToggle()"
+    >
+      <i class="pi pi-bars"></i>
+    </button>
 
-        <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()" :aria-label="t('text.toggle_menu')">
-            <i class="pi pi-ellipsis-v"></i>
-        </button>
+    <button
+      class="p-link layout-topbar-menu-button layout-topbar-button"
+      :aria-label="t('text.toggle_menu')"
+      data-testid="open-option-menu-button"
+      @click="onTopBarMenuButton()"
+    >
+      <i class="pi pi-ellipsis-v"></i>
+    </button>
 
-        <div id="option-menu" class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="onSettingsClick()" class="p-link layout-topbar-button" :title="t('text.Settings')" :aria-label="t('text.Settings')">
-                <i class="pi pi-cog"></i><span>{{ t('text.Settings') }}</span>
-            </button>
-            <button v-if="!isLogged" @click="onLoginClick()" class="p-link layout-topbar-button" :title="t('text.Login')" :aria-label="t('text.Login')">
-                <i class="pi pi-user"></i><span>{{ t('text.Login') }}</span>
-            </button>
-            <button v-else @click="onLogoutClick()" class="p-link layout-topbar-button" :title="t('text.Logout')" :aria-label="t('text.Logout')">
-                <i class="pi pi-sign-out"></i><span>{{ t('text.Logout') }}</span>
-            </button>
-        </div>
+    <div
+      id="option-menu"
+      class="layout-topbar-menu"
+      :class="topbarMenuClasses"
+      data-testid="option-menu"
+    >
+      <button
+        class="p-link layout-topbar-button"
+        :title="t('text.Settings')"
+        :aria-label="t('text.Settings')"
+        data-testid="open-settings-button"
+        @click="onSettingsClick()"
+      >
+        <i class="pi pi-cog"></i><span>{{ t('text.Settings') }}</span>
+      </button>
+      <button
+        v-if="!isLogged"
+        class="p-link layout-topbar-button"
+        :title="t('text.Login')"
+        :aria-label="t('text.Login')"
+        data-testid="login-button"
+        @click="onLoginClick()"
+      >
+        <i class="pi pi-user"></i><span>{{ t('text.Login') }}</span>
+      </button>
+      <button
+        v-else
+        class="p-link layout-topbar-button"
+        :title="t('text.Logout')"
+        :aria-label="t('text.Logout')"
+        data-testid="logout-button"
+        @click="onLogoutClick()"
+      >
+        <i class="pi pi-sign-out"></i><span>{{ t('text.Logout') }}</span>
+      </button>
     </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 #option-menu.layout-topbar-menu button span {
-    display: none;
+  display: none;
 }
+
 @media (max-width: 991px) {
-    #option-menu.layout-topbar-menu button span {
-        display: block;
-    }
+  #option-menu.layout-topbar-menu button span {
+    display: block;
+  }
 }
 </style>

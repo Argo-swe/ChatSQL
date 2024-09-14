@@ -1,83 +1,79 @@
-from tools.utils import Utils
-from models.responses.response_dto import ResponseStatusEnum
+from typing import Annotated
+from configuration import Configuration
 from models.responses.string_data_response_dto import StringDataResponseDto
+from models.responses.prompt_response_dto import PromptResponseDto
+from routes.auth.jwt_bearer import JwtBearer
+from core.service.prompt_manager_service import PromptManagerService
 
-from fastapi import APIRouter, Depends
-from engine.index_manager import IndexManager
+from fastapi import APIRouter, Depends, Query
 
-from sqlalchemy.orm import Session
-from database import crud, models
-from database.base import SessionLocal, engine
 
-def getDb():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+def create_prompt_router(config: Configuration):
+    tag = "prompt"
+    router = APIRouter()
 
-tag = "prompt"
-router = APIRouter()
+    def get_prompt_manager_service() -> PromptManagerService:
+        """Retrieve the prompt manager service instance from the configuration."""
+        return config.get_prompt_manager_service()
 
-manager = IndexManager()
-
-@router.get("/", tags=[tag], response_model=StringDataResponseDto)
-def generatePrompt(dictionaryId: int, query: str, dbms: str, lang: str, db: Session = Depends(getDb)) -> StringDataResponseDto:
-
-    foundDic = crud.getDictionaryById(db, dictionaryId)
-
-    if foundDic == None:
-        return StringDataResponseDto(
-                message=f"Dictionary with id {id} not found",
-                status=ResponseStatusEnum.NOT_FOUND
-            )
-
-    if query is None or query == "":
-        return StringDataResponseDto(
-                message=f"Query cannot be empty",
-                status=ResponseStatusEnum.BAD_REQUEST
-            )
-
-    manager.loadIndex(foundDic.id)
-    prompt = manager.promptGenerator(foundDic.id, query, lang, dbms, activate_log=True)
-
-    print(prompt)
-
-    return StringDataResponseDto(
-        data=prompt,
-        status=ResponseStatusEnum.OK
+    @router.get(
+        "/",
+        tags=[tag],
+        response_model=StringDataResponseDto,
+        name="generatePrompt",
+        summary="Generate a prompt based on query parameters",
     )
+    def generate_prompt(
+        dictionary_id: Annotated[int, Query(alias="dictionaryId")],
+        query: str,
+        dbms: str,
+        lang: str,
+        prompt_manager_service: PromptManagerService = Depends(
+            get_prompt_manager_service
+        ),
+    ) -> StringDataResponseDto:
+        """Generate a prompt using the provided parameters.
 
-# TODO: valutare quando gestire il caricamento indice (problema concorrenza)
-# @router.put("/select-index", tags=[tag], response_model=ResponseDto)
-# def generatePrompt(dictionaryId: int, db: Session = Depends(getDb)) -> Res:
+        - **dictionaryId**: ID of the dictionary to be used.
+        - **query**: The input query string to generate the prompt.
+        - **dbms**: The database management system being used.
+        - **lang**: The language for the generated prompt.
 
-#     foundDic = crud.getDictionaryById(db, dictionaryId)
+        Returns the generated prompt as a string.
+        """
+        return prompt_manager_service.generate_prompt(dictionary_id, query, lang, dbms)
 
-#     if foundDic == None:
-#         return ResponseDto(
-#                 message=f"Dictionary with id {id} not found",
-#                 status=ResponseStatusEnum.NOT_FOUND
-#             )
-
-#     manager.createOrLoadIndex(f"index_{foundDic.id}")
-
-#     return ResponseDto(
-#         data=prompt,
-#         status=ResponseStatusEnum.OK
-#     )
-
-@router.get("/debug", tags=[tag], response_model=StringDataResponseDto)
-def generatePromptDebug() -> StringDataResponseDto:
-
-    try:
-        with open('/opt/chatsql/logs/chatsql_log.txt', 'r') as file:
-            return StringDataResponseDto(
-                data=file.read(),
-                status=ResponseStatusEnum.OK
+    @router.get(
+        "/debug",
+        tags=[tag],
+        response_model=PromptResponseDto,
+        dependencies=[Depends(JwtBearer())],
+        name="generatePromptWithDebug",
+        summary="Generate a prompt with debug information",
     )
-    except FileNotFoundError:
-        return StringDataResponseDto(
-            message="Log file not found",
-            status=ResponseStatusEnum.NOT_FOUND
+    def generate_prompt_with_debug(
+        dictionary_id: Annotated[int, Query(alias="dictionaryId")],
+        query: str,
+        dbms: str,
+        lang: str,
+        prompt_manager_service: PromptManagerService = Depends(
+            get_prompt_manager_service
+        ),
+    ) -> PromptResponseDto:
+        """Generate a prompt with detailed debug information.
+
+        - **dictionaryId**: ID of the dictionary to be used.
+        - **query**: The input query string to generate the prompt.
+        - **dbms**: The database management system being used.
+        - **lang**: The language for the generated prompt.
+
+        Returns the generated prompt along with additional debug data.
+        """
+        return prompt_manager_service.generate_prompt_with_debug(
+            dictionary_id, query, lang, dbms
         )
+
+    return router
+
+
+prompt_router = create_prompt_router

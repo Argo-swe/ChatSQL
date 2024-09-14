@@ -1,35 +1,53 @@
-import { jwtDecode, type JwtPayload } from "jwt-decode";
+import { jwtDecode, type JwtPayload } from 'jwt-decode';
 
+/**
+ * AuthService class provides authentication-related functionalities.
+ */
 export default class AuthService {
-    static LS_TOKEN_KEY = 'token';
+  // Key for token in localStorage
+  static readonly LS_TOKEN_KEY = 'token';
 
-    static logout() {
-        localStorage.removeItem(AuthService.LS_TOKEN_KEY);
-        window.dispatchEvent(new CustomEvent('token-localstorage-changed'));
+  /**
+   * Removes the token from localStorage and sends a custom event to notify the change.
+   */
+  static logout() {
+    localStorage.removeItem(AuthService.LS_TOKEN_KEY);
+    window.dispatchEvent(new CustomEvent('token-localstorage-changed'));
+  }
+
+  /**
+   * Check if the token is in localStorage and has not expired.
+   */
+  static isLogged(): boolean {
+    const token = localStorage.getItem(AuthService.LS_TOKEN_KEY);
+
+    if (!token) {
+      return false;
     }
 
-    static isLogged(): boolean {
-        const token = localStorage.getItem(AuthService.LS_TOKEN_KEY);
+    return AuthService.checkJwtExpiration(token);
+  }
 
-        if (!token) {
-            return false;
-        }
+  /**
+   * Decode the JWT token and check its expiration date.
+   * @param token - The JWT token to verify.
+   */
+  private static checkJwtExpiration(token: string): boolean {
+    const decoded = jwtDecode<JwtPayload>(token);
 
-        return AuthService.checkJwtExpiration(token);
+    return !AuthService.isTokenExpired(decoded.exp);
+  }
+
+  /**
+   * Performs expiration date verification.
+   * @param exp - The token expiration date in seconds.
+   */
+  private static isTokenExpired(exp?: number): boolean {
+    const actualTime: number = new Date().getTime();
+
+    if (exp) {
+      return 1000 * exp - actualTime < 5000;
     }
-
-    private static checkJwtExpiration(token: string): boolean {
-        const decoded = jwtDecode<JwtPayload>(token);
-
-        return !AuthService.isTokenExpired(decoded.exp);
-    }
-
-    private static isTokenExpired(exp: number | undefined): boolean {
-        const actualTime: number = (new Date()).getTime();
-
-        if (exp) {
-          return ((1000 * exp) - actualTime) < 5000;
-        }
-        return true;
-    }
+    return true;
+  }
 }

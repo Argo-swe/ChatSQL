@@ -1,0 +1,56 @@
+{
+  "database_name": "Cinema",
+  "database_description": "The cinema database is designed to manage and track movie screenings, ticket sales, and customer information.",
+  "tables": [
+    {
+      "name": "customers",
+      "description": "Table containing personal details of customers who purchase tickets.",
+      "table_synonyms": [
+        "clients",
+        "members",
+        "audience"
+      ],
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "integer",
+          "description": "The unique identifier for a customer.",
+          "column_synonyms": [
+            "id",
+            "identifier"
+          ]
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "description": "The unique login name for a customer.",
+          "column_synonyms": [
+            "nickname",
+            "alias"
+          ]
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "description": "The customer's email address.",
+          "column_synonyms": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The customer's first name.",
+          "column_synonyms": null
+        },
+        {
+          "name": "surname",
+          "type": "string",
+          "description": "The customer's surname.",
+          "column_synonyms": null
+        }
+      ],
+      "primary_key": [
+        "customer_id"
+      ]
+    }
+  ]
+}
