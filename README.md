@@ -20,7 +20,7 @@
    ```
    docker compose up
    ```
-   per l'ambiende di sviluppo che esegue le immagini locali compilate, oppure
+   per l'ambiente di sviluppo che esegue le immagini locali compilate, oppure
    ```
    docker compose -f docker-compose-production.yml up
    ```
