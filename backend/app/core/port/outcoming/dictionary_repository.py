@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 from models.dictionary_dto import DictionaryDto
 
 
@@ -13,25 +13,25 @@ class DictionaryRepository(ABC):
         """
 
     @abstractmethod
-    def get_dictionary_by_id(self, id: int) -> DictionaryDto:
+    def get_dictionary_by_id(self, id: int) -> Optional[DictionaryDto]:
         """Retrieve a specific dictionary by its ID.
 
         Args:
             id (int): The unique identifier of the dictionary.
 
         Returns:
-            DictionaryDto: The dictionary data associated with the given ID.
+            Optional[DictionaryDto]: The dictionary data associated with the given ID.
         """
 
     @abstractmethod
-    def get_dictionary_by_name(self, name: str) -> DictionaryDto:
+    def get_dictionary_by_name(self, name: str) -> Optional[DictionaryDto]:
         """Retrieve a specific dictionary by its name.
 
         Args:
             name (str): The name of the dictionary.
 
         Returns:
-            DictionaryDto: The dictionary data associated with the given name.
+            Optional[DictionaryDto]: The dictionary data associated with the given name.
         """
 
     @abstractmethod
@@ -47,7 +47,9 @@ class DictionaryRepository(ABC):
         """
 
     @abstractmethod
-    def update_dictionary(self, id: int, name: str, description: str) -> DictionaryDto:
+    def update_dictionary(
+        self, id: int, name: str, description: str
+    ) -> Optional[DictionaryDto]:
         """Update the name and description of an existing dictionary by its ID.
 
         Args:
@@ -56,7 +58,7 @@ class DictionaryRepository(ABC):
             description (str): The updated description of the dictionary.
 
         Returns:
-            DictionaryDto: The updated dictionary data.
+            Optional[DictionaryDto]: The updated dictionary data.
         """
 
     @abstractmethod
