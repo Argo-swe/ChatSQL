@@ -2,7 +2,9 @@ name: chatsql
 
 services:
   backend:
-    image: ghcr.io/argo-swe/chatsql-backend:latest
+    build:
+        context: ./backend
+        dockerfile: ./Dockerfile
     command: fastapi dev app.py --host 0.0.0.0
     ports:
       - '8000:8000'
@@ -26,7 +28,9 @@ services:
       - chatsql-network
 
   frontend:
-    image: ghcr.io/argo-swe/chatsql-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
     ports:
       - "5173:5173"
     entrypoint:
