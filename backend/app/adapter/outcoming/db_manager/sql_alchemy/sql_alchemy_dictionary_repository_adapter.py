@@ -13,7 +13,7 @@ class SqlAlchemyDictionaryRepositoryAdapter(DictionaryRepository):
     def get_all_dictionaries(self) -> List[DictionaryDto]:
         dictionaries = self._session.query(Dictionaries).all()
 
-        return [DictionaryDto.from_orm(dictionary) for dictionary in dictionaries]
+        return [DictionaryDto.model_validate(dictionary) for dictionary in dictionaries]
 
     def get_dictionary_by_id(self, id: int) -> Optional[DictionaryDto]:
         dictionary = (
@@ -23,7 +23,7 @@ class SqlAlchemyDictionaryRepositoryAdapter(DictionaryRepository):
         if dictionary is None:
             return None
 
-        return DictionaryDto.from_orm(dictionary)
+        return DictionaryDto.model_validate(dictionary)
 
     def get_dictionary_by_name(self, name: str) -> Optional[DictionaryDto]:
         dictionary = (
@@ -33,14 +33,14 @@ class SqlAlchemyDictionaryRepositoryAdapter(DictionaryRepository):
         if dictionary is None:
             return None
 
-        return DictionaryDto.from_orm(dictionary)
+        return DictionaryDto.model_validate(dictionary)
 
     def create_dictionary(self, name: str, description: str) -> DictionaryDto:
         db_dictionary = Dictionaries(name=name, description=description)
         self._session.add(db_dictionary)
         self._session.commit()
         self._session.refresh(db_dictionary)
-        return DictionaryDto.from_orm(db_dictionary)
+        return DictionaryDto.model_validate(db_dictionary)
 
     def update_dictionary(
         self, id: int, name: str, description: str
@@ -56,7 +56,7 @@ class SqlAlchemyDictionaryRepositoryAdapter(DictionaryRepository):
         current_dictionary.description = description
         self._session.commit()
         self._session.refresh(current_dictionary)
-        return DictionaryDto.from_orm(current_dictionary)
+        return DictionaryDto.model_validate(current_dictionary)
 
     def delete_dictionary(self, id: int):
         dictionary = (

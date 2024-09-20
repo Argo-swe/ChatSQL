@@ -16,4 +16,4 @@ class SqlAlchemyAuthenticationRepositoryAdapter(AuthenticationRepository):
         if admin is None:
             return None
 
-        return AdminDto.from_orm(admin)
+        return AdminDto.model_validate(admin)

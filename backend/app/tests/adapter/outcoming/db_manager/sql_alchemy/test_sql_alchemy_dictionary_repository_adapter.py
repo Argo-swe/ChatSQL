@@ -48,9 +48,9 @@ def test_create_dictionary_success(dictionary_repository, mock_session, mocker):
     assert result.description == description
 
     # Ensure that add, commit, and refresh were called as expected
-    mock_session.add.assert_called_once_with(result)
+    mock_session.add.assert_called_once()
     mock_session.commit.assert_called_once()
-    mock_session.refresh.assert_called_once_with(result)
+    mock_session.refresh.assert_called_once()
 
 
 """Test for handling database commit failure during dictionary creation"""
@@ -91,18 +91,13 @@ def test_update_dictionary(dictionary_repository, mock_session, mocker):
     mock_dictionary.name = "Old Name"
     mock_dictionary.description = "Old Description"
 
-    # Mock the get_dictionary_by_id method to return the mock dictionary
-    mocker.patch.object(
-        dictionary_repository, "get_dictionary_by_id", return_value=mock_dictionary
-    )
+    # Mock the query to return the mock dictionary
+    mock_session.query(Dictionaries).filter().first.return_value = mock_dictionary
 
     # Call the update_dictionary method
     result = dictionary_repository.update_dictionary(
         dictionary_id, new_name, new_description
     )
-
-    # Verify that get_dictionary_by_id was called with the correct ID
-    dictionary_repository.get_dictionary_by_id.assert_called_once_with(dictionary_id)
 
     # Check that the dictionary's name and description were updated
     assert mock_dictionary.name == new_name
@@ -113,7 +108,7 @@ def test_update_dictionary(dictionary_repository, mock_session, mocker):
     mock_session.refresh.assert_called_once_with(mock_dictionary)
 
     # Verify that the method returns the updated dictionary
-    assert result == mock_dictionary
+    assert isinstance(result, DictionaryDto)
 
 
 """Test for handling database commit failure"""
@@ -124,14 +119,10 @@ def test_update_dictionary_commit_failure(dictionary_repository, mock_session, m
     new_name = "Updated Name"
     new_description = "Updated Description"
 
-    # Simulate an existing dictionary instance to be returned by get_dictionary_by_id
+    # Simulate an existing dictionary instance to be returned
     mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
     mock_dictionary.id = dictionary_id
-
-    # Mock the get_dictionary_by_id method to return the mock dictionary
-    mocker.patch.object(
-        dictionary_repository, "get_dictionary_by_id", return_value=mock_dictionary
-    )
+    mock_session.query(Dictionaries).filter().first.return_value = mock_dictionary
 
     # Simulate a commit failure by raising an exception
     mock_session.commit.side_effect = Exception("Commit failed")
@@ -157,16 +148,16 @@ def test_update_non_existent_dictionary(dictionary_repository, mock_session, moc
     new_name = "Updated Name"
     new_description = "Updated Description"
 
-    # Mock get_dictionary_by_id to return None for a non-existent dictionary
-    mocker.patch.object(
-        dictionary_repository, "get_dictionary_by_id", return_value=None
+    # Mock the query to return None for a non-existent dictionary
+    mock_session.query(Dictionaries).filter().first.return_value = None
+
+    # Attempt to update a non-existent dictionary and expect a return value of None
+    result = dictionary_repository.update_dictionary(
+        dictionary_id, new_name, new_description
     )
 
-    # Attempt to update a non-existent dictionary and expect an AttributeError
-    with pytest.raises(AttributeError):
-        dictionary_repository.update_dictionary(
-            dictionary_id, new_name, new_description
-        )
+    # Ensure that the result is None
+    assert result is None
 
     # Verify that commit was not called since the dictionary doesn't exist
     mock_session.commit.assert_not_called()
@@ -181,17 +172,17 @@ def test_update_non_existent_dictionary(dictionary_repository, mock_session, moc
 def test_delete_dictionary_success(dictionary_repository, mock_session, mocker):
     dictionary_id = 1
 
-    # Simulate an existing dictionary instance to be returned by get_dictionary_by_id
+    # Simulate an existing dictionary instance to be returned
     mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
-    mocker.patch.object(
-        dictionary_repository, "get_dictionary_by_id", return_value=mock_dictionary
-    )
+
+    # Mock the query to return the mock dictionary
+    mock_session.query(Dictionaries).filter().first.return_value = mock_dictionary
 
     # Call the delete_dictionary method
     dictionary_repository.delete_dictionary(dictionary_id)
 
-    # Verify that get_dictionary_by_id was called with the correct ID
-    dictionary_repository.get_dictionary_by_id.assert_called_once_with(dictionary_id)
+    # Verify that the query was called with the Dictionaries model
+    mock_session.query.assert_called_with(Dictionaries)
 
     # Ensure that the delete and commit methods were called on the session
     mock_session.delete.assert_called_once_with(mock_dictionary)
@@ -204,16 +195,14 @@ def test_delete_dictionary_success(dictionary_repository, mock_session, mocker):
 def test_delete_dictionary_non_existent(dictionary_repository, mock_session, mocker):
     dictionary_id = 1
 
-    # Simulate get_dictionary_by_id returning None (dictionary does not exist)
-    mocker.patch.object(
-        dictionary_repository, "get_dictionary_by_id", return_value=None
-    )
+    # Mock the query to return None for a non-existent dictionary
+    mock_session.query(Dictionaries).filter().first.return_value = None
 
     # Call the delete_dictionary method
     dictionary_repository.delete_dictionary(dictionary_id)
 
-    # Verify that get_dictionary_by_id was called with the correct ID
-    dictionary_repository.get_dictionary_by_id.assert_called_once_with(dictionary_id)
+    # Verify that the query was called to fetch the dictionary
+    mock_session.query.assert_called_with(Dictionaries)
 
     # Ensure that delete and commit were NOT called since the dictionary does not exist
     mock_session.delete.assert_not_called()
@@ -226,11 +215,11 @@ def test_delete_dictionary_non_existent(dictionary_repository, mock_session, moc
 def test_delete_dictionary_database_error(dictionary_repository, mock_session, mocker):
     dictionary_id = 1
 
-    # Simulate an existing dictionary instance to be returned by get_dictionary_by_id
+    # Mock the query to return the mock dictionary
     mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
-    mocker.patch.object(
-        dictionary_repository, "get_dictionary_by_id", return_value=mock_dictionary
-    )
+
+    # Mock the session query to return the mock dictionary
+    mock_session.query(Dictionaries).filter().first.return_value = mock_dictionary
 
     # Simulate an exception being raised when trying to delete the dictionary
     mock_session.delete.side_effect = Exception("Database error during deletion")
@@ -238,6 +227,9 @@ def test_delete_dictionary_database_error(dictionary_repository, mock_session, m
     # Attempt to delete the dictionary and expect an exception
     with pytest.raises(Exception, match="Database error during deletion"):
         dictionary_repository.delete_dictionary(dictionary_id)
+
+    # Ensure that the query was called to fetch the dictionary
+    mock_session.query.assert_called_with(Dictionaries)
 
     # Ensure that delete was called, but commit was not called due to the exception
     mock_session.delete.assert_called_once_with(mock_dictionary)
@@ -252,11 +244,9 @@ def test_delete_dictionary_ensure_commit_called(
 ):
     dictionary_id = 1
 
-    # Simulate an existing dictionary instance to be returned by get_dictionary_by_id
+    # Simulate an existing dictionary instance to be returned
     mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
-    mocker.patch.object(
-        dictionary_repository, "get_dictionary_by_id", return_value=mock_dictionary
-    )
+    mock_session.query(Dictionaries).filter().first.return_value = mock_dictionary
 
     # Call the delete_dictionary method
     dictionary_repository.delete_dictionary(dictionary_id)
@@ -271,10 +261,16 @@ def test_delete_dictionary_ensure_commit_called(
 
 
 def test_get_all_dictionaries(dictionary_repository, mock_session, mocker):
-    # Simulate a list of mock dictionaries to be returned by the query
-    mock_dictionaries = [
-        mocker.create_autospec(Dictionaries, instance=True) for _ in range(3)
-    ]
+    # Create mock dictionaries with the necessary attributes
+    mock_dictionaries = []
+    for i in range(3):
+        mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
+        mock_dictionary.id = i + 1
+        mock_dictionary.name = f"Dictionary {i + 1}"
+        mock_dictionary.description = f"Description for Dictionary {i + 1}"
+        mock_dictionaries.append(mock_dictionary)
+
+    # Mock the session query to return the list of mock dictionaries
     mock_session.query(Dictionaries).all.return_value = mock_dictionaries
 
     # Call the get_all_dictionaries method
@@ -284,8 +280,10 @@ def test_get_all_dictionaries(dictionary_repository, mock_session, mocker):
     mock_session.query.assert_any_call(Dictionaries)
     # Ensure that the all() method was called to fetch all results
     mock_session.query(Dictionaries).all.assert_called_once()
-    # Ensure the result is the list of mock dictionaries
-    assert result == mock_dictionaries
+    # Ensure the result is a list of DictionaryDto instances
+    assert isinstance(result, list)
+    for dictionary in result:
+        assert isinstance(dictionary, DictionaryDto)
 
 
 """Test for get_dictionary_by_id"""
@@ -294,6 +292,11 @@ def test_get_all_dictionaries(dictionary_repository, mock_session, mocker):
 def test_get_dictionary_by_id(dictionary_repository, mock_session, mocker):
     dictionary_id = 1
     mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
+    mock_dictionary.id = dictionary_id
+    mock_dictionary.name = "Sample Dictionary"
+    mock_dictionary.description = "A description"
+
+    # Mock the query to return the mock dictionary
     mock_session.query(Dictionaries).filter().first.return_value = mock_dictionary
 
     # Call the get_dictionary_by_id method
@@ -310,8 +313,8 @@ def test_get_dictionary_by_id(dictionary_repository, mock_session, mocker):
     # Ensure that first() was called after the filter
     mock_session.query(Dictionaries).filter().first.assert_called_once()
 
-    # Ensure the result is the expected mock dictionary
-    assert result == mock_dictionary
+    # Ensure the result is the expected DictionaryDto
+    assert isinstance(result, DictionaryDto)
 
 
 """Test for get_dictionary_by_name"""
@@ -320,6 +323,11 @@ def test_get_dictionary_by_id(dictionary_repository, mock_session, mocker):
 def test_get_dictionary_by_name(dictionary_repository, mock_session, mocker):
     dictionary_name = "SampleDictionary"
     mock_dictionary = mocker.create_autospec(Dictionaries, instance=True)
+    mock_dictionary.id = 1
+    mock_dictionary.name = dictionary_name
+    mock_dictionary.description = "A description"
+
+    # Mock the query to return the mock dictionary
     mock_session.query(Dictionaries).filter().first.return_value = mock_dictionary
 
     # Call the get_dictionary_by_name method
@@ -336,5 +344,5 @@ def test_get_dictionary_by_name(dictionary_repository, mock_session, mocker):
     # Ensure that first() was called after the filter
     mock_session.query(Dictionaries).filter().first.assert_called_once()
 
-    # Ensure the result is the expected mock dictionary
-    assert result == mock_dictionary
+    # Ensure the result is the expected DictionaryDto
+    assert isinstance(result, DictionaryDto)
