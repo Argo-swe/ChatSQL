@@ -70,8 +70,8 @@ jobs:
       run: |
         sh setup-pre-commit.sh && pre-commit run --all-files    
 
-    # Esegue il type check del frontend
-    - name: Build Frontend
+    # Esegue il type checking del frontend
+    - name: Type Checking Frontend
       run: |
         cd ${{ github.workspace }}/frontend
         npm run type-check

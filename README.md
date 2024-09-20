@@ -20,7 +20,12 @@
    ```
    docker compose up
    ```
-   vengono avviati due container:
+   per l'ambiente di sviluppo che esegue le immagini locali compilate, oppure
+   ```
+   docker compose -f docker-compose-production.yml up
+   ```
+   per eseguire l'ultima release.
+   Vengono avviati due container:
    - frontend: sviluppato in VueJs ed espone l'interfaccia utente
    - backend: espone l'interfaccia di backend e i funzionamenti di ricerca semantica
 

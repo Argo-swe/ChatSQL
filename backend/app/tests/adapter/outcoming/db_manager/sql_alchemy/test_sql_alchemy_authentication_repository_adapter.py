@@ -1,4 +1,5 @@
 import pytest
+from models.admin_dto import AdminDto
 from sqlalchemy.orm import Session
 from adapter.outcoming.db_manager.sql_alchemy.sql_alchemy_authentication_repository_adapter import (
     SqlAlchemyAuthenticationRepositoryAdapter,
@@ -27,10 +28,12 @@ def auth_repository(mock_session):
 
 def test_get_admin_by_username_existing_user(auth_repository, mock_session, mocker):
     username = "existing_user"
+    password = "secure_password"
 
     # Create a mock Admins instance that simulates the database model
     mock_admin = mocker.create_autospec(Admins, instance=True)
     mock_admin.username = username
+    mock_admin.password = password
 
     # Mock the query, filter, and first methods to return the mock_admin when queried
     mock_session.query(Admins).filter().first.return_value = mock_admin
@@ -47,8 +50,8 @@ def test_get_admin_by_username_existing_user(auth_repository, mock_session, mock
     # Assert that the filter argument matches the expected condition (Admins.username == username)
     assert str(actual_filter_arg) == str(Admins.username == username)
 
-    # Ensure that the method returns the correct admin instance
-    assert result == mock_admin
+    # Ensure that the method returns the correct admindto instance
+    assert isinstance(result, AdminDto)
 
 
 """Test for retrieving a non-existent user by username"""

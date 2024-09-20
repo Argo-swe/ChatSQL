@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from models.admin_dto import AdminDto
 
@@ -6,7 +7,7 @@ from models.admin_dto import AdminDto
 class AuthenticationRepository(ABC):
 
     @abstractmethod
-    def get_admin_by_username(self, username: str) -> AdminDto:
+    def get_admin_by_username(self, username: str) -> Optional[AdminDto]:
         """Retrieve user details by username.
 
         Args:
